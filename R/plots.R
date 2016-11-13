@@ -8,6 +8,7 @@ plot.calDate <- function(calDate, label=NA, calendar="BP", type="standard"){
     prob <- calDate[["agegrid"]]$PrDens
     cra <- calDate[["metadata"]]$CRA
     error <- calDate[["metadata"]]$Error
+    calcurve <- calDate[["metadata"]]$CalCurve
     calendars <- c("BP","BCAD")
     if (!calendar %in% calendars){
         stop("The calendar you have chosen is not currently an option.")
@@ -51,7 +52,7 @@ plot.calDate <- function(calDate, label=NA, calendar="BP", type="standard"){
         polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
         axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
         mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)   
-        calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp,".14c", sep="")
+        calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calcurve,".14c", sep="")
         options(warn=-1)
         cc <- readLines(calCurveFile, encoding="UTF-8")
         cc <- cc[!grepl("[#]",cc)]

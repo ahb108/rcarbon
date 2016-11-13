@@ -109,7 +109,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
 
 uncalibrate <- function(date, error, calCurves='intcal13', uncalmethod="standard"){ 
 
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp,".14c", sep="")
+    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
     calcurve <- calcurve[!grepl("[#]",calcurve)]
