@@ -51,9 +51,13 @@ plot.calDate <- function(calDate, label=NA, calendar="BP", type="standard"){
         polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
         axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
         mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)   
-        calCurveFile <- paste(system.file("data", package = "Bchron"),"intcal13.txt.gz",sep="/")
-        cc <- as.data.frame(utils::read.table(calCurveFile))
-        names(cc) <- c("BP","CRA","Error","D14C","Sigma")
+        calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp,".14c", sep="")
+        options(warn=-1)
+        cc <- readLines(calCurveFile, encoding="UTF-8")
+        cc <- cc[!grepl("[#]",cc)]
+        cc <- as.matrix(read.csv(textConnection(cc), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+        options(warn=0)
+        colnames(cc) <- c("BP","CRA","Error","D14C","Sigma")
         if (calendar=="BCAD"){
             tmp <- (xrng-1950)*-1
             cc$RX <- 1950-cc$BP

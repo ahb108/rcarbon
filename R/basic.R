@@ -11,16 +11,17 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
     if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(ages)) }
     if (length(resErrors)==1){ resErrors <- rep(resErrors,length(ages)) }
     names(reslist) <- ids
-    # Calibration curve(s)
-    require(Bchron)
-    pathToCalCurves <- system.file("data", package="Bchron")
     tmp <- unique(calCurves)
     if (length(calCurves)==1){ calCurves <- rep(calCurves,length(ages)) }
     cclist <- vector(mode="list", length=length(tmp))
     for (a in 1:length(tmp)){
-        calCurveFile <- paste(pathToCalCurves, "/", tmp,".txt.gz", sep="")
-        cctmp <- as.matrix(read.table(calCurveFile))[,1:3]
-        colnames(cctmp) <- c("CALBP", "C14BP", "Error")
+        calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp,".14c", sep="")
+        options(warn=-1)
+        cctmp <- readLines(calCurveFile, encoding="UTF-8")
+        cctmp <- cctmp[!grepl("[#]",cctmp)]
+        cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+        options(warn=0)
+        colnames(cctmp) <- c("CALBP","C14BP","Error")
         cclist[[tmp[a]]] <- cctmp
     }
     if (length(ages)>1 & verbose){
@@ -107,15 +108,18 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
 }
 
 uncalibrate <- function(date, error, calCurves='intcal13', uncalmethod="standard"){ 
-    require(Bchron) 
-    pathToCalCurves <- system.file("data", package="Bchron")
-    calCurveFile <- paste(pathToCalCurves, "/", calCurves,".txt.gz", sep="")
-    calcurve <- as.matrix(read.table(calCurveFile))[,1:3]
-    colnames(calcurve) <- c("CALBP", "C14BP", "Error")
+
+    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp,".14c", sep="")
+    options(warn=-1)
+    calcurve <- readLines(calCurveFile, encoding="UTF-8")
+    calcurve <- calcurve[!grepl("[#]",calcurve)]
+    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+    options(warn=0)
+    colnames(calcurve) <- c("CALBP","C14BP","Error")
     dates <- data.frame(approx(calcurve, xout=date))
     colnames(dates) <- c("CALBP", "C14BP")
     calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$CALBP)$y
-    if (uncalmethod == "Crema"){
+    if (uncalmethod == "CremaetalPLOSOne2016"){
         dates$Error <- sqrt(error^2 + calcurve.error^2)
         dates$C14RandAge <- round(rnorm(nrow(dates),mean=dates$C14BP,sd=dates$Error))
     } else {
@@ -123,24 +127,6 @@ uncalibrate <- function(date, error, calCurves='intcal13', uncalmethod="standard
         dates$C14RandAge <- round(rnorm(nrow(dates),mean=dates$C14BP,sd=calcurve.error))
     }
     return(dates)
-}
-
-calspdf <- function(ages, dens, calCurves='intcal13'){
-
-    require(Bchron)
-    pathToCalCurves <- system.file("data", package="Bchron")
-    calCurveFile <- paste(pathToCalCurves, "/", calCurves,".txt.gz", sep="")
-    calcurve <- as.matrix(read.table(calCurveFile))[,1:3]
-    colnames(calcurve) <- c("CALBP", "C14BP", "Error")
-    calBP.out <- seq(max(calcurve),min(calcurve),-1)
-    CRAdates <- data.frame(approx(calcurve[,1:2], xout=calBP.out))
-    names(CRAdates) <- c("calBP.out","CRA")
-    CRAdates$CRA <- round(CRAdates$CRA,0)
-    CRApdf <-  data.frame(CRA=ages,prob.out=dens)
-    res <- merge(CRAdates,CRApdf,by="CRA",all.x=TRUE, sort=FALSE)
-    res <- res[with(res, order(-calBP.out)), c("calBP.out","prob.out")]
-    res$prob.out[is.na(res$prob.out)] <- 0
-    return(res$prob.out)
 }
 
 sampleDate <- function(ndates, years, probs, replace=TRUE) { 

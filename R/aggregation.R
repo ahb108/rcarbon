@@ -1,10 +1,12 @@
 calspdf <- function(ages, dens, calCurves='intcal13'){
 
-    require(Bchron)
-    pathToCalCurves <- system.file("data", package="Bchron")
-    calCurveFile <- paste(pathToCalCurves, "/", calCurves,".txt.gz", sep="")
-    calcurve <- as.matrix(read.table(calCurveFile))[,1:3]
-    colnames(calcurve) <- c("CALBP", "C14BP", "Error")
+    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp,".14c", sep="")
+    options(warn=-1)
+    calcurve <- readLines(calCurveFile, encoding="UTF-8")
+    calcurve <- cctmp[!grepl("[#]",cctmp)]
+    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+    options(warn=0)
+    colnames(calcurve) <- c("CALBP","C14BP","Error")
     calBP.out <- seq(max(calcurve),min(calcurve),-1)
     CRAdates <- data.frame(approx(calcurve[,1:2], xout=calBP.out))
     names(CRAdates) <- c("calBP.out","CRA")
