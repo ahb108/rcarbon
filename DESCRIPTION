@@ -2,9 +2,8 @@ Package: rcarbon
 Title: Calibration and analysis of radiocarbon dates
 Version: 0.0.0.9000
 Authors@R: c(
-person("Andrew", "Bevan", email="andrew.bevan@gmail.com", role=c("aut", "cre"),
-person("Enrico", "Crema", email="enrico.crema@gmail.com", role="aut")
-)
+person("Andrew", "Bevan", email="andrew.bevan@gmail.com", role=c("aut", "cre")),
+person("Enrico", "Crema", email="enrico.crema@gmail.com", role="aut"))
 Description: This package handles the calibration and analysis of radiocarbon, often but not exclsuively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists. 
 Depends: R (>= 3.3.1)
 Suggests: Bchron
