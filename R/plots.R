@@ -56,9 +56,9 @@ plot.calDate <- function(calDate, label=NA, calendar="BP", type="standard"){
         options(warn=-1)
         cc <- readLines(calCurveFile, encoding="UTF-8")
         cc <- cc[!grepl("[#]",cc)]
-        cc <- as.matrix(read.csv(textConnection(cc), header=FALSE, stringsAsFactors=FALSE))
+        cc <- read.csv(textConnection(cc), header=FALSE, stringsAsFactors=FALSE)
         options(warn=0)
-        colnames(cc) <- c("BP","CRA","Error","D14C","Sigma")
+        names(cc) <- c("BP","CRA","Error","D14C","Sigma")
         if (calendar=="BCAD"){
             tmp <- (xrng-1950)*-1
             cc$RX <- 1950-cc$BP
