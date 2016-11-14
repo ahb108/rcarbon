@@ -67,16 +67,20 @@ modelTest <- function(bins, ages, errors, yearRange, calCurves, nsim, edge=500, 
     return(res)
 }
 
-regionTest <- function(regions, bins, date, error, DeltaR=0, DeltaRsd=0, yearRange,nsim=1000, raw=TRUE, calCurves){
+regionTest <- function(regions, bins, ages, errors, resOffsets=0, resErrors=0, yearRange, nsim, calCurves, runm=50, raw=TRUE, method="standard", normalised=FALSE, ncores=1){
 
+    if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(ages)) }
+    if (length(resErrors)==1){ resErrors <- rep(resErrors,length(ages)) }
     tmp <- calibrate(ages=100,errors=10,timeRange=yearRange) # dummy
-    individualDatesMatrix<-matrix(NA,nrow=nrow(tmp),ncol=length(date))
-    print("Calibrating Individual Dates...")
+    tmp <- tmp[[1]][["agegrid"]]
+    individualDatesMatrix <- matrix(NA,nrow=nrow(tmp),ncol=length(ages))
+    print("Calibrating observed ages...")
     flush.console()
-    pb <- txtProgressBar(min = 1, max = length(date), style=3)
-    for (x in 1:length(date)){
+    pb <- txtProgressBar(min=1, max=length(ages), style=3)
+    for (x in 1:length(ages)){
         setTxtProgressBar(pb, x)
-        individualDatesMatrix[,x]=calibrate(date=date[x],error=error[x], DeltaR=DeltaR[x],DeltaRsd=DeltaRsd[x], timeRange=yearRange,calCurves=calCurves[x])[,2]
+        tmpcal <- calibrate(ages=ages[x],errors=errors[x], resOffsets=resOffsets[x],resErrors=resErrors[x], timeRange=yearRange,calCurves=calCurves)
+        individualDatesMatrix[,x] <- tmpcal[[1]][["agegrid"]][,2]
     }
     close(pb)
     binNames <- unique(bins)
@@ -98,34 +102,37 @@ regionTest <- function(regions, bins, date, error, DeltaR=0, DeltaRsd=0, yearRan
     }
     close(pb)  
     observedSPD <- vector("list",length=length(unique(regionList)))
-    names(observedSPD)<-unique(regionList)
+    names(observedSPD) <- unique(regionList)
     for (x in 1:length(unique(regionList))){
         focus <- unique(regionList)[x]
         index <- which(regionList==focus)
         tmpSPD <- apply(binnedMatrix[,index],1,sum)
-        tmpSPD <- tmpSPD/sum(tmpSPD) #normalise to 1
+        tmp1 <- runMean(tmpSPD,runm)
+        tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]  
+        tmpSPD <- tmpSPD/sum(tmpSPD)
         observedSPD[[x]] <- data.frame(calBP=tmp[,1],SPD=tmpSPD)
     }
     simulatedSPD <- vector("list",length=length(unique(regionList)))
     for (x in 1:length(unique(regionList))){
-        simulatedSPD[[x]]=matrix(NA,nrow=nrow(tmp),ncol=nsim)
+        simulatedSPD[[x]] <- matrix(NA, nrow=nrow(tmp), ncol=nsim)
     }
     print("Permutation test...")
     flush.console()
-    pb <- txtProgressBar(min = 1, max = nsim, style=3)
+    pb <- txtProgressBar(min=1, max=nsim, style=3)
     for (s in 1:nsim){
         setTxtProgressBar(pb, s)
-        simRegionList=sample(regionList) #randomize Regions
+        simRegionList <- sample(regionList)
         for (x in 1:length(unique(simRegionList))){
             focus <- unique(regionList)[x]
             index <- which(simRegionList==focus)
             tmpSPD <- apply(binnedMatrix[,index],1,sum)
-            tmpSPD <- tmpSPD/sum(tmpSPD) #normalise to 1
+            tmp1 <- runMean(tmpSPD,runm)
+            tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]            
+            tmpSPD <- tmpSPD/sum(tmpSPD)
             simulatedSPD[[x]][,s] <- tmpSPD
         }
     }
     close(pb)
-    ##Summary
     simulatedCIlist <- vector("list",length=length(unique(regionList)))
     for (x in 1:length(unique(regionList))){
         simulatedCIlist[[x]] <- cbind(apply(simulatedSPD[[x]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[x]],1,quantile,prob=c(0.975)))
@@ -150,8 +157,10 @@ regionTest <- function(regions, bins, date, error, DeltaR=0, DeltaRsd=0, yearRan
         }
     }        
     if(raw==FALSE){
-        return(list(observed=observedSPD,envelope=simulatedCIlist,pValueList=pValueList))
+        res <- list(observed=observedSPD,envelope=simulatedCIlist,pValueList=pValueList)
     } else {  
-        return(list(observed=observedSPD,envelope=simulatedCIlist,raw=simulatedSPD,pValueList=pValueList))
-    }    
+        res <- list(observed=observedSPD,envelope=simulatedCIlist,raw=simulatedSPD,pValueList=pValueList)
+    }
+    class(res) <- "rspdRegionTest"
+    return(res)
 }

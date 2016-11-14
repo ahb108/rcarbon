@@ -162,6 +162,90 @@ plot.rspdModelTest <- function(rspdModelTest, yMax=NA, xlim=c(0,1), drawaxes=TRU
         axis(side=1,at=seq(max(obs[,1]),min(obs[,1]),-100),labels=NA,tck = -.01)
     }
 }
+    
+plot.rspdRegionTest <- function(data, focalregion=1, yMax=1, xlim=NA, drawaxes=TRUE, ...){
+
+    obs <- data$observed[[focalregion]]
+    if (any(is.na(xlim))){ xlim <- c(max(obs[,1]),min(obs[,1])) }
+    resolution <- 1
+    envelope <- data$envelope[[focalregion]]
+    if (is.na(yMax)){ yMax=max(as.numeric(envelope),obs[,2]) }    
+    booms <- which(obs[,2]>envelope[,2])
+    busts <- which(obs[,2]<envelope[,1])
+    baseline <- rep(0,nrow(obs))
+    if (drawaxes){
+        plot(obs[,1],obs[,2],xlim=xlim, ylim=c(0,yMax), xlab="cal BP",ylab="Normalised Summed Probability",type="l",col=1,lwd=0.5,axes=FALSE,...)
+        axis(side=1,padj=-1)
+        axis(side=2,padj=1)
+    } else {
+        plot(obs[,1],obs[,2],xlim=xlim, ylim=c(0,yMax), xlab="",ylab="",type="l",col=1,lwd=0.5, axes=FALSE,...)
+    }
+    box()
+    boomPlot <- baseline
+    if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
+    bustPlot <- baseline
+    if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }                 
+    boomBlocks <- vector("list")
+    counter <- 0
+    state <- "off"
+    for (x in 1:length(boomPlot)){
+        if (boomPlot[x]>0&state=="off"){
+            counter <- counter+1
+            boomBlocks <- c(boomBlocks,vector("list",1))
+            boomBlocks[[counter]] <- vector("list",2)
+            boomBlocks[[counter]][[1]] <- boomPlot[x]
+            boomBlocks[[counter]][[2]] <- obs[x,1]
+            state <- "on"
+        }
+        if (state=="on"){
+            if (boomPlot[x]>0){
+                boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[x])
+                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[x,1])
+            }
+            if (boomPlot[x]==0){
+                state <- "off"
+            }
+        }    
+    }
+    bustBlocks <- vector("list")
+    counter <- 0
+    state <- "off"
+    for (x in 1:length(bustPlot)){
+        if (bustPlot[x]>0&state=="off"){
+            counter <- counter+1
+            bustBlocks <- c(bustBlocks,vector("list",1))
+            bustBlocks[[counter]] <- vector("list",2)
+            bustBlocks[[counter]][[1]] <- bustPlot[x]
+            bustBlocks[[counter]][[2]] <- obs[x,1]
+            state <- "on"
+        }
+        if (state=="on"){
+            if (bustPlot[x]>0){
+                bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[x])
+                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[x,1])
+            }
+            if (bustPlot[x]==0){
+                state <- "off"
+            }
+        }    
+    } 
+    if (length(booms)>0){
+        for (x in 1:length(boomBlocks)){
+            polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+        }
+    }
+    if (length(busts)>0){
+        for (x in 1:length(bustBlocks)){
+            polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+        }
+    }  
+    polygon(x=c(obs[,1], rev(obs[,1])), y=c(envelope[,1], rev(envelope[,2])), col=rgb(0,0,0,0.2), border=NA)
+    spdSmooth <- runMean(obs[,2], 200/resolution)
+    ## lines(obs[,1],spdSmooth,col=1,lwd=2.5,lty=1)
+    if (drawaxes){
+        axis(side=1, at=seq(max(obs[,1]), min(obs[,1]),-100), labels=NA, tck=-0.01)
+    }
+}
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){
 
