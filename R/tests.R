@@ -79,7 +79,7 @@ regionTest <- function(regions, bins, ages, errors, resOffsets=0, resErrors=0, y
     pb <- txtProgressBar(min=1, max=length(ages), style=3)
     for (x in 1:length(ages)){
         setTxtProgressBar(pb, x)
-        tmpcal <- calibrate(ages=ages[x],errors=errors[x], resOffsets=resOffsets[x],resErrors=resErrors[x], timeRange=yearRange,calCurves=calCurves)
+        tmpcal <- calibrate(ages=ages[x],errors=errors[x], resOffsets=resOffsets[x],resErrors=resErrors[x], timeRange=yearRange,calCurves=calCurves, method=method, normalised=normalised)
         individualDatesMatrix[,x] <- tmpcal[[1]][["agegrid"]][,2]
     }
     close(pb)
@@ -100,17 +100,17 @@ regionTest <- function(regions, bins, ages, errors, resOffsets=0, resErrors=0, y
         }
         regionList[b] <- regions[index][1]
     }
-    close(pb)  
+    close(pb)
     observedSPD <- vector("list",length=length(unique(regionList)))
     names(observedSPD) <- unique(regionList)
     for (x in 1:length(unique(regionList))){
         focus <- unique(regionList)[x]
         index <- which(regionList==focus)
-        tmpSPD <- apply(binnedMatrix[,index],1,sum)
-        tmp1 <- runMean(tmpSPD,runm)
+        tmpSPD <- apply(binnedMatrix[,index], 1, sum)
+        tmp1 <- runMean(tmpSPD, runm)
         tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]  
-        tmpSPD <- tmpSPD/sum(tmpSPD)
-        observedSPD[[x]] <- data.frame(calBP=tmp[,1],SPD=tmpSPD)
+        tmpSPD <- tmpSPD / sum(tmpSPD)
+        observedSPD[[x]] <- data.frame(calBP=tmp[,1], SPD=tmpSPD)
     }
     simulatedSPD <- vector("list",length=length(unique(regionList)))
     for (x in 1:length(unique(regionList))){
@@ -132,10 +132,12 @@ regionTest <- function(regions, bins, ages, errors, resOffsets=0, resErrors=0, y
             simulatedSPD[[x]][,s] <- tmpSPD
         }
     }
+    names(simulatedSPD) <- unique(regionList)
     close(pb)
     simulatedCIlist <- vector("list",length=length(unique(regionList)))
     for (x in 1:length(unique(regionList))){
         simulatedCIlist[[x]] <- cbind(apply(simulatedSPD[[x]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[x]],1,quantile,prob=c(0.975)))
+        names(simulatedCIlist) <- unique(regionList)
     }
     pValueList <- numeric(length=length(simulatedSPD))
     for (x in 1:length(simulatedSPD)){
@@ -155,6 +157,7 @@ regionTest <- function(regions, bins, ages, errors, resOffsets=0, resErrors=0, y
         if (observedStatistic>0){    
             pValueList[[x]] <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
         }
+        names(pValueList) <- unique(regionList)
     }        
     if(raw==FALSE){
         res <- list(observed=observedSPD,envelope=simulatedCIlist,pValueList=pValueList)

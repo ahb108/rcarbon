@@ -163,7 +163,7 @@ plot.rspdModelTest <- function(rspdModelTest, yMax=NA, xlim=c(0,1), drawaxes=TRU
     }
 }
     
-plot.rspdRegionTest <- function(data, focalregion=1, yMax=1, xlim=NA, drawaxes=TRUE, ...){
+plot.rspdRegionTest <- function(data, focalregion="1", xlim=NA, yMax=1, drawaxes=TRUE, ...){
 
     obs <- data$observed[[focalregion]]
     if (any(is.na(xlim))){ xlim <- c(max(obs[,1]),min(obs[,1])) }
