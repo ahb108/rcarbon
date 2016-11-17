@@ -70,8 +70,8 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     }
     speccall <- as.data.frame(lapply(speccall,deparse), stringsAsFactors=FALSE)
     speccall <- speccall[,names(defcall)] 
-    if (!"calDates" %in% class(x) & !"uncalDates" %in% class(x)){
-        stop("x must be an object of class 'calDates' or 'uncalDates'.")
+    if (!"calDates" %in% class(x)){
+        stop("x must be an object of class 'calDates'.")
     }
     if (length(bins)>1){
         if (any(is.na(bins))){
@@ -114,8 +114,8 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     finalSPD <- apply(binnedMatrix,1,sum)
     if (!is.na(runm)){
         tmp1 <- runMean(finalSPD,runm)
+        finalSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
     }
-    finalSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
     res <- data.frame(calBP=dummygrid[[1]][["agegrid"]][,1], SPD=finalSPD)
     if (spdnormalised){
         res$SPD <- res$SPD/sum(res$SPD, na.rm=TRUE)
@@ -125,11 +125,7 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     names(reslist) <- c("metadata","agegrid")
     reslist[["metadata"]] <- speccall
     reslist[["agegrid"]] <- res
-    if (!"calDates" %in% class(x)){
-        class(reslist) <- append(class(reslist),"CalSPD")
-    } else if (!"uncalDates" %in% class(x)){
-        class(reslist) <- append(class(reslist),"UncalSPD")
-    }
+    class(reslist) <- append(class(reslist),"CalSPD")
     if (verbose){ print("Done.") }
     return(reslist)
 }
