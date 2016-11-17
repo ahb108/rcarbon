@@ -101,6 +101,9 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
         index <- which(bins==binNames[b])
         slist <- x[index]
         tmp <- lapply(lapply(slist, `[[`, 2),`[`,2)
+        if (datenormalised){
+            tmp <- lapply(tmp,FUN=function(x) x/sum(x))
+        }
         if (length(binNames)>1){
             spd.tmp <- Reduce("+", tmp) / length(index)
         } else {
