@@ -57,38 +57,50 @@ binPrep <- function(sites, ages, h=200){
     return(clusters)
 }
 
-#' Produce a summed probability dsitribution from a set of calibrated radiocarbon dates.
-#'
-#' 
-#' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases
-#' @param calcurve a vector of uncalibrated conventional radiocarbon ages
-#' @param h a single numeric value passed to hclust() to control degree of grouping of similar ages in a phase site.
-#'
-#' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with rspd()
-#'
-#' @examples
-#' rspd()
-newrspd <- function(x, bins, yearRange, normalised=FALSE, verbose=TRUE){
+rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
 
+    defcall <- as.list(args(rspd))
+    defcall <- defcall[-length(defcall)]
+    speccall <- as.list(match.call())
+    speccall <- speccall[-1]
+    i <- match(names(defcall), names(speccall))
+    i <- is.na(i)
+    if (any(i)){
+        speccall[names(defcall)[which(i)]] = defcall[which(i)]
+    }
+    speccall <- as.data.frame(lapply(speccall,deparse), stringsAsFactors=FALSE)
+    speccall <- speccall[,names(defcall)] 
     if (!"calDates" %in% class(x) & !"uncalDates" %in% class(x)){
         stop("x must be an object of class 'calDates' or 'uncalDates'.")
     }
-    if (any(is.na(bins))){ stop("Cannot have NA values in the bins.") }
+    if (length(bins)>1){
+        if (any(is.na(bins))){
+            stop("Cannot have NA values in bins.")
+        }
+        if (length(bins)!=length(x)){
+            stop("bins (if provided) must be the same lenght as x.")
+        }
+    } else {
+        bins <- rep("0_0",length(x))
+    }
     if (verbose){ print("Converting age/date set...") }
-    dummygrid <- calibrate(ages=100,errors=10,timeRange=yearRange) # dummy
-    individualDatesMatrix <- matrix(NA,nrow=nrow(dummygrid[[1]][["agegrid"]]),ncol=length(ages))
+    dummygrid <- calibrate(ages=100,errors=10) # dummy
+    individualDatesMatrix <- matrix(NA,nrow=nrow(dummygrid[[1]][["agegrid"]]),ncol=length(x))
     tmp <- lapply(x, `[[`, 2)
     tmp <- lapply(tmp,`[`, 2)
     individualDatesMatrix <- do.call("cbind",tmp)
+    if (datenormalised){
+        individualDatesMatrix <- apply(individualDatesMatrix,2,FUN=function(x) x/sum(x))
+    }
     binNames <- unique(bins)
     binnedMatrix <- matrix(NA, nrow=nrow(individualDatesMatrix), ncol=length(binNames))
-    if (verbose){
+    if (verbose & length(binNames)>1){
         print("Binning by site/phase...")
         flush.console()
         pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
     }
     for (b in 1:length(binNames)){
-            if (verbose){ setTxtProgressBar(pb, b) }
+            if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
             index <- which(bins==binNames[b])
             if (length(index)>1){    
                 spd.tmp <- apply(individualDatesMatrix[,index],1,sum)
@@ -97,56 +109,29 @@ newrspd <- function(x, bins, yearRange, normalised=FALSE, verbose=TRUE){
                 binnedMatrix[,b] <- individualDatesMatrix[,index]
             }
         }
-    if (verbose){ close(pb) }
+    if (verbose & length(binNames)>1){ close(pb) }
+    if (verbose){ print("Aggregating...") }
     finalSPD <- apply(binnedMatrix,1,sum)
-    finalSPD <- finalSPD/sum(finalSPD)
-    tmp1 <- runMean(finalSPD,runm)
+    if (!is.na(runm)){
+        tmp1 <- runMean(finalSPD,runm)
+    }
     finalSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
     res <- data.frame(calBP=dummygrid[[1]][["agegrid"]][,1], SPD=finalSPD)
+    if (spdnormalised){
+        res$SPD <- res$SPD/sum(res$SPD, na.rm=TRUE)
+    }
+    res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
+    reslist <- vector("list",length=2)
+    names(reslist) <- c("metadata","agegrid")
+    reslist[["metadata"]] <- speccall
+    reslist[["agegrid"]] <- res
     if (!"calDates" %in% class(x)){
-        class(res) <- append(class(res),"CalSPD")
+        class(reslist) <- append(class(reslist),"CalSPD")
     } else if (!"uncalDates" %in% class(x)){
-        class(res) <- append(class(res),"UncalSPD")
+        class(reslist) <- append(class(reslist),"UncalSPD")
     }
-    return(res)    
-}
-
-rspd <- function(bins, ages, errors, resOffsets=0, resErrors=0, yearRange, calCurves, eps=1e-5, method="standard", runm=50, normalised=FALSE, ncores=1, verbose=TRUE){
-    
-    if (any(is.na(bins))){ stop("Cannot have NA values in the bins.") }
-    dummygrid <- calibrate(ages=100,errors=10,timeRange=yearRange) # dummy
-    individualDatesMatrix <- matrix(NA,nrow=nrow(dummygrid[[1]][["agegrid"]]),ncol=length(ages))
-    # Calibrate
-    tmp <- calibrate(ages=ages,errors=errors,resOffsets=resOffsets,resErrors=resErrors,timeRange=yearRange,calCurves=calCurves, method=method, normalised=normalised, ncores=ncores, verbose=verbose)
-    tmp <- lapply(tmp, `[[`, 2)
-    tmp <- lapply(tmp,`[`, 2)
-    individualDatesMatrix <- do.call("cbind",tmp)
-    # Aggregate
-    binNames <- unique(bins)
-    binnedMatrix <- matrix(NA,nrow=nrow(individualDatesMatrix),ncol=length(binNames))
-    if (verbose){
-        print("Binning by site/phase...")
-        flush.console()
-        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
-    }
-    for (b in 1:length(binNames)){
-            if (verbose){ setTxtProgressBar(pb, b) }
-            index <- which(bins==binNames[b])
-            if (length(index)>1){    
-                spd.tmp <- apply(individualDatesMatrix[,index],1,sum)
-                binnedMatrix[,b] <- spd.tmp/length(index)
-            } else {
-                binnedMatrix[,b] <- individualDatesMatrix[,index]
-            }
-        }
-    if (verbose){ close(pb) }
-    finalSPD <- apply(binnedMatrix,1,sum)
-    finalSPD <- finalSPD/sum(finalSPD)
-    tmp1 <- runMean(finalSPD,runm)
-    finalSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
-    res <- data.frame(calBP=dummygrid[[1]][["agegrid"]][,1], SPD=finalSPD)
-    class(res) <- append(class(res),"RSPD")
-    return(res)    
+    if (verbose){ print("Done.") }
+    return(reslist)
 }
 
 siteW <- function(dateID ,cra,error,siteID,timeRange){

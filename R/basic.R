@@ -7,7 +7,11 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
     }
     reslist <- vector(mode="list", length=length(ages))
-    if (is.na(ids[1])){ ids <- as.character(1:length(ages)) }
+    if (is.na(ids[1])){
+        ids <- as.character(1:length(ages))
+    } else {
+        ids <- as.character(ids)
+    }
     if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(ages)) }
     if (length(resErrors)==1){ resErrors <- rep(resErrors,length(ages)) }
     names(reslist) <- ids
