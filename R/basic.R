@@ -52,7 +52,8 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
             if (normalised){ dens <- dens/sum(dens) }
             res <- data.frame(calBP=calBP,PrDens=dens)
             df <- data.frame(DateID=ids[b], CRA=ages[b], Error=errors[b], Details=dateDetails[b], CalCurve=calCurves[b],ResOffsets=resOffsets[b], ResErrors=resErrors[b], StartBP=timeRange[1], EndBP=timeRange[2], CalMethod=method, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
-            sublist <- list(metadata=df,agegrid=res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),])
+            agegrid <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+            sublist <- list(metadata=df,agegrid=agegrid)
             class(sublist) <- append(class(sublist),"calDate")
             return(sublist)
         }

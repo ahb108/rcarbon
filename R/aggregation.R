@@ -71,15 +71,12 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     speccall <- as.data.frame(lapply(speccall,deparse), stringsAsFactors=FALSE)
     speccall <- speccall[,names(defcall)]
     speccall$ndates <- length(x)
-    if (!is.na(bins)){
-        speccall$nbins <- length(unique(bins))
-    } else {
-        speccall$nbins <- length(x)
-    }
+    speccall$nbins <- length(x)
     if (!"calDates" %in% class(x)){
         stop("x must be an object of class 'calDates'.")
     }
     if (length(bins)>1){
+        speccall$nbins <- length(unique(bins))
         if (any(is.na(bins))){
             stop("Cannot have NA values in bins.")
         }

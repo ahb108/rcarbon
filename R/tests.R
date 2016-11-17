@@ -67,37 +67,30 @@ modelTest <- function(bins, ages, errors, yearRange, calCurves, nsim, edge=500, 
     return(res)
 }
 
-regionTest <- function(regions, bins, ages, errors, resOffsets=0, resErrors=0, yearRange, nsim, calCurves, runm=50, raw=TRUE, method="standard", normalised=FALSE, ncores=1){
-
-    if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(ages)) }
-    if (length(resErrors)==1){ resErrors <- rep(resErrors,length(ages)) }
-    tmp <- calibrate(ages=100,errors=10,timeRange=yearRange) # dummy
-    tmp <- tmp[[1]][["agegrid"]]
-    individualDatesMatrix <- matrix(NA,nrow=nrow(tmp),ncol=length(ages))
-    print("Calibrating observed ages...")
-    flush.console()
-    pb <- txtProgressBar(min=1, max=length(ages), style=3)
-    for (x in 1:length(ages)){
-        setTxtProgressBar(pb, x)
-        tmpcal <- calibrate(ages=ages[x],errors=errors[x], resOffsets=resOffsets[x],resErrors=resErrors[x], timeRange=yearRange,calCurves=calCurves, method=method, normalised=normalised)
-        individualDatesMatrix[,x] <- tmpcal[[1]][["agegrid"]][,2]
-    }
-    close(pb)
+regionTest <- function(x, bins, regions, nsim, datenormalised=FALSE, raw=TRUE, verbose=TRUE){
+    
     binNames <- unique(bins)
-    binnedMatrix <- matrix(NA,nrow=nrow(tmp),ncol=length(binNames))
+    binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["agegrid"]]), ncol=length(binNames))
     regionList <- numeric()
-    print("Binning...")
-    flush.console()    
-    pb <- txtProgressBar(min=1, max=length(binNames), style=3)
+    if (verbose & length(binNames)>1){
+        print("Binning by site/phase...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
+    }
     for (b in 1:length(binNames)){
-        setTxtProgressBar(pb, b)
+        if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
-        if (length(index)>1){    
-            spd.tmp <- apply(individualDatesMatrix[,index],1,sum)
-            binnedMatrix[,b] <- spd.tmp/length(index)
-        } else {
-            binnedMatrix[,b] <- individualDatesMatrix[,index]
+        slist <- x[index]
+        tmp <- lapply(lapply(slist, `[[`, 2),`[`,2)
+        if (datenormalised){
+            tmp <- lapply(tmp,FUN=function(x) x/sum(x))
         }
+        if (length(binNames)>1){
+            spd.tmp <- Reduce("+", tmp) / length(index)
+        } else {
+            spd.tmp <- Reduce("+", tmp)
+        }
+        binnedMatrix[,b] <- spd.tmp[,1]
         regionList[b] <- regions[index][1]
     }
     close(pb)
