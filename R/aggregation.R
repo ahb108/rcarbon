@@ -1,4 +1,13 @@
-calspdf <- function(ages, dens, calCurves='intcal13'){
+#' Calibrate (or uncalibrate) a set of radiocarbon probability distributions that are already summed/aggregated.
+#'
+#' @param rspd object of class CalSPD (a summed distribution of calibrated calender date probabilities) or UncalSPD (a summed distribution of either uncalibrated conventional radiocarbon age probabilities)
+#' @param calcurve character string indicating the radiocarbon calibration curve to be used or an object of class 'CalCurve')
+#'
+#' @return An object of class CalSPD or UncalSPD
+#'
+#' @examples
+#' rspdCal()
+rspdCal <- function(rspd, calcurve='intcal13'){ 
 
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
@@ -18,7 +27,20 @@ calspdf <- function(ages, dens, calCurves='intcal13'){
     return(res$prob.out)
 }
 
-binPrep <- function(sites,dates,h=200){
+#' Prepare a set of bins for controlling the aggregation of radiocarbon dates
+#' known to be from the same phase of same archaeological site (for use with rspd)
+#'
+#' Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in agiven site phase will impede comparison between sites or phases. 
+#' 
+#' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases
+#' @param calcurve a vector uncalibrated conventional radiocarbon ages
+#' @param h a single numeric value passed to hclust() to control degree of grouping of similar ages in a phase site.
+#'
+#' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with rspd()
+#'
+#' @examples
+#' binPrep()
+binPrep <- function(sites, ages, h=200){
     
     clusters <- rep(NA,length(sites))
     
@@ -35,9 +57,62 @@ binPrep <- function(sites,dates,h=200){
     return(clusters)
 }
 
-rspd <- function(bins, ages, errors, resOffsets=0, resErrors=0, runm=50, yearRange,calCurves, eps=1e-5, method="standard", normalised=FALSE, ncores=1, verbose=TRUE){
+#' Produce a summed probability dsitribution from a set of calibrated radiocarbon dates.
+#'
+#' 
+#' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases
+#' @param calcurve a vector of uncalibrated conventional radiocarbon ages
+#' @param h a single numeric value passed to hclust() to control degree of grouping of similar ages in a phase site.
+#'
+#' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with rspd()
+#'
+#' @examples
+#' rspd()
+newrspd <- function(x, bins, yearRange, normalised=FALSE, verbose=TRUE){
+
+    if (!"calDates" %in% class(x) & !"uncalDates" %in% class(x)){
+        stop("x must be an object of class 'calDates' or 'uncalDates'.")
+    }
+    if (any(is.na(bins))){ stop("Cannot have NA values in the bins.") }
+    if (verbose){ print("Converting age/date set...") }
+    dummygrid <- calibrate(ages=100,errors=10,timeRange=yearRange) # dummy
+    individualDatesMatrix <- matrix(NA,nrow=nrow(dummygrid[[1]][["agegrid"]]),ncol=length(ages))
+    tmp <- lapply(x, `[[`, 2)
+    tmp <- lapply(tmp,`[`, 2)
+    individualDatesMatrix <- do.call("cbind",tmp)
+    binNames <- unique(bins)
+    binnedMatrix <- matrix(NA, nrow=nrow(individualDatesMatrix), ncol=length(binNames))
+    if (verbose){
+        print("Binning by site/phase...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
+    }
+    for (b in 1:length(binNames)){
+            if (verbose){ setTxtProgressBar(pb, b) }
+            index <- which(bins==binNames[b])
+            if (length(index)>1){    
+                spd.tmp <- apply(individualDatesMatrix[,index],1,sum)
+                binnedMatrix[,b] <- spd.tmp/length(index)
+            } else {
+                binnedMatrix[,b] <- individualDatesMatrix[,index]
+            }
+        }
+    if (verbose){ close(pb) }
+    finalSPD <- apply(binnedMatrix,1,sum)
+    finalSPD <- finalSPD/sum(finalSPD)
+    tmp1 <- runMean(finalSPD,runm)
+    finalSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
+    res <- data.frame(calBP=dummygrid[[1]][["agegrid"]][,1], SPD=finalSPD)
+    if (!"calDates" %in% class(x)){
+        class(res) <- append(class(res),"CalSPD")
+    } else if (!"uncalDates" %in% class(x)){
+        class(res) <- append(class(res),"UncalSPD")
+    }
+    return(res)    
+}
+
+rspd <- function(bins, ages, errors, resOffsets=0, resErrors=0, yearRange, calCurves, eps=1e-5, method="standard", runm=50, normalised=FALSE, ncores=1, verbose=TRUE){
     
-    # Set-up
     if (any(is.na(bins))){ stop("Cannot have NA values in the bins.") }
     dummygrid <- calibrate(ages=100,errors=10,timeRange=yearRange) # dummy
     individualDatesMatrix <- matrix(NA,nrow=nrow(dummygrid[[1]][["agegrid"]]),ncol=length(ages))
@@ -74,7 +149,7 @@ rspd <- function(bins, ages, errors, resOffsets=0, resErrors=0, runm=50, yearRan
     return(res)    
 }
 
-siteW <- function(dateID,cra,error,siteID,timeRange){
+siteW <- function(dateID ,cra,error,siteID,timeRange){
     df <- data.frame(DateID=dateID,CRA=cra,Error=error,SiteID=siteID,Weights=1)
     allsiteids <- unique(siteID)
     if (any(is.na(allsiteids))){ stop("Cannot have missing site IDs") }
