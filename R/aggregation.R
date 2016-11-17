@@ -47,7 +47,7 @@ binPrep <- function(sites, ages, h=200){
     for  (x in 1:length(unique(sites))){
         index <- which(sites==unique(sites)[x])
         if (length(index)>1){
-            clusters[index] <- paste(unique(sites)[x],cutree(hclust(dist(dates[index])),h=h),sep="_")
+            clusters[index] <- paste(unique(sites)[x],cutree(hclust(dist(ages[index])),h=h),sep="_")
         }
         if (length(index)==1){
             clusters[index] <- paste(unique(sites)[x],"1",sep="_")
@@ -66,10 +66,16 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     i <- match(names(defcall), names(speccall))
     i <- is.na(i)
     if (any(i)){
-        speccall[names(defcall)[which(i)]] = defcall[which(i)]
+        speccall[names(defcall)[which(i)]] <- defcall[which(i)]
     }
     speccall <- as.data.frame(lapply(speccall,deparse), stringsAsFactors=FALSE)
-    speccall <- speccall[,names(defcall)] 
+    speccall <- speccall[,names(defcall)]
+    speccall$ndates <- length(x)
+    if (!is.na(bins)){
+        speccall$nbins <- length(unique(bins))
+    } else {
+        speccall$nbins <- length(x)
+    }
     if (!"calDates" %in% class(x)){
         stop("x must be an object of class 'calDates'.")
     }
@@ -83,32 +89,25 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     } else {
         bins <- rep("0_0",length(x))
     }
-    if (verbose){ print("Converting age/date set...") }
-    dummygrid <- calibrate(ages=100,errors=10) # dummy
-    individualDatesMatrix <- matrix(NA,nrow=nrow(dummygrid[[1]][["agegrid"]]),ncol=length(x))
-    tmp <- lapply(x, `[[`, 2)
-    tmp <- lapply(tmp,`[`, 2)
-    individualDatesMatrix <- do.call("cbind",tmp)
-    if (datenormalised){
-        individualDatesMatrix <- apply(individualDatesMatrix,2,FUN=function(x) x/sum(x))
-    }
     binNames <- unique(bins)
-    binnedMatrix <- matrix(NA, nrow=nrow(individualDatesMatrix), ncol=length(binNames))
+    binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["agegrid"]]), ncol=length(binNames))
     if (verbose & length(binNames)>1){
         print("Binning by site/phase...")
         flush.console()
         pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
     }
     for (b in 1:length(binNames)){
-            if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
-            index <- which(bins==binNames[b])
-            if (length(index)>1){    
-                spd.tmp <- apply(individualDatesMatrix[,index],1,sum)
-                binnedMatrix[,b] <- spd.tmp/length(index)
-            } else {
-                binnedMatrix[,b] <- individualDatesMatrix[,index]
-            }
+        if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
+        index <- which(bins==binNames[b])
+        slist <- x[index]
+        tmp <- lapply(lapply(slist, `[[`, 2),`[`,2)
+        if (length(binNames)>1){
+            spd.tmp <- Reduce("+", tmp) / length(index)
+        } else {
+            spd.tmp <- Reduce("+", tmp)
         }
+        binnedMatrix[,b] <- spd.tmp[,1]
+    }
     if (verbose & length(binNames)>1){ close(pb) }
     if (verbose){ print("Aggregating...") }
     finalSPD <- apply(binnedMatrix,1,sum)
@@ -116,7 +115,7 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
         tmp1 <- runMean(finalSPD,runm)
         finalSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
     }
-    res <- data.frame(calBP=dummygrid[[1]][["agegrid"]][,1], SPD=finalSPD)
+    res <- data.frame(calBP=x[[1]][["agegrid"]][,1], SPD=finalSPD)
     if (spdnormalised){
         res$SPD <- res$SPD/sum(res$SPD, na.rm=TRUE)
     }
