@@ -73,7 +73,7 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
         if (nrow(x[[1]][["agegrid"]]) != length(seq(timeRange[1],timeRange[2],-1))){
             for (d in 1:length(x)){
                 tmpag <- x[[d]][["agegrid"]]
-                tmpag <- tmpag[tmpag$calBP <= timeRange[1] & tmpag$calBP <= timeRange[2], ]
+                tmpag <- tmpag[tmpag$calBP <= timeRange[1] & tmpag$calBP >= timeRange[2], ]
                 x[[d]][["agegrid"]] <- tmpag
             }
         }
@@ -103,7 +103,7 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
         binnedMatrix[,b] <- spd.tmp[,1]
         regionList[b] <- regions[index][1]
     }
-    close(pb)
+    if (verbose & length(binNames)>1){ close(pb) }
     ## Combine observed bins for focal region
     observedSPD <- vector("list",length=length(unique(regionList)))
     names(observedSPD) <- unique(regionList)
@@ -123,11 +123,13 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
     for (d in 1:length(unique(regionList))){
         simulatedSPD[[d]] <- matrix(NA, nrow=nrow(x[[1]][["agegrid"]]), ncol=nsim)
     }
-    print("Permutation test...")
-    flush.console()
-    pb <- txtProgressBar(min=1, max=nsim, style=3)
+    if (verbose){
+        print("Permutation test...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=nsim, style=3)
+    }
     for (s in 1:nsim){
-        setTxtProgressBar(pb, s)
+        if (verbose){ setTxtProgressBar(pb, s) }
         simRegionList <- sample(regionList)
         for (d in 1:length(unique(simRegionList))){
             focus <- unique(regionList)[d]
@@ -142,7 +144,7 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
         }
     }
     names(simulatedSPD) <- unique(regionList)
-    close(pb)
+    if (verbose){ close(pb) }
     simulatedCIlist <- vector("list",length=length(unique(regionList)))
     for (d in 1:length(unique(regionList))){
         simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975)))
@@ -177,5 +179,6 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
         res <- list(observed=observedSPD,envelope=simulatedCIlist,raw=simulatedSPD,pValueList=pValueList)
     }
     class(res) <- "rspdRegionTest"
+    if (verbose){ print("Done.") }
     return(res)
 }
