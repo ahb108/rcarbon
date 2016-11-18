@@ -67,8 +67,18 @@ modelTest <- function(bins, ages, errors, yearRange, calCurves, nsim, edge=500, 
     return(res)
 }
 
-regionTest <- function(x, bins, regions, nsim, datenormalised=FALSE, raw=TRUE, verbose=TRUE){
-    
+regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
+
+    if (any(!is.na(timeRange))){
+        if (nrow(x[[1]][["agegrid"]]) != length(seq(timeRange[1],timeRange[2],-1))){
+            for (d in 1:length(x)){
+                tmpag <- x[[d]][["agegrid"]]
+                tmpag <- tmpag[tmpag$calBP <= timeRange[1] & tmpag$calBP <= timeRange[2], ]
+                x[[d]][["agegrid"]] <- tmpag
+            }
+        }
+    }
+    ## Calculate SPDs per bin
     binNames <- unique(bins)
     binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["agegrid"]]), ncol=length(binNames))
     regionList <- numeric()
@@ -94,20 +104,24 @@ regionTest <- function(x, bins, regions, nsim, datenormalised=FALSE, raw=TRUE, v
         regionList[b] <- regions[index][1]
     }
     close(pb)
+    ## Combine observed bins for focal region
     observedSPD <- vector("list",length=length(unique(regionList)))
     names(observedSPD) <- unique(regionList)
-    for (x in 1:length(unique(regionList))){
-        focus <- unique(regionList)[x]
+    for (d in 1:length(unique(regionList))){
+        focus <- unique(regionList)[d]
         index <- which(regionList==focus)
         tmpSPD <- apply(binnedMatrix[,index], 1, sum)
-        tmp1 <- runMean(tmpSPD, runm)
-        tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]  
+        if (!is.na(runm)){
+            tmp1 <- runMean(tmpSPD,runm)
+            tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
+        }
         tmpSPD <- tmpSPD / sum(tmpSPD)
-        observedSPD[[x]] <- data.frame(calBP=tmp[,1], SPD=tmpSPD)
+        observedSPD[[d]] <- data.frame(calBP=x[[1]][["agegrid"]][,1], SPD=tmpSPD)
     }
+    ## Simulate focal dataset but draw bins from all regions
     simulatedSPD <- vector("list",length=length(unique(regionList)))
-    for (x in 1:length(unique(regionList))){
-        simulatedSPD[[x]] <- matrix(NA, nrow=nrow(tmp), ncol=nsim)
+    for (d in 1:length(unique(regionList))){
+        simulatedSPD[[d]] <- matrix(NA, nrow=nrow(x[[1]][["agegrid"]]), ncol=nsim)
     }
     print("Permutation test...")
     flush.console()
@@ -115,40 +129,45 @@ regionTest <- function(x, bins, regions, nsim, datenormalised=FALSE, raw=TRUE, v
     for (s in 1:nsim){
         setTxtProgressBar(pb, s)
         simRegionList <- sample(regionList)
-        for (x in 1:length(unique(simRegionList))){
-            focus <- unique(regionList)[x]
+        for (d in 1:length(unique(simRegionList))){
+            focus <- unique(regionList)[d]
             index <- which(simRegionList==focus)
             tmpSPD <- apply(binnedMatrix[,index],1,sum)
-            tmp1 <- runMean(tmpSPD,runm)
-            tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]            
+            if (!is.na(runm)){
+                tmp1 <- runMean(tmpSPD,runm)
+                tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
+            }           
             tmpSPD <- tmpSPD/sum(tmpSPD)
-            simulatedSPD[[x]][,s] <- tmpSPD
+            simulatedSPD[[d]][,s] <- tmpSPD
         }
     }
     names(simulatedSPD) <- unique(regionList)
     close(pb)
     simulatedCIlist <- vector("list",length=length(unique(regionList)))
-    for (x in 1:length(unique(regionList))){
-        simulatedCIlist[[x]] <- cbind(apply(simulatedSPD[[x]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[x]],1,quantile,prob=c(0.975)))
+    for (d in 1:length(unique(regionList))){
+        simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975)))
         names(simulatedCIlist) <- unique(regionList)
     }
     pValueList <- numeric(length=length(simulatedSPD))
-    for (x in 1:length(simulatedSPD)){
-        zscoreMean <- apply(simulatedSPD[[x]],1,mean)
-        zscoreSD <- apply(simulatedSPD[[x]],1,sd)
-        tmp.sim <- t(apply(simulatedSPD[[x]],1,function(x){return((x - mean(x))/sd(x))}))
-        tmp.obs <- observedSPD[[x]]
-        tmp.obs[,2] <- (tmp.obs[,2]-zscoreMean)/zscoreSD
-        tmp.ci <- t(apply(tmp.sim,1,quantile,prob=c(0.025,0.975)))
-        expectedstatistic <- abs(apply(tmp.sim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=tmp.ci[,1])) + apply(tmp.sim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=tmp.ci[,2])    
-        lower <- tmp.obs[,2]-tmp.ci[,1]
-        indexLow <- which(tmp.obs[,2]<tmp.ci[,1])
-        higher <- tmp.obs[,2]-tmp.ci[,2]
-        indexHi <- which(tmp.obs[,2]>tmp.ci[,2])
+    ## Further statistics
+    for (a in 1:length(simulatedSPD)){
+        zscoreMean <- apply(simulatedSPD[[a]],1,mean)
+        zscoreSD <- apply(simulatedSPD[[a]],1,sd)
+        tmp.sim <- t(apply(simulatedSPD[[a]],1,function(x){ return((x - mean(x))/sd(x)) }))
+        tmp.sim[is.na(tmp.sim)] <- 0
+        tmp.obs <- observedSPD[[a]]
+        tmp.obs[,2] <- (tmp.obs[,2] - zscoreMean) / zscoreSD
+        tmp.obs[is.na(tmp.obs[,2]),2] <- 0
+        tmp.ci <- t(apply(tmp.sim,1, quantile, prob=c(0.025,0.975)))
+        expectedstatistic <- abs(apply(tmp.sim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=tmp.ci[,1])) + apply(tmp.sim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=tmp.ci[,2])   
+        lower <- tmp.obs[,2] - tmp.ci[,1]
+        indexLow <- which(tmp.obs[,2] < tmp.ci[,1])
+        higher <- tmp.obs[,2] - tmp.ci[,2]
+        indexHi <- which(tmp.obs[,2] > tmp.ci[,2])
         observedStatistic <- sum(abs(lower[indexLow]))+sum(higher[indexHi])
-        pValueList[[x]] <- 1
+        pValueList[[a]] <- 1
         if (observedStatistic>0){    
-            pValueList[[x]] <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
+            pValueList[[a]] <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
         }
         names(pValueList) <- unique(regionList)
     }        
