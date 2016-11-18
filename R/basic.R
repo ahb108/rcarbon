@@ -109,6 +109,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
     }
     if (length(ages)>1 & verbose){ close(pb) }
     class(reslist) <- append(class(reslist),"calDates")
+    if (verbose){ print("Done.") }
     return(reslist)
 }
 

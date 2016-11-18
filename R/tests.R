@@ -1,27 +1,25 @@
-modelTest <- function(bins, ages, errors, yearRange, calCurves, nsim, edge=500, resOffsets=0 ,resErrors=0, runm=50, raw=FALSE, model="exponential", method="standard", normalised=FALSE, simnormalised=normalised, ncores=1){
+modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("exponential","uniform"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, verbose=TRUE){
 
-    if (!model %in% c("exponential","uniform")){
-        stop("Currently only exponential and uniform models are supported.")
-    }
-    print("Calibrating observed ages...")
-    # Calibrate and bin observed ages
-    observed <- rspd(bins=bins,ages=ages,errors=errors,yearRange=yearRange,calCurves=calCurves, method=method, normalised=normalised, ncores=ncores, verbose=FALSE)
-    finalSPD <- observed[,"SPD"]
-    # Simulation
-    C14Interval <- range(ages)
+    ## Bin observed dates
+    if (verbose){ print("Aggregating observed dates...") }
+    observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
+    finalSPD <- observed[["agegrid"]][,"SPD"]
+    ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
-    print("Monte-Carlo test...")
+    if (verbose){
+        print("Monte-Carlo test...")
     flush.console()
-    pb <- txtProgressBar(min=1, max=nsim, style=3)
+        pb <- txtProgressBar(min=1, max=nsim, style=3)
+    }
     for (s in 1:nsim){
-        setTxtProgressBar(pb, s)
+        if (verbose){ setTxtProgressBar(pb, s) }
         if (model=="uniform"){
-            randomDates <- round(runif(length(unique(bins)),rev(yearRange)[1]-edge,rev(yearRange)[2]+edge))
+            randomDates <- round(runif(length(unique(bins)),rev(timeRange)[1]-edge,rev(timeRange)[2]+edge))
         } else if (model=="exponential"){
             plusoffset <- min(finalSPD[finalSPD!=0])/10000 
             finalSPD <- finalSPD+plusoffset #avoid log(0)
-            fit <- lm(log(finalSPD)~observed[,1])
-            time <- seq(min(observed[,1])-edge,max(observed[,1])+edge,1)
+            fit <- lm(log(finalSPD)~observed[["agegrid"]][,"calBP"])
+            time <- seq(min(observed[["agegrid"]][,"calBP"])-edge,max(observed[["agegrid"]][,"calBP"])+edge,1)
             est <-  exp(fit$coefficients[1]) * exp(time*fit$coefficients[2])
             pweights <- est/sum(est)
             randomDates <- round(sample(time,size=length(unique(bins)),prob=pweights))
@@ -30,17 +28,19 @@ modelTest <- function(bins, ages, errors, yearRange, calCurves, nsim, edge=500, 
         simDates <- round(uncalibrate(randomDates,randomSDs)[,4:3])
         randomDates <- simDates[,1]
         randomSDs <- simDates[,2] 
-        tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=yearRange, calCurves='intcal13', method=method, normalised=simnormalised, ncores=ncores, verbose=FALSE)
+        tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', method=method, normalised=datenormalised, ncores=ncores, verbose=FALSE)
         tmp <- lapply(tmp, `[[`, 2)
         tmp <- lapply(tmp,`[`, 2)
         simDateMatrix <- do.call("cbind",tmp)
         sim[,s] <- apply(simDateMatrix,1,sum)
-        sim[,s] <- sim[,s]/sum(sim[,s])
+        if (spdnormalised){
+            sim[,s] <- sim[,s]/sum(sim[,s])
+        }
         sim[,s] <- sim[,s]+plusoffset
         tmp1 <- runMean(sim[,s],runm)
         sim[!is.na(tmp1),s] <- tmp1[!is.na(tmp1)]
     }
-    close(pb)
+    if (verbose){ close(pb) }
     # Envelope, z-scores, global p-value
     lo <- apply(sim,1,quantile,prob=0.025)
     hi <- apply(sim,1,quantile,prob=0.975)
@@ -56,7 +56,7 @@ modelTest <- function(bins, ages, errors, yearRange, calCurves, nsim, edge=500, 
     expectedstatistic <- abs(apply(Zsim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=zLo)) + apply(Zsim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=zHi)
     pvalue <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
     # Results
-    result <- data.frame(calBP=observed[,1],SPD=finalSPD,lo=lo,hi=hi)
+    result <- data.frame(calBP=observed[["agegrid"]][,"calBP"],SPD=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){
         res <- list(result=result, sim=NA, pval=pvalue, fit=fit)
     }
@@ -64,6 +64,7 @@ modelTest <- function(bins, ages, errors, yearRange, calCurves, nsim, edge=500, 
         res <- list(result=result, sim=sim, pval=pvalue, fit=fit)
     }
     class(res) <- "rspdModelTest"
+    if (verbose){ print("Done.") }
     return(res)
 }
 

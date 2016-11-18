@@ -81,7 +81,7 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
             stop("Cannot have NA values in bins.")
         }
         if (length(bins)!=length(x)){
-            stop("bins (if provided) must be the same lenght as x.")
+            stop("bins (if provided) must be the same length as x.")
         }
     } else {
         bins <- rep("0_0",length(x))
