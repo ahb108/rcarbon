@@ -22,7 +22,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
             time <- seq(min(observed[["agegrid"]][,"calBP"])-edge,max(observed[["agegrid"]][,"calBP"])+edge,1)
             est <-  exp(fit$coefficients[1]) * exp(time*fit$coefficients[2])
             pweights <- est/sum(est)
-            randomDates <- round(sample(time,size=length(unique(bins)),prob=pweights))
+            randomDates <- round(sample(time,size=length(unique(bins)), replace=TRUE, prob=pweights))
         }
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
         simDates <- round(uncalibrate(randomDates,randomSDs)[,4:3])
