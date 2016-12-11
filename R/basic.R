@@ -113,7 +113,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
     return(reslist)
 }
 
-uncalibrate <- function(date, error, calCurves='intcal13', uncalmethod="standard"){ 
+uncalibrate <- function(date, error=NA, calCurves='intcal13', uncalmethod="standard"){ 
 
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
@@ -126,6 +126,9 @@ uncalibrate <- function(date, error, calCurves='intcal13', uncalmethod="standard
     colnames(dates) <- c("CALBP", "C14BP")
     calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$CALBP)$y
     if (uncalmethod == "CremaetalPLOSOne2016"){
+        if (is.na(error)){
+            stop("For this method you must provide a numeric error argument for the anticipated measurement error")
+        }
         dates$Error <- sqrt(error^2 + calcurve.error^2)
         dates$C14RandAge <- round(rnorm(nrow(dates),mean=dates$C14BP,sd=dates$Error))
     } else {
