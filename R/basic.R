@@ -113,8 +113,9 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
     return(reslist)
 }
 
-uncalibrate <- function(date, error=NA, calCurves='intcal13', uncalmethod="standard"){ 
+uncalibrate <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard", normalised=TRUE, eps=1e-5){ 
 
+    if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(calBP)) } 
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
@@ -122,23 +123,29 @@ uncalibrate <- function(date, error=NA, calCurves='intcal13', uncalmethod="stand
     calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
     options(warn=0)
     colnames(calcurve) <- c("CALBP","C14BP","Error")
-    dates <- data.frame(approx(calcurve, xout=date))
-    colnames(dates) <- c("CALBP", "C14BP")
-    calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$CALBP)$y
-    if (uncalmethod == "CremaetalPLOSOne2016"){
-        if (is.na(error)){
+    dates <- data.frame(approx(calcurve, xout=calBP))
+    colnames(dates) <- c("calBP", "ccCRA")
+    calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$calBP)$y
+    if (method == "standard"){
+        dates$ccError <- calcurve.error
+        dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=dates$ccError)
+        dates$rError <- CRAerrors
+        if (roundyear){ dates$rCRA <- round(dates$rCRA) }
+    } else if (method == "Cremaetal16"){
+        if (is.na(CRAerrors[1])){
             stop("For this method you must provide a numeric error argument for the anticipated measurement error")
         }
-        dates$Error <- sqrt(error^2 + calcurve.error^2)
-        dates$C14RandAge <- round(rnorm(nrow(dates),mean=dates$C14BP,sd=dates$Error))
+        dates$ccError <- calcurve.error       
+        dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=CRAerrors)
+        dates$rError <- sqrt(CRAerrors^2 + calcurve.error^2)
+        if (roundyear){ dates$rCRA <- round(dates$rCRA) }
     } else {
-        dates$Error <- error
-        dates$C14RandAge <- round(rnorm(nrow(dates),mean=dates$C14BP,sd=calcurve.error))
+        stop("Not one of the currently supplied methods." )   
     }
     return(dates)
 }
 
-sampleDate <- function(ndates, years, probs, replace=TRUE, CRAadj=TRUE, calCurve='intcal13') { 
+sampleDates <- function(ndates, years, probs, replace=TRUE, CRAadj=TRUE, calCurve='intcal13') { 
     if (CRAadj){
         load(paste(system.file("data", package="rcarbon"), "/dunifCRA.rda", sep=""))
         adj <- dunifCRA[dunifCRA$calBP >= min(years) & dunifCRA$calBP <= max(years),calCurve]
