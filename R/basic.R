@@ -147,7 +147,7 @@ uncalibrate <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13
 
 sampleDates <- function(ndates, years, probs, replace=TRUE, CRAadj=TRUE, calCurve='intcal13') { 
     if (CRAadj){
-        load(paste(system.file("data", package="rcarbon"), "/dunifCRA.rda", sep=""))
+        data(dunifCRA)
         adj <- dunifCRA[dunifCRA$calBP >= min(years) & dunifCRA$calBP <= max(years),calCurve]
         probs <- probs * adj
     }
