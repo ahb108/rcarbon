@@ -87,7 +87,7 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
         bins <- rep("0_0",length(x))
     }
     binNames <- unique(bins)
-    binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["agegrid"]]), ncol=length(binNames))
+    binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["grid"]]), ncol=length(binNames))
     if (verbose & length(binNames)>1){
         print("Binning by site/phase...")
         flush.console()
@@ -115,15 +115,15 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
         tmp1 <- runMean(finalSPD,runm)
         finalSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
     }
-    res <- data.frame(calBP=x[[1]][["agegrid"]][,1], SPD=finalSPD)
+    res <- data.frame(calBP=x[[1]][["grid"]][,1], SPD=finalSPD)
     if (spdnormalised){
         res$SPD <- res$SPD/sum(res$SPD, na.rm=TRUE)
     }
     res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
     reslist <- vector("list",length=2)
-    names(reslist) <- c("metadata","agegrid")
+    names(reslist) <- c("metadata","grid")
     reslist[["metadata"]] <- speccall
-    reslist[["agegrid"]] <- res
+    reslist[["grid"]] <- res
     class(reslist) <- append(class(reslist),"CalSPD")
     if (verbose){ print("Done.") }
     return(reslist)

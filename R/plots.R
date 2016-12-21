@@ -4,8 +4,8 @@ plot.calDate <- function(calDate, label=NA, calendar="BP", type="standard"){
     if (!type %in% types){
         stop("The plot type you have chosen is not currently an option.")
     }
-    yearsBP <- calDate[["agegrid"]]$calBP
-    prob <- calDate[["agegrid"]]$PrDens
+    yearsBP <- calDate[["grid"]]$calBP
+    prob <- calDate[["grid"]]$PrDens
     cra <- calDate[["metadata"]]$CRA
     error <- calDate[["metadata"]]$Error
     calcurve <- calDate[["metadata"]]$CalCurve

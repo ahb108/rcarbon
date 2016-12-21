@@ -3,7 +3,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
     observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
-    finalSPD <- observed[["agegrid"]][,"SPD"]
+    finalSPD <- observed[["grid"]][,"SPD"]
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
     if (verbose){
@@ -18,8 +18,8 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         } else if (model=="exponential"){
             plusoffset <- min(finalSPD[finalSPD!=0])/10000 
             finalSPD <- finalSPD+plusoffset #avoid log(0)
-            fit <- lm(log(finalSPD)~observed[["agegrid"]][,"calBP"])
-            time <- seq(min(observed[["agegrid"]][,"calBP"])-edge,max(observed[["agegrid"]][,"calBP"])+edge,1)
+            fit <- lm(log(finalSPD)~observed[["grid"]][,"calBP"])
+            time <- seq(min(observed[["grid"]][,"calBP"])-edge,max(observed[["grid"]][,"calBP"])+edge,1)
             est <-  exp(fit$coefficients[1]) * exp(time*fit$coefficients[2])
             pweights <- est/sum(est)
             randomDates <- round(sample(time,size=length(unique(bins)), replace=TRUE, prob=pweights))
@@ -56,7 +56,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     expectedstatistic <- abs(apply(Zsim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=zLo)) + apply(Zsim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=zHi)
     pvalue <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
     # Results
-    result <- data.frame(calBP=observed[["agegrid"]][,"calBP"],SPD=finalSPD,lo=lo,hi=hi)
+    result <- data.frame(calBP=observed[["grid"]][,"calBP"],SPD=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){
         res <- list(result=result, sim=NA, pval=pvalue, fit=fit)
     }
@@ -71,17 +71,17 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
 regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
 
     if (any(!is.na(timeRange))){
-        if (nrow(x[[1]][["agegrid"]]) != length(seq(timeRange[1],timeRange[2],-1))){
+        if (nrow(x[[1]][["grid"]]) != length(seq(timeRange[1],timeRange[2],-1))){
             for (d in 1:length(x)){
-                tmpag <- x[[d]][["agegrid"]]
+                tmpag <- x[[d]][["grid"]]
                 tmpag <- tmpag[tmpag$calBP <= timeRange[1] & tmpag$calBP >= timeRange[2], ]
-                x[[d]][["agegrid"]] <- tmpag
+                x[[d]][["grid"]] <- tmpag
             }
         }
     }
     ## Calculate SPDs per bin
     binNames <- unique(bins)
-    binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["agegrid"]]), ncol=length(binNames))
+    binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["grid"]]), ncol=length(binNames))
     regionList <- numeric()
     if (verbose & length(binNames)>1){
         print("Binning by site/phase...")
@@ -117,12 +117,12 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
             tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
         }
         tmpSPD <- tmpSPD / sum(tmpSPD)
-        observedSPD[[d]] <- data.frame(calBP=x[[1]][["agegrid"]][,1], SPD=tmpSPD)
+        observedSPD[[d]] <- data.frame(calBP=x[[1]][["grid"]][,1], SPD=tmpSPD)
     }
     ## Simulate focal dataset but draw bins from all regions
     simulatedSPD <- vector("list",length=length(unique(regionList)))
     for (d in 1:length(unique(regionList))){
-        simulatedSPD[[d]] <- matrix(NA, nrow=nrow(x[[1]][["agegrid"]]), ncol=nsim)
+        simulatedSPD[[d]] <- matrix(NA, nrow=nrow(x[[1]][["grid"]]), ncol=nsim)
     }
     if (verbose){
         print("Permutation test...")

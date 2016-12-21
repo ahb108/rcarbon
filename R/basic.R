@@ -100,7 +100,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
             }
             df <- data.frame(DateID=ids[b], CRA=ages[b], Error=errors[b], Details=dateDetails[b], CalCurve=calCurves[b],ResOffsets=resOffsets[b], ResErrors=resErrors[b], StartBP=timeRange[1], EndBP=timeRange[2], CalMethod=method, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
             sublist <- vector(mode="list", length=2)
-            names(sublist) <- c("metadata","agegrid")
+            names(sublist) <- c("metadata","grid")
             sublist[[1]] <- df
             sublist[[2]] <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             class(sublist) <- append(class(sublist),"calDate")
@@ -187,7 +187,7 @@ quickMarks <- function(x, verbose=TRUE){
     }
     for (a in 1:length(x)){
         if (length(x)>1 & verbose){ setTxtProgressBar(pb, a) }
-        tmp <- x[[a]]$agegrid
+        tmp <- x[[a]]$grid
         tmp <- tmp[tmp$PrDens>0,]
         tmp <- tmp[with(tmp, order(-PrDens)), ]
         tmp$Cumul <- cumsum(tmp$PrDens)
