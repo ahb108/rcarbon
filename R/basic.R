@@ -1,5 +1,6 @@
 calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 ,resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
-    
+
+    ## NB. add manualpage thanks to Bchron/Parnell
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
     }
