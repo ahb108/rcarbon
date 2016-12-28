@@ -40,7 +40,7 @@ rspdCal <- function(rspd, calcurve='intcal13'){
 #'
 #' @examples
 #' binPrep()
-binPrep <- function(sites, ages, h=200){
+binPrep <- function(sites, ages, h){
     
     clusters <- rep(NA,length(sites))
     
@@ -57,8 +57,9 @@ binPrep <- function(sites, ages, h=200){
     return(clusters)
 }
 
-rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
+rspd <- function(x, timeRange, bins=NA, binwt=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
 
+    if (verbose){ print("Extracting...") }
     defcall <- as.list(args(rspd))
     defcall <- defcall[-length(defcall)]
     speccall <- as.list(match.call())
@@ -102,7 +103,11 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
             tmp <- lapply(tmp,FUN=function(x) x/sum(x))
         }
         if (length(binNames)>1){
-            spd.tmp <- Reduce("+", tmp) / length(index)
+            if (!is.na(binwt)){
+                spd.tmp <- (Reduce("+", tmp)^(1/binwt))
+            } else {
+                spd.tmp <- (Reduce("+", tmp) / length(index))
+            }
         } else {
             spd.tmp <- Reduce("+", tmp)
         }

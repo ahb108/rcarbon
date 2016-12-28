@@ -139,7 +139,10 @@ uncalibrate <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13
         dates$ccError <- calcurve.error       
         dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=CRAerrors)
         dates$rError <- sqrt(CRAerrors^2 + calcurve.error^2)
-        if (roundyear){ dates$rCRA <- round(dates$rCRA) }
+        if (roundyear){
+            dates$rCRA <- round(dates$rCRA)
+            dates$rError <- round(dates$rError)
+        }
     } else {
         stop("Not one of the currently supplied methods." )   
     }
@@ -150,7 +153,7 @@ sampleDates <- function(ndates, years, probs, replace=TRUE, CRAadj=TRUE, calCurv
     if (CRAadj){
         data(dunifCRA)
         adj <- dunifCRA[dunifCRA$calBP >= min(years) & dunifCRA$calBP <= max(years),calCurve]
-        probs <- probs * adj
+        probs <- (probs/sum(probs)) * adj
     }
     sample(x=years, ndates, replace=replace, prob=probs) 
 }
