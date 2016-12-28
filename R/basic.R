@@ -149,12 +149,7 @@ uncalibrate <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13
     return(dates)
 }
 
-sampleDates <- function(ndates, years, probs, replace=TRUE, CRAadj=TRUE, calCurve='intcal13') { 
-    if (CRAadj){
-        data(dunifCRA)
-        adj <- dunifCRA[dunifCRA$calBP >= min(years) & dunifCRA$calBP <= max(years),calCurve]
-        probs <- (probs/sum(probs)) * adj
-    }
+sampleDates <- function(ndates, years, probs, replace=TRUE, calCurve='intcal13'){ 
     sample(x=years, ndates, replace=replace, prob=probs) 
 }
 

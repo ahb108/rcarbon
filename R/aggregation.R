@@ -1,30 +1,61 @@
-#' Calibrate (or uncalibrate) a set of radiocarbon probability distributions that are already summed/aggregated.
-#'
-#' @param rspd object of class CalSPD (a summed distribution of calibrated calender date probabilities) or UncalSPD (a summed distribution of either uncalibrated conventional radiocarbon age probabilities)
-#' @param calcurve character string indicating the radiocarbon calibration curve to be used or an object of class 'CalCurve')
-#'
-#' @return An object of class CalSPD or UncalSPD
-#'
-#' @examples
-#' rspdCal()
-rspdCal <- function(rspd, calcurve='intcal13'){ 
+pdCal <- function(uncalgrid, calCurves='intcal13', timeRange=c(50000,0), eps=1e-5, normalised=TRUE, verbose=TRUE){
 
+    names(uncalgrid) <- c("CRA","PrDens")
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
-    calcurve <- cctmp[!grepl("[#]",cctmp)]
+    calcurve <- calcurve[!grepl("[#]",calcurve)]
     calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
     options(warn=0)
     colnames(calcurve) <- c("CALBP","C14BP","Error")
-    calBP.out <- seq(max(calcurve),min(calcurve),-1)
-    CRAdates <- data.frame(approx(calcurve[,1:2], xout=calBP.out))
-    names(CRAdates) <- c("calBP.out","CRA")
+    CRAdates <- data.frame(approx(calcurve[,1:2], xout=seq(max(calcurve[,1]),min(calcurve[,1]),-1)))
+    names(CRAdates) <- c("calBP","CRA")
     CRAdates$CRA <- round(CRAdates$CRA,0)
-    CRApdf <-  data.frame(CRA=ages,prob.out=dens)
-    res <- merge(CRAdates,CRApdf,by="CRA",all.x=TRUE, sort=FALSE)
-    res <- res[with(res, order(-calBP.out)), c("calBP.out","prob.out")]
-    res$prob.out[is.na(res$prob.out)] <- 0
-    return(res$prob.out)
+    res <- merge(CRAdates, uncalgrid, by="CRA",all.x=TRUE, sort=FALSE)
+    res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
+    res$PrDens[is.na(res$PrDens)] <- 0
+    if (normalised){
+        res[res$PrDens < eps,"PrDens"] <- 0
+        res$PrDens <- res$PrDens/sum(res$PrDens)
+    } else {
+        res[res$PrDens < eps,"PrDens"] <- 0
+    }
+    res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
+    if (verbose){ print("Done.") }
+    return(res)
+}
+
+pdUncal <- function(calgrid, calCurves='intcal13', verbose=TRUE){
+
+    if (verbose){ print("Uncalibrating...") }
+    names(calgrid) <- c("calBP","PrDens")
+    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
+    options(warn=-1)
+    calcurve <- readLines(calCurveFile, encoding="UTF-8")
+    calcurve <- calcurve[!grepl("[#]",calcurve)]
+    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+    options(warn=0)
+    colnames(calcurve) <- c("CALBP","C14BP","Error")
+    ## Back-calibrate each year to CRA, add errors and weight
+    mycras <- uncalibrate(calgrid$calBP)
+    res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=NA)
+    tmp <- vector(mode="list",length=nrow(mycras))
+    basetmp <- vector(mode="list",length=nrow(mycras))
+    for (a in 1:length(tmp)){
+        basetmp[[a]] <- dnorm(res$CRA, mean=mycras$ccCRA[a], sd=mycras$ccError[a])
+        tmp[[a]] <- basetmp[[a]] * calgrid$PrDens[a]
+    }
+    unscGauss <- do.call("cbind",tmp)
+    base <- do.call("cbind",basetmp)
+    res$Base <- rowSums(base)
+    res$Base <- res$Base/sum(res$Base)
+    res$PrDens <- rowSums(unscGauss)
+    res$PrDens <- res$PrDens/sum(res$PrDens)
+    res$Adj <- 0
+    res$Adj[res$Base>0] <- res$PrDens[res$Base>0] / res$Base[dd$Base>0]
+    res$Adj <- res$Adj/sum(res$Adj)
+    if (verbose){ print("Done.") }
+    return(res)
 }
 
 #' Prepare a set of bins for controlling the aggregation of radiocarbon dates
