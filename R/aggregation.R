@@ -49,11 +49,11 @@ pdUncal <- function(calgrid, calCurves='intcal13', verbose=TRUE){
     base <- do.call("cbind",basetmp)
     res$Base <- rowSums(base)
     res$Base <- res$Base/sum(res$Base)
-    res$PrDens <- rowSums(unscGauss)
+    res$Raw <- rowSums(unscGauss)
+    res$Raw <- res$Raw/sum(res$Raw)
+    res$PrDens <- 0
+    res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
     res$PrDens <- res$PrDens/sum(res$PrDens)
-    res$Adj <- 0
-    res$Adj[res$Base>0] <- res$PrDens[res$Base>0] / res$Base[dd$Base>0]
-    res$Adj <- res$Adj/sum(res$Adj)
     if (verbose){ print("Done.") }
     return(res)
 }
