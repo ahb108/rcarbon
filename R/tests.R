@@ -1,4 +1,4 @@
-modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("exponential","uniform"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, verbose=TRUE){
+modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=250, raw=FALSE, model=c("exponential","uniform"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, verbose=TRUE){
 
     ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
@@ -29,9 +29,6 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
             randomDates <- sample(cragrid$CRA, replace=TRUE, size=length(unique(bins)), prob=cragrid$PrDens)
         }
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
-        simDates <- round(uncalibrate(randomDates,randomSDs)[,4:3])
-        randomDates <- simDates[,1]
-        randomSDs <- simDates[,2] 
         tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', method=method, normalised=datenormalised, ncores=ncores, verbose=FALSE)
         tmp <- lapply(tmp, `[[`, 2)
         tmp <- lapply(tmp,`[`, 2)
