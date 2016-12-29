@@ -130,6 +130,7 @@ rspd <- function(x, timeRange, bins=NA, binwt=NA, datenormalised=FALSE, spdnorma
         index <- which(bins==binNames[b])
         slist <- x[index]
         tmp <- lapply(lapply(slist, `[[`, 2),`[`,2)
+        return(tmp)
         if (datenormalised){
             tmp <- lapply(tmp,FUN=function(x) x/sum(x))
         }

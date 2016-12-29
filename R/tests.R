@@ -11,18 +11,22 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     flush.console()
         pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
+    if (model=="exponential"){
+        plusoffset <- min(finalSPD[finalSPD!=0])/10000 
+        finalSPD <- finalSPD+plusoffset #avoid log(0)
+        fit <- lm(log(finalSPD)~observed[["grid"]][,"calBP"])
+        time <- seq(min(observed[["grid"]][,"calBP"])-edge,max(observed[["grid"]][,"calBP"])+edge,1)
+        est <-  exp(fit$coefficients[1]) * exp(time*fit$coefficients[2])
+        predgrid <- data.frame(calBP=time, PrDens=est)
+        predgrid$PrDens <- predgrid$PrDens/sum(predgrid$PrDens)
+        cragrid <- pdUncal(predgrid, verbose=FALSE)
+    }
     for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }
         if (model=="uniform"){
             randomDates <- round(runif(length(unique(bins)),rev(timeRange)[1]-edge,rev(timeRange)[2]+edge))
         } else if (model=="exponential"){
-            plusoffset <- min(finalSPD[finalSPD!=0])/10000 
-            finalSPD <- finalSPD+plusoffset #avoid log(0)
-            fit <- lm(log(finalSPD)~observed[["grid"]][,"calBP"])
-            time <- seq(min(observed[["grid"]][,"calBP"])-edge,max(observed[["grid"]][,"calBP"])+edge,1)
-            est <-  exp(fit$coefficients[1]) * exp(time*fit$coefficients[2])
-            pweights <- est/sum(est)
-            randomDates <- round(sample(time,size=length(unique(bins)), replace=TRUE, prob=pweights))
+            randomDates <- sample(cragrid$CRA, replace=TRUE, size=length(unique(bins)), prob=cragrid$PrDens)
         }
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
         simDates <- round(uncalibrate(randomDates,randomSDs)[,4:3])
