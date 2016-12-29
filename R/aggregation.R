@@ -25,7 +25,7 @@ pdCal <- function(uncalgrid, calCurves='intcal13', timeRange=c(50000,0), eps=1e-
     return(res)
 }
 
-pdUncal <- function(calgrid, calCurves='intcal13', verbose=TRUE){
+pdUncal <- function(calgrid, calCurves='intcal13', eps=1e-5, verbose=TRUE){
 
     if (verbose){ print("Uncalibrating...") }
     names(calgrid) <- c("calBP","PrDens")
@@ -53,6 +53,7 @@ pdUncal <- function(calgrid, calCurves='intcal13', verbose=TRUE){
     res$Raw <- res$Raw/sum(res$Raw)
     res$PrDens <- 0
     res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
+    res$PrDens[res$Raw < eps] <- 0
     res$PrDens <- res$PrDens/sum(res$PrDens)
     if (verbose){ print("Done.") }
     return(res)
