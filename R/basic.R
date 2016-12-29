@@ -56,7 +56,6 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
             agegrid <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             sublist <- list(metadata=df,agegrid=agegrid)
             class(sublist) <- append(class(sublist),"calDate")
-            return(sublist)
         }
         stopCluster(cl)
         class(reslist) <- append(class(reslist),"calDates")
