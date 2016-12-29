@@ -1,4 +1,4 @@
-modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=250, raw=FALSE, model=c("exponential","uniform"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, verbose=TRUE){
+modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("exponential","uniform"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, verbose=TRUE){
 
     ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
