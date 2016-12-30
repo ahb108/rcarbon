@@ -29,6 +29,7 @@ pdUncal <- function(calgrid, calCurves='intcal13', eps=1e-5, verbose=TRUE){
 
     if (verbose){ print("Uncalibrating...") }
     names(calgrid) <- c("calBP","PrDens")
+    calgrid$PrDens <- calgrid$PrDens/sum(calgrid$PrDens)
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")

@@ -1,8 +1,8 @@
-modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("uniform","exponential","custom"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, fitonly=FALSE, verbose=TRUE){
+modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("exponential","custom"), predgrid=NA, method="standard", datenormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
 
     ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
-    observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
+    observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=FALSE, verbose=FALSE)
     finalSPD <- observed$grid$SPD
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
@@ -11,39 +11,39 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     flush.console()
         pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
+    coeffs <- NA
+    time <- seq(min(observed$grid$calBP)-edge,max(observed$grid$calBP)+edge,1)
     if (model=="exponential"){
         plusoffset <- min(finalSPD[finalSPD!=0])/10000 
         finalSPD <- finalSPD+plusoffset #avoid log(0)
-        time <- seq(min(observed$grid$calBP)-edge,max(observed$grid$calBP)+edge,1)
-        fit <- lm(log(finalSPD)~observed$grid$calBP)        
-        est <-  exp(fit$coefficients[1]) * exp(time*fit$coefficients[2])
-        if (fitonly){
-            print("Done (fitted model only).")
-            dff <- data.frame(calBP=time,EstPrDens=est)
-            dff <- dff[with(dff, order(-calBP)), ]
-            return(dff)
-        }
+        fit <- lm(log(finalSPD)~observed$grid$calBP)
+        coeffs <- fit$coefficients
+        est <-  exp(coeffs[1]) * exp(time*coeffs[2])
         predgrid <- data.frame(calBP=time, PrDens=est)
-        predgrid$PrDens <- predgrid$PrDens/sum(predgrid$PrDens)
-        cragrid <- pdUncal(predgrid, verbose=FALSE)
+    } else if (model=="custom"){
+        if (length(predgrid)!=2){
+            stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
+        }
     }
+    if (fitonly){
+        print("Done (SPD and fitted model only).")
+        res <- list(result=NA, sim=NA, pval=NA, osbSPD=observed, fit=predgrid, coefficients=coeffs)
+        return(res)
+    }
+    cragrid <- pdUncal(predgrid, verbose=FALSE)
+    mets <- lapply(alldates, `[[`, 1)
+    obscras <- do.call("rbind",dd)$CRA
+    cragrid$PrDens[cragrid$CRA > max(obscras) | cragrid$CRA < min(obscras)] <- 0
     for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }
-        if (model=="uniform"){
-            randomDates <- round(runif(length(unique(bins)),rev(timeRange)[1]-edge,rev(timeRange)[2]+edge))
-        } else if (model=="exponential"){
-            randomDates <- sample(cragrid$CRA, replace=TRUE, size=length(unique(bins)), prob=cragrid$PrDens)
-        }
+        randomDates <- sample(cragrid$CRA, replace=TRUE, size=length(unique(bins)), prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
         tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', method=method, normalised=datenormalised, ncores=ncores, verbose=FALSE)
         tmp <- lapply(tmp, `[[`, 2)
         tmp <- lapply(tmp,`[`, 2)
         simDateMatrix <- do.call("cbind",tmp)
         sim[,s] <- apply(simDateMatrix,1,sum)
-        if (spdnormalised){
-            sim[,s] <- sim[,s]/sum(sim[,s])
-        }
-        sim[,s] <- sim[,s]+plusoffset
+        sim[,s] <- sim[,s] + plusoffset
         tmp1 <- runMean(sim[,s],runm)
         sim[!is.na(tmp1),s] <- tmp1[!is.na(tmp1)]
     }
@@ -64,12 +64,8 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     pvalue <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
     # Results
     result <- data.frame(calBP=observed$grid$calBP,SPD=finalSPD,lo=lo,hi=hi)
-    if(raw==FALSE){
-        res <- list(result=result, sim=NA, pval=pvalue, fit=fit)
-    }
-    if(raw==TRUE){
-        res <- list(result=result, sim=sim, pval=pvalue, fit=fit)
-    }
+    if(raw==FALSE){ sim <- NA }
+    res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, coefficients=coeffs)
     class(res) <- "rspdModelTest"
     if (verbose){ print("Done.") }
     return(res)
