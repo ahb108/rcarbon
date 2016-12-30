@@ -24,6 +24,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         if (length(predgrid)!=2){
             stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
         }
+        plusoffset <- 0
     }
     if (fitonly){
         print("Done (SPD and fitted model only).")
@@ -31,8 +32,8 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         return(res)
     }
     cragrid <- pdUncal(predgrid, verbose=FALSE)
-    mets <- lapply(alldates, `[[`, 1)
-    obscras <- do.call("rbind",dd)$CRA
+    mets <- lapply(x, `[[`, 1)
+    obscras <- do.call("rbind",mets)$CRA
     cragrid$PrDens[cragrid$CRA > max(obscras) | cragrid$CRA < min(obscras)] <- 0
     for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }

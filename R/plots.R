@@ -93,7 +93,7 @@ plot.rspdModelTest <- function(rspdModelTest, yMax=NA, xlim=c(0,1), drawaxes=TRU
         xlim <- c(max(obs[,1]),min(obs[,1]))
     }
     if (drawaxes){
-        plot(obs[,1],obs[,2],xlim=xlim,ylim=c(0,yMax), xlab="cal BP",ylab="Normalised Summed Probability",type="l",col=1,lwd=0.5,...)
+        plot(obs[,1],obs[,2],xlim=xlim,ylim=c(0,yMax), xlab="cal BP",ylab="Summed Probability",type="l",col=1,lwd=0.5,...)
     } else {
         plot(obs[,1],obs[,2],xlim=xlim,ylim=c(0,yMax), xlab="",ylab="",type="l", xaxt="n", yaxt="n",col=1,lwd=0.5,...)
     }
