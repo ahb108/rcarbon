@@ -1,9 +1,9 @@
-modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("exponential","uniform"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, verbose=TRUE){
+modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("uniform","exponential","custom"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, verbose=TRUE){
 
     ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
     observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
-    finalSPD <- observed[["grid"]][,"SPD"]
+    finalSPD <- observed$grid$SPD
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
     if (verbose){
@@ -14,8 +14,10 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     if (model=="exponential"){
         plusoffset <- min(finalSPD[finalSPD!=0])/10000 
         finalSPD <- finalSPD+plusoffset #avoid log(0)
-        fit <- lm(log(finalSPD)~observed[["grid"]][,"calBP"])
-        time <- seq(min(observed[["grid"]][,"calBP"])-edge,max(observed[["grid"]][,"calBP"])+edge,1)
+        time <- seq(min(observed$grid$calBP)-edge,max(observed$grid$calBP)+edge,1)
+        strt <- which(finalSPD$grid$calBP==time[2])
+        end <- which(finalSPD$grid$calBP==time[1])
+        fit <- lm(log(finalSPD[strt:end])~observed$grid$calBP[strt:end])        
         est <-  exp(fit$coefficients[1]) * exp(time*fit$coefficients[2])
         predgrid <- data.frame(calBP=time, PrDens=est)
         predgrid$PrDens <- predgrid$PrDens/sum(predgrid$PrDens)
@@ -57,7 +59,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     expectedstatistic <- abs(apply(Zsim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=zLo)) + apply(Zsim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=zHi)
     pvalue <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
     # Results
-    result <- data.frame(calBP=observed[["grid"]][,"calBP"],SPD=finalSPD,lo=lo,hi=hi)
+    result <- data.frame(calBP=observed$grid$calBP,SPD=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){
         res <- list(result=result, sim=NA, pval=pvalue, fit=fit)
     }
