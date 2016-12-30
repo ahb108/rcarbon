@@ -1,4 +1,4 @@
-modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("uniform","exponential","custom"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, verbose=TRUE){
+modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("uniform","exponential","custom"), method="standard", datenormalised=FALSE, spdnormalised=TRUE, ncores=1, fitonly=FALSE, verbose=TRUE){
 
     ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
@@ -6,7 +6,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     finalSPD <- observed$grid$SPD
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
-    if (verbose){
+    if (verbose & !fitonly){
         print("Monte-Carlo test...")
     flush.console()
         pb <- txtProgressBar(min=1, max=nsim, style=3)
@@ -15,10 +15,14 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         plusoffset <- min(finalSPD[finalSPD!=0])/10000 
         finalSPD <- finalSPD+plusoffset #avoid log(0)
         time <- seq(min(observed$grid$calBP)-edge,max(observed$grid$calBP)+edge,1)
-        strt <- which(finalSPD$grid$calBP==time[2])
-        end <- which(finalSPD$grid$calBP==time[1])
-        fit <- lm(log(finalSPD[strt:end])~observed$grid$calBP[strt:end])        
+        fit <- lm(log(finalSPD)~observed$grid$calBP)        
         est <-  exp(fit$coefficients[1]) * exp(time*fit$coefficients[2])
+        if (fitonly){
+            print("Done (fitted model only).")
+            dff <- data.frame(calBP=time,EstPrDens=est)
+            dff <- dff[with(dff, order(-calBP)), ]
+            return(dff)
+        }
         predgrid <- data.frame(calBP=time, PrDens=est)
         predgrid$PrDens <- predgrid$PrDens/sum(predgrid$PrDens)
         cragrid <- pdUncal(predgrid, verbose=FALSE)
