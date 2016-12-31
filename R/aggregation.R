@@ -146,8 +146,7 @@ rspd <- function(x, timeRange, bins=NA, binwt=1, datenormalised=FALSE, spdnormal
     if (verbose){ print("Aggregating...") }
     finalSPD <- apply(binnedMatrix,1,sum)
     if (!is.na(runm)){
-        tmp1 <- runMean(finalSPD, runm)
-        finalSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
+        finalSPD <- runMean(finalSPD, runm, edge="fill")
     }
     res <- data.frame(calBP=x[[1]][["grid"]][,1], SPD=finalSPD)
     if (spdnormalised){

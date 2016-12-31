@@ -149,10 +149,6 @@ uncalibrate <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13
     return(dates)
 }
 
-sampleDates <- function(ndates, years, probs, replace=TRUE, calCurve='intcal13'){ 
-    sample(x=years, ndates, replace=replace, prob=probs) 
-}
-
 reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
 
     types <- c("simple","normal", "custom")
@@ -176,12 +172,19 @@ reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
     return(res)
 }
 
-gaussW <- function(x,bw){
+gaussW <- function(x, bw){
     exp(-(x^2)/(2*(bw^2)))
 }
 
-runMean <- function(x,n){
-    filter(x,rep(1/n,n), sides=2)
+runMean <- function(x, n, edge="NA"){
+    res <- x
+    tmp <- filter(res,rep(1/n,n), sides=2)
+    if (edge == "fill"){
+        res[!is.na(tmp)] <- tmp[!is.na(tmp)]
+    } else {
+        res <- tmp
+    }
+    return(res)
 }
 
 quickMarks <- function(x, verbose=TRUE){

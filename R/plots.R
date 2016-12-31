@@ -156,7 +156,7 @@ plot.rspdModelTest <- function(rspdModelTest, yMax=NA, xlim=c(0,1), drawaxes=TRU
         }
     }  
     polygon(x=c(obs[,1],rev(obs[,1])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
-    spdSmooth <- runMean(obs[,2],200/resolution)
+    ## spdSmooth <- runMean(obs[,2], 200/resolution, edge="fill")
     ## lines(obs[,1],spdSmooth,col=1,lwd=2.5,lty=1)
     if (drawaxes){
         axis(side=1,at=seq(max(obs[,1]),min(obs[,1]),-100),labels=NA,tck = -.01)
@@ -240,7 +240,7 @@ plot.rspdRegionTest <- function(data, focalregion="1", xlim=NA, yMax=1, drawaxes
         }
     }  
     polygon(x=c(obs[,1], rev(obs[,1])), y=c(envelope[,1], rev(envelope[,2])), col=rgb(0,0,0,0.2), border=NA)
-    spdSmooth <- runMean(obs[,2], 200/resolution)
+    ## spdSmooth <- runMean(obs[,2], 200/resolution, edge="fill")
     ## lines(obs[,1],spdSmooth,col=1,lwd=2.5,lty=1)
     if (drawaxes){
         axis(side=1, at=seq(max(obs[,1]), min(obs[,1]),-100), labels=NA, tck=-0.01)

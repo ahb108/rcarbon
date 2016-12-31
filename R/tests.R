@@ -45,8 +45,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         simDateMatrix <- do.call("cbind",tmp)
         sim[,s] <- apply(simDateMatrix,1,sum)
         sim[,s] <- sim[,s] + plusoffset
-        tmp1 <- runMean(sim[,s],runm)
-        sim[!is.na(tmp1),s] <- tmp1[!is.na(tmp1)]
+        sim[,s] <- runMean(sim[,s], runm, edge="fill")
     }
     if (verbose){ close(pb) }
     # Envelope, z-scores, global p-value
@@ -117,8 +116,7 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
         index <- which(regionList==focus)
         tmpSPD <- apply(binnedMatrix[,index], 1, sum)
         if (!is.na(runm)){
-            tmp1 <- runMean(tmpSPD,runm)
-            tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
+            tmpSPD <- runMean(tmpSPD,runm, edge="fill")
         }
         tmpSPD <- tmpSPD / sum(tmpSPD)
         observedSPD[[d]] <- data.frame(calBP=x[[1]][["grid"]][,1], SPD=tmpSPD)
@@ -141,8 +139,7 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
             index <- which(simRegionList==focus)
             tmpSPD <- apply(binnedMatrix[,index],1,sum)
             if (!is.na(runm)){
-                tmp1 <- runMean(tmpSPD,runm)
-                tmpSPD[!is.na(tmp1)] <- tmp1[!is.na(tmp1)]
+                tmpSPD <- runMean(tmpSPD, runm, edge="fill")
             }           
             tmpSPD <- tmpSPD/sum(tmpSPD)
             simulatedSPD[[d]][,s] <- tmpSPD
