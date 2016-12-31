@@ -90,7 +90,7 @@ binPrep <- function(sites, ages, h){
     return(clusters)
 }
 
-rspd <- function(x, timeRange, bins=NA, binwt=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
+rspd <- function(x, timeRange, bins=NA, binwt=1, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
 
     if (verbose){ print("Extracting...") }
     defcall <- as.list(args(rspd))
@@ -136,11 +136,7 @@ rspd <- function(x, timeRange, bins=NA, binwt=NA, datenormalised=FALSE, spdnorma
             tmp <- lapply(tmp,FUN=function(x) x/sum(x))
         }
         if (length(binNames)>1){
-            if (!is.na(binwt)){
-                spd.tmp <- (Reduce("+", tmp)^(1/binwt))
-            } else {
-                spd.tmp <- (Reduce("+", tmp) / length(index))
-            }
+            spd.tmp <- (Reduce("+", tmp) / (length(index)^(1/binwt)))
         } else {
             spd.tmp <- Reduce("+", tmp)
         }
@@ -167,7 +163,7 @@ rspd <- function(x, timeRange, bins=NA, binwt=NA, datenormalised=FALSE, spdnorma
     return(reslist)
 }
 
-siteW <- function(dateID ,cra,error,siteID,timeRange){
+siteW <- function(dateID, cra, error, siteID, timeRange){
     df <- data.frame(DateID=dateID,CRA=cra,Error=error,SiteID=siteID,Weights=1)
     allsiteids <- unique(siteID)
     if (any(is.na(allsiteids))){ stop("Cannot have missing site IDs") }
