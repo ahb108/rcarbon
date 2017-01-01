@@ -134,6 +134,7 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
         slist <- x$grid[index]
         slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
         slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
+        slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
         tmp <- lapply(slist,`[`,2)
         if (datenormalised){
             tmp <- lapply(tmp,FUN=function(x) x/sum(x))
