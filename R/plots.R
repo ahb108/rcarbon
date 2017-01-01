@@ -1,14 +1,14 @@
-plot.calDate <- function(calDate, label=NA, calendar="BP", type="standard"){
+plot.calDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard"){
 
     types <- c("standard","simple")
     if (!type %in% types){
         stop("The plot type you have chosen is not currently an option.")
     }
-    yearsBP <- calDate[["grid"]]$calBP
-    prob <- calDate[["grid"]]$PrDens
-    cra <- calDate[["metadata"]]$CRA
-    error <- calDate[["metadata"]]$Error
-    calcurve <- calDate[["metadata"]]$CalCurve
+    yearsBP <- calDates$grids[[ind]]$calBP
+    prob <- calDates$grids[[ind]]$PrDens
+    cra <- calDates$metadata$CRA[ind]
+    error <- calDates$metadata$Error[ind]
+    calcurve <- calDates$metadata$CalCurve[ind]
     calendars <- c("BP","BCAD")
     if (!calendar %in% calendars){
         stop("The calendar you have chosen is not currently an option.")

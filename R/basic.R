@@ -1,4 +1,4 @@
-calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 ,resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
 
     ## NB. add manualpage thanks to Bchron/Parnell
     if (length(ages) != length(errors)){
@@ -7,7 +7,8 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
     if (!is.na(ids[1]) & (length(ages) != length(ids))){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
     }
-    reslist <- vector(mode="list", length=length(ages))
+    reslist <- vector(mode="list", length=2)
+    sublist <- vector(mode="list", length=length(ages))
     if (is.na(ids[1])){
         ids <- as.character(1:length(ages))
     } else {
@@ -15,7 +16,8 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
     }
     if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(ages)) }
     if (length(resErrors)==1){ resErrors <- rep(resErrors,length(ages)) }
-    names(reslist) <- ids
+    names(sublist) <- ids
+    names(reslist) <- c("metadata","grids")
     tmp <- unique(calCurves)
     if (length(calCurves)==1){ calCurves <- rep(calCurves,length(ages)) }
     cclist <- vector(mode="list", length=length(tmp))
@@ -40,7 +42,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
         cl <- makeCluster(ncores)
         registerDoParallel(cl)
         if (verbose){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
-        reslist <- foreach (b=1:length(ages)) %dopar% {
+        sublist <- foreach (b=1:length(ages)) %dopar% {
             method <- "standard"
             calcurve <- cclist[[calCurves[b]]]
             calBP <- seq(max(calcurve),min(calcurve),-1)
@@ -52,15 +54,14 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
             dens[dens < eps] <- 0
             if (normalised){ dens <- dens/sum(dens) }
             res <- data.frame(calBP=calBP,PrDens=dens)
-            df <- data.frame(DateID=ids[b], CRA=ages[b], Error=errors[b], Details=dateDetails[b], CalCurve=calCurves[b],ResOffsets=resOffsets[b], ResErrors=resErrors[b], StartBP=timeRange[1], EndBP=timeRange[2], CalMethod=method, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
-            agegrid <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-            sublist <- list(metadata=df,grid=agegrid)
-            class(sublist) <- append(class(sublist),"calDate")
-            return(sublist)
+            
+            res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+            res <- res[res$PrDens > 0,]
+            class(res) <- append(class(res),"calGrid")
+            return(res)
         }
         stopCluster(cl)
-        class(reslist) <- append(class(reslist),"calDates")
-        names(reslist) <- ids
+        names(sublist) <- ids
     } else {
         for (b in 1:length(ages)){
             if (length(ages)>1 & verbose){ setTxtProgressBar(pb, b) }
@@ -99,20 +100,21 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
                 res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
                 if (normalised){ res$PrDens <- res$PrDens / sum(res$PrDens) }
             }
-            df <- data.frame(DateID=ids[b], CRA=ages[b], Error=errors[b], Details=dateDetails[b], CalCurve=calCurves[b],ResOffsets=resOffsets[b], ResErrors=resErrors[b], StartBP=timeRange[1], EndBP=timeRange[2], CalMethod=method, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
-            sublist <- vector(mode="list", length=2)
-            names(sublist) <- c("metadata","grid")
-            sublist[[1]] <- df
-            sublist[[2]] <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-            class(sublist) <- append(class(sublist),"calDate")
-            reslist[[ids[b]]] <- sublist
+            res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+            res <- res[res$PrDens > 0,]
+            class(res) <- append(class(res),"calGrid")
+            sublist[[ids[b]]] <- res
         }
     }
     if (length(ages)>1 & verbose){ close(pb) }
+    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], CalMethod=method, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
+    reslist[["metadata"]] <- df
+    reslist[["grids"]] <- sublist
     class(reslist) <- append(class(reslist),"calDates")
     if (verbose){ print("Done.") }
     return(reslist)
 }
+
 
 uncalibrate <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard", normalised=TRUE, eps=1e-5){ 
 
@@ -192,16 +194,16 @@ quickMarks <- function(x, verbose=TRUE){
     if (!"calDates" %in% class(x)){
         stop("Input must be of class \"calDates\"")
     }
-    df <- as.data.frame(matrix(ncol=8,nrow=length(x)), stringsasFactors=TRUE)
+    df <- as.data.frame(matrix(ncol=8,nrow=length(x$grid)), stringsasFactors=TRUE)
     names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
     print("Extracting approximate values...")
-    if (length(x)>1 & verbose){
+    if (length(x$grid)>1 & verbose){
         flush.console()
-        pb <- txtProgressBar(min=1, max=length(x), style=3)
+        pb <- txtProgressBar(min=1, max=length(x$grid), style=3)
     }
-    for (a in 1:length(x)){
-        if (length(x)>1 & verbose){ setTxtProgressBar(pb, a) }
-        tmp <- x[[a]]$grid
+    for (a in 1:length(x$grid)){
+        if (length(x$grid)>1 & verbose){ setTxtProgressBar(pb, a) }
+        tmp <- x$grid[[a]]
         tmp <- tmp[tmp$PrDens>0,]
         tmp <- tmp[with(tmp, order(-PrDens)), ]
         tmp$Cumul <- cumsum(tmp$PrDens)
@@ -213,9 +215,9 @@ quickMarks <- function(x, verbose=TRUE){
         df[a,"q68s"] <- min(tmp1$calBP) + (wdth*0.25)
         df[a,"q68e"] <- max(tmp1$calBP) - (wdth*0.25)
         df[a,"qMed"] <- round(mean(c(df[a,"q95s"],df[a,"q95e"])),0)
-        df[a,"DateID"] <- as.character(x[[a]]$metadata$DateID)
-        df[a,"CRA"] <- x[[a]]$metadata$CRA
-        df[a,"Error"] <- x[[a]]$metadata$Error
+        df[a,"DateID"] <- as.character(x$metadata$DateID[a])
+        df[a,"CRA"] <- x$metadata$CRA[a]
+        df[a,"Error"] <- x$metadata$Error[a]
     }
     if (length(x)>1 & verbose){ close(pb) }
     class(df) <- append(class(df),"quickMarks")

@@ -90,7 +90,7 @@ binPrep <- function(sites, ages, h){
     return(clusters)
 }
 
-rspd <- function(x, timeRange, bins=NA, binwt=1, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
+rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
 
     if (verbose){ print("Extracting...") }
     defcall <- as.list(args(rspd))
@@ -104,8 +104,8 @@ rspd <- function(x, timeRange, bins=NA, binwt=1, datenormalised=FALSE, spdnormal
     }
     speccall <- as.data.frame(lapply(speccall,deparse), stringsAsFactors=FALSE)
     speccall <- speccall[,names(defcall)]
-    speccall$ndates <- length(x)
-    speccall$nbins <- length(x)
+    speccall$ndates <- length(x$grid)
+    speccall$nbins <- length(x$grid)
     if (!"calDates" %in% class(x)){
         stop("x must be an object of class 'calDates'.")
     }
@@ -114,14 +114,15 @@ rspd <- function(x, timeRange, bins=NA, binwt=1, datenormalised=FALSE, spdnormal
         if (any(is.na(bins))){
             stop("Cannot have NA values in bins.")
         }
-        if (length(bins)!=length(x)){
+        if (length(bins)!=length(x$grid)){
             stop("bins (if provided) must be the same length as x.")
         }
     } else {
-        bins <- rep("0_0",length(x))
+        bins <- rep("0_0",length(x$grid))
     }
     binNames <- unique(bins)
-    binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["grid"]]), ncol=length(binNames))
+    calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
+    binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     if (verbose & length(binNames)>1){
         print("Binning by site/phase...")
         flush.console()
@@ -130,13 +131,15 @@ rspd <- function(x, timeRange, bins=NA, binwt=1, datenormalised=FALSE, spdnormal
     for (b in 1:length(binNames)){
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
-        slist <- x[index]
-        tmp <- lapply(lapply(slist, `[[`, 2),`[`,2)
+        slist <- x$grid[index]
+        slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
+        slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
+        tmp <- lapply(slist,`[`,2)
         if (datenormalised){
             tmp <- lapply(tmp,FUN=function(x) x/sum(x))
         }
         if (length(binNames)>1){
-            spd.tmp <- (Reduce("+", tmp) / (length(index)^(1/binwt)))
+            spd.tmp <- Reduce("+", tmp) / length(index)
         } else {
             spd.tmp <- Reduce("+", tmp)
         }
@@ -148,7 +151,7 @@ rspd <- function(x, timeRange, bins=NA, binwt=1, datenormalised=FALSE, spdnormal
     if (!is.na(runm)){
         finalSPD <- runMean(finalSPD, runm, edge="fill")
     }
-    res <- data.frame(calBP=x[[1]][["grid"]][,1], SPD=finalSPD)
+    res <- data.frame(calBP=calyears$calBP, SPD=finalSPD)
     if (spdnormalised){
         res$SPD <- res$SPD/sum(res$SPD, na.rm=TRUE)
     }
