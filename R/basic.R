@@ -1,4 +1,4 @@
-calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, eps=1e-5, ncores=1, verbose=TRUE){
 
     ## NB. add manualpage thanks to Bchron/Parnell
     if (length(ages) != length(errors)){
@@ -56,7 +56,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
             res <- data.frame(calBP=calBP,PrDens=dens)
             
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-            res <- res[res$PrDens > 0,]
+            if (compact){ res <- res[res$PrDens > 0,] }
             class(res) <- append(class(res),"calGrid")
             return(res)
         }
@@ -101,7 +101,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
                 if (normalised){ res$PrDens <- res$PrDens / sum(res$PrDens) }
             }
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-            res <- res[res$PrDens > 0,]
+            if (compact){ res <- res[res$PrDens > 0,] }
             class(res) <- append(class(res),"calGrid")
             sublist[[ids[b]]] <- res
         }

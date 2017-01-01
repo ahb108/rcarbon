@@ -32,16 +32,14 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         return(res)
     }
     cragrid <- pdUncal(predgrid, verbose=FALSE)
-    mets <- lapply(x, `[[`, 1)
-    obscras <- do.call("rbind",mets)$CRA
+    obscras <- x$metadata$CRA
     cragrid$PrDens[cragrid$CRA > max(obscras) | cragrid$CRA < min(obscras)] <- 0
     for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=length(unique(bins)), prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
-        tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', method=method, normalised=datenormalised, ncores=ncores, verbose=FALSE)
-        tmp <- lapply(tmp, `[[`, 2)
-        tmp <- lapply(tmp,`[`, 2)
+        tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', method=method, normalised=datenormalised, compact=FALSE, ncores=ncores, verbose=FALSE)
+        tmp <- lapply(tmp$grid,`[`,2)
         simDateMatrix <- do.call("cbind",tmp)
         sim[,s] <- apply(simDateMatrix,1,sum)
         sim[,s] <- sim[,s] + plusoffset
