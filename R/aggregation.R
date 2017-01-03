@@ -166,28 +166,43 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     return(reslist)
 }
 
-siteW <- function(dateID, cra, error, siteID, timeRange){
-    df <- data.frame(DateID=dateID,CRA=cra,Error=error,SiteID=siteID,Weights=1)
-    allsiteids <- unique(siteID)
-    if (any(is.na(allsiteids))){ stop("Cannot have missing site IDs") }
-    for (a in 1:length(allsiteids)){
-        cat(paste(a,";",sep=""))
-        tmp <- df[df$SiteID==allsiteids[a] & !is.na(df$SiteID),]
-        tmpc <- mcalibrate(tmp$CRA,tmp$Error, progress=FALSE, timeRange=timeRange)
+overlapW <- function(calDates, bins, verbose=TRUE){
+    df <- data.frame(Weight=rep(1,length(myCalDates$grids)))
+    binNames <- unique(bins)
+    if (any(is.na(binNames))){ stop("Cannot have missing bin IDs") }
+    if (verbose){
+        print("Checking overlaps within each bin...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Checking overlaps within each bin...")
+    }
+    for (a in 1:length(binNames)){
+        if (verbose & length(binNames)>1){ setTxtProgressBar(pb, a) }
+        index <- which(bins==binNames[a])
+        binneddates <- calDates$metadata[index,"DateID"]
+        tmpc <- calDates$grids[index]
         if (length(tmpc)>1){
-            overlaps <- rep(NA,length(tmpc))
-            for (i in 1:length(tmpc)){
-                otherinds <- 1:length(tmpc)
-                otherinds <- otherinds[-i]
-                tmpo <- rep(NA,length(otherinds))
-                for (j in 1:length(otherinds)){
-                    tmpo[j] <- sum(abs(tmpc[[i]]$prob.out-tmpc[[otherinds[j]]]$prob.out))/2
+            maxbp <- max(sapply(tmpc,FUN=function(x) max(x$calBP)))
+            minbp <- min(sapply(tmpc,FUN=function(x) min(x$calBP)))
+            calyears <- data.frame(calBP=seq(maxbp, minbp,-1))
+            slist <- lapply(tmpc,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
+            slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
+            slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
+            for (i in 1:length(slist)){
+                mydateid <- binneddates[i]
+                focal <- slist[[i]]
+                others <- slist[-i]
+                overlaps <- rep(NA,length(others))
+                for (j in 1:length(others)){             
+                    tmp <- apply(cbind(focal$PrDens,others[[j]]$PrDens),1,min)
+                    overlaps[j] <- sum(tmp)
                 }
-                overlaps[i] <- sum(tmpo)/length(tmpo)
+                wt <- sum(focal$PrDens) * (1 - (sum(overlaps) / (sum(focal$PrDens)*length(overlaps))))
+                df$Weight[calDates$metadata$DateID==mydateid] <- wt
             }
-            df[df$SiteID==allsiteids[a],"Weights"] <- overlaps
         }
     }
+    if (verbose & length(binNames)>1){ close(pb) }
+    if (verbose){ print("Done.") }
     return(df)
 }
 
