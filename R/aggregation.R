@@ -136,8 +136,12 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
         slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
         slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
         tmp <- lapply(slist,`[`,2)
-        if (datenormalised){
-            tmp <- lapply(tmp,FUN=function(x) x/sum(x))
+        if (datenormalised){   
+            outofTR <- lapply(tmp,sum)==0 # date out of range
+            tmpc <- tmp[!outofTR]
+            if (length(tmpc)>0){
+                tmp <- lapply(tmpc,FUN=function(x) x/sum(x))
+            }
         }
         if (length(binNames)>1){
             spd.tmp <- Reduce("+", tmp) / length(index)
