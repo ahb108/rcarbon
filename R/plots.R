@@ -81,7 +81,6 @@ plot.calDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
 plot.rspdModelTest <- function(rspdModelTest, ylim=NA, xlim=NA, drawaxes=TRUE, ...){
 
     obs <- rspdModelTest$result[,1:2]
-    resolution <- 1
     envelope <- rspdModelTest$result[,3:4]
     if (any(is.na(xlim))){ xlim <- c(max(obs[,"calBP"]),min(obs[,"calBP"])) }
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs[,"SPD"])) }
