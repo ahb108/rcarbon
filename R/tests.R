@@ -69,20 +69,12 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     return(res)
 }
 
-regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
+rmarkTest <- function(x, bins, marks,  nsim, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
 
-    if (any(!is.na(timeRange))){
-        if (nrow(x[[1]][["grid"]]) != length(seq(timeRange[1],timeRange[2],-1))){
-            for (d in 1:length(x)){
-                tmpag <- x[[d]][["grid"]]
-                tmpag <- tmpag[tmpag$calBP <= timeRange[1] & tmpag$calBP >= timeRange[2], ]
-                x[[d]][["grid"]] <- tmpag
-            }
-        }
-    }
     ## Calculate SPDs per bin
     binNames <- unique(bins)
-    binnedMatrix <- matrix(NA, nrow=nrow(x[[1]][["grid"]]), ncol=length(binNames))
+    calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
+    binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     regionList <- numeric()
     if (verbose & length(binNames)>1){
         print("Binning by site/phase...")
@@ -92,10 +84,17 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
     for (b in 1:length(binNames)){
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
-        slist <- x[index]
-        tmp <- lapply(lapply(slist, `[[`, 2),`[`,2)
-        if (datenormalised){
-            tmp <- lapply(tmp,FUN=function(x) x/sum(x))
+        slist <- x$grids[index]
+        slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
+        slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
+        slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
+        tmp <- lapply(slist,`[`,"PrDens")
+        if (datenormalised){   
+            outofTR <- lapply(tmp,sum)==0 # date out of range
+            tmpc <- tmp[!outofTR]
+            if (length(tmpc)>0){
+                tmp <- lapply(tmpc,FUN=function(x) x/sum(x))
+            }
         }
         if (length(binNames)>1){
             spd.tmp <- Reduce("+", tmp) / length(index)
@@ -103,7 +102,7 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
             spd.tmp <- Reduce("+", tmp)
         }
         binnedMatrix[,b] <- spd.tmp[,1]
-        regionList[b] <- regions[index][1]
+        regionList[b] <- marks[index][1]
     }
     if (verbose & length(binNames)>1){ close(pb) }
     ## Combine observed bins for focal region
@@ -114,15 +113,15 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
         index <- which(regionList==focus)
         tmpSPD <- apply(binnedMatrix[,index], 1, sum)
         if (!is.na(runm)){
-            tmpSPD <- runMean(tmpSPD,runm, edge="fill")
+            tmpSPD <- runMean(tmpSPD, runm, edge="fill")
         }
         tmpSPD <- tmpSPD / sum(tmpSPD)
-        observedSPD[[d]] <- data.frame(calBP=x[[1]][["grid"]][,1], SPD=tmpSPD)
+        observedSPD[[d]] <- data.frame(calBP=calyears, SPD=tmpSPD)
     }
     ## Simulate focal dataset but draw bins from all regions
     simulatedSPD <- vector("list",length=length(unique(regionList)))
     for (d in 1:length(unique(regionList))){
-        simulatedSPD[[d]] <- matrix(NA, nrow=nrow(x[[1]][["grid"]]), ncol=nsim)
+        simulatedSPD[[d]] <- matrix(NA, nrow=nrow(calyears), ncol=nsim)
     }
     if (verbose){
         print("Permutation test...")
@@ -178,7 +177,10 @@ regionTest <- function(x, bins, regions,  nsim, runm=NA, timeRange=NA, datenorma
     } else {  
         res <- list(observed=observedSPD,envelope=simulatedCIlist,raw=simulatedSPD,pValueList=pValueList)
     }
-    class(res) <- "rspdRegionTest"
+    class(res) <- "rspdMarkTest"
     if (verbose){ print("Done.") }
     return(res)
 }
+
+
+

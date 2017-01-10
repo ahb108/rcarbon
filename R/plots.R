@@ -78,24 +78,20 @@ plot.calDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     }
 }
 
-plot.rspdModelTest <- function(rspdModelTest, yMax=NA, xlim=c(0,1), drawaxes=TRUE, ...){
+plot.rspdModelTest <- function(rspdModelTest, ylim=NA, xlim=NA, drawaxes=TRUE, ...){
 
     obs <- rspdModelTest$result[,1:2]
     resolution <- 1
     envelope <- rspdModelTest$result[,3:4]
-    if (is.na(yMax)){
-        yMax <- max(envelope,obs[,2])
-    }
+    if (any(is.na(xlim))){ xlim <- c(max(obs[,"calBP"]),min(obs[,"calBP"])) }
+    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs[,"SPD"])) }
     booms <- which(obs[,2]>envelope[,2])
     busts <- which(obs[,2]<envelope[,1])
     baseline <- rep(0,nrow(obs))
-    if (is.null(xlim)){
-        xlim <- c(max(obs[,1]),min(obs[,1]))
-    }
     if (drawaxes){
-        plot(obs[,1],obs[,2],xlim=xlim,ylim=c(0,yMax), xlab="cal BP",ylab="Summed Probability",type="l",col=1,lwd=0.5,...)
+        plot(obs[,1],obs[,2],xlim=xlim,ylim=ylim, xlab="cal BP",ylab="Summed Probability",type="l",col=1,lwd=0.5,...)
     } else {
-        plot(obs[,1],obs[,2],xlim=xlim,ylim=c(0,yMax), xlab="",ylab="",type="l", xaxt="n", yaxt="n",col=1,lwd=0.5,...)
+        plot(obs[,1],obs[,2],xlim=xlim,ylim=ylim, xlab="",ylab="",type="l", xaxt="n", yaxt="n",col=1,lwd=0.5,...)
     }
     boomPlot <- baseline
     boomPlot[booms] <- obs[booms,2]
@@ -156,29 +152,27 @@ plot.rspdModelTest <- function(rspdModelTest, yMax=NA, xlim=c(0,1), drawaxes=TRU
         }
     }  
     polygon(x=c(obs[,1],rev(obs[,1])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
-    ## spdSmooth <- runMean(obs[,2], 200/resolution, edge="fill")
-    ## lines(obs[,1],spdSmooth,col=1,lwd=2.5,lty=1)
     if (drawaxes){
         axis(side=1,at=seq(max(obs[,1]),min(obs[,1]),-100),labels=NA,tck = -.01)
     }
 }
     
-plot.rspdRegionTest <- function(data, focalregion="1", xlim=NA, yMax=1, drawaxes=TRUE, ...){
+plot.rspdMarkTest <- function(data, focalm="1", xlim=NA, ylim=NA, drawaxes=TRUE, ...){
 
-    obs <- data$observed[[focalregion]]
-    if (any(is.na(xlim))){ xlim <- c(max(obs[,1]),min(obs[,1])) }
-    resolution <- 1
-    envelope <- data$envelope[[focalregion]]
+    obs <- data$observed[[focalm]]
+    envelope <- data$envelope[[focalm]]
+    if (any(is.na(xlim))){ xlim <- c(max(obs[,"calBP"]),min(obs[,"calBP"])) }
+    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs[,"SPD"])) }
     if (is.na(yMax)){ yMax=max(as.numeric(envelope),obs[,2]) }    
     booms <- which(obs[,2]>envelope[,2])
     busts <- which(obs[,2]<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes){
-        plot(obs[,1],obs[,2],xlim=xlim, ylim=c(0,yMax), xlab="cal BP",ylab="Normalised Summed Probability",type="l",col=1,lwd=0.5,axes=FALSE,...)
+        plot(obs[,1],obs[,2],xlim=xlim, ylim=ylim, xlab="cal BP",ylab="Normalised Summed Probability",type="l",col=1,lwd=0.5,axes=FALSE,...)
         axis(side=1,padj=-1)
         axis(side=2,padj=1)
     } else {
-        plot(obs[,1],obs[,2],xlim=xlim, ylim=c(0,yMax), xlab="",ylab="",type="l",col=1,lwd=0.5, axes=FALSE,...)
+        plot(obs[,1],obs[,2],xlim=xlim, ylim=ylim, xlab="",ylab="",type="l",col=1,lwd=0.5, axes=FALSE,...)
     }
     box()
     boomPlot <- baseline
@@ -240,12 +234,11 @@ plot.rspdRegionTest <- function(data, focalregion="1", xlim=NA, yMax=1, drawaxes
         }
     }  
     polygon(x=c(obs[,1], rev(obs[,1])), y=c(envelope[,1], rev(envelope[,2])), col=rgb(0,0,0,0.2), border=NA)
-    ## spdSmooth <- runMean(obs[,2], 200/resolution, edge="fill")
-    ## lines(obs[,1],spdSmooth,col=1,lwd=2.5,lty=1)
     if (drawaxes){
         axis(side=1, at=seq(max(obs[,1]), min(obs[,1]),-100), labels=NA, tck=-0.01)
     }
 }
+
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){
 
