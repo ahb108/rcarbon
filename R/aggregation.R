@@ -104,8 +104,8 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     }
     speccall <- as.data.frame(lapply(speccall,deparse), stringsAsFactors=FALSE)
     speccall <- speccall[,names(defcall)]
-    speccall$ndates <- length(x$grid)
-    speccall$nbins <- length(x$grid)
+    speccall$ndates <- length(x$grids)
+    speccall$nbins <- length(x$grids)
     if (!"calDates" %in% class(x)){
         stop("x must be an object of class 'calDates'.")
     }
@@ -114,11 +114,11 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
         if (any(is.na(bins))){
             stop("Cannot have NA values in bins.")
         }
-        if (length(bins)!=length(x$grid)){
+        if (length(bins)!=length(x$grids)){
             stop("bins (if provided) must be the same length as x.")
         }
     } else {
-        bins <- rep("0_0",length(x$grid))
+        bins <- rep("0_0",length(x$grids))
     }
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
@@ -131,7 +131,7 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     for (b in 1:length(binNames)){
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
-        slist <- x$grid[index]
+        slist <- x$grids[index]
         slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
         slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
         slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
