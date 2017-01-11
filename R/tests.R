@@ -43,7 +43,9 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         simDateMatrix <- do.call("cbind",tmp)
         sim[,s] <- apply(simDateMatrix,1,sum)
         sim[,s] <- sim[,s] + plusoffset
-        sim[,s] <- runMean(sim[,s], runm, edge="fill")
+        if (!is.na(runm)){
+            sim[,s] <- runMean(sim[,s], runm, edge="fill")
+        }
     }
     if (verbose){ close(pb) }
     # Envelope, z-scores, global p-value
