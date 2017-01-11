@@ -1,8 +1,8 @@
-modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("exponential","custom"), predgrid=NA, method="standard", datenormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
+modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, method="standard", datenormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
 
     ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
-    observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=FALSE, verbose=FALSE)
+    observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=TRUE, verbose=FALSE)
     finalSPD <- observed$grid$SPD
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
@@ -14,6 +14,11 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     coeffs <- NA
     time <- seq(min(observed$grid$calBP)-edge,max(observed$grid$calBP)+edge,1)
     if (model=="exponential"){
+        plusoffset <- 0
+        fit <- nls(y ~ exp(a + b * x), data=data.frame(x=time, y=finalSPD), start=list(a=0, b=0))
+        est <- predict(fitnls, list(x=time))
+        predgrid <- data.frame(calBP=time, PrDens=est)
+    } else if (model=="explog"){
         plusoffset <- min(finalSPD[finalSPD!=0])/10000 
         finalSPD <- finalSPD+plusoffset #avoid log(0)
         fit <- lm(log(finalSPD)~observed$grid$calBP)
@@ -25,6 +30,8 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
             stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
         }
         plusoffset <- 0
+    } else {
+        stop("Specified model not one of current choices.")
     }
     if (fitonly){
         print("Done (SPD and fitted model only).")
@@ -34,7 +41,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
     cragrid <- pdUncal(predgrid, verbose=FALSE)
     obscras <- x$metadata$CRA
     cragrid$PrDens[cragrid$CRA > max(obscras) | cragrid$CRA < min(obscras)] <- 0
-    for (s in 1:nsim){
+        for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=length(unique(bins)), prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
@@ -43,6 +50,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         simDateMatrix <- do.call("cbind",tmp)
         sim[,s] <- apply(simDateMatrix,1,sum)
         sim[,s] <- sim[,s] + plusoffset
+        sim[,s] <- (sim[,s]/sum(sim[,s])) * sum(est)
         if (!is.na(runm)){
             sim[,s] <- runMean(sim[,s], runm, edge="fill")
         }
