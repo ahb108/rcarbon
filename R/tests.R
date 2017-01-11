@@ -1,4 +1,4 @@
-modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, method="standard", datenormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
+modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, method="standard", datenormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
 
     ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
@@ -12,11 +12,11 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, edge=500, ra
         pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
     coeffs <- NA
-    time <- seq(min(observed$grid$calBP)-edge,max(observed$grid$calBP)+edge,1)
+    time <- seq(max(observed$grid$calBP),min(observed$grid$calBP),-1)
     if (model=="exponential"){
         plusoffset <- 0
         fit <- nls(y ~ exp(a + b * x), data=data.frame(x=time, y=finalSPD), start=list(a=0, b=0))
-        est <- predict(fitnls, list(x=time))
+        est <- predict(fit, list(x=time))
         predgrid <- data.frame(calBP=time, PrDens=est)
     } else if (model=="explog"){
         plusoffset <- min(finalSPD[finalSPD!=0])/10000 
