@@ -279,3 +279,36 @@ crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE
         points(xmed[a],cra[a], pch=pch.pts, cex=cex.pts, ...)
     }
 }
+
+plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, spdnormalised=TRUE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
+
+    types <- c("standard","simple")
+    if (!type %in% types){
+        stop("The plot type you have chosen is not currently an option.")
+    }
+    spdvals <- spd$grid$SPD
+    if (!is.na(runm)){ spdvals <- runMean(spdvals, runm, edge="fill") }
+    if (spdnormalised){ spdvals <- spdvals/sum(spdvals) }
+    if (rescale){ spdvals <- reScale(spdvals) }
+    if (any(is.na(ylim))){ ylim <- c(0,max(spdvals)*1.1) }
+    if (calendar=="BP"){
+        plotyears <- spd$grid$calBP
+        xlabel <- "Years cal BP"
+        if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
+    } else if (calendar=="BCAD"){
+        plotyears <- 1950-spd$grid$calBP
+        xlabel <- "Years BC/AD"
+        if (any(is.na(xlim))){ xlim <- c(min(plotyears),max(plotyears)) }
+    } else {
+        stop("Unknown calendar type")
+    }
+    if (xaxt=='n'){ xlabel <- "" }
+    if (type=="standard"){
+        par(xaxs="i")
+        par(yaxs="i")
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt)
+        polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
+    } else if (type=="simple"){
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt,...)
+    }
+}
