@@ -162,7 +162,6 @@ plot.rspdMarkTest <- function(data, focalm="1", xlim=NA, ylim=NA, drawaxes=TRUE,
     envelope <- data$envelope[[focalm]]
     if (any(is.na(xlim))){ xlim <- c(max(obs[,"calBP"]),min(obs[,"calBP"])) }
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs[,"SPD"])) }
-    if (is.na(yMax)){ yMax=max(as.numeric(envelope),obs[,2]) }    
     booms <- which(obs[,2]>envelope[,2])
     busts <- which(obs[,2]<envelope[,1])
     baseline <- rep(0,nrow(obs))
