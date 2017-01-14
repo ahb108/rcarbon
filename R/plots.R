@@ -156,21 +156,31 @@ plot.rspdModelTest <- function(rspdModelTest, ylim=NA, xlim=NA, drawaxes=TRUE, .
     }
 }
     
-plot.rspdMarkTest <- function(data, focalm="1", xlim=NA, ylim=NA, drawaxes=TRUE, ...){
+plot.rspdMarkTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, drawaxes=TRUE, ...){
 
     obs <- data$observed[[focalm]]
+    if (calendar=="BP"){
+        obs$Years <- obs$calBP
+        xlabel <- "Years cal BP"
+        if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
+    } else if (calendar=="BCAD"){
+        obs$Years <- 1950-obs$calBP
+        xlabel <- "Years BC/AD"
+        if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
+    } else {
+        stop("Unknown calendar type")
+    }
     envelope <- data$envelope[[focalm]]
-    if (any(is.na(xlim))){ xlim <- c(max(obs[,"calBP"]),min(obs[,"calBP"])) }
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs[,"SPD"])) }
-    booms <- which(obs[,2]>envelope[,2])
-    busts <- which(obs[,2]<envelope[,1])
+    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$SPD)) }
+    booms <- which(obs$SPD>envelope[,2])
+    busts <- which(obs$SPD<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes){
-        plot(obs[,1],obs[,2],xlim=xlim, ylim=ylim, xlab="cal BP",ylab="Normalised Summed Probability",type="l",col=1,lwd=0.5,axes=FALSE,...)
+        plot(obs$Years,obs$SPD,xlim=xlim, ylim=ylim, xlab=xlabel,ylab="Normalised Summed Probability",type="l",col=col.obs,lwd=lwd.obs,axes=FALSE,...)
         axis(side=1,padj=-1)
         axis(side=2,padj=1)
     } else {
-        plot(obs[,1],obs[,2],xlim=xlim, ylim=ylim, xlab="",ylab="",type="l",col=1,lwd=0.5, axes=FALSE,...)
+        plot(obs$Years,obs$SPD,xlim=xlim, ylim=ylim, xlab="",ylab="",type="l",col=col.obs, lwd=lwd.obs, axes=FALSE,...)
     }
     box()
     boomPlot <- baseline
@@ -186,13 +196,13 @@ plot.rspdMarkTest <- function(data, focalm="1", xlim=NA, ylim=NA, drawaxes=TRUE,
             boomBlocks <- c(boomBlocks,vector("list",1))
             boomBlocks[[counter]] <- vector("list",2)
             boomBlocks[[counter]][[1]] <- boomPlot[x]
-            boomBlocks[[counter]][[2]] <- obs[x,1]
+            boomBlocks[[counter]][[2]] <- obs[x,"Years"]
             state <- "on"
         }
         if (state=="on"){
             if (boomPlot[x]>0){
                 boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[x])
-                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[x,1])
+                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[x,"Years"])
             }
             if (boomPlot[x]==0){
                 state <- "off"
@@ -208,13 +218,13 @@ plot.rspdMarkTest <- function(data, focalm="1", xlim=NA, ylim=NA, drawaxes=TRUE,
             bustBlocks <- c(bustBlocks,vector("list",1))
             bustBlocks[[counter]] <- vector("list",2)
             bustBlocks[[counter]][[1]] <- bustPlot[x]
-            bustBlocks[[counter]][[2]] <- obs[x,1]
+            bustBlocks[[counter]][[2]] <- obs[x,"Years"]
             state <- "on"
         }
         if (state=="on"){
             if (bustPlot[x]>0){
                 bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[x])
-                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[x,1])
+                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[x,"Years"])
             }
             if (bustPlot[x]==0){
                 state <- "off"
@@ -231,12 +241,11 @@ plot.rspdMarkTest <- function(data, focalm="1", xlim=NA, ylim=NA, drawaxes=TRUE,
             polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
         }
     }  
-    polygon(x=c(obs[,1], rev(obs[,1])), y=c(envelope[,1], rev(envelope[,2])), col=rgb(0,0,0,0.2), border=NA)
+    polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=rgb(0,0,0,0.2), border=NA)
     if (drawaxes){
-        axis(side=1, at=seq(max(obs[,1]), min(obs[,1]),-100), labels=NA, tck=-0.01)
+        axis(side=1, at=seq(max(obs[,"Years"]), min(obs[,"Years"]),-100), labels=NA, tck=-0.01)
     }
 }
-
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){
 
