@@ -1,4 +1,4 @@
-calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, dfs=100, eps=1e-5, ncores=1, verbose=TRUE){
 
     ## NB. add manualpage thanks to Bchron/Parnell
     if (length(ages) != length(errors)){
@@ -14,6 +14,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
     } else {
         ids <- as.character(ids)
     }
+    if (length(dfs)==1){ dfs <- rep(dfs, length(ages)) }
     if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(ages)) }
     if (length(resErrors)==1){ resErrors <- rep(resErrors,length(ages)) }
     names(sublist) <- ids
@@ -69,7 +70,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-            methods <- c("standard","Bchron","CalPallike")
+            methods <- c("standard","tDist","Bchron","CalPallike")
             if (!method %in% methods){
                 stop("The method you have chosen is not currently an option.")
             }
@@ -78,7 +79,22 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
                 tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y
                 dens <- dnorm(age, mean=mu, sd=sqrt(tau))
                 dens[dens < eps] <- 0
-                if (normalised){ dens <- dens/sum(dens) }
+                if (normalised){
+                    dens <- dens/sum(dens)
+                    dens[dens < eps] <- 0
+                    dens <- dens/sum(dens)
+                }
+                res <- data.frame(calBP=calBP,PrDens=dens)
+            } else if (method=="tDist"){
+                mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
+                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y
+                dens <- dt((age - mu)/sqrt(tau), df=dfs)
+                dens[dens < eps] <- 0
+                if (normalised){
+                    dens <- dens/sum(dens)
+                    dens[dens < eps] <- 0
+                    dens <- dens/sum(dens)
+                }
                 res <- data.frame(calBP=calBP,PrDens=dens)
             } else if (method=="Bchron"){
                 tmp <- BchronCalibrate(ages=age,ageSds=error,calCurves=calCurves[b],eps=eps)
@@ -98,7 +114,10 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
                 CRApdf$PrDens[CRApdf$PrDens < eps] <- 0
                 res <- merge(CRAdates,CRApdf,by="CRA",all.x=TRUE, sort=FALSE)
                 res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
-                if (normalised){ res$PrDens <- res$PrDens / sum(res$PrDens) }
+                if (normalised){
+                    dens <- res$PrDens / sum(res$PrDens)
+                    dens[dens < eps] <- 0
+                    res$PrDens <- dens/sum(dens)                }
             }
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             if (compact){ res <- res[res$PrDens > 0,] }
