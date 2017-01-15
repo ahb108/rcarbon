@@ -41,7 +41,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, raw=FALSE, m
     cragrid <- pdUncal(predgrid, verbose=FALSE)
     obscras <- x$metadata$CRA
     cragrid$PrDens[cragrid$CRA > max(obscras) | cragrid$CRA < min(obscras)] <- 0
-        for (s in 1:nsim){
+    for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=length(unique(bins)), prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
@@ -50,7 +50,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, raw=FALSE, m
         simDateMatrix <- do.call("cbind",tmp)
         sim[,s] <- apply(simDateMatrix,1,sum)
         sim[,s] <- sim[,s] + plusoffset
-        sim[,s] <- (sim[,s]/sum(sim[,s])) * sum(est)
+        sim[,s] <- (sim[,s]/sum(sim[,s])) * sum(predgrid$PrDens)
         if (!is.na(runm)){
             sim[,s] <- runMean(sim[,s], runm, edge="fill")
         }
