@@ -183,7 +183,6 @@ plot.rspdMarkTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA,
     }
     envelope <- data$envelope[[focalm]]
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$SPD)) }
-    ylab"Summed Probability"
     booms <- which(obs$SPD>envelope[,2])
     busts <- which(obs$SPD<envelope[,1])
     baseline <- rep(0,nrow(obs))
