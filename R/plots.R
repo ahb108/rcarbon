@@ -78,7 +78,7 @@ plot.calDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     }
 }
 
-plot.rspdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, drawaxes=TRUE, ...){
+plot.rspdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", drawaxes=TRUE, ...){
 
     obs <- modeltest$result[,1:2]
     if (calendar=="BP"){
@@ -98,9 +98,9 @@ plot.rspdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.o
     busts <- which(obs$SPD<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes){
-        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, ...)
+        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, ...)
     } else {
-        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, axes=FALSE, ...)
+        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     box()
     boomPlot <- baseline
@@ -167,7 +167,7 @@ plot.rspdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.o
     }
 }
     
-plot.rspdMarkTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, drawaxes=TRUE, ...){
+plot.rspdMarkTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", drawaxes=TRUE, ...){
 
     obs <- data$observed[[focalm]]
     if (calendar=="BP"){
@@ -187,11 +187,11 @@ plot.rspdMarkTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA,
     busts <- which(obs$SPD<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes){
-        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, axes=FALSE, ...)
+        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
         axis(side=1,padj=-1)
         axis(side=2,padj=1)
     } else {
-        plot(obs$Years,obs$SPD, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, axes=FALSE, ...)
+        plot(obs$Years,obs$SPD, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     box()
     boomPlot <- baseline
