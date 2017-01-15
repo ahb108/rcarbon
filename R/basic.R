@@ -1,6 +1,5 @@
-calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, dfs=100, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, dfs=100, oxpath=NULL, eps=1e-5, ncores=1, verbose=TRUE){
 
-    ## NB. add manualpage thanks to Bchron/Parnell
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
     }
@@ -70,7 +69,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-            methods <- c("standard","tDist","Bchron","CalPallike")
+            methods <- c("standard","tDist","Bchron","OxCal","CalPallike")
             if (!method %in% methods){
                 stop("The method you have chosen is not currently an option.")
             }
@@ -96,6 +95,18 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
                     dens <- dens/sum(dens)
                 }
                 res <- data.frame(calBP=calBP,PrDens=dens)
+            } else if (method=="OxCal"){
+                if (is.null(oxpath)){ stop("You need to provide an oxpath argument.")
+                } else {
+                    if (b==1){
+                        tmptxt <- capture.output(setOxcalExecutablePath(oxpath))
+                    }
+                    mydate <- oxcalCalibrate(age, error, ids[b])
+                    years <- 1950-mydate[[1]]$raw_probabilities$dates
+                    dens <- mydate[[1]]$raw_probabilities$probabilities
+                    dens <- approx(years, dens, xout=calBP, rule=2)
+                    res <- data.frame(calBP=calBP,PrDens=dens$y)
+                }
             } else if (method=="Bchron"){
                 tmp <- BchronCalibrate(ages=age,ageSds=error,calCurves=calCurves[b],eps=eps)
                 calBPtmp <- rev(as.numeric(tmp[[1]][4][[1]]))
@@ -242,4 +253,6 @@ quickMarks <- function(x, verbose=TRUE){
     class(df) <- append(class(df),"quickMarks")
     return(df)
 }
+
+
 
