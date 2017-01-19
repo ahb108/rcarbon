@@ -1,6 +1,6 @@
 plot.calDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard"){
 
-    types <- c("standard","simple")
+    types <- c("standard", "simple", "auc")
     if (!type %in% types){
         stop("The plot type you have chosen is not currently an option.")
     }
@@ -39,7 +39,10 @@ plot.calDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     axis(1, at=xticks, labels=abs(xticks),las=2, cex.axis=0.75)
     axis(4, cex.axis=0.75)
     polygon(xvals,yvals, col="grey50", border="grey50")
-    if (type != "simple"){
+    if (type=="standard" | type=="auc"){
+        if (type=="auc"){
+            lines(xvals, yvals/sum(yvals), col="black", lty="dotted")
+        }
         par(new=TRUE)
         cradf1 <- data.frame(CRA=50000:0,Prob=dnorm(50000:0, mean=cra, sd=error))
         cradf1 <- cradf1[cradf1$Prob>0.0001,]
