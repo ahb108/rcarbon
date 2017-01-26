@@ -1,7 +1,11 @@
-modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, method="standard", datenormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, method="standard", datenormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
 
-    ## Bin observed dates
     if (verbose){ print("Aggregating observed dates...") }
+    if (is.na(bins[1])){
+        samplesize <- length(x$grids)
+    } else {
+        samplesize <- length(unique(bins))
+    }
     observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=TRUE, verbose=FALSE)
     finalSPD <- observed$grid$SPD
     ## Simulation
@@ -43,7 +47,7 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, raw=FALSE, m
     cragrid$PrDens[cragrid$CRA > max(obscras) | cragrid$CRA < min(obscras)] <- 0
     for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }
-        randomDates <- sample(cragrid$CRA, replace=TRUE, size=length(unique(bins)), prob=cragrid$PrDens)
+        randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
         tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', method=method, normalised=datenormalised, compact=FALSE, ncores=ncores, verbose=FALSE)
         tmp <- lapply(tmp$grid,`[`,2)
@@ -79,10 +83,14 @@ modelTest <- function(x, errors, bins, nsim, runm=NA, timeRange=NA, raw=FALSE, m
     return(res)
 }
 
-rmarkTest <- function(x, bins, marks,  nsim, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
+rmarkTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
 
     ## Calculate SPDs per bin
-    binNames <- unique(bins)
+    if (is.na(bins[1])){
+        binNames <- as.character(1:length(x$grids))
+    } else {
+        binNames <- unique(bins)
+    }
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     regionList <- numeric()
