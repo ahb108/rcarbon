@@ -83,7 +83,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     return(res)
 }
 
-rmarkTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
+permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
 
     ## Calculate SPDs per bin
     if (is.na(bins[1])){
@@ -195,7 +195,7 @@ rmarkTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenorma
     } else {  
         res <- list(observed=observedSPD,envelope=simulatedCIlist,raw=simulatedSPD,pValueList=pValueList)
     }
-    class(res) <- "rspdMarkTest"
+    class(res) <- "rspdPermTest"
     if (verbose){ print("Done.") }
     return(res)
 }

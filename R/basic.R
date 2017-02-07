@@ -4,7 +4,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
     }
     if (!is.na(ids[1]) & (length(ages) != length(ids))){
-        stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
+        stop("Ages and errors (and ids/details/offsets if provided) must be the same length.")
     }
     reslist <- vector(mode="list", length=2)
     sublist <- vector(mode="list", length=length(ages))
@@ -108,7 +108,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
                     res <- data.frame(calBP=calBP,PrDens=dens$y)
                 }
             } else if (method=="Bchron"){
-                tmp <- BchronCalibrate(ages=age,ageSds=error,calCurves=calCurves[b],eps=eps)
+                tmp <- BchronCalibrate(ages=age,ageSds=error,calCurves=calCurves[b], eps=eps, dfs=dfs)
                 calBPtmp <- rev(as.numeric(tmp[[1]][4][[1]]))
                 prob <- rev(as.numeric(tmp[[1]][[5]]))
                 dens <- rep(0,length=length(calBP))
@@ -146,7 +146,7 @@ calibrate <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13'
 }
 
 
-uncalibrate <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard", normalised=TRUE, eps=1e-5){ 
+uncalibrate <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard"){ 
 
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(calBP)) } 
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
