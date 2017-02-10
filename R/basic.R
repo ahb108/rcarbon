@@ -287,14 +287,14 @@ calibrate.UncalGrid <- function(x, calCurves='intcal13', timeRange=c(50000,0), c
     calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
     options(warn=0)
     colnames(calcurve) <- c("CALBP","C14BP","Error")
-    if (fast){
+    if (type=="fast"){
         if (datenormalised){
             warning('Cannot normalise dates using fast method, so leaving unnormalised.')
         }
         CRAdates <- data.frame(approx(calcurve[,1:2], xout=seq(max(calcurve[,1]),min(calcurve[,1]),-1)))
         names(CRAdates) <- c("calBP","CRA")
         CRAdates$CRA <- round(CRAdates$CRA,0)
-        res <- merge(CRAdates, uncalgrid, by="CRA",all.x=TRUE, sort=FALSE)
+        res <- merge(CRAdates, x, by="CRA",all.x=TRUE, sort=FALSE)
         res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
         res$PrDens[is.na(res$PrDens)] <- 0
     }
