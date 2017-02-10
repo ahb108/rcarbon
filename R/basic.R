@@ -329,10 +329,16 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact
     res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=NA)
     tmp <- vector(mode="list",length=nrow(mycras))
     basetmp <- vector(mode="list",length=nrow(mycras))
+    if (length(tmp)>1 & verbose){
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(tmp), style=3)
+    }
     for (a in 1:length(tmp)){
         basetmp[[a]] <- dnorm(res$CRA, mean=mycras$ccCRA[a], sd=mycras$ccError[a])
         tmp[[a]] <- basetmp[[a]] * calgrid$PrDens[a]
+        if (verbose){ setTxtProgressBar(pb, a) }
     }
+    if (verbose){ close(pb) }
     unscGauss <- do.call("cbind",tmp)
     base <- do.call("cbind",basetmp)
     res$Base <- rowSums(base)

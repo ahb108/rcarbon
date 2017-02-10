@@ -396,8 +396,13 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, yli
     xlabel <- "C14 Years"
     yvals <- c(0,prob,0,0)
     xrng <- c(max(plotyears)+50, min(plotyears)-50)
-    xticks <- 100*(xrng%/%100 + as.logical(xrng%%100))
-    xticks <- seq(xticks[1]-100, xticks[2], -100)
+    if (dist(xrng)>10000){
+        xticks <- 1000*(xrng%/%1000 + as.logical(xrng%%1000))
+        xticks <- seq(xticks[1]-1000, xticks[2], -1000)
+    } else {
+        xticks <- 100*(xrng%/%100 + as.logical(xrng%%100))
+        xticks <- seq(xticks[1]-100, xticks[2], -100)
+    }
     if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
     par(mar=mar) #c(bottom, left, top, right)
     par(cex.lab=cex.lab)
