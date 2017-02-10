@@ -364,7 +364,7 @@ as.UncalGrid <- function(x) {
     } else {
         stop("Input must be 2 or 4 columns.")
     }
-    class(df) <- append(class(df),"UncalGrid")
+    class(df) <- c("UncalGrid", class(df)) 
     return(df)
 }
 
@@ -375,6 +375,6 @@ as.CalGrid <- function(x) {
     } else {
         stop("Input must be 2 columns.")
     }
-    class(df) <- append(class(df),"CalGrid")
+    class(df) <- c("CalGrid", class(df)) 
     return(df)
 }
