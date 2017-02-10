@@ -345,3 +345,29 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact
     if (verbose){ print("Done.") }
     return(res)
 }
+
+as.UncalGrid <- function(x) {
+    df <- as.data.frame(x)
+    if (ncol(x) == 2){
+        names(df) <- c("CRA", "PrDens")
+        df$Base <- NA
+        df$Raw <- NA
+    } else if (ncol(x) == 4){
+        names(df) <- c("CRA", "PrDens", "Base", "Raw")
+    } else {
+        stop("Input must be 2 or 4 columns.")
+    }
+    class(df) <- append(class(df),"UncalGrid")
+    return(df)
+}
+
+as.CalGrid <- function(x) {
+    df <- as.data.frame(x)
+    if (ncol(x) == 2){
+        names(df) <- c("calBP", "PrDens")
+    } else {
+        stop("Input must be 2 columns.")
+    }
+    class(df) <- append(class(df),"CalGrid")
+    return(df)
+}
