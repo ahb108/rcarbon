@@ -335,7 +335,7 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
     }
 }
 
-plot.calGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
+plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
     yearsBP <- x$calBP
     prob <- x$PrDens
@@ -377,7 +377,7 @@ plot.calGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, ylim=NA
     polygon(xvals,yvals, col=fill.p, border=border.p)
 }
 
-plot.uncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
+plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
     years <- x$CRA
     if (type=="adjusted"){
