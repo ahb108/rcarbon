@@ -85,12 +85,12 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 
 permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
 
-    ## Calculate SPDs per bin
     if (is.na(bins[1])){
-        binNames <- as.character(1:length(x$grids))
+        binNames <- bins <- "1"
     } else {
         binNames <- unique(bins)
     }
+    binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     regionList <- numeric()
@@ -114,10 +114,10 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
                 tmp <- lapply(tmpc,FUN=function(x) x/sum(x))
             }
         }
+        spd.tmp <- Reduce("+", tmp)
+        return(spd.tmp)
         if (length(binNames)>1){
-            spd.tmp <- Reduce("+", tmp) / length(index)
-        } else {
-            spd.tmp <- Reduce("+", tmp)
+            spd.tmp <- spd.tmp/sum(spd.tmp)
         }
         binnedMatrix[,b] <- spd.tmp[,1]
         regionList[b] <- marks[index][1]
@@ -199,6 +199,3 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
     if (verbose){ print("Done.") }
     return(res)
 }
-
-
-

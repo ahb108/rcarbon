@@ -1,5 +1,6 @@
-pdCal <- function(uncalgrid, calCurves='intcal13', timeRange=c(50000,0), eps=1e-5, normalised=TRUE, verbose=TRUE){
+pdCal <- function(uncalgrid, calCurves='intcal13', timeRange=c(50000,0), compact=TRUE, eps=1e-5, spdnormalised=FALSE, verbose=TRUE){
 
+    if (verbose){ print("Calibrating...") }
     names(uncalgrid) <- c("CRA","PrDens")
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
@@ -14,21 +15,24 @@ pdCal <- function(uncalgrid, calCurves='intcal13', timeRange=c(50000,0), eps=1e-
     res <- merge(CRAdates, uncalgrid, by="CRA",all.x=TRUE, sort=FALSE)
     res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
     res$PrDens[is.na(res$PrDens)] <- 0
-    if (normalised){
+    if (spdnormalised){
         res[res$PrDens < eps,"PrDens"] <- 0
         res$PrDens <- res$PrDens/sum(res$PrDens)
     } else {
         res[res$PrDens < eps,"PrDens"] <- 0
     }
     res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
+    if (compact){ res <- res[res$PrDens > 0,] }
+    class(res) <- append(class(res),"CalGrid")
     if (verbose){ print("Done.") }
     return(res)
 }
 
-pdUncal <- function(calgrid, calCurves='intcal13', eps=1e-5, verbose=TRUE){
+pdUncal <- function(calgrid, calCurves='intcal13', eps=1e-5, compact=TRUE, spdnormalised=FALSE, verbose=TRUE){
 
     if (verbose){ print("Uncalibrating...") }
     names(calgrid) <- c("calBP","PrDens")
+    odm <- sum(calgrid$PrDens)
     calgrid$PrDens <- calgrid$PrDens/sum(calgrid$PrDens)
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
@@ -55,7 +59,13 @@ pdUncal <- function(calgrid, calCurves='intcal13', eps=1e-5, verbose=TRUE){
     res$PrDens <- 0
     res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
     res$PrDens[res$Raw < eps] <- 0
-    res$PrDens <- res$PrDens/sum(res$PrDens)
+    if (spdnormalised){
+        res$PrDens <- res$PrDens/sum(res$PrDens)
+    } else {
+        res$PrDens <- (res$PrDens/sum(res$PrDens)) * odm
+    }
+    if (compact){ res <- res[res$PrDens > 0,] }
+    class(res) <- append(class(res),"UncalGrid")
     if (verbose){ print("Done.") }
     return(res)
 }
@@ -156,11 +166,12 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     if (!is.na(runm)){
         finalSPD <- runMean(finalSPD, runm, edge="fill")
     }
-    res <- data.frame(calBP=calyears$calBP, SPD=finalSPD)
+    res <- data.frame(calBP=calyears$calBP, PrDens=finalSPD)
     if (spdnormalised){
-        res$SPD <- res$SPD/sum(res$SPD, na.rm=TRUE)
+        res$SPD <- res$PrDens/sum(res$PrDens, na.rm=TRUE)
     }
     res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
+    class(res) <- append(class(res),"CalGrid")
     reslist <- vector("list",length=2)
     names(reslist) <- c("metadata","grid")
     reslist[["metadata"]] <- speccall

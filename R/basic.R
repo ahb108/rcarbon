@@ -254,5 +254,94 @@ quickMarks <- function(x, verbose=TRUE){
     return(df)
 }
 
+"[.calDates" <- function(x,i){
 
+    if (nrow(x$metadata)==0){
+        stop("No data to extract")
+    }
+    if(!missing(i)) {
+        if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
+            res <- list(metadata=x$metadata[i,], grids=x$grids[i])
+            class(res) <- append(class(res),"calDates")        
+        } else {
+         stop("i must be a numeric, character or logical vector of length(x)")
+        }
+        return(res)
+    }           
+}
 
+calibrate.UncalGrid <- function(x, calCurves='intcal13', timeRange=c(50000,0), compact=TRUE, eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE){
+
+    if (verbose){ print("Calibrating...") }
+    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
+    options(warn=-1)
+    calcurve <- readLines(calCurveFile, encoding="UTF-8")
+    calcurve <- calcurve[!grepl("[#]",calcurve)]
+    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+    options(warn=0)
+    colnames(calcurve) <- c("CALBP","C14BP","Error")
+    if (fast){
+        if (datenormalised){
+            warning('Cannot normalise dates using fast method, so leaving unnormalised.')
+        }
+        CRAdates <- data.frame(approx(calcurve[,1:2], xout=seq(max(calcurve[,1]),min(calcurve[,1]),-1)))
+        names(CRAdates) <- c("calBP","CRA")
+        CRAdates$CRA <- round(CRAdates$CRA,0)
+        res <- merge(CRAdates, uncalgrid, by="CRA",all.x=TRUE, sort=FALSE)
+        res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
+        res$PrDens[is.na(res$PrDens)] <- 0
+    }
+    if (spdnormalised){
+        res[res$PrDens < eps,"PrDens"] <- 0
+        res$PrDens <- res$PrDens/sum(res$PrDens)
+    } else {
+        res[res$PrDens < eps,"PrDens"] <- 0
+    }
+    res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
+    if (compact){ res <- res[res$PrDens > 0,] }
+    class(res) <- append(class(res),"CalGrid")
+    if (verbose){ print("Done.") }
+    return(res)
+}
+
+uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact=TRUE, spdnormalised=FALSE, verbose=TRUE){
+
+    if (verbose){ print("Uncalibrating...") }
+    names(calgrid) <- c("calBP","PrDens")
+    odm <- sum(calgrid$PrDens)
+    calgrid$PrDens <- calgrid$PrDens/sum(calgrid$PrDens)
+    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
+    options(warn=-1)
+    calcurve <- readLines(calCurveFile, encoding="UTF-8")
+    calcurve <- calcurve[!grepl("[#]",calcurve)]
+    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+    options(warn=0)
+    colnames(calcurve) <- c("CALBP","C14BP","Error")
+    ## Back-calibrate each year to CRA, add errors and weight
+    mycras <- uncalibrate(calgrid$calBP)
+    res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=NA)
+    tmp <- vector(mode="list",length=nrow(mycras))
+    basetmp <- vector(mode="list",length=nrow(mycras))
+    for (a in 1:length(tmp)){
+        basetmp[[a]] <- dnorm(res$CRA, mean=mycras$ccCRA[a], sd=mycras$ccError[a])
+        tmp[[a]] <- basetmp[[a]] * calgrid$PrDens[a]
+    }
+    unscGauss <- do.call("cbind",tmp)
+    base <- do.call("cbind",basetmp)
+    res$Base <- rowSums(base)
+    res$Base <- res$Base/sum(res$Base)
+    res$Raw <- rowSums(unscGauss)
+    res$Raw <- res$Raw/sum(res$Raw)
+    res$PrDens <- 0
+    res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
+    res$PrDens[res$Raw < eps] <- 0
+    if (spdnormalised){
+        res$PrDens <- res$PrDens/sum(res$PrDens)
+    } else {
+        res$PrDens <- (res$PrDens/sum(res$PrDens)) * odm
+    }
+    if (compact){ res <- res[res$PrDens > 0,] }
+    class(res) <- append(class(res),"UncalGrid")
+    if (verbose){ print("Done.") }
+    return(res)
+}
