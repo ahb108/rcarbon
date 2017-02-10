@@ -306,7 +306,7 @@ calibrate.UncalGrid <- function(x, calCurves='intcal13', timeRange=c(50000,0), c
     }
     res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
     if (compact){ res <- res[res$PrDens > 0,] }
-    class(res) <- append(class(res),"CalGrid")
+    class(res) <- c("CalGrid", class(res))   
     if (verbose){ print("Done.") }
     return(res)
 }
@@ -348,7 +348,7 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact
         res$PrDens <- (res$PrDens/sum(res$PrDens)) * odm
     }
     if (compact){ res <- res[res$PrDens > 0,] }
-    class(res) <- append(class(res),"UncalGrid")
+    class(res) <- c("UncalGrid", class(res)) 
     if (verbose){ print("Done.") }
     return(res)
 }
