@@ -2,7 +2,7 @@ calibrate <- function (x, ...) {
    UseMethod("calibrate", x)
 }
 
-calibrate.numeric <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, dfs=100, oxpath=NULL, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, dfs=100, oxpath=NULL, eps=1e-5, ncores=1, verbose=TRUE){
 
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
@@ -153,7 +153,7 @@ uncalibrate <- function (x, ...) {
    UseMethod("uncalibrate", x)
 }
 
-uncalibrate.numeric <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard"){ 
+uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard"){ 
 
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(calBP)) } 
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
