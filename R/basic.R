@@ -1,5 +1,5 @@
 calibrate <- function (x, ...) {
-   UseMethod("calibrate", x)
+   UseMethod("calibrate")
 }
 
 calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, dfs=100, oxpath=NULL, eps=1e-5, ncores=1, verbose=TRUE){
