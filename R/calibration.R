@@ -233,35 +233,10 @@ uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='
     return(dates)
 }
 
-reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
-
-    types <- c("simple","normal", "custom")
-    if (!type %in% types){
-        stop("The rescale type you have chosen is not currently an option.")
-    }
-    if (na.rm){ x <- na.omit(x) }
-    if (type=="normal"){
-        res <- (x-mean(x))/sd(x)
-    } else if (type=="custom"){
-        if (is.null(crng)){
-            stop("For custom type you need to specify a crng.")
-        } else {
-            xrange <- range(x)
-            mfac <- (crng[2] - crng[1])/(xrange[2] - xrange[1])
-            res <- crng[1] + (x - xrange[1]) * mfac
-        }
-    } else {
-       res <- (x-min(x))/(max(x) - min(x))
-   }
-    return(res)
-}
-
 uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, unifp="local", compact=TRUE, verbose=TRUE){
 
     if (verbose){ print("Uncalibrating...") }
     names(calgrid) <- c("calBP","PrDens")
-    odm <- sum(calgrid$PrDens)
-    calgrid$PrDens <- calgrid$PrDens/sum(calgrid$PrDens)
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
@@ -270,7 +245,7 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, unifp="
     options(warn=0)
     colnames(calcurve) <- c("CALBP","C14BP","Error")
     mycras <- uncalibrate(calgrid$calBP)
-    res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=NA)
+    res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=0)
     tmp <- vector(mode="list",length=nrow(mycras))
     basetmp <- vector(mode="list",length=nrow(mycras))
     if (length(tmp)>1 & verbose){
@@ -284,40 +259,23 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, unifp="
     }
     if (verbose){ close(pb) }
     unscGauss <- do.call("cbind",tmp)
+    res$Raw <- rowSums(unscGauss)
+    res$Raw[res$Raw < eps] <- 0
     if (unifp=="local"){
         base <- do.call("cbind",basetmp)
         res$Base <- rowSums(base)
+        res$Raw[res$Raw < eps] <- 0
     } else if (unifp=="global"){
         data(UnifCalYears)
         res$Base <- UnifCalYears[UnifCalYears$CRA %in% res$CRA,"PrDens"]
     } else {
         stop("Options for unifp are 'local' or 'global'.")
     }
-    ## res$Base <- res$Base/sum(res$Base)
-    res$Raw <- rowSums(unscGauss)
-    res$Raw <- res$Raw/sum(res$Raw)
-    res$PrDens <- 0
     res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
-    res$PrDens[res$Raw < eps] <- 0
     if (compact){ res <- res[res$PrDens > 0,] }
     class(res) <- c("UncalGrid", class(res)) 
     if (verbose){ print("Done.") }
     return(res)
-}
-
-as.UncalGrid <- function(x) {
-    df <- as.data.frame(x)
-    if (ncol(x) == 2){
-        names(df) <- c("CRA", "PrDens")
-        df$Base <- NA
-        df$Raw <- NA
-    } else if (ncol(x) == 4){
-        names(df) <- c("CRA", "PrDens", "Base", "Raw")
-    } else {
-        stop("Input must be 2 or 4 columns.")
-    }
-    class(df) <- c("UncalGrid", class(df)) 
-    return(df)
 }
 
 as.CalGrid <- function(x) {
