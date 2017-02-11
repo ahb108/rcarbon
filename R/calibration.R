@@ -288,12 +288,12 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, unifp="
         base <- do.call("cbind",basetmp)
         res$Base <- rowSums(base)
     } else if (unifp=="global"){
-        data(uncalunif)
-        res$Base <- uncalunif[uncalunif$CRA %in% res$CRA,"PrDens"]
+        data(UnifCalYears)
+        res$Base <- UnifCalYears[UnifCalYears$CRA %in% res$CRA,"PrDens"]
     } else {
         stop("Options for unifp are 'local' or 'global'.")
     }
-    res$Base <- res$Base/sum(res$Base)
+    ## res$Base <- res$Base/sum(res$Base)
     res$Raw <- rowSums(unscGauss)
     res$Raw <- res$Raw/sum(res$Raw)
     res$PrDens <- 0
