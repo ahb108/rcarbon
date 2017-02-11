@@ -287,7 +287,7 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, unifp="
     if (unifp=="local"){
         base <- do.call("cbind",basetmp)
         res$Base <- rowSums(base)
-    } else if (unifp="global"){
+    } else if (unifp=="global"){
         data(uncalunif)
         res$Base <- uncalunif[uncalunif$CRA %in% res$CRA,"PrDens"]
     } else {
