@@ -149,6 +149,51 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     return(reslist)
 }
 
+calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(50000,0), compact=TRUE, eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE, ...){
+
+    if (length(errors)==1){
+        errors <- rep(errors,length(x$CRA))
+    }
+    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
+    options(warn=-1)
+    calcurve <- readLines(calCurveFile, encoding="UTF-8")
+    calcurve <- calcurve[!grepl("[#]",calcurve)]
+    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+    options(warn=0)
+    colnames(calcurve) <- c("CALBP","C14BP","Error")
+    if (type=="full"){
+        caleach <- calibrate(ages=x$CRA, errors=errors, method="standard", normalised=datenormalised, compact=FALSE,...)
+        tmp <- lapply(caleach$grids,`[`,2)
+        tmp <- lapply(1:length(tmp),FUN=function(i) tmp[[i]]*x$PrDens[i])
+        tmp <- do.call("cbind",tmp)
+        res <- data.frame(calBP=caleach$grids[[1]]$calBP, PrDens=apply(tmp,1,sum))
+    } else if (type=="fast"){
+        if (datenormalised){
+            warning('Cannot normalise dates using fast method, so leaving unnormalised.')
+        }
+        if (verbose){ print("Calibrating...") }
+        CRAdates <- data.frame(approx(calcurve[,1:2], xout=seq(max(calcurve[,1]),min(calcurve[,1]),-1)))
+        names(CRAdates) <- c("calBP","CRA")
+        CRAdates$CRA <- round(CRAdates$CRA,0)
+        res <- merge(CRAdates, x, by="CRA",all.x=TRUE, sort=FALSE)
+        res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
+        res$PrDens[is.na(res$PrDens)] <- 0
+    } else {
+        stop("Type must be 'full' or 'fast'.")
+    }
+    res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
+    if (spdnormalised){
+        res[res$PrDens < eps,"PrDens"] <- 0
+        res$PrDens <- res$PrDens/sum(res$PrDens)
+    } else {
+        res[res$PrDens < eps,"PrDens"] <- 0
+    }
+    if (compact){ res <- res[res$PrDens > 0,] }
+    class(res) <- c("CalGrid", class(res))   
+    if (verbose){ print("Done.") }
+    return(res)
+}
+
 uncalibrate <- function (x, ...) {
    UseMethod("uncalibrate", x)
 }
@@ -211,107 +256,7 @@ reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
     return(res)
 }
 
-gaussW <- function(x, bw){
-    exp(-(x^2)/(2*(bw^2)))
-}
-
-runMean <- function(x, n, edge="NA"){
-    res <- x
-    tmp <- filter(res,rep(1/n,n), sides=2)
-    if (edge == "fill"){
-        res[!is.na(tmp)] <- tmp[!is.na(tmp)]
-    } else {
-        res <- tmp
-    }
-    return(res)
-}
-
-quickMarks <- function(x, verbose=TRUE){
-
-    if (!"calDates" %in% class(x)){
-        stop("Input must be of class \"calDates\"")
-    }
-    df <- as.data.frame(matrix(ncol=8,nrow=length(x$grid)), stringsasFactors=TRUE)
-    names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
-    print("Extracting approximate values...")
-    if (length(x$grid)>1 & verbose){
-        flush.console()
-        pb <- txtProgressBar(min=1, max=length(x$grid), style=3)
-    }
-    for (a in 1:length(x$grid)){
-        if (length(x$grid)>1 & verbose){ setTxtProgressBar(pb, a) }
-        tmp <- x$grid[[a]]
-        tmp <- tmp[tmp$PrDens>0,]
-        tmp <- tmp[with(tmp, order(-PrDens)), ]
-        tmp$Cumul <- cumsum(tmp$PrDens)
-        tmp$Cumul <- tmp$Cumul/max(tmp$Cumul)
-        tmp1 <- tmp[tmp$Cumul <= 0.95,]
-        df[a,"q95s"] <- min(tmp1$calBP)
-        df[a,"q95e"] <- max(tmp1$calBP)
-        wdth <- max(tmp1$calBP)-min(tmp1$calBP)
-        df[a,"q68s"] <- min(tmp1$calBP) + (wdth*0.25)
-        df[a,"q68e"] <- max(tmp1$calBP) - (wdth*0.25)
-        df[a,"qMed"] <- round(mean(c(df[a,"q95s"],df[a,"q95e"])),0)
-        df[a,"DateID"] <- as.character(x$metadata$DateID[a])
-        df[a,"CRA"] <- x$metadata$CRA[a]
-        df[a,"Error"] <- x$metadata$Error[a]
-    }
-    if (length(x)>1 & verbose){ close(pb) }
-    class(df) <- append(class(df),"quickMarks")
-    return(df)
-}
-
-"[.calDates" <- function(x,i){
-
-    if (nrow(x$metadata)==0){
-        stop("No data to extract")
-    }
-    if(!missing(i)) {
-        if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
-            res <- list(metadata=x$metadata[i,], grids=x$grids[i])
-            class(res) <- append(class(res),"calDates")        
-        } else {
-         stop("i must be a numeric, character or logical vector of length(x)")
-        }
-        return(res)
-    }           
-}
-
-calibrate.UncalGrid <- function(x, calCurves='intcal13', timeRange=c(50000,0), compact=TRUE, eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE){
-
-    if (verbose){ print("Calibrating...") }
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
-    options(warn=-1)
-    calcurve <- readLines(calCurveFile, encoding="UTF-8")
-    calcurve <- calcurve[!grepl("[#]",calcurve)]
-    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-    options(warn=0)
-    colnames(calcurve) <- c("CALBP","C14BP","Error")
-    if (type=="fast"){
-        if (datenormalised){
-            warning('Cannot normalise dates using fast method, so leaving unnormalised.')
-        }
-        CRAdates <- data.frame(approx(calcurve[,1:2], xout=seq(max(calcurve[,1]),min(calcurve[,1]),-1)))
-        names(CRAdates) <- c("calBP","CRA")
-        CRAdates$CRA <- round(CRAdates$CRA,0)
-        res <- merge(CRAdates, x, by="CRA",all.x=TRUE, sort=FALSE)
-        res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
-        res$PrDens[is.na(res$PrDens)] <- 0
-    }
-    if (spdnormalised){
-        res[res$PrDens < eps,"PrDens"] <- 0
-        res$PrDens <- res$PrDens/sum(res$PrDens)
-    } else {
-        res[res$PrDens < eps,"PrDens"] <- 0
-    }
-    res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
-    if (compact){ res <- res[res$PrDens > 0,] }
-    class(res) <- c("CalGrid", class(res))   
-    if (verbose){ print("Done.") }
-    return(res)
-}
-
-uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact=TRUE, spdnormalised=FALSE, verbose=TRUE){
+uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, unifp="local", compact=TRUE, verbose=TRUE){
 
     if (verbose){ print("Uncalibrating...") }
     names(calgrid) <- c("calBP","PrDens")
@@ -324,7 +269,6 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact
     calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
     options(warn=0)
     colnames(calcurve) <- c("CALBP","C14BP","Error")
-    ## Back-calibrate each year to CRA, add errors and weight
     mycras <- uncalibrate(calgrid$calBP)
     res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=NA)
     tmp <- vector(mode="list",length=nrow(mycras))
@@ -340,19 +284,21 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact
     }
     if (verbose){ close(pb) }
     unscGauss <- do.call("cbind",tmp)
-    base <- do.call("cbind",basetmp)
-    res$Base <- rowSums(base)
+    if (unifp=="local"){
+        base <- do.call("cbind",basetmp)
+        res$Base <- rowSums(base)
+    } else if (unifp="global"){
+        data(uncalunif)
+        res$Base <- uncalunif[uncalunif$CRA %in% res$CRA,"PrDens"]
+    } else {
+        stop("Options for unifp are 'local' or 'global'.")
+    }
     res$Base <- res$Base/sum(res$Base)
     res$Raw <- rowSums(unscGauss)
     res$Raw <- res$Raw/sum(res$Raw)
     res$PrDens <- 0
     res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
     res$PrDens[res$Raw < eps] <- 0
-    if (spdnormalised){
-        res$PrDens <- res$PrDens/sum(res$PrDens)
-    } else {
-        res$PrDens <- (res$PrDens/sum(res$PrDens)) * odm
-    }
     if (compact){ res <- res[res$PrDens > 0,] }
     class(res) <- c("UncalGrid", class(res)) 
     if (verbose){ print("Done.") }
@@ -383,4 +329,20 @@ as.CalGrid <- function(x) {
     }
     class(df) <- c("CalGrid", class(df)) 
     return(df)
+}
+
+"[.calDates" <- function(x,i){
+
+    if (nrow(x$metadata)==0){
+        stop("No data to extract")
+    }
+    if(!missing(i)) {
+        if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
+            res <- list(metadata=x$metadata[i,], grids=x$grids[i])
+            class(res) <- append(class(res),"calDates")        
+        } else {
+         stop("i must be a numeric, character or logical vector of length(x)")
+        }
+        return(res)
+    }           
 }

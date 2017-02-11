@@ -335,7 +335,7 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
     }
 }
 
-plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
+plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
     yearsBP <- x$calBP
     prob <- x$PrDens
@@ -369,9 +369,10 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, ylim=NA
         xticks <- seq(xticks[1]-100, xticks[2], 100)
     }
     if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
+    if (is.na(xlim[1])){ xlim <- xrng }
     par(mar=mar) #c(bottom, left, top, right)
     par(cex.lab=cex.lab)
-    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xrng, ylim=ylim, xaxt='n', yaxt='n', cex.axis=cex.axis,...)
+    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n', cex.axis=cex.axis,...)
     axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=cex.axis)
     axis(4, cex.axis=cex.axis)
     polygon(xvals,yvals, col=fill.p, border=border.p)

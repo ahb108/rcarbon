@@ -42,7 +42,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
         res <- list(result=NA, sim=NA, pval=NA, osbSPD=observed, fit=predgrid, coefficients=coeffs)
         return(res)
     }
-    cragrid <- pdUncal(predgrid, verbose=FALSE)
+    cragrid <- uncalibrate(as.CalGrid(predgrid), verbose=FALSE)
     obscras <- x$metadata$CRA
     cragrid$PrDens[cragrid$CRA > max(obscras) | cragrid$CRA < min(obscras)] <- 0
     for (s in 1:nsim){
