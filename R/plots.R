@@ -96,14 +96,14 @@ plot.rspdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.o
         stop("Unknown calendar type")
     }    
     envelope <- modeltest$result[,3:4]
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs$SPD)) }
-    booms <- which(obs$SPD>envelope[,2])
-    busts <- which(obs$SPD<envelope[,1])
+    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs$PrDens)) }
+    booms <- which(obs$PrDens>envelope[,2])
+    busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes){
-        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, ...)
+        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, ...)
     } else {
-        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     box()
     boomPlot <- baseline
@@ -185,16 +185,16 @@ plot.rspdMarkTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA,
         stop("Unknown calendar type")
     }
     envelope <- data$envelope[[focalm]]
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$SPD)) }
-    booms <- which(obs$SPD>envelope[,2])
-    busts <- which(obs$SPD<envelope[,1])
+    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)) }
+    booms <- which(obs$PrDens>envelope[,2])
+    busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes){
-        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
         axis(side=1,padj=-1)
         axis(side=2,padj=1)
     } else {
-        plot(obs$Years,obs$SPD, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     box()
     boomPlot <- baseline
@@ -308,7 +308,7 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
     if (!type %in% types){
         stop("The plot type you have chosen is not currently an option.")
     }
-    spdvals <- spd$grid$SPD
+    spdvals <- spd$grid$PrDens
     if (!is.na(runm)){ spdvals <- runMean(spdvals, runm, edge="fill") }
     if (spdnormalised){ spdvals <- spdvals/sum(spdvals) }
     if (rescale){ spdvals <- reScale(spdvals) }
@@ -428,16 +428,16 @@ plot.rspdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA,
         stop("Unknown calendar type")
     }
     envelope <- data$envelope[[focalm]]
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$SPD)) }
-    booms <- which(obs$SPD>envelope[,2])
-    busts <- which(obs$SPD<envelope[,1])
+    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)) }
+    booms <- which(obs$PrDens>envelope[,2])
+    busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes){
-        plot(obs$Years, obs$SPD, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
         axis(side=1,padj=-1)
         axis(side=2,padj=1)
     } else {
-        plot(obs$Years,obs$SPD, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     box()
     boomPlot <- baseline
