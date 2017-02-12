@@ -115,9 +115,8 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
             }
         }
         spd.tmp <- Reduce("+", tmp)
-        return(spd.tmp)
         if (length(binNames)>1){
-            spd.tmp <- spd.tmp/sum(spd.tmp)
+            spd.tmp <- spd.tmp / length(index)
         }
         binnedMatrix[,b] <- spd.tmp[,1]
         regionList[b] <- marks[index][1]
