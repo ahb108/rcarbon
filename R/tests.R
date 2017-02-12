@@ -92,6 +92,7 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
     }
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
+    propdf <- data.frame(calBP=calyears, Denom=NA, ObsProp=NA, EnvHi=NA, EnvLo=NA)
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     regionList <- numeric()
     if (verbose & length(binNames)>1){
@@ -132,10 +133,18 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
         if (!is.na(runm)){
             tmpSPD <- runMean(tmpSPD, runm, edge="fill")
         }
+        if (d==1){
+            focd <- dall <- tmpSPD
+        } else {
+            dall <- dall+tmpSPD
+        }
         tmpSPD <- tmpSPD / sum(tmpSPD)
         observedSPD[[d]] <- data.frame(calBP=calyears, PrDens=tmpSPD)
     }
-    ## Simulate focal dataset but draw bins from all regions
+    propdf$ObsProp <- focd / dall
+    propdf$Denom <- dall
+    simprop <- matrix(nrow=nrow(calyears), ncol=nsim)
+    ## Simulate via permuting the labels
     simulatedSPD <- vector("list",length=length(unique(regionList)))
     for (d in 1:length(unique(regionList))){
         simulatedSPD[[d]] <- matrix(NA, nrow=nrow(calyears), ncol=nsim)
@@ -154,13 +163,22 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
             tmpSPD <- apply(binnedMatrix[,index],1,sum)
             if (!is.na(runm)){
                 tmpSPD <- runMean(tmpSPD, runm, edge="fill")
-            }           
+            }
+            if (d==1){
+                focd <- dall <- tmpSPD
+            } else {
+                dall <- dall+tmpSPD
+            }
             tmpSPD <- tmpSPD/sum(tmpSPD)
             simulatedSPD[[d]][,s] <- tmpSPD
         }
+        simprop[,s] <- focd / dall
     }
     names(simulatedSPD) <- unique(regionList)
     if (verbose){ close(pb) }
+    tmp <- apply(simprop,1,FUN=function(x) quantile(x,c(0.025,0.975), na.rm=TRUE))
+    propdf$EnvLo <- tmp[1,]
+    propdf$EnvHi <- tmp[2,]
     simulatedCIlist <- vector("list",length=length(unique(regionList)))
     for (d in 1:length(unique(regionList))){
         simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975)))
@@ -189,12 +207,10 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
         }
         names(pValueList) <- unique(regionList)
     }        
-    if(raw==FALSE){
-        res <- list(observed=observedSPD,envelope=simulatedCIlist,pValueList=pValueList)
-    } else {  
-        res <- list(observed=observedSPD,envelope=simulatedCIlist,raw=simulatedSPD,pValueList=pValueList)
-    }
+    res <- list(observed=observedSPD, envelope=simulatedCIlist, proportions=propdf, pValueList=pValueList)
+    if (raw){ res$raw <- simulatedSPD }
     class(res) <- "rspdPermTest"
     if (verbose){ print("Done.") }
     return(res)
 }
+
