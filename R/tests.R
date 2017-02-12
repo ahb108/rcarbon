@@ -75,7 +75,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     expectedstatistic <- abs(apply(Zsim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=zLo)) + apply(Zsim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=zHi)
     pvalue <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
     # Results
-    result <- data.frame(calBP=observed$grid$calBP,SPD=finalSPD,lo=lo,hi=hi)
+    result <- data.frame(calBP=observed$grid$calBP,PrDens=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){ sim <- NA }
     res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, coefficients=coeffs)
     class(res) <- "rspdModelTest"
@@ -134,7 +134,7 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
             tmpSPD <- runMean(tmpSPD, runm, edge="fill")
         }
         tmpSPD <- tmpSPD / sum(tmpSPD)
-        observedSPD[[d]] <- data.frame(calBP=calyears, SPD=tmpSPD)
+        observedSPD[[d]] <- data.frame(calBP=calyears, PrDens=tmpSPD)
     }
     ## Simulate focal dataset but draw bins from all regions
     simulatedSPD <- vector("list",length=length(unique(regionList)))
