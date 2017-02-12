@@ -1,75 +1,3 @@
-pdCal <- function(uncalgrid, calCurves='intcal13', timeRange=c(50000,0), compact=TRUE, eps=1e-5, spdnormalised=FALSE, verbose=TRUE){
-
-    if (verbose){ print("Calibrating...") }
-    names(uncalgrid) <- c("CRA","PrDens")
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
-    options(warn=-1)
-    calcurve <- readLines(calCurveFile, encoding="UTF-8")
-    calcurve <- calcurve[!grepl("[#]",calcurve)]
-    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-    options(warn=0)
-    colnames(calcurve) <- c("CALBP","C14BP","Error")
-    CRAdates <- data.frame(approx(calcurve[,1:2], xout=seq(max(calcurve[,1]),min(calcurve[,1]),-1)))
-    names(CRAdates) <- c("calBP","CRA")
-    CRAdates$CRA <- round(CRAdates$CRA,0)
-    res <- merge(CRAdates, uncalgrid, by="CRA",all.x=TRUE, sort=FALSE)
-    res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
-    res$PrDens[is.na(res$PrDens)] <- 0
-    if (spdnormalised){
-        res[res$PrDens < eps,"PrDens"] <- 0
-        res$PrDens <- res$PrDens/sum(res$PrDens)
-    } else {
-        res[res$PrDens < eps,"PrDens"] <- 0
-    }
-    res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
-    if (compact){ res <- res[res$PrDens > 0,] }
-    class(res) <- append(class(res),"CalGrid")
-    if (verbose){ print("Done.") }
-    return(res)
-}
-
-pdUncal <- function(calgrid, calCurves='intcal13', eps=1e-5, compact=TRUE, spdnormalised=FALSE, verbose=TRUE){
-
-    if (verbose){ print("Uncalibrating...") }
-    names(calgrid) <- c("calBP","PrDens")
-    odm <- sum(calgrid$PrDens)
-    calgrid$PrDens <- calgrid$PrDens/sum(calgrid$PrDens)
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
-    options(warn=-1)
-    calcurve <- readLines(calCurveFile, encoding="UTF-8")
-    calcurve <- calcurve[!grepl("[#]",calcurve)]
-    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-    options(warn=0)
-    colnames(calcurve) <- c("CALBP","C14BP","Error")
-    ## Back-calibrate each year to CRA, add errors and weight
-    mycras <- uncalibrate(calgrid$calBP)
-    res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=NA)
-    tmp <- vector(mode="list",length=nrow(mycras))
-    basetmp <- vector(mode="list",length=nrow(mycras))
-    for (a in 1:length(tmp)){
-        basetmp[[a]] <- dnorm(res$CRA, mean=mycras$ccCRA[a], sd=mycras$ccError[a])
-        tmp[[a]] <- basetmp[[a]] * calgrid$PrDens[a]
-    }
-    unscGauss <- do.call("cbind",tmp)
-    base <- do.call("cbind",basetmp)
-    res$Base <- rowSums(base)
-    res$Base <- res$Base/sum(res$Base)
-    res$Raw <- rowSums(unscGauss)
-    res$Raw <- res$Raw/sum(res$Raw)
-    res$PrDens <- 0
-    res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
-    res$PrDens[res$Raw < eps] <- 0
-    if (spdnormalised){
-        res$PrDens <- res$PrDens/sum(res$PrDens)
-    } else {
-        res$PrDens <- (res$PrDens/sum(res$PrDens)) * odm
-    }
-    if (compact){ res <- res[res$PrDens > 0,] }
-    class(res) <- append(class(res),"UncalGrid")
-    if (verbose){ print("Done.") }
-    return(res)
-}
-
 #' Prepare a set of bins for controlling the aggregation of radiocarbon dates
 #' known to be from the same phase of same archaeological site (for use with rspd)
 #'
@@ -168,7 +96,7 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     }
     res <- data.frame(calBP=calyears$calBP, PrDens=finalSPD)
     if (spdnormalised){
-        res$SPD <- res$PrDens/sum(res$PrDens, na.rm=TRUE)
+        res$PrDens <- res$PrDens/sum(res$PrDens, na.rm=TRUE)
     }
     res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
     class(res) <- append(class(res),"CalGrid")
