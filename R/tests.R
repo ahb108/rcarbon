@@ -7,7 +7,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
         samplesize <- length(unique(bins))
     }
     observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=TRUE, verbose=FALSE)
-    finalSPD <- observed$grid$SPD
+    finalSPD <- observed$grid$PrDens
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
     if (verbose & !fitonly){
