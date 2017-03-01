@@ -90,10 +90,9 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
     } else {
         binNames <- unique(bins)
     }
-    binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     propdf <- data.frame(calBP=calyears, Denom=NA, ObsProp=NA, EnvHi=NA, EnvLo=NA)
-    binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
+    binnedMatrix <- matrix(nrow=nrow(calyears), ncol=length(binNames))
     regionList <- numeric()
     if (verbose & length(binNames)>1){
         print("Binning by site/phase...")
