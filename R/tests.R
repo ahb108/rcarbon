@@ -193,7 +193,7 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=NA, bins=NA, runm=NA, da
                 focd <- tmpSPD
             }
             if (d==1){
-                focd <- dall <- tmpSPD
+                dall <- tmpSPD
             } else {
                 dall <- dall+tmpSPD
             }
