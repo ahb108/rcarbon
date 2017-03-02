@@ -62,9 +62,9 @@ rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     if (verbose & length(binNames)>1){
-        print("Binning by site/phase...")
+        print("Binning...")
         flush.console()
-        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
+        pb <- txtProgressBar(min=1, max=length(binNames), style=3)
     }
     for (b in 1:length(binNames)){
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
@@ -183,9 +183,9 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE,
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     if (verbose & length(binNames)>1){
-        print("Binning by site/phase...")
+        print("Binning...")
         flush.console()
-        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
+        pb <- txtProgressBar(min=1, max=length(binNames), style=3)
     }
     caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
     caldateyears <- seq(caldateTR[1],caldateTR[2],-1)
