@@ -82,9 +82,9 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     return(res)
 }
 
-permTest <- function(x, marks,  timeRange, nsim, propfc=NA, bins=NA, runm=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
+permTest <- function(x, marks,  timeRange, nsim, propfc=marks[1], bins=NA, runm=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
 
-    if (is.na(propfc)){ prfc <- 1 } else { prfc <- propfc }
+    ## if (is.na(propfc)){ prfc <- 1 } else { prfc <- propfc }
     if (is.na(bins[1])){
         binNames <- bins <- "bin1"
     } else {
@@ -93,7 +93,7 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=NA, bins=NA, runm=NA, da
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     propdf <- data.frame(calBP=calyears, Denom=NA, ObsProp=NA, EnvHi=NA, EnvLo=NA)
     binnedMatrix <- matrix(nrow=nrow(calyears), ncol=length(binNames))
-    GroupList <- numeric()
+    GroupList <- vector()
     if (verbose & length(binNames)>1){
         print("Summing observed groups...")
         flush.console()
@@ -155,7 +155,7 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=NA, bins=NA, runm=NA, da
         if (!is.na(runm)){
             tmpSPD <- runMean(tmpSPD, runm, edge="fill")
         }
-        if (focus==prfc){
+        if (focus==propfc){
             focd <- tmpSPD
         }
         if (d==1){
@@ -189,7 +189,7 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=NA, bins=NA, runm=NA, da
             if (!is.na(runm)){
                 tmpSPD <- runMean(tmpSPD, runm, edge="fill")
             }
-            if (focus==prfc){
+            if (focus==propfc){
                 focd <- tmpSPD
             }
             if (d==1){
