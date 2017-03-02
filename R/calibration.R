@@ -2,7 +2,7 @@ calibrate <- function (x, ...) {
    UseMethod("calibrate")
 }
 
-calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, compact=TRUE, dfs=100, oxpath=NULL, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, calMatrix=FALSE, dfs=100, oxpath=NULL, eps=1e-5, ncores=1, verbose=TRUE){
 
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
@@ -12,6 +12,11 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     }
     reslist <- vector(mode="list", length=2)
     sublist <- vector(mode="list", length=length(ages))
+    if (calMatrix){
+        calmBP <- seq(timeRange[1],timeRange[2],-1)
+        calmat <- matrix(ncol=length(grids), nrow=length(calmBP))
+        rownames(calmat) <- calmBP
+    }
     if (is.na(ids[1])){
         ids <- as.character(1:length(ages))
     } else {
@@ -58,14 +63,18 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             dens[dens < eps] <- 0
             if (normalised){ dens <- dens/sum(dens) }
             res <- data.frame(calBP=calBP,PrDens=dens)
-            
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-            if (compact){ res <- res[res$PrDens > 0,] }
+            if (!calMatrix){ res <- res[res$PrDens > 0,] }
             class(res) <- append(class(res),"calGrid")
             return(res)
         }
         stopCluster(cl)
         names(sublist) <- ids
+        if (calMatrix){
+            calmat <- sapply(grids, FUN=function(x) x$PrDens)
+            rownames(calmat) <- calmBP
+            sublist <- lapply(sublist, FUN=function(x) x[x$PrDens > 0, ])
+        }
     } else {
         for (b in 1:length(ages)){
             if (length(ages)>1 & verbose){ setTxtProgressBar(pb, b) }
@@ -120,22 +129,10 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
                 dens[index] <- prob
                 dens[dens < eps] <- 0
                 res <- data.frame(calBP=calBP,PrDens=dens)
-            } else if (method=="CalPallike"){
-                CRAdates <- data.frame(approx(calcurve, xout=calBP))
-                names(CRAdates) <- c("calBP","CRA")
-                CRAdates$CRA <- round(CRAdates$CRA,0)
-                CRApdf <-  data.frame(CRA=max(CRAdates$CRA):min(CRAdates$CRA))
-                CRApdf$PrDens <- dnorm(CRApdf$CRA, mean=age, sd=error)
-                CRApdf$PrDens[CRApdf$PrDens < eps] <- 0
-                res <- merge(CRAdates,CRApdf,by="CRA",all.x=TRUE, sort=FALSE)
-                res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
-                if (normalised){
-                    dens <- res$PrDens / sum(res$PrDens)
-                    dens[dens < eps] <- 0
-                    res$PrDens <- dens/sum(dens)                }
             }
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-            if (compact){ res <- res[res$PrDens > 0,] }
+            if (calMatrix){ calmat[,b] <- res$PrDens }
+            res <- res[res$PrDens > 0,]
             class(res) <- append(class(res),"calGrid")
             sublist[[ids[b]]] <- res
         }
@@ -144,6 +141,10 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], CalMethod=method, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df
     reslist[["grids"]] <- sublist
+    if (calMatrix){
+        class(calmat) <- c("CalMatrix", class(calmat))
+        reslist[["calmatrix"]] <- calmat
+    }
     class(reslist) <- append(class(reslist),"calDates")
     if (verbose){ print("Done.") }
     return(reslist)
