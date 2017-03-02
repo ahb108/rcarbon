@@ -77,7 +77,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     result <- data.frame(calBP=observed$grid$calBP,PrDens=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){ sim <- NA }
     res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, coefficients=coeffs)
-    class(res) <- "spdModelTest"
+    class(res) <- "SpdModelTest"
     if (verbose){ print("Done.") }
     return(res)
 }
@@ -237,7 +237,7 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=NA, bins=NA, runm=NA, da
     }        
     res <- list(observed=observedSPD, envelope=simulatedCIlist, proportions=propdf, pValueList=pValueList)
     if (raw){ res$raw <- simulatedSPD }
-    class(res) <- "spdPermTest"
+    class(res) <- "SpdPermTest"
     if (verbose){ print("Done.") }
     return(res)
 }

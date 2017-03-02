@@ -145,7 +145,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         class(calmat) <- c("CalMatrix", class(calmat))
         reslist[["calmatrix"]] <- calmat
     }
-    class(reslist) <- append(class(reslist),"calDates")
+    class(reslist) <- append(class(reslist),"CalDates")
     if (verbose){ print("Done.") }
     return(reslist)
 }
