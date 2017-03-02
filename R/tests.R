@@ -83,57 +83,84 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     return(res)
 }
 
-permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
+permTest <- function(x, marks,  timeRange, nsim, propfc=NA, bins=NA, runm=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
 
+    if (is.na(propfc)){ prfc <- 1 } else { prfc <- propfc }
     if (is.na(bins[1])){
-        binNames <- bins <- "1"
+        binNames <- bins <- "bin1"
     } else {
         binNames <- unique(bins)
     }
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     propdf <- data.frame(calBP=calyears, Denom=NA, ObsProp=NA, EnvHi=NA, EnvLo=NA)
     binnedMatrix <- matrix(nrow=nrow(calyears), ncol=length(binNames))
-    regionList <- numeric()
+    GroupList <- numeric()
     if (verbose & length(binNames)>1){
-        print("Binning by site/phase...")
+        print("Summing observed groups...")
         flush.console()
-        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
+        pb <- txtProgressBar(min=1, max=length(binNames), style=3)
     }
+    caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
+    caldateyears <- seq(caldateTR[1],caldateTR[2],-1)
+    check <- caldateTR[1] >= timeRange[1] & caldateTR[2] <= timeRange[2]
+    ## Observed SPDs
     for (b in 1:length(binNames)){
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
-        slist <- x$grids[index]
-        slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
-        slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
-        slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
-        tmp <- lapply(slist,`[`,"PrDens")
-        if (datenormalised){   
-            outofTR <- lapply(tmp,sum)==0 # date out of range
-            tmpc <- tmp[!outofTR]
-            if (length(tmpc)>0){
-                tmp <- lapply(tmpc,FUN=function(x) x/sum(x))
+        if (length(x$calmatrix)>1){
+            if (!check){
+                stop("The time range of the calibrated dataset must be at least as large as the spd time range.")
+            } else {
+                tmp <- x$calmatrix[,index, drop=FALSE]
+                if (datenormalised){
+                    tmp <- apply(tmp,2,FUN=function(x) x/sum(x))
+                }
+                spdtmp <- rowSums(tmp)
+                if (length(binNames)>1){
+                    spdtmp <- spdtmp / length(index)
+                }
+                binnedMatrix[,b] <- spdtmp[caldateyears<=timeRange[1] & caldateyears>=timeRange[2]]
             }
+        } else {
+            slist <- x$grids[index]
+            slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
+            slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
+            slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
+            tmp <- lapply(slist,`[`,2)
+            if (datenormalised){   
+                outofTR <- lapply(tmp,sum)==0 # date out of range
+                tmpc <- tmp[!outofTR]
+                if (length(tmpc)>0){
+                    tmp <- lapply(tmpc,FUN=function(x) x/sum(x))
+                }
+            }
+            if (length(binNames)>1){
+                spdtmp <- Reduce("+", tmp) / length(index)
+            } else {
+                spdtmp <- Reduce("+", tmp)
+            }
+            if (length(binNames)>1){
+                spdtmp <- spdtmp / length(index)
+            }
+            binnedMatrix[,b] <- spdtmp[,1]
         }
-        spd.tmp <- Reduce("+", tmp)
-        if (length(binNames)>1){
-            spd.tmp <- spd.tmp / length(index)
-        }
-        binnedMatrix[,b] <- spd.tmp[,1]
-        regionList[b] <- marks[index][1]
+        GroupList[b] <- marks[index][1]
     }
     if (verbose & length(binNames)>1){ close(pb) }
-    ## Combine observed bins for focal region
-    observedSPD <- vector("list",length=length(unique(regionList)))
-    names(observedSPD) <- unique(regionList)
-    for (d in 1:length(unique(regionList))){
-        focus <- unique(regionList)[d]
-        index <- which(regionList==focus)
+    observedSPD <- vector("list",length=length(unique(GroupList)))
+    names(observedSPD) <- unique(GroupList)
+    for (d in 1:length(unique(GroupList))){
+        focus <- unique(GroupList)[d]
+        index <- which(GroupList==focus)
         tmpSPD <- apply(binnedMatrix[,index], 1, sum)
         if (!is.na(runm)){
             tmpSPD <- runMean(tmpSPD, runm, edge="fill")
         }
+        if (focus==prfc){
+            focd <- tmpSPD
+        }
         if (d==1){
-            focd <- dall <- tmpSPD
+            dall <- tmpSPD
         } else {
             dall <- dall+tmpSPD
         }
@@ -143,25 +170,28 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
     propdf$ObsProp <- focd / dall
     propdf$Denom <- dall
     simprop <- matrix(nrow=nrow(calyears), ncol=nsim)
-    ## Simulate via permuting the labels
-    simulatedSPD <- vector("list",length=length(unique(regionList)))
-    for (d in 1:length(unique(regionList))){
+    ## Permutations
+    simulatedSPD <- vector("list",length=length(unique(GroupList)))
+    for (d in 1:length(unique(GroupList))){
         simulatedSPD[[d]] <- matrix(NA, nrow=nrow(calyears), ncol=nsim)
     }
     if (verbose){
-        print("Permutation test...")
+        print("Permuting the groups...")
         flush.console()
         pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
     for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }
-        simRegionList <- sample(regionList)
-        for (d in 1:length(unique(simRegionList))){
-            focus <- unique(regionList)[d]
-            index <- which(simRegionList==focus)
+        simGroupList <- sample(GroupList)
+        for (d in 1:length(unique(simGroupList))){
+            focus <- unique(GroupList)[d]
+            index <- which(simGroupList==focus)
             tmpSPD <- apply(binnedMatrix[,index],1,sum)
             if (!is.na(runm)){
                 tmpSPD <- runMean(tmpSPD, runm, edge="fill")
+            }
+            if (focus==prfc){
+                focd <- tmpSPD
             }
             if (d==1){
                 focd <- dall <- tmpSPD
@@ -173,18 +203,18 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
         }
         simprop[,s] <- focd / dall
     }
-    names(simulatedSPD) <- unique(regionList)
+    names(simulatedSPD) <- unique(GroupList)
     if (verbose){ close(pb) }
     tmp <- apply(simprop,1,FUN=function(x) quantile(x,c(0.025,0.975), na.rm=TRUE))
+    ## Statistics
     propdf$EnvLo <- tmp[1,]
     propdf$EnvHi <- tmp[2,]
-    simulatedCIlist <- vector("list",length=length(unique(regionList)))
-    for (d in 1:length(unique(regionList))){
+    simulatedCIlist <- vector("list",length=length(unique(GroupList)))
+    for (d in 1:length(unique(GroupList))){
         simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975)))
-        names(simulatedCIlist) <- unique(regionList)
+        names(simulatedCIlist) <- unique(GroupList)
     }
     pValueList <- numeric(length=length(simulatedSPD))
-    ## Further statistics
     for (a in 1:length(simulatedSPD)){
         zscoreMean <- apply(simulatedSPD[[a]],1,mean)
         zscoreSD <- apply(simulatedSPD[[a]],1,sd)
@@ -204,7 +234,7 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
         if (observedStatistic>0){    
             pValueList[[a]] <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic]))/c(length(expectedstatistic)+1)
         }
-        names(pValueList) <- unique(regionList)
+        names(pValueList) <- unique(GroupList)
     }        
     res <- list(observed=observedSPD, envelope=simulatedCIlist, proportions=propdf, pValueList=pValueList)
     if (raw){ res$raw <- simulatedSPD }
@@ -212,4 +242,5 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
     if (verbose){ print("Done.") }
     return(res)
 }
+
 
