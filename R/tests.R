@@ -6,7 +6,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     } else {
         samplesize <- length(unique(bins))
     }
-    observed <- rspd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=TRUE, verbose=FALSE)
+    observed <- spd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=TRUE, verbose=FALSE)
     finalSPD <- observed$grid$PrDens
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
@@ -78,7 +78,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     result <- data.frame(calBP=observed$grid$calBP,PrDens=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){ sim <- NA }
     res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, coefficients=coeffs)
-    class(res) <- "rspdModelTest"
+    class(res) <- "spdModelTest"
     if (verbose){ print("Done.") }
     return(res)
 }
@@ -208,7 +208,7 @@ permTest <- function(x, marks,  nsim, bins=NA, runm=NA, timeRange=NA, datenormal
     }        
     res <- list(observed=observedSPD, envelope=simulatedCIlist, proportions=propdf, pValueList=pValueList)
     if (raw){ res$raw <- simulatedSPD }
-    class(res) <- "rspdPermTest"
+    class(res) <- "spdPermTest"
     if (verbose){ print("Done.") }
     return(res)
 }

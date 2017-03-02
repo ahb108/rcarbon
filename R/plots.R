@@ -81,7 +81,7 @@ plot.calDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     }
 }
 
-plot.rspdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", drawaxes=TRUE, ...){
+plot.spdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", drawaxes=TRUE, ...){
 
     obs <- modeltest$result[,1:2]
     if (calendar=="BP"){
@@ -323,7 +323,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
     polygon(xvals,yvals, col=fill.p, border=border.p)
 }
 
-plot.rspdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", drawaxes=TRUE, ...){
+plot.spdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", drawaxes=TRUE, ...){
 
     obs <- data$observed[[focalm]]
     if (calendar=="BP"){
