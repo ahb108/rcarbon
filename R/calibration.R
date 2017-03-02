@@ -14,7 +14,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     sublist <- vector(mode="list", length=length(ages))
     if (calMatrix){
         calmBP <- seq(timeRange[1],timeRange[2],-1)
-        calmat <- matrix(ncol=length(grids), nrow=length(calmBP))
+        calmat <- matrix(ncol=length(ages), nrow=length(calmBP))
         rownames(calmat) <- calmBP
     }
     if (is.na(ids[1])){
