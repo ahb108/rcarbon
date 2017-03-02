@@ -30,83 +30,9 @@ binPrep <- function(sites, ages, h){
 
 rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
 
-    if (verbose){ print("Extracting...") }
-    defcall <- as.list(args(rspd))
-    defcall <- defcall[-length(defcall)]
-    speccall <- as.list(match.call())
-    speccall <- speccall[-1]
-    i <- match(names(defcall), names(speccall))
-    i <- is.na(i)
-    if (any(i)){
-        speccall[names(defcall)[which(i)]] <- defcall[which(i)]
-    }
-    speccall <- as.data.frame(lapply(speccall,deparse), stringsAsFactors=FALSE)
-    speccall <- speccall[,names(defcall)]
-    speccall$ndates <- length(x$grids)
-    speccall$nbins <- length(x$grids)
-    if (!"calDates" %in% class(x)){
-        stop("x must be an object of class 'calDates'.")
-    }
-    if (length(bins)>1){
-        speccall$nbins <- length(unique(bins))
-        if (any(is.na(bins))){
-            stop("Cannot have NA values in bins.")
-        }
-        if (length(bins)!=length(x$grids)){
-            stop("bins (if provided) must be the same length as x.")
-        }
-    } else {
-        bins <- rep("0_0",length(x$grids))
-    }
-    binNames <- unique(bins)
-    calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
-    binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
-    if (verbose & length(binNames)>1){
-        print("Binning...")
-        flush.console()
-        pb <- txtProgressBar(min=1, max=length(binNames), style=3)
-    }
-    for (b in 1:length(binNames)){
-        if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
-        index <- which(bins==binNames[b])
-        slist <- x$grids[index]
-        slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
-        slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
-        slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
-        tmp <- lapply(slist,`[`,2)
-        if (datenormalised){   
-            outofTR <- lapply(tmp,sum)==0 # date out of range
-            tmpc <- tmp[!outofTR]
-            if (length(tmpc)>0){
-                tmp <- lapply(tmpc,FUN=function(x) x/sum(x))
-            }
-        }
-        if (length(binNames)>1){
-            spd.tmp <- Reduce("+", tmp) / length(index)
-        } else {
-            spd.tmp <- Reduce("+", tmp)
-        }
-        binnedMatrix[,b] <- spd.tmp[,1]
-    }
-    if (verbose & length(binNames)>1){ close(pb) }
-    if (verbose){ print("Aggregating...") }
-    finalSPD <- apply(binnedMatrix,1,sum)
-    if (!is.na(runm)){
-        finalSPD <- runMean(finalSPD, runm, edge="fill")
-    }
-    res <- data.frame(calBP=calyears$calBP, PrDens=finalSPD)
-    if (spdnormalised){
-        res$PrDens <- res$PrDens/sum(res$PrDens, na.rm=TRUE)
-    }
-    res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
-    class(res) <- append(class(res),"CalGrid")
-    reslist <- vector("list",length=2)
-    names(reslist) <- c("metadata","grid")
-    reslist[["metadata"]] <- speccall
-    reslist[["grid"]] <- res
-    class(reslist) <- append(class(reslist),"CalSPD")
-    if (verbose){ print("Done.") }
-    return(reslist)
+    warning("Deprecated and soon to be removed. Using spd() instead.")
+    return(spd(x=x, timeRange=timeRange, bins=bins, datenormalised=datenormalised, spdnormalised=spdnormalised, runm=runm, verbose=verbose))
+
 }
 
 overlapW <- function(calDates, bins, verbose=TRUE){
@@ -152,7 +78,7 @@ overlapW <- function(calDates, bins, verbose=TRUE){
 spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
     
     if (verbose){ print("Extracting...") }
-    defcall <- as.list(args(rspd))
+    defcall <- as.list(args(spd))
     defcall <- defcall[-length(defcall)]
     speccall <- as.list(match.call())
     speccall <- speccall[-1]
@@ -165,8 +91,8 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE,
     speccall <- speccall[,names(defcall)]
     speccall$ndates <- length(x$grids)
     speccall$nbins <- length(x$grids)
-    if (!"calDates" %in% class(x)){
-        stop("x must be an object of class 'calDates'.")
+    if (!"CalDates" %in% class(x)){
+        stop("x must be an object of class 'CalDates'.")
     }
     if (length(bins)>1){
         speccall$nbins <- length(unique(bins))
