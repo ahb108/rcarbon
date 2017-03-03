@@ -39,8 +39,8 @@ runMean <- function(x, n, edge="NA"){
 
 quickMarks <- function(x, verbose=TRUE){
 
-    if (!"calDates" %in% class(x)){
-        stop("Input must be of class \"calDates\"")
+    if (!"CalDates" %in% class(x)){
+        stop("Input must be of class \"CalDates\"")
     }
     df <- as.data.frame(matrix(ncol=8,nrow=length(x$grid)), stringsasFactors=TRUE)
     names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
