@@ -107,13 +107,6 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
-    if (verbose & length(binNames)>1){
-        flush.console()
-        pb <- txtProgressBar(min=1, max=length(binNames), style=3)
-    }
-    caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
-    caldateyears <- seq(caldateTR[1],caldateTR[2],-1)
-    check <- caldateTR[1] >= timeRange[1] & caldateTR[2] <= timeRange[2]
     if (verbose){
         if (length(x$calmatrix)>1){
             print("Aggregating...")
@@ -121,6 +114,13 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
             print("Extracting and aggregating...")
         }
     }
+    if (verbose & length(binNames)>1){
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(binNames), style=3)
+    }
+    caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
+    caldateyears <- seq(caldateTR[1],caldateTR[2],-1)
+    check <- caldateTR[1] >= timeRange[1] & caldateTR[2] <= timeRange[2]
     for (b in 1:length(binNames)){
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
