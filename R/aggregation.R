@@ -75,9 +75,8 @@ overlapW <- function(calDates, bins, verbose=TRUE){
     return(df)
 }
 
-spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
+spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE){
     
-    if (verbose){ print("Extracting...") }
     defcall <- as.list(args(spd))
     defcall <- defcall[-length(defcall)]
     speccall <- as.list(match.call())
@@ -109,7 +108,6 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE,
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     if (verbose & length(binNames)>1){
-        print("Binning...")
         flush.console()
         pb <- txtProgressBar(min=1, max=length(binNames), style=3)
     }
@@ -120,6 +118,7 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE,
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
         if (length(x$calmatrix)>1){
+            if (verbose){ print("Aggregating...") }
             if (!check){
                 stop("The time range of the calibrated dataset must be at least as large as the spd time range.")
             } else {
@@ -134,6 +133,7 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE,
                 binnedMatrix[,b] <- spdtmp[caldateyears<=timeRange[1] & caldateyears>=timeRange[2]]
             }
         } else {
+            if (verbose){ print("Extracting and aggregating...") }
             slist <- x$grids[index]
             slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
             slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
@@ -155,7 +155,6 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE,
         }
     }
     if (verbose & length(binNames)>1){ close(pb) }
-    if (verbose){ print("Aggregating...") }
     finalSPD <- apply(binnedMatrix,1,sum)
     if (!is.na(runm)){
         finalSPD <- runMean(finalSPD, runm, edge="fill")
