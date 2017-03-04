@@ -72,3 +72,42 @@ quickMarks <- function(x, verbose=TRUE){
     return(df)
 }
 
+smoothGauss <- function(x, alpha, window=0.1){
+  
+    ## adapted from
+    ##https://github.com/cran/smoother/blob/master/R/smth-gaussian.R
+    ##http://uk.mathworks.com/help/signal/ref/gausswin.html?s_tid=gn_loc_drop
+    ## alpha is the proportional to the standard deviation of the Gaussian smoothing kernel. Specifically: σ=(N – 1)/(2α) where σ is the Gaussian sd, N the length of the series and α the function argument
+    ## window must be a fraction
+
+    ## Convolution
+    windowLength <- as.integer(max(abs(window*length(x)),1))
+    hw <- abs(windowLength / 2.0)
+    w <- sapply(c(0:(windowLength-1)), function(x){
+        n <- x - as.integer(hw)
+        k <- -0.5 * (abs(alpha) * n / hw) ^2
+        exp(1)^k
+    })
+    sizeW <- length(w)
+    sizeD <- length(x)
+    w <- w/sum(w)
+    hkwL <- as.integer(sizeW/2) 
+    hkwR <- sizeW - hkwL
+  
+    ## Smoothing
+    smthfun <- function(i){
+        ix.d <- c((i-hkwL):(i+hkwR-1))
+        ix.w <- which(ix.d %in% 1:sizeD)
+        ix.d <- ix.d[ix.w]
+        if (length(ix.w) != sizeW){
+            W.nm <- w[ix.w] / sum(w[ix.w])
+        } else {
+            W.nm <- w
+        }  
+        D.nm <- x[ix.d]
+        as.numeric(D.nm %*% W.nm)
+    }
+    res <- sapply(c(1:sizeD), FUN=smthfun)
+    res[c(1:hkwL,(sizeD - hkwR + 1):sizeD)] <- NA # remove tails
+    return(res)
+}
