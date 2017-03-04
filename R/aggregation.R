@@ -114,11 +114,17 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
     caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
     caldateyears <- seq(caldateTR[1],caldateTR[2],-1)
     check <- caldateTR[1] >= timeRange[1] & caldateTR[2] <= timeRange[2]
+    if (verbose){
+        if (length(x$calmatrix)>1){
+            print("Aggregating...")
+        } else {
+            print("Extracting and aggregating...")
+        }
+    }
     for (b in 1:length(binNames)){
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
         if (length(x$calmatrix)>1){
-            if (verbose){ print("Aggregating...") }
             if (!check){
                 stop("The time range of the calibrated dataset must be at least as large as the spd time range.")
             } else {
@@ -133,7 +139,6 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
                 binnedMatrix[,b] <- spdtmp[caldateyears<=timeRange[1] & caldateyears>=timeRange[2]]
             }
         } else {
-            if (verbose){ print("Extracting and aggregating...") }
             slist <- x$grids[index]
             slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
             slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
