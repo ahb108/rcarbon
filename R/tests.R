@@ -84,12 +84,8 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 
 permTest <- function(x, marks,  timeRange, nsim, propfc=marks[1], bins=NA, runm=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
 
-    ## if (is.na(propfc)){ prfc <- 1 } else { prfc <- propfc }
-    if (is.na(bins[1])){
-        binNames <- bins <- "bin1"
-    } else {
-        binNames <- unique(bins)
-    }
+    if (is.na(bins[1])){ bins <- as.character(1:length(x$grids)) }
+    binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     propdf <- data.frame(calBP=calyears, Denom=NA, ObsProp=NA, EnvHi=NA, EnvLo=NA)
     binnedMatrix <- matrix(nrow=nrow(calyears), ncol=length(binNames))
@@ -241,5 +237,4 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=marks[1], bins=NA, runm=
     if (verbose){ print("Done.") }
     return(res)
 }
-
 
