@@ -291,16 +291,20 @@ as.CalGrid <- function(x) {
 }
 
 "[.calDates" <- function(x,i){
-
+    
     if (nrow(x$metadata)==0){
         stop("No data to extract")
     }
     if(!missing(i)) {
         if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
-            res <- list(metadata=x$metadata[i,], grids=x$grids[i])
-            class(res) <- append(class(res),"calDates")        
+            if (length(x$calmat>0)){
+                res <- list(metadata=x$metadata[i,], grids=x$grids[i], calmat=x$calmat[i])
+            } else {
+                res <- list(metadata=x$metadata[i,], grids=x$grids[i])
+            }
+            class(res) <- c("CalDates", class(res))        
         } else {
-         stop("i must be a numeric, character or logical vector of length(x)")
+            stop("i must be a numeric, character or logical vector of length(x)")
         }
         return(res)
     }           
