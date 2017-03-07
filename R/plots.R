@@ -323,7 +323,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
     polygon(xvals,yvals, col=fill.p, border=border.p)
 }
 
-plot.SpdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", drawaxes=TRUE, ...){
+plot.SpdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
     obs <- data$observed[[focalm]]
     if (calendar=="BP"){
@@ -342,14 +342,13 @@ plot.SpdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(0,nrow(obs))
-    if (drawaxes){
+    if (drawaxes & bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
         axis(side=1,padj=-1)
         axis(side=2,padj=1)
-    } else {
+    } else if (bbty != "n"){
         plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
-    box()
     boomPlot <- baseline
     if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
     bustPlot <- baseline
@@ -397,19 +396,68 @@ plot.SpdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
                 state <- "off"
             }
         }    
-    } 
+    }
     if (length(booms)>0){
         for (x in 1:length(boomBlocks)){
-            polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+            if (bbty=="f"){
+                polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+            } else if (bbty %in% c("s","b","n")){
+            } else {
+                stop("Incorrect bbty argument.")
+            }
         }
     }
     if (length(busts)>0){
         for (x in 1:length(bustBlocks)){
-            polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+            if (bbty=="f"){
+                polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+            } else if (bbty %in% c("s","b","n")){
+            } else {
+                stop("Incorrect bbty argument.")
+            }
         }
     }  
-    polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=rgb(0,0,0,0.2), border=NA)
-    if (drawaxes){
+    if (bbty != "n"){
+        polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=rgb(0,0,0,0.2), border=NA)
+        box()
+    }
+    if (drawaxes & bbty != "n"){
         axis(side=1, at=seq(max(obs[,"Years"]), min(obs[,"Years"]),-100), labels=NA, tck=-0.01)
+    }
+    bbp <- list(booms=boomBlocks, busts=bustBlocks)
+    class(bbp) <- c("BBPolygons",class(bbp))
+    if (bbty %in% c("n","b")){ return(bbp) }
+}
+
+bbpolygons <- function(x, baseline, width, border=NULL, bg=NA, col.boom=rgb(0.7,0,0,0.2), col.bust=rgb(0,0,0.7,0.2), border.boom=NA, border.bust=NA){
+    if (!grepl("BBPolygons",class(x)[1])){
+        stop("Input must be of class BBPolygons.")
+    } else {
+        boomBlocks <- x$booms
+        bustBlocks <- x$busts
+        plotrng <- par("usr") #c(x1, x2, y1, y2)
+        if (baseline=="top"){
+            baseline <- plotrng[4]-(width/2)
+        } else if (baseline=="bottom"){
+            baseline <- plotrng[3]+(width/2)
+        }
+        plotymin <- baseline-(width/2)
+        plotymax <- baseline+(width/2)
+        if (!is.na(bg)){
+            polygon(c(plotrng[1], plotrng[1], plotrng[2], plotrng[2], plotrng[1]),c(plotymin, plotymax, plotymax, plotymin, plotymin), col=bg)
+        }
+        if (length(boomBlocks)>0){
+            for (x in 1:length(boomBlocks)){
+                polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(baseline+(width/2),length(boomBlocks[[x]][[1]])),rep(baseline-(width/2),length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
+            }
+        }
+        if (length(bustBlocks)>0){
+            for (x in 1:length(bustBlocks)){
+                polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(baseline+(width/2),length(bustBlocks[[x]][[1]])),rep(baseline-(width/2),length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
+            }
+        }
+        if(!(is.null(border))){
+            polygon(c(plotrng[1], plotrng[1], plotrng[2], plotrng[2], plotrng[1]),c(plotymin, plotymax, plotymax, plotymin, plotymin), border=border)
+        }
     }
 }
