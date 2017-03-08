@@ -144,7 +144,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     if (calMatrix){
         reslist[["calmatrix"]] <- calmat
     }
-    class(reslist) <- append(class(reslist),"CalDates")
+    class(reslist) <- c("CalDates",class(reslist))
     if (verbose){ print("Done.") }
     return(reslist)
 }
@@ -296,7 +296,7 @@ as.CalGrid <- function(x) {
     }
     if(!missing(i)) {
         if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
-            if (length(x$calmat>0)){
+            if (length(x$calmatrix>0)){
                 res <- list(metadata=x$metadata[i,], grids=x$grids[i], calmatrix=x$calmatrix[,i])
             } else {
                 res <- list(metadata=x$metadata[i,], grids=x$grids[i])
