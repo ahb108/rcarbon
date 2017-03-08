@@ -289,7 +289,7 @@ as.CalGrid <- function(x) {
     return(df)
 }
 
-"[.calDates" <- function(x,i){
+"[.CalDates" <- function(x,i){
     
     if (nrow(x$metadata)==0){
         stop("No data to extract")
