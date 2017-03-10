@@ -169,12 +169,12 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
         res$PrDens <- res$PrDens/sum(res$PrDens, na.rm=TRUE)
     }
     res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
-    class(res) <- append(class(res),"CalGrid")
+    class(res) <- c("CalGrid", class(res))
     reslist <- vector("list",length=2)
     names(reslist) <- c("metadata","grid")
     reslist[["metadata"]] <- speccall
     reslist[["grid"]] <- res
-    class(reslist) <- append(class(reslist),"CalSPD")
+    class(reslist) <- c("CalSPD",class(reslist))
     if (verbose){ print("Done.") }
     return(reslist)
 }
