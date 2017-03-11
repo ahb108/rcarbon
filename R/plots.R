@@ -87,7 +87,7 @@ plot.SpdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.ob
     if (calendar=="BP"){
         obs$Years <- obs$calBP
         xlabel <- "Years cal BP"
-        if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
+        if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)*1.1) }
     } else if (calendar=="BCAD"){
         obs$Years <- 1950-obs$calBP
         xlabel <- "Years BC/AD"
@@ -338,7 +338,7 @@ plot.SpdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
         stop("Unknown calendar type")
     }
     envelope <- data$envelope[[focalm]]
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)) }
+    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(0,nrow(obs))
@@ -429,7 +429,7 @@ plot.SpdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
     if (bbty %in% c("n","b")){ return(bbp) }
 }
 
-bbpolygons <- function(x, baseline, propheight=1, calendar="BP", border=NA, bg=NA, col.boom=rgb(0.7,0,0,0.2), col.bust=rgb(0,0,0.7,0.2), border.boom=NA, border.bust=NA){
+bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA, col.boom=rgb(0.7,0,0,0.2), col.bust=rgb(0,0,0.7,0.2), border.boom=NA, border.bust=NA){
 
     if (!calendar %in% c("BP","BCAD")){ stop("Unknown calendar type") }
     if (!grepl("BBPolygons",class(x)[1])){
@@ -438,32 +438,34 @@ bbpolygons <- function(x, baseline, propheight=1, calendar="BP", border=NA, bg=N
         boomBlocks <- x$booms
         bustBlocks <- x$busts
         plotrng <- par("usr") #c(x1, x2, y1, y2)
-        width <- (plotrng[4]-plotrng[3]) * propheight
+        width <- (plotrng[4]-plotrng[3]) * height
         if (baseline=="top"){
-            baseline <- plotrng[4]-width
+            realbase <- plotrng[4]-width
         } else if (baseline=="bottom"){
-            baseline <- plotrng[3]+width
+            realbase <- plotrng[3]+width
+        } else {
+            realbase <- plotrng[3] + ((plotrng[4]-plotrng[3]) * baseline)
         }
-        plotymin <- baseline-width
-        plotymax <- baseline+width
+        plotymin <- realbase-width
+        plotymax <- realbase+width
         if (!is.na(bg)){
             polygon(c(plotrng[1], plotrng[1], plotrng[2], plotrng[2], plotrng[1]),c(plotymin, plotymax, plotymax, plotymin, plotymin), col=bg, border=border)
         }
         if (length(boomBlocks)>0){
             for (x in 1:length(boomBlocks)){
                 if (calendar=="BP"){
-                    polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(baseline+width,length(boomBlocks[[x]][[1]])),rep(baseline-width,length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
+                    polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(realbase+width,length(boomBlocks[[x]][[1]])),rep(realbase-width,length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
                 } else {
-                    polygon(c((1950-boomBlocks[[x]][[2]]),rev((1950-boomBlocks[[x]][[2]]))),c(rep(baseline+width,length(boomBlocks[[x]][[1]])),rep(baseline-width,length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
+                    polygon(c((1950-boomBlocks[[x]][[2]]),rev((1950-boomBlocks[[x]][[2]]))),c(rep(realbase+width,length(boomBlocks[[x]][[1]])),rep(realbase-width,length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
                 }
             }
         }
         if (length(bustBlocks)>0){
             for (x in 1:length(bustBlocks)){
                 if (calendar=="BP"){
-                    polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(baseline+width,length(bustBlocks[[x]][[1]])),rep(baseline-width,length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
+                    polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(realbase+width,length(bustBlocks[[x]][[1]])),rep(realbase-width,length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
                 } else {
-                    polygon(c((1950-bustBlocks[[x]][[2]]),rev((1950-bustBlocks[[x]][[2]]))),c(rep(baseline+width,length(bustBlocks[[x]][[1]])),rep(baseline-width,length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
+                    polygon(c((1950-bustBlocks[[x]][[2]]),rev((1950-bustBlocks[[x]][[2]]))),c(rep(realbase+width,length(bustBlocks[[x]][[1]])),rep(realbase-width,length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
                 }
             }
         }
