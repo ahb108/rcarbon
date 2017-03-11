@@ -81,13 +81,13 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     }
 }
 
-plot.SpdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", drawaxes=TRUE, ...){
+plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
-    obs <- modeltest$result[,1:2]
+    obs <- test$result[,1:2]
     if (calendar=="BP"){
         obs$Years <- obs$calBP
         xlabel <- "Years cal BP"
-        if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)*1.1) }
+        if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
     } else if (calendar=="BCAD"){
         obs$Years <- 1950-obs$calBP
         xlabel <- "Years BC/AD"
@@ -95,14 +95,14 @@ plot.SpdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.ob
     } else {
         stop("Unknown calendar type")
     }    
-    envelope <- modeltest$result[,3:4]
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs$PrDens)) }
+    envelope <- test$result[,3:4]
+    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(0,nrow(obs))
-    if (drawaxes){
+    if (drawaxes & bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, ...)
-    } else {
+    } else if (bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     box()
@@ -156,18 +156,31 @@ plot.SpdModelTest <- function(modeltest, calendar="BP", ylim=NA, xlim=NA, col.ob
     }
     if (length(booms)>0){
         for (x in 1:length(boomBlocks)){
-            polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+            if (bbty=="f"){
+                polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+            } else if (bbty %in% c("s","b","n")){
+            } else {
+                stop("Incorrect bbty argument.")
+            }
         }
     }  
     if (length(busts)>0){
         for (x in 1:length(bustBlocks)){
-            polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+            if (bbty=="f"){
+                polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+            } else if (bbty %in% c("s","b","n")){
+            } else {
+                stop("Incorrect bbty argument.")
+            }
         }
     }  
     polygon(x=c(obs[,"Years"],rev(obs[,"Years"])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
-    if (drawaxes){
+    if (drawaxes & bbty != "n"){
         axis(side=1,at=seq(max(obs[,"Years"]),min(obs[,"Years"]),-100),labels=NA,tck = -.01)
     }
+    bbp <- list(booms=boomBlocks, busts=bustBlocks)
+    class(bbp) <- c("BBPolygons",class(bbp))
+    if (bbty %in% c("n","b")){ return(bbp) }
 }
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){
@@ -323,9 +336,9 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
     polygon(xvals,yvals, col=fill.p, border=border.p)
 }
 
-plot.SpdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
+plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
-    obs <- data$observed[[focalm]]
+    obs <- test$observed[[focalm]]
     if (calendar=="BP"){
         obs$Years <- obs$calBP
         xlabel <- "Years cal BP"
@@ -337,7 +350,7 @@ plot.SpdPermTest <- function(data, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
     } else {
         stop("Unknown calendar type")
     }
-    envelope <- data$envelope[[focalm]]
+    envelope <- test$envelope[[focalm]]
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
