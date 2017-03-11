@@ -1,4 +1,4 @@
-plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard"){
+plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab="auto", ylab="auto", axis4=TRUE){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
@@ -20,11 +20,11 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     if (calendar=="BP"){
         plotyears <- yearsBP
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])*-1
-        xlabel <- "Years cal BP"
+        if (xlab=="auto"){ xlabel <- "Years cal BP" } else { xlabel <- xlab } 
     } else if (calendar=="BCAD"){
         plotyears <- 1950-yearsBP
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
-        xlabel <- "Years BC/AD"
+        if (xlab=="auto"){ xlabel <- "Years BC/AD" } else { xlabel <- xlab }       
     } else {
         stop("Unknown calendar type")
     }
@@ -33,11 +33,11 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     xticks <- 100*(xrng%/%100 + as.logical(xrng%%100))
     xticks <- seq(xticks[1]-100, xticks[2], 100)
     yrng <- c(min(yvals[yvals>0]),max(yvals[yvals>0])+(max(yvals[yvals>0])*2))
-    par(mar = c(4,4,1,3)) #c(bottom, left, top, right)
+    ## par(mar=c(4,4,1,3)) #c(bottom, left, top, right)
     par(cex.lab=0.75)
     plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xrng, xaxt='n', yaxt='n', cex.axis=0.75)
-    axis(1, at=xticks, labels=abs(xticks),las=2, cex.axis=0.75)
-    axis(4, cex.axis=0.75)
+    axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
+    if (axis4){ axis(4, cex.axis=0.75) }
     polygon(xvals,yvals, col="grey50", border="grey50")
     if (type=="standard" | type=="auc"){
         if (type=="auc"){
@@ -54,7 +54,11 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         plot(cradf1$RX,cradf1$CRA,type="l", axes=FALSE, xlab=NA, ylab=NA, xlim=xlim, ylim=ylim, col=rgb(144,238,144,120,maxColorValue=255))
         polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
         axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
-        mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)   
+        if (ylab=="auto"){
+            mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)
+        } else {
+            mtext(side=2, line=3, xlab, cex=0.75)
+        }
         calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calcurve,".14c", sep="")
         options(warn=-1)
         cc <- readLines(calCurveFile, encoding="UTF-8")
