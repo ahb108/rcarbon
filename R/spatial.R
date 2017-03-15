@@ -80,7 +80,7 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #### Initial warning messages ####
 ##################################
 
-     if (!"calDates" %in% class(calDates)){
+     if (!"CalDates" %in% class(calDates)){
         stop("calDates must be an object of class 'calDates'.")
     }
     if (length(bins)>1){
