@@ -22,8 +22,19 @@ defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
 
 
 
-##Compute Great Arc Distances Matrix ##
-greatArcDist<-function(Latitude,Longitude,verbose=TRUE)
+#' Compute Great Arc Distances Matrix 
+#'
+#' This function computes and returns a Great Arc distance matrix from Latitude and Longitude data.
+#'
+#' @param Latitude A vector of Latitudes in decimal degrees
+#' @param Longitude A vector of Longitudes in decimal degrees
+#' @param progress If set to TRUE shows the progress bar is shown (default is FALSE)
+
+#' @details Distances are calculated following the standard trigonometry formula
+#'
+#' @return An object of class matrix with distances in km
+
+greatArcDist<-function(Latitude,Longitude,progress=FALSE)
     {
 
 	if (length(Latitude)!=length(Longitude))
