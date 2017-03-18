@@ -17,9 +17,10 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         yearsBP <- rev(yearsBP)
         prob <- rev(prob)
     }
+    yvals <- c(0,prob,0,0)
     if (calendar=="BP"){
         plotyears <- yearsBP
-        xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])*-1
+        xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
         if (xlab=="auto"){ xlabel <- "Years cal BP" } else { xlabel <- xlab } 
     } else if (calendar=="BCAD"){
         plotyears <- 1950-yearsBP
@@ -28,15 +29,19 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     } else {
         stop("Unknown calendar type")
     }
-    yvals <- c(0,prob,0,0)
     xrng <- c(min(xvals[yvals>0.000001])-50,max(xvals[yvals>0.000001])+50)
+    if (calendar=="BP"){ xlim <- rev(xrng) } else { xlim <- xrng }
     xticks <- 100*(xrng%/%100 + as.logical(xrng%%100))
-    xticks <- seq(xticks[1]-100, xticks[2], 100)
+    if (calendar=="BP"){
+        xticks <- seq(xticks[1], xticks[2]-100, 100)
+    } else {
+        xticks <- seq(xticks[1]-100, xticks[2], 100)
+    }
     yrng <- c(min(yvals[yvals>0]),max(yvals[yvals>0])+(max(yvals[yvals>0])*2))
-    ## par(mar=c(4,4,1,3)) #c(bottom, left, top, right)
     par(cex.lab=0.75)
-    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xrng, xaxt='n', yaxt='n', cex.axis=0.75)
-    axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
+    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75)
+    axis(1, at=xticks, labels=xticks, las=2, cex.axis=0.75)
+    ## axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
     if (axis4){ axis(4, cex.axis=0.75) }
     polygon(xvals,yvals, col="grey50", border="grey50")
     if (type=="standard" | type=="auc"){
@@ -46,7 +51,6 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         par(new=TRUE)
         cradf1 <- data.frame(CRA=50000:0,Prob=dnorm(50000:0, mean=cra, sd=error))
         cradf1 <- cradf1[cradf1$Prob>0.0001,]
-        xlim <- xrng
         ylim <- c(cra-(12*error),cra+(8*error))    
         cradf1$RX <- reScale(cradf1$Prob, type="custom", crng=c(xlim[1],(xlim[1]+diff(xlim)*0.33)))
         yticks <- ylim[1]:ylim[2]
@@ -70,8 +74,8 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
             tmp <- (xrng-1950)*-1
             cc$RX <- 1950-cc$BP
         } else {
-            tmp <- xrng*-1
-            cc$RX <- cc$BP*-1
+            tmp <- xrng
+            cc$RX <- cc$BP
         }
         cc <- cc[cc$BP >= min(tmp) & cc$BP < max(tmp),] 
         cc$Hi <- cc$CRA + 10
