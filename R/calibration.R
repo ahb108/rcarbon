@@ -114,7 +114,6 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
            	    mydate <- oxcalSingleDate(ages=age,error=error,OxCalExecute=oxpath, calCurve=calCurves[b])
 		    dens <- approx(mydate$years, mydate$dens, xout=calBP, rule=2)
                     res <- data.frame(calBP=calBP,PrDens=dens$y)
-                }
             } else if (method=="Bchron"){
                 tmp <- BchronCalibrate(ages=age,ageSds=error,calCurves=calCurves[b], eps=eps, dfs=dfs)
                 calBPtmp <- rev(as.numeric(tmp[[1]][4][[1]]))
