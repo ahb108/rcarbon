@@ -110,14 +110,9 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
                 res <- data.frame(calBP=calBP,PrDens=dens)
             } else if (method=="OxCal"){
                 if (is.null(oxpath)){ stop("You need to provide an oxpath argument.")
-                } else {
-                    if (b==1){
-                        tmptxt <- capture.output(setOxcalExecutablePath(oxpath))
-                    }
-                    mydate <- oxcalCalibrate(age, error, ids[b])
-                    years <- 1950-mydate[[1]]$raw_probabilities$dates
-                    dens <- mydate[[1]]$raw_probabilities$probabilities
-                    dens <- approx(years, dens, xout=calBP, rule=2)
+                }
+           	    mydate <- oxcalSingleDate(ages=age,error=error,OxCalExecute=oxpath, calCurve=calCurves[b])
+		    dens <- approx(mydate$years, mydate$dens, xout=calBP, rule=2)
                     res <- data.frame(calBP=calBP,PrDens=dens$y)
                 }
             } else if (method=="Bchron"){
@@ -308,3 +303,46 @@ as.CalGrid <- function(x) {
         return(res)
     }           
 }
+
+oxcalSingleDate<-function(id="tmp01",ages,error,OxCalExecute,calCurve)
+    {
+        fn <- tempfile()
+        fnRecieve <- paste(fn, ".js", sep = "")
+        fn <- paste(fn, ".oxcal", sep = "")
+	
+        cat("Options(){};\n",file=fn,append=FALSE) #Start Sequence#
+        cat("Plot(){\n",file=fn,append=TRUE) #Start Sequence#
+        if (calCurve=="marine13")
+            {
+                cat('Curve("Marine13.14c");',file=fn,append=TRUE)
+                cat(paste('Delta_R(',DeltaR,',',DeltaRsd,');\n',sep=""),file=fn,append=TRUE)
+            }
+        if (calCurve=="shcal13")
+            {
+                cat('Curve("ShCal13");',file=fn,append=TRUE)
+            }
+
+        if (calCurve=="intcal13")
+            {
+                cat('Curve("IntCal13");',file=fn,append=TRUE)
+            }
+        cat(paste('R_Date(','\"',id,'\",',ages,',',error,');\n',sep=""),file=fn,append=TRUE)
+        cat('};\n',file=fn,append=TRUE)
+        excecuter=paste(OxCalExecute,fn)
+        system(excecuter)        
+	result <- scan(fnRecieve, character(0), sep = "\n",quiet=T)
+
+
+  probs <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.prob=\\[)(.*)(\\];)")[, 3], ", "))))
+  pstart <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.start=)(.*)(;)")[, 3], ", "))))
+  resolution <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.resolution=)(.*)(;)")[, 3], ", "))))
+  normaliser <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.probNorm=)(.*)(;)")[, 3], ", "))))
+
+  if(is.na(normaliser)) {normaliser <- 1}
+
+  years <- seq(pstart, by = resolution, length.out = length(probs))
+  res <- data.frame(years= 1950-years, dens = probs * normaliser)
+	return(res)
+    }
+
+
