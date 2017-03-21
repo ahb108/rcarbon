@@ -10,6 +10,9 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     if (!is.na(ids[1]) & (length(ages) != length(ids))){
         stop("Ages and errors (and ids/details/offsets if provided) must be the same length.")
     }
+   if (any(is.na(ages))|any(is.na(errors))){
+        stop("Ages or errors contain NAs")
+    }
     reslist <- vector(mode="list", length=2)
     sublist <- vector(mode="list", length=length(ages))
     if (calMatrix){
@@ -82,7 +85,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-            methods <- c("standard","tDist","Bchron","OxCal","CalPallike")
+            methods <- c("standard","tDist","OxCal")
             if (!method %in% methods){
                 stop("The method you have chosen is not currently an option.")
             }
@@ -114,17 +117,8 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
            	    mydate <- oxcalSingleDate(ages=age,error=error,OxCalExecute=oxpath, calCurve=calCurves[b])
 		    dens <- approx(mydate$years, mydate$dens, xout=calBP, rule=2)
                     res <- data.frame(calBP=calBP,PrDens=dens$y)
-            } else if (method=="Bchron"){
-                tmp <- BchronCalibrate(ages=age,ageSds=error,calCurves=calCurves[b], eps=eps, dfs=dfs)
-                calBPtmp <- rev(as.numeric(tmp[[1]][4][[1]]))
-                prob <- rev(as.numeric(tmp[[1]][[5]]))
-                dens <- rep(0,length=length(calBP))
-                index <- which(calBP %in% calBPtmp)
-                dens[index] <- prob
-                dens[dens < eps] <- 0
-                res <- data.frame(calBP=calBP,PrDens=dens)
             }
-            res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+	    res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             if (calMatrix){ calmat[,b] <- res$PrDens }
             res <- res[res$PrDens > 0,]
             class(res) <- append(class(res),"calGrid")
@@ -282,6 +276,46 @@ as.CalGrid <- function(x) {
     class(df) <- c("CalGrid", class(df)) 
     return(df)
 }
+
+as.CalDates <- function(x){
+    cl <- class(x)
+    if (cl!="BchronCalibratedDates"){
+	    stop("x must be of class BchronCalibratedDates")
+    }
+    methods <- "Bchron"
+    reslist <- vector(mode="list", length=2)
+    sublist <- vector(mode="list", length=length(x))
+    ids <- as.character(1:length(x))
+    names(sublist) <- ids
+    names(reslist) <- c("metadata","grids")
+    ages <- unlist(lapply(x,function(x){return(x[[1]])}))
+    errors <-  unlist(lapply(x,function(x){return(x[[2]])}))
+    calCurves <- as.character(unlist(lapply(x,function(x){return(x[[3]])})))
+
+    for (i in 1:length(x))
+    {
+	tmp <- x[[i]]
+	res <- data.frame(calBP=rev(tmp$ageGrid),PrDens=rev(tmp$densities))
+        class(res) <- append(class(res),"calGrid")        
+	calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves[i],".14c", sep="")
+        options(warn=-1)
+        cctmp <- readLines(calCurveFile, encoding="UTF-8")
+        cctmp <- cctmp[!grepl("[#]",cctmp)]
+        cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1]
+        options(warn=0)
+        calBP <- seq(max(cctmp),min(cctmp),-1)
+	rownames(res) <- match(res[,1],calBP)
+	sublist[[ids[i]]] <- res
+    }	    
+	 
+    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=NA, CalCurve=calCurves,ResOffsets=NA, ResErrors=NA, StartBP=NA, EndBP=NA, CalMethod="Bchron", Normalised=TRUE, CalEPS=NA, stringsAsFactors=FALSE)
+    reslist[["metadata"]] <- df
+    reslist[["grids"]] <- sublist
+    class(reslist) <- c("CalDates",class(reslist))
+    return(reslist)
+}
+
+
 
 "[.CalDates" <- function(x,i){
     
