@@ -1,5 +1,44 @@
 
 
+as.CalDates <- function(x){
+    cl <- class(x)
+    if (cl!="BchronCalibratedDates"){
+	    stop("x must be of class BchronCalibratedDates")
+    }
+    methods <- "Bchron"
+    reslist <- vector(mode="list", length=2)
+    sublist <- vector(mode="list", length=length(x))
+    ids <- as.character(1:length(x))
+    names(sublist) <- ids
+    names(reslist) <- c("metadata","grids")
+    ages <- unlist(lapply(x,function(x){return(x[[1]])}))
+    errors <-  unlist(lapply(x,function(x){return(x[[2]])}))
+    calCurves <- as.character(unlist(lapply(x,function(x){return(x[[3]])})))
+
+    for (i in 1:length(x))
+    {
+	tmp <- x[[i]]
+	res <- data.frame(calBP=rev(tmp$ageGrid),PrDens=rev(tmp$densities))
+        class(res) <- append(class(res),"calGrid")        
+	calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves[i],".14c", sep="")
+        options(warn=-1)
+        cctmp <- readLines(calCurveFile, encoding="UTF-8")
+        cctmp <- cctmp[!grepl("[#]",cctmp)]
+        cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1]
+        options(warn=0)
+        calBP <- seq(max(cctmp),min(cctmp),-1)
+	rownames(res) <- match(res[,1],calBP)
+	sublist[[ids[i]]] <- res
+    }	    
+	 
+    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=NA, CalCurve=calCurves,ResOffsets=NA, ResErrors=NA, StartBP=NA, EndBP=NA, CalMethod="Bchron", Normalised=TRUE, CalEPS=NA, stringsAsFactors=FALSE)
+    reslist[["metadata"]] <- df
+    reslist[["grids"]] <- sublist
+    class(reslist) <- c("CalDates",class(reslist))
+    return(reslist)
+}
+
+
 
 
 
