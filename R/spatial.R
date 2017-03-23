@@ -393,11 +393,16 @@ print(x$metadata)
 ##Plot function for spatial SPD#
 
 
-plot.spSPD<-function(x,index,basemap=TRUE,baseSize=0.5)
+plot.spSPD<-function(x,index=NULL,basemap=TRUE,baseSize=0.5)
 {
-	if (class(x)!="spatialTest")
+	if (!any(class(x)%in%c("spatialTest")))
 	{
         stop("x is not a spatialTest class object")
+	}
+
+        if (is.null(index))
+	{
+        stop("index value missing")
 	}
 
         require(sp)	
