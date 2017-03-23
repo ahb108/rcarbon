@@ -18,7 +18,7 @@ defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
                 {w[x,]=as.numeric(distmat[x,]<=h)}
         }
     res=list(w=w,h=h,kernel=kernel)
-    class(res) <- append(class(reslist),"spatialweights")
+    class(res) <- append(class(res),"spatialweights")
     return(res)   
 }
 
