@@ -117,6 +117,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
            	    mydate <- oxcalSingleDate(ages=age,error=error,OxCalExecute=oxpath, calCurve=calCurves[b])
 		    dens <- approx(mydate$years, mydate$dens, xout=calBP, rule=2)
                     res <- data.frame(calBP=calBP,PrDens=dens$y)
+		    normalised <- TRUE
             }
 	    res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             if (calMatrix){ calmat[,b] <- res$PrDens }
