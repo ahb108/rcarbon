@@ -1,7 +1,7 @@
 ## Compute weights from distance matrix
 defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
 {
-    weights=matrix(NA,nrow=nrow(distmat),ncol=ncol(distmat))
+    w=matrix(NA,nrow=nrow(distmat),ncol=ncol(distmat))
     kernels <- c("gaussian","fixed")
     if (!kernel %in% kernels){
                 stop("The kernel you have chosen is not currently an option.")
@@ -13,11 +13,13 @@ defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
     for (x in 1:nrow(distmat))
         {
             if (kernel=="gaussian")
-                {weights[x,]=exp(-distmat[x,]^2/h^2)}
+                {w[x,]=exp(-distmat[x,]^2/h^2)}
             if (kernel=="fixed")
-                {weights[x,]=as.numeric(distmat[x,]<=h)}
+                {w[x,]=as.numeric(distmat[x,]<=h)}
         }
-    return(weights)   
+    res=list(w=w,h=h,kernel=kernel)
+    class(res) <- append(class(reslist),"spatialweights")
+    return(res)   
 }
 
 
@@ -66,7 +68,7 @@ greatArcDist<-function(Latitude,Longitude,verbose=FALSE)
 
 ##Core spatialSPD function##
 
-spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA, verbose=TRUE,permute="locations",ncores=1,datenormalised=FALSE)
+spSPDpermtest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA, verbose=TRUE,permute="locations",ncores=1,datenormalised=FALSE)
 {
 
 ###################################
@@ -180,7 +182,7 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
 ## Apply SpatialWeights ##
 
-    obsGridVal=t(spatialweights)%*%obsMatrix
+    obsGridVal=t(spatialweights$w)%*%obsMatrix
 
 ## Compute Rate of Change #3
 
@@ -209,7 +211,7 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 		}
 	  resultHiLoEq<-foreach (x=1:nsim,.combine= sumcombine) %dopar% {
 
-            simGridVal<-matrix(NA,nrow=nrow(spatialweights),ncol=nBreaks)
+            simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
             
 	    ## Aggregate by Site ## 
 
@@ -243,12 +245,12 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
            ## Apply Weights ##
 
-           simGridVal=t(spatialweights)%*%aggMatrix
+           simGridVal=t(spatialweights$w)%*%aggMatrix
 	    }
 	    if (permute=="locations")
 	    {
 	     simMatrix=obsMatrix[sample(nrow(obsMatrix)),]	
-             simGridVal=t(spatialweights)%*%simMatrix
+             simGridVal=t(spatialweights$w)%*%simMatrix
 		
 	    }
 
@@ -279,9 +281,9 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
     
 	} else {
 
-    hi=matrix(0,nrow=nrow(spatialweights),ncol=nBreaks-1)
-    lo=matrix(0,nrow=nrow(spatialweights),ncol=nBreaks-1)
-    eq=matrix(0,nrow=nrow(spatialweights),ncol=nBreaks-1)
+    hi=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
+    lo=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
+    eq=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
 
     print("Permutation test...")
     flush.console()
@@ -291,7 +293,7 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
         for (s in 1:nsim)
         {
             setTxtProgressBar(pb, s)
-	    simGridVal<-matrix(NA,nrow=nrow(spatialweights),ncol=nBreaks)
+	    simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
             ## Aggregate by Site ## 
             simResMatrix=matrix(0,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
 
@@ -324,12 +326,12 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 		       
 
            ##Apply Weights 
-           simGridVal=t(spatialweights)%*%aggMatrix
+           simGridVal=t(spatialweights$w)%*%aggMatrix
 	    }
            if (permute=="locations")
            {
 	     simMatrix=obsMatrix[sample(nrow(obsMatrix)),]	
-             simGridVal=t(spatialweights)%*%simMatrix
+             simGridVal=t(spatialweights$w)%*%simMatrix
 	   }
 
 
@@ -374,12 +376,18 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
     qvalLo=apply(pvalLo,2,function(x){return(fdrtool(x,statistic="pvalue",plot=FALSE,verbose=FALSE)$qval)})
     qval=apply(pval,2,function(x){return(fdrtool(x,statistic="pvalue",plot=FALSE,verbose=FALSE)$qval)})
 
-    metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""))
+    metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""),weights.h=spatialweights$h,weights.kernel=spatialweights$kernel)
    
-    reslist=list(rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,metadata=metadata,locations=locations)
+    reslist=list(metadata=metadata,rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,locations=locations)
     
-    class(reslist) <- append(class(reslist),"spSPD")
+    class(reslist) <- append(class(reslist),"spatialTest")
     return(reslist)
+}
+
+
+print.spSPD<-function(x)
+{
+print(x$metadata)
 }
 
 ##Plot function for spatial SPD#
@@ -387,6 +395,11 @@ spatialSPD<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
 plot.spSPD<-function(x,index,basemap=TRUE,baseSize=0.5)
 {
+	if (class(x)!="spatialTest")
+	{
+        stop("x is not a spatialTest class object")
+	}
+
         require(sp)	
         locations=x$locations
 	projection=strsplit(proj4string(locations),split=" ")[[1]]
