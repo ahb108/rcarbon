@@ -391,7 +391,7 @@ spSPDpermtest<-function(calDates, timeRange, bins, locations, breaks, spatialwei
 
 
 
-plot.spSPD<-function(x,index=NULL,option,breakRange,breakLength=7,legendPlot=FALSE,rd=5,baseSize=0.5,...)
+plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,legendPlot=FALSE,rd=5,baseSize=0.5,...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{
@@ -410,11 +410,6 @@ plot.spSPD<-function(x,index=NULL,option,breakRange,breakLength=7,legendPlot=FAL
 
         require(sp)	
         locations=x$locations
-	xrange=bbox(locations)[1,]
-	yrange=bbox(locations)[2,]
-
-	projection=strsplit(proj4string(locations),split=" ")[[1]]
-
 
 	if (option=="raw")
 	{
