@@ -454,7 +454,6 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,legendPl
 	minusPoints=locations[which(x$pvalHi[,index]<0.5),]
 
 	# Set Base 
-	par(mar=c(0.1,0.1,0,0.5))
 	plot(locations,col=NA,xlab="",ylab="",axes=FALSE,...)
 	points(plusPoints,col="gold",pch=20,cex=baseSize)
 	points(minusPoints,col="lightblue",pch=20,cex=baseSize)
