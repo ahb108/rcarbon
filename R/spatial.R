@@ -385,56 +385,84 @@ spSPDpermtest<-function(calDates, timeRange, bins, locations, breaks, spatialwei
 }
 
 
-print.spSPD<-function(x)
-{
-print(x$metadata)
-}
 
 ##Plot function for spatial SPD#
 
 
-plot.spSPD<-function(x,index=NULL,basemap=TRUE,baseSize=0.5)
+
+
+plot.spSPD<-function(x,index=NULL,option,breakRange,breakLength=7,legendPlot=FALSE,rd=5,baseSize=0.5,...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{
         stop("x is not a spatialTest class object")
 	}
 
-        if (is.null(index))
+        if (is.null(index)&option%in%c("raw","test"))
 	{
         stop("index value missing")
 	}
 
+	if (!option%in%c("raw","test","rawlegend","testlegend"))
+	{
+        stop(paste("The option ",option," is not available",sep=""))
+	}
+
         require(sp)	
         locations=x$locations
+	xrange=bbox(locations)[1,]
+	yrange=bbox(locations)[2,]
+
 	projection=strsplit(proj4string(locations),split=" ")[[1]]
 
-	if (basemap) 
-         {
-	library(rworldmap)
-	library(raster)
-	library(maptools)
-	if (!"+proj=longlat"%in%projection&!"+datum=WGS84"%in%projection)
+
+	if (option=="raw")
 	{
-        stop("basemap available only for LatLong data with WGS84")
+	breaks=seq(breakRange[1],breakRange[2],length.out=breakLength)
+	outbreak=c(-Inf,breaks,Inf)
+	classes=cut(x$rocaObs[,index], outbreak,labels=F)
+	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
+	classes=cols[classes]
+	plot(locations,col=classes,pch=20,add=TRUE,cex=baseSize)
 	}
-	base=getMap(resolution="low")
-         }
-
-		
-		nBreaks=ncol(x$rocaObs)
 
 
+	if (option=="rawlegend")
+	{
+	breaks=round(seq(breakRange[1],breakRange[2],length.out=breakLength),rd)
+	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
+	breaksLab=numeric(breakLength+1)
+	breaksLab[1]= paste("<",breaks[1])
+	for (j in 2:c(breakLength+1))
+	{
+	 breaksLab[j] = paste(breaks[j-1],"to", breaks[j])		
+	 if (j==c(breakLength+1)) {breaksLab[j] = paste(">",breaks[length(breaks)])}	 
+	}
+	par(mar=c(2,0,2,0))	
+        plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
+	legend("center",legend=breaksLab,col=cols,pch=20)
+        }
+
+	
+	if (option=="testlegend")
+	{
+	par(mar=c(2,0,2,0))
+	plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
+	legend("top",title="Negative Deviation",legend=c("p<0.5","p<0.05","q<0.05"),pch=20,col=c("lightblue","cornflowerblue","darkblue"),bg="white",cex=1.4,bty="n")
+	legend("bottom",title="Positive Deviation",legend=c("p<0.5","p<0.05","q<0.05"),pch=20,col=c("gold","orange","red"),bg="white",cex=1.4,bty="n")
+	}
+
+	if (option=="test")
+	{
+	nBreaks=ncol(x$rocaObs)
 	plusPoints=locations[which(x$pvalHi[,index]>0.5),]
 	minusPoints=locations[which(x$pvalHi[,index]<0.5),]
 
 	# Set Base 
 	par(mar=c(0.1,0.1,0,0.5))
-	plot(locations,col=NA,xlab="",ylab="",axes=FALSE)
-
-	if(basemap) {plot(base,col="grey75",border="beige",add=TRUE)}
-	points(plusPoints,col="gold",pch=20,cex=0.5)
-	points(minusPoints,col="lightblue",pch=20,cex=0.5)
+	plot(locations,col=NA,xlab="",ylab="",axes=FALSE,...)
+	points(plusPoints,col="gold",pch=20,cex=baseSize)
+	points(minusPoints,col="lightblue",pch=20,cex=baseSize)
 
 
 	# Set Positive
@@ -443,12 +471,12 @@ plot.spSPD<-function(x,index=NULL,basemap=TRUE,baseSize=0.5)
 	if (length(positive.index)>0)
 		{
 		positive=locations[positive.index,]
-		points(positive,pch=20,col="orange",cex=0.5)
+		points(positive,pch=20,col="orange",cex=baseSize)
 		qpositive.index=which(x$qvalLo[,index]<=0.05&x$pvalLo[,index]<=0.05) #Originally based on qvalHi
 		if (length(qpositive.index)>0)
 			{
 				qpositive=locations[qpositive.index,]
-				points(qpositive,pch=20,col="red",cex=0.5)
+				points(qpositive,pch=20,col="red",cex=baseSize)
 
 			}
 		}
@@ -457,16 +485,17 @@ plot.spSPD<-function(x,index=NULL,basemap=TRUE,baseSize=0.5)
 	if (length(negative.index)>0)
 		{
 		negative=locations[negative.index,]
-		points(negative,pch=20,col="cornflowerblue",cex=0.5)
+		points(negative,pch=20,col="cornflowerblue",cex=baseSize)
 		qnegative.index=which(x$qvalHi[,index]<=0.05&x$pvalHi[,index]<=0.05) #Originally based on qvalLo
 		if (length(qnegative.index)>0)
 			{
 				qnegative=locations[qnegative.index,]
-				points(qnegative,pch=20,col="darkblue",cex=0.5)
+				points(qnegative,pch=20,col="darkblue",cex=baseSize)
 
 			}
 
 		}
+	}
 
 }
 
