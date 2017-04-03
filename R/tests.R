@@ -82,12 +82,11 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     return(res)
 }
 
-permTest <- function(x, marks,  timeRange, nsim, propfc=marks[1], bins=NA, runm=NA, datenormalised=FALSE, raw=FALSE, verbose=TRUE){
+permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalised=FALSE, spdnormalised=FALSE, raw=FALSE, verbose=TRUE){
 
     if (is.na(bins[1])){ bins <- as.character(1:length(x$grids)) }
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
-    propdf <- data.frame(calBP=calyears, Denom=NA, ObsProp=NA, EnvHi=NA, EnvLo=NA)
     binnedMatrix <- matrix(nrow=nrow(calyears), ncol=length(binNames))
     GroupList <- vector()
     if (verbose & length(binNames)>1){
@@ -145,26 +144,21 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=marks[1], bins=NA, runm=
     observedSPD <- vector("list",length=length(unique(GroupList)))
     names(observedSPD) <- unique(GroupList)
     for (d in 1:length(unique(GroupList))){
+
         focus <- unique(GroupList)[d]
         index <- which(GroupList==focus)
         tmpSPD <- apply(binnedMatrix[,index], 1, sum)
         if (!is.na(runm)){
             tmpSPD <- runMean(tmpSPD, runm, edge="fill")
         }
-        if (focus==propfc){
-            focd <- tmpSPD
-        }
         if (d==1){
             dall <- tmpSPD
         } else {
             dall <- dall+tmpSPD
         }
-        tmpSPD <- tmpSPD / sum(tmpSPD)
+        if (spdnormalised){ tmpSPD <- tmpSPD / sum(tmpSPD) }
         observedSPD[[d]] <- data.frame(calBP=calyears, PrDens=tmpSPD)
     }
-    propdf$ObsProp <- focd / dall
-    propdf$Denom <- dall
-    simprop <- matrix(nrow=nrow(calyears), ncol=nsim)
     ## Permutations
     simulatedSPD <- vector("list",length=length(unique(GroupList)))
     for (d in 1:length(unique(GroupList))){
@@ -185,25 +179,18 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=marks[1], bins=NA, runm=
             if (!is.na(runm)){
                 tmpSPD <- runMean(tmpSPD, runm, edge="fill")
             }
-            if (focus==propfc){
-                focd <- tmpSPD
-            }
             if (d==1){
                 dall <- tmpSPD
             } else {
                 dall <- dall+tmpSPD
             }
-            tmpSPD <- tmpSPD/sum(tmpSPD)
+            if (spdnormalised){ tmpSPD <- tmpSPD/sum(tmpSPD) }
             simulatedSPD[[d]][,s] <- tmpSPD
         }
-        simprop[,s] <- focd / dall
     }
     names(simulatedSPD) <- unique(GroupList)
     if (verbose){ close(pb) }
-    tmp <- apply(simprop,1,FUN=function(x) quantile(x,c(0.025,0.975), na.rm=TRUE))
     ## Statistics
-    propdf$EnvLo <- tmp[1,]
-    propdf$EnvHi <- tmp[2,]
     simulatedCIlist <- vector("list",length=length(unique(GroupList)))
     for (d in 1:length(unique(GroupList))){
         simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975)))
@@ -231,10 +218,9 @@ permTest <- function(x, marks,  timeRange, nsim, propfc=marks[1], bins=NA, runm=
         }
         names(pValueList) <- unique(GroupList)
     }        
-    res <- list(observed=observedSPD, envelope=simulatedCIlist, proportions=propdf, pValueList=pValueList)
+    res <- list(observed=observedSPD, envelope=simulatedCIlist, pValueList=pValueList)
     if (raw){ res$raw <- simulatedSPD }
     class(res) <- "SpdPermTest"
     if (verbose){ print("Done.") }
     return(res)
 }
-
