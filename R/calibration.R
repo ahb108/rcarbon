@@ -392,7 +392,7 @@ jagsSingleCalibrate<-function(age,error,calCurves='intcal13',init=NA,iter=50000)
 
  #   calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
 
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp,".14c", sep="")
+    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
     calcurve <- calcurve[!grepl("[#]",calcurve)]
