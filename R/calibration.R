@@ -143,7 +143,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
                     dens <- dens/sum(dens)
 		    }
                 res <- data.frame(calBP=calBP,PrDens=dens)
-                }
+               
 	    }
 
 	    res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
