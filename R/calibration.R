@@ -85,7 +85,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-            methods <- c("standard","tDist","OxCal","MCMC")
+            methods <- c("standard","tDist","OxCal","MCMC","oxcalStyle")
             if (!method %in% methods){
                 stop("The method you have chosen is not currently an option.")
             }
@@ -114,16 +114,35 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             } else if (method=="OxCal"){
                 if (is.null(oxpath)){ stop("You need to provide an oxpath argument.")
                 }
-           	    mydate <- oxcalSingleDate(ages=age,error=error,OxCalExecute=oxpath, calCurve=calCurves[b])
-		    dens <- approx(mydate$years, mydate$dens, xout=calBP, rule=2)
-                    res <- data.frame(calBP=calBP,PrDens=dens$y)
-		    normalised <- TRUE
+           	mydate <- oxcalSingleDate(ages=age,error=error,OxCalExecute=oxpath, calCurve=calCurves[b])
+		dens <- approx(mydate$years, mydate$dens, xout=calBP, rule=2)
+                res <- data.frame(calBP=calBP,PrDens=dens$y)
+		normalised <- TRUE
             } else if (method=="MCMC"){
-           	    mydate <- jagsSingleCalibrate(age=age,error=error, calCurve=calCurves[b],iter=iter)
-		    dens <- approx(mydate$calBP, mydate$PrDens, xout=calBP, rule=1)
-                    res <- data.frame(calBP=calBP,PrDens=dens$y)
-		    res$PrDens[is.na(res$PrDens)] <- 0
-		    normalised <- TRUE
+           	mydate <- jagsSingleCalibrate(age=age,error=error, calCurve=calCurves[b],iter=iter)
+		dens <- approx(mydate$calBP, mydate$PrDens, xout=calBP, rule=1)
+                res <- data.frame(calBP=calBP,PrDens=dens$y)
+		res$PrDens[is.na(res$PrDens)] <- 0
+		normalised <- TRUE
+	    } else if (method=="oxcalStyle"){
+		F14 <- exp(calcurve[,2]/-8033)
+		F14Error <-  F14*calcurve[,3]/8033
+		calf14 <- approx(calcurve[,1], F14, xout=calBP)$y
+                calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y
+		f14age <- exp(age/-8033);
+		f14err <- f14age*error/8033;
+	        p1 <- (f14age - calf14)^2
+                p2 <- 2 * (f14err^2 + calf14error^2);
+                p3 <- sqrt(f14err^2 + calf14error^2);
+                dens <- exp(-p1/p2)/p3
+                dens[dens < eps] <- 0		
+		if (normalised){
+                    dens <- dens/sum(dens)
+                    dens[dens < eps] <- 0
+                    dens <- dens/sum(dens)
+		    }
+                res <- data.frame(calBP=calBP,PrDens=dens)
+                }
 	    }
 
 	    res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
