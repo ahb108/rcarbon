@@ -1,4 +1,4 @@
-plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab="auto", ylab="auto", axis4=TRUE){
+plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab="auto", ylab="auto", axis4=TRUE, HPD=TRUE, credMass=0.95){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
@@ -43,7 +43,20 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     axis(1, at=xticks, labels=xticks, las=2, cex.axis=0.75)
     ## axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
     if (axis4){ axis(4, cex.axis=0.75) }
+    if (!HPD){
     polygon(xvals,yvals, col="grey50", border="grey50")
+    } else {
+    polygon(xvals,yvals, col="grey82", border="grey82")
+    hdres <- hpdi(calDates,credMass=credMass)[[ind]]
+	for (i in 1:nrow(hdres))
+	{
+	 index=which(xvals%in%hdres[i,1]:hdres[i,2])
+         polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],0,0), col="grey50", border="grey50")
+	}
+    }
+
+
+
     if (type=="standard" | type=="auc"){
         if (type=="auc"){
             lines(xvals, yvals/sum(yvals), col="black", lty="dotted")
