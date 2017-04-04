@@ -455,4 +455,27 @@ jagsSingleCalibrate<-function(age,error,calCurves='intcal13',init=NA,iter=50000)
 }
 
 
+hpdi<- function(x, credMass=0.95)
+{
+   cl <- class(x)
+    if (!"CalDates"%in%cl){
+	    stop("x must be of class CalDates")
+    }
+	
+  n <- nrow(x$metadata)
+  result=vector("list",length=n)
+  for ( i in 1:n)
+  {
+  grd <- x$grids[[i]]	  
+  sorted <- sort(grd$PrDens , decreasing=TRUE )
+  heightIdx = min( which( cumsum( sorted) >= sum(grd$PrDens) * credMass ) )
+  height = sorted[heightIdx]
+  indices = which( grd$PrDens >= height )
+  gaps <- which(diff(indices) > 1)
+  starts <- indices[c(1, gaps + 1)]
+  ends <- indices[c(gaps, length(indices))]
+  result[[i]] <- cbind(startCalBP = grd$calBP[starts], endCalBP = grd$calBP[ends]) 
+  }  
+  return(result)
+}
 
