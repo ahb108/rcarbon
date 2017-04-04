@@ -76,7 +76,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         if (calMatrix){
             calmat <- sapply(sublist, FUN=function(x) x$PrDens)
             rownames(calmat) <- calmBP
-            colnames(calmat) <- 1:ncol(calmat)
+            colnames(calmat) <- NULL
             sublist <- lapply(sublist, FUN=function(x) x[x$PrDens > 0, ])
         }
     } else {
