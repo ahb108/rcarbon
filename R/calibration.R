@@ -74,8 +74,9 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         stopCluster(cl)
         names(sublist) <- ids
         if (calMatrix){
-            calmat <- sapply(grids, FUN=function(x) x$PrDens)
+            calmat <- sapply(sublist, FUN=function(x) x$PrDens)
             rownames(calmat) <- calmBP
+            colnames(calmat) <- NULL
             sublist <- lapply(sublist, FUN=function(x) x[x$PrDens > 0, ])
         }
     } else {
@@ -248,7 +249,7 @@ uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='
     return(dates)
 }
 
-uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, unifp="local", compact=TRUE, verbose=TRUE){
+uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact=TRUE, verbose=TRUE){
 
     if (verbose){ print("Uncalibrating...") }
     names(calgrid) <- c("calBP","PrDens")
@@ -276,16 +277,9 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, unifp="
     unscGauss <- do.call("cbind",tmp)
     res$Raw <- rowSums(unscGauss)
     res$Raw[res$Raw < eps] <- 0
-    if (unifp=="local"){
-        base <- do.call("cbind",basetmp)
-        res$Base <- rowSums(base)
-        res$Raw[res$Raw < eps] <- 0
-    } else if (unifp=="global"){
-        data(UnifCalYears)
-        res$Base <- UnifCalYears[UnifCalYears$CRA %in% res$CRA,"PrDens"]
-    } else {
-        stop("Options for unifp are 'local' or 'global'.")
-    }
+    base <- do.call("cbind",basetmp)
+    res$Base <- rowSums(base)
+    res$Raw[res$Raw < eps] <- 0
     res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
     if (compact){ res <- res[res$PrDens > 0,] }
     class(res) <- c("UncalGrid", class(res)) 
