@@ -48,6 +48,7 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     } else {
     polygon(xvals,yvals, col="grey82", border="grey82")
     hdres <- hpdi(calDates,credMass=credMass)[[ind]]
+    if(calendar=="BCAD"){hdres=1950-hdres}
 	for (i in 1:nrow(hdres))
 	{
 	 index=which(xvals%in%hdres[i,1]:hdres[i,2])
