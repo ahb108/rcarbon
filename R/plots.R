@@ -1,4 +1,4 @@
-plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab="auto", ylab="auto", axis4=TRUE, HPD=TRUE, credMass=0.95){
+plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab="auto", ylab="auto", axis4=TRUE, HPD=FALSE, credMass=0.95){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
