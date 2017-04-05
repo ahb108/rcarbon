@@ -41,11 +41,14 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     par(cex.lab=0.75)
     plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75)
     
+
+    xticksLab <- xticks
     if (calendar=="BCAD")
     {
-      xticks[which(xticks>=0)]=xticks[which(xticks>=0)]+1
+      if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
+      xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
-    axis(1, at=xticks, labels=xticks, las=2, cex.axis=0.75)
+    axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
     ## axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
     
 
@@ -130,7 +133,7 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes & bbty != "n"){
-        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, ...)
+        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     } else if (bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
@@ -204,9 +207,25 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
         }
     }  
     polygon(x=c(obs[,"Years"],rev(obs[,"Years"])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
-    if (drawaxes & bbty != "n"){
-        axis(side=1,at=seq(max(obs[,"Years"]),min(obs[,"Years"]),-100),labels=NA,tck = -.01)
+    if (drawaxes & bbty != "n" & calendar=="BP"){
+	rr <- range(pretty(obs[,"Years"]))    
+        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+        axis(side=1,at=pretty(obs[,"Years"]))
+    } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
+	yy <-  obs[,"Years"]
+       
+	rr <- range(pretty(yy))    
+        prettyTicks <- seq(rr[1],rr[2],+100)
+	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+
+        py <- pretty(yy)
+	pyShown <- py
+	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+	py[which(py>1)] <-  py[which(py>1)]-1
+	axis(side=1,at=py,labels=pyShown)
     }
+
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
     class(bbp) <- c("BBPolygons",class(bbp))
     if (bbty %in% c("n","b")){ return(bbp) }
@@ -279,12 +298,33 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
     if (type=="standard"){
         par(xaxs="i")
         par(yaxs="i")
-        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt)
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt, axes=FALSE)
         polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
     } else if (type=="simple"){
-        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt,...)
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt, axes=FALSE, ...)
+    }
+    box()
+    axis(side=2)
+
+    if (calendar=="BP"){
+	rr <- range(pretty(plotyears))    
+        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+        axis(side=1,at=pretty(plotyears))
+
+    } else if (calendar=="BCAD"){
+	yy <-  plotyears
+        rr <- range(pretty(yy))    
+        prettyTicks <- seq(rr[1],rr[2],+100)
+	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+        py <- pretty(yy)
+	pyShown <- py
+	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+	py[which(py>1)] <-  py[which(py>1)]-1
+	axis(side=1,at=py,labels=pyShown)
     }
 }
+
 
 plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
@@ -324,10 +364,21 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
     par(mar=mar) #c(bottom, left, top, right)
     par(cex.lab=cex.lab)
     plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n', cex.axis=cex.axis,...)
-    axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=cex.axis)
+    
+    xticksLab <- xticks
+    if (calendar=="BCAD")
+    {
+      if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
+      xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
+    }
+    axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
+
     axis(4, cex.axis=cex.axis)
     polygon(xvals,yvals, col=fill.p, border=border.p)
 }
+
+
+
 
 plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
@@ -365,6 +416,11 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
     polygon(xvals,yvals, col=fill.p, border=border.p)
 }
 
+
+
+
+
+
 plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
     obs <- test$observed[[focalm]]
@@ -386,7 +442,7 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
     baseline <- rep(0,nrow(obs))
     if (drawaxes & bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
-        axis(side=1,padj=-1)
+        #axis(side=1,padj=-1)
         axis(side=2,padj=1)
     } else if (bbty != "n"){
         plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
@@ -463,13 +519,37 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
         polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=col.env, border=NA)
         box()
     }
-    if (drawaxes & bbty != "n"){
-        axis(side=1, at=seq(max(obs[,"Years"]), min(obs[,"Years"]),-100), labels=NA, tck=-0.01)
+    #if (drawaxes & bbty != "n"){
+    #    axis(side=1, at=seq(max(obs[,"Years"]), min(obs[,"Years"]),-100), labels=NA, tck=-0.01)
+    #}
+
+    if (drawaxes & bbty != "n" & calendar=="BP"){
+	rr <- range(pretty(obs[,"Years"]))    
+        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+        axis(side=1,at=pretty(obs[,"Years"]))
+    } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
+	yy <-  obs[,"Years"]
+	rr <- range(pretty(yy))    
+        prettyTicks <- seq(rr[1],rr[2],+100)
+	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+
+        py <- pretty(yy)
+	pyShown <- py
+	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+	py[which(py>1)] <-  py[which(py>1)]-1
+	axis(side=1,at=py,labels=pyShown)
     }
+    
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
     class(bbp) <- c("BBPolygons",class(bbp))
     if (bbty %in% c("n","b")){ return(bbp) }
 }
+
+
+
+
+
 
 bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA, col.boom=rgb(0.7,0,0,0.2), col.bust=rgb(0,0,0.7,0.2), border.boom=NA, border.bust=NA){
 
