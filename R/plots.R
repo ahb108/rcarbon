@@ -40,8 +40,15 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     yrng <- c(min(yvals[yvals>0]),max(yvals[yvals>0])+(max(yvals[yvals>0])*2))
     par(cex.lab=0.75)
     plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75)
+    
+    if (calendar=="BCAD")
+    {
+      xticks[which(xticks>=0)]=xticks[which(xticks>=0)]+1
+    }
     axis(1, at=xticks, labels=xticks, las=2, cex.axis=0.75)
     ## axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
+    
+
     if (axis4){ axis(4, cex.axis=0.75) }
     if (!HPD){
     polygon(xvals,yvals, col="grey50", border="grey50")
