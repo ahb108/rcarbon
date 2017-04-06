@@ -19,6 +19,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         calmBP <- seq(timeRange[1],timeRange[2],-1)
         calmat <- matrix(ncol=length(ages), nrow=length(calmBP))
         rownames(calmat) <- calmBP
+        calmat[] <- 0
     }
     if (is.na(ids[1])){
         ids <- as.character(1:length(ages))
@@ -67,17 +68,16 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             if (normalised){ dens <- dens/sum(dens) }
             res <- data.frame(calBP=calBP,PrDens=dens)
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-            if (!calMatrix){ res <- res[res$PrDens > 0,] }
+            res <- res[res$PrDens > 0,]
             class(res) <- append(class(res),"calGrid")
             return(res)
         }
         stopCluster(cl)
         names(sublist) <- ids
         if (calMatrix){
-            calmat <- sapply(sublist, FUN=function(x) x$PrDens)
-            rownames(calmat) <- calmBP
-            colnames(calmat) <- NULL
-            sublist <- lapply(sublist, FUN=function(x) x[x$PrDens > 0, ])
+            for (a in 1:length(sublist)){
+                calmat[as.character(sublist[[a]]$calBP),a] <- sublist[[a]]$PrDens
+            }
         }
     } else {
         for (b in 1:length(ages)){
