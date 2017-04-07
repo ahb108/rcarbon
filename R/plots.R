@@ -138,6 +138,7 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     box()
+    axis(side=2)
     boomPlot <- baseline
     boomPlot[booms] <- obs[booms,2]
     bustPlot <- baseline
@@ -298,7 +299,7 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
     if (type=="standard"){
         par(xaxs="i")
         par(yaxs="i")
-        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt, axes=FALSE)
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab="Summed Probability", xlab=xlabel, xaxt=xaxt, yaxt=yaxt, axes=FALSE)
         polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
     } else if (type=="simple"){
         plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt, axes=FALSE, ...)
@@ -363,7 +364,7 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
     if (is.na(xlim[1])){ xlim <- xrng }
     par(mar=mar) #c(bottom, left, top, right)
     par(cex.lab=cex.lab)
-    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n', cex.axis=cex.axis,...)
+    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n',axes=F, cex.axis=cex.axis,...)
     
     xticksLab <- xticks
     if (calendar=="BCAD")
@@ -372,9 +373,10 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
       xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
     axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
-
+    axis(2)
     axis(4, cex.axis=cex.axis)
     polygon(xvals,yvals, col=fill.p, border=border.p)
+    box()
 }
 
 
@@ -540,7 +542,7 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
 	py[which(py>1)] <-  py[which(py>1)]-1
 	axis(side=1,at=py,labels=pyShown)
     }
-    
+    axis(2)
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
     class(bbp) <- c("BBPolygons",class(bbp))
     if (bbty %in% c("n","b")){ return(bbp) }
