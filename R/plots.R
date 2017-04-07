@@ -305,14 +305,11 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
         plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt, axes=FALSE, ...)
     }
     box()
-    axis(side=2)
-
-    if (calendar=="BP"){
+    if (calendar=="BP" & xaxt!="n"){
 	rr <- range(pretty(plotyears))    
         axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
         axis(side=1,at=pretty(plotyears))
-
-    } else if (calendar=="BCAD"){
+    } else if (calendar=="BCAD" & xaxt!="n"){
 	yy <-  plotyears
         rr <- range(pretty(yy))    
         prettyTicks <- seq(rr[1],rr[2],+100)
@@ -325,7 +322,6 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
 	axis(side=1,at=py,labels=pyShown)
     }
 }
-
 
 plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
