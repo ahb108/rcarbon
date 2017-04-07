@@ -542,7 +542,6 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
 	py[which(py>1)] <-  py[which(py>1)]-1
 	axis(side=1,at=py,labels=pyShown)
     }
-    axis(2)
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
     class(bbp) <- c("BBPolygons",class(bbp))
     if (bbty %in% c("n","b")){ return(bbp) }
