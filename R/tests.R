@@ -134,10 +134,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
             } else {
                 spdtmp <- Reduce("+", tmp)
             }
-            if (length(binNames)>1){
-                spdtmp <- spdtmp / length(index)
-            }
-            binnedMatrix[,b] <- spdtmp[,1]
+           binnedMatrix[,b] <- spdtmp[,1]
         }
         GroupList[b] <- marks[index][1]
     }
