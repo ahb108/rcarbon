@@ -121,3 +121,47 @@ smoothGauss <- function(x, alpha, window=0.1){
     res[c(1:hkwL,(sizeD - hkwR + 1):sizeD)] <- NA # remove tails
     return(res)
 }
+
+
+
+rangecheck <- function(x,bins,timeRange,datenormalised=F)
+{
+    binNames <- unique(bins)
+    calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
+    binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
+    for (b in 1:length(binNames)){
+        index <- which(bins==binNames[b])
+        if (length(x$calmatrix)>1){
+                tmp <- x$calmatrix[,index, drop=FALSE]
+                if (datenormalised){
+                    tmp <- apply(tmp,2,FUN=function(x) x/sum(x))
+                }
+                spdtmp <- rowSums(tmp)
+                if (length(binNames)>1){
+                    spdtmp <- spdtmp / length(index)
+                }
+                binnedMatrix[,b] <- spdtmp[caldateyears<=timeRange[1] & caldateyears>=timeRange[2]]
+            
+        } else {
+            slist <- x$grids[index]
+            slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
+            slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
+            slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
+            tmp <- lapply(slist,`[`,2)
+            if (datenormalised){   
+                outofTR <- lapply(tmp,sum)==0 # date out of range
+                tmpc <- tmp[!outofTR]
+                if (length(tmpc)>0){
+                    tmp <- lapply(tmpc,FUN=function(x) x/sum(x))
+                }
+            }
+            if (length(binNames)>1){
+                spdtmp <- Reduce("+", tmp) / length(index)
+            } else {
+                spdtmp <- Reduce("+", tmp)
+            }
+            binnedMatrix[,b] <- spdtmp[,1]
+        }
+    }
+return(sum(apply(binnedMatrix,2,sum)==0)/ncol(binnedMatrix)*100)
+}
