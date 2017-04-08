@@ -593,3 +593,89 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
         }
     }
 }
+
+
+binsense<-function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
+{
+
+  if (!calendar %in% c("BP","BCAD")){ stop("Unknown calendar type") }
+  	
+  years <- timeRange[1]:timeRange[2]
+  xlab <- "Years BP"
+  coln <- numeric(length=length(h))
+  xr <- timeRange
+  if (calendar=="BCAD")
+  {
+   years <- 1950 - years
+   xlab <- "Years BC/AD"
+   xr <- range(years)
+  }
+
+  res <- matrix(NA,nrow=length(years),ncol=length(h))
+
+  if (verbose)
+	 {
+         print("Computing SPDs...")
+	 flush.console()
+         pb <- txtProgressBar(min = 1, max =length(h), style=3)
+	 }
+  for (b in 1:length(h))
+    {
+    if (verbose){setTxtProgressBar(pb, b)}	    
+    bins <- binPrep(sites=y[,sitecol],ages=y[,agecol],h=h[b])
+    spdtmp <- spd(x,bins= bins,timeRange=timeRange,spdnormalised=T,verbose=F,...)
+    res[,b] <- spdtmp$grid$PrDens
+    coln[b] <- paste("h.",h[b],sep="")
+    }
+
+  if (verbose)
+	{ 
+	close(pb)
+        print("Done.") 
+	}	
+  if (legend==TRUE){layout(matrix(c(1,1,2,2),2,2),width=c(1,0.2))}
+
+  plot(years,res[,1],xlim=xr,ylim=range(res),type="n",xlab=xlab,ylab="normalised SPD",axes=F)
+  axis(side=2)
+  if (calendar=="BP") {axis(1)}
+  if (calendar=="BCAD")
+  {
+   xticksAt=pretty(years)
+   xticksLab=xticksAt
+   if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
+   if (any(xticksAt>1)){xticksAt[which(xticksAt>1)]=xticksAt[which(xticksAt>1)]-1}
+   axis(side=1,at=xticksAt,label=xticksLab)
+  }  
+
+
+  cl=colorRampPalette(c("indianred","royalblue"),alpha=0.5)
+
+  minRange=apply(res,1,min)
+  maxRange=apply(res,1,max)
+
+  polygon(c(years,rev(years)),c(minRange,rev(maxRange)),col="darkgrey",border="NA")
+
+  for (x in 1:length(h))
+   {
+    lines(years,res[,x],col=cl(length(h))[x],lwd=0.5)
+   }
+
+  if (legend==TRUE)
+  { 
+  par(mar=c(6,2,6,2))	  
+  z=matrix(1:100,nrow=1)
+  x=1
+  y=seq(h[1],h[length(h)],len=100) # supposing 3 and 2345 are the range of your data
+  image(x,y,z,col=cl(100),axes=FALSE,xlab="",ylab="")
+  axis(2,padj=1,cex.axis=0.7)
+  mtext(side=2,"h",line=2,las=2,cex=0.7)
+  }
+  box()
+if (raw) {
+colnames(res)=coln	
+res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
+}
+}
+
+
+
