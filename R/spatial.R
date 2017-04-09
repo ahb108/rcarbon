@@ -106,7 +106,10 @@ spSPDpermtest<-function(calDates, timeRange, bins, locations, breaks, spatialwei
     {
         stop("locations must have rownames")
     }
-
+    if (!all(range(timeRange)==range(breaks)))
+    {
+	stop("Range of breaks values must much match the temporal range defined by timeRange")
+    }
    
 
 #############################
