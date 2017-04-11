@@ -446,8 +446,8 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,legendPl
 	{
 	par(mar=c(2,0,2,0))
 	plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	legend("top",title="Negative Deviation",legend=c("p<0.5","p<0.05","q<0.05"),pch=20,col=c("lightblue","cornflowerblue","darkblue"),bg="white",cex=1.4,bty="n")
-	legend("bottom",title="Positive Deviation",legend=c("p<0.5","p<0.05","q<0.05"),pch=20,col=c("gold","orange","red"),bg="white",cex=1.4,bty="n")
+	legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=1.4,bty="n")
+	legend("bottom",title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=1.4,bty="n")
 	}
 
 	if (option=="test")
@@ -458,8 +458,8 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,legendPl
 
 	# Set Base 
 	plot(locations,col=NA,xlab="",ylab="",axes=FALSE,...)
-	points(plusPoints,col="gold",pch=20,cex=baseSize)
-	points(minusPoints,col="lightblue",pch=20,cex=baseSize)
+	points(plusPoints,col="darkgrey",pch=20,cex=baseSize)
+	points(minusPoints,col="darkgrey",pch=20,cex=baseSize)
 
 
 	# Set Positive
