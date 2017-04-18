@@ -165,3 +165,17 @@ rangecheck <- function(x,bins,timeRange,datenormalised=F)
     }
 return(sum(apply(binnedMatrix,2,sum)==0)/ncol(binnedMatrix)*100)
 }
+
+BPtoBCAD <- function(x){
+    res <- matrix(c(x, rep(NA,length(x))), ncol=2)
+    res[x < 1950,2] <- 1950-res[x < 1950,1]
+    res[x >= 1950,2] <- 1949-res[x >= 1950,1]
+    return(res[,2])
+}
+
+BCADtoBP <- function(x){
+    res <- matrix(c(x, rep(NA,length(x))), ncol=2)
+    res[x > 0,2] <- abs(res[x > 0,1] - 1950)
+    res[x < 0,2] <- abs(res[x < 0,1] - 1949)
+    return(res[,2])
+}
