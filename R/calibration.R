@@ -2,7 +2,7 @@ calibrate <- function (x, ...) {
    UseMethod("calibrate")
 }
 
-calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), method="standard", normalised=FALSE, calMatrix=FALSE, dfs=100, oxpath=NULL, iter=50000,eps=1e-5, ncores=1, verbose=TRUE){
+calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, normalised=FALSE, calMatrix=FALSE, dfs=100, oxpath=NULL, iter=50000,eps=1e-5, ncores=1, verbose=TRUE){
 
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
@@ -56,15 +56,30 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         registerDoParallel(cl)
         if (verbose){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
         sublist <- foreach (b=1:length(ages)) %dopar% {
-            method <- "standard"
             calcurve <- cclist[[calCurves[b]]]
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-            mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-            tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y
-            dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-            dens[dens < eps] <- 0
+	    if (F14C==FALSE)
+	    {
+            	mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
+            	tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
+            	dens <- dnorm(age, mean=mu, sd=sqrt(tau))
+            	dens[dens < eps] <- 0
+            } else if (F14C==TRUE)
+            {
+	    	F14 <- exp(calcurve[,2]/-8033)
+	    	F14Error <-  F14*calcurve[,3]/8033
+	    	calf14 <- approx(calcurve[,1], F14, xout=calBP)$y
+            	calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y
+	    	f14age <- exp(age/-8033);
+	    	f14err <- f14age*error/8033
+	    	p1 <- (f14age - calf14)^2
+            	p2 <- 2 * (f14err^2 + calf14error^2)
+            	p3 <- sqrt(f14err^2 + calf14error^2)
+            	dens <- exp(-p1/p2)/p3
+            	dens[dens < eps] <- 0		    
+	    }
             if (normalised){ dens <- dens/sum(dens) }
             res <- data.frame(calBP=calBP,PrDens=dens)
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
@@ -86,46 +101,11 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-            methods <- c("standard","tDist","OxCal","MCMC","oxcalStyle")
-            if (!method %in% methods){
-                stop("The method you have chosen is not currently an option.")
-            }
-            if (method=="standard"){
+            if (F14C==FALSE){
                 mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y
+                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
                 dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-                dens[dens < eps] <- 0
-                if (normalised){
-                    dens <- dens/sum(dens)
-                    dens[dens < eps] <- 0
-                    dens <- dens/sum(dens)
-                }
-                res <- data.frame(calBP=calBP,PrDens=dens)
-            } else if (method=="tDist"){
-                mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y
-                dens <- dt((age - mu)/sqrt(tau), df=dfs)
-                dens[dens < eps] <- 0
-                if (normalised){
-                    dens <- dens/sum(dens)
-                    dens[dens < eps] <- 0
-                    dens <- dens/sum(dens)
-                }
-                res <- data.frame(calBP=calBP,PrDens=dens)
-            } else if (method=="OxCal"){
-                if (is.null(oxpath)){ stop("You need to provide an oxpath argument.")
-                }
-           	mydate <- oxcalSingleDate(ages=age,error=error,OxCalExecute=oxpath, calCurve=calCurves[b])
-		dens <- approx(mydate$years, mydate$dens, xout=calBP, rule=2)
-                res <- data.frame(calBP=calBP,PrDens=dens$y)
-		normalised <- TRUE
-            } else if (method=="MCMC"){
-           	mydate <- jagsSingleCalibrate(age=age,error=error, calCurve=calCurves[b],iter=iter)
-		dens <- approx(mydate$calBP, mydate$PrDens, xout=calBP, rule=1)
-                res <- data.frame(calBP=calBP,PrDens=dens$y)
-		res$PrDens[is.na(res$PrDens)] <- 0
-		normalised <- TRUE
-	    } else if (method=="oxcalStyle"){
+               }  else if (F14C==TRUE){
 		F14 <- exp(calcurve[,2]/-8033)
 		F14Error <-  F14*calcurve[,3]/8033
 		calf14 <- approx(calcurve[,1], F14, xout=calBP)$y
@@ -136,16 +116,14 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
                 p2 <- 2 * (f14err^2 + calf14error^2);
                 p3 <- sqrt(f14err^2 + calf14error^2);
                 dens <- exp(-p1/p2)/p3
-                dens[dens < eps] <- 0		
-		if (normalised){
-                    dens <- dens/sum(dens)
-                    dens[dens < eps] <- 0
-                    dens <- dens/sum(dens)
-		    }
-                res <- data.frame(calBP=calBP,PrDens=dens)
-               
 	    }
-
+               dens[dens < eps] <- 0
+            if (normalised){
+                dens <- dens/sum(dens)
+                dens[dens < eps] <- 0
+                dens <- dens/sum(dens)
+                }
+            res <- data.frame(calBP=calBP,PrDens=dens)
 	    res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             if (calMatrix){ calmat[,b] <- res$PrDens }
             res <- res[res$PrDens > 0,]
@@ -154,7 +132,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         }
     }
     if (length(ages)>1 & verbose){ close(pb) }
-    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], CalMethod=method, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
+    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], F14CConversion=F14C, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df
     reslist[["grids"]] <- sublist
     if (calMatrix){
