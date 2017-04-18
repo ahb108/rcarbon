@@ -2,7 +2,7 @@ calibrate <- function (x, ...) {
    UseMethod("calibrate")
 }
 
-calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, normalised=FALSE, calMatrix=FALSE, dfs=100, oxpath=NULL, iter=50000,eps=1e-5, ncores=1, verbose=TRUE){
+calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, normalised=FALSE, calMatrix=FALSE, iter=50000,eps=1e-5, ncores=1, verbose=TRUE){
 
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
