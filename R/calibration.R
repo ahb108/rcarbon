@@ -110,11 +110,11 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
 		F14Error <-  F14*calcurve[,3]/8033
 		calf14 <- approx(calcurve[,1], F14, xout=calBP)$y
                 calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y
-		f14age <- exp(age/-8033);
-		f14err <- f14age*error/8033;
+		f14age <- exp(age/-8033)
+		f14err <- f14age*error/8033
 	        p1 <- (f14age - calf14)^2
-                p2 <- 2 * (f14err^2 + calf14error^2);
-                p3 <- sqrt(f14err^2 + calf14error^2);
+                p2 <- 2 * (f14err^2 + calf14error^2)
+                p3 <- sqrt(f14err^2 + calf14error^2)
                 dens <- exp(-p1/p2)/p3
 	    }
                dens[dens < eps] <- 0
@@ -336,13 +336,13 @@ as.CalDates <- function(x){
     }           
 }
 
-oxcalSingleDate<-function(id="tmp01",ages,error,OxCalExecute,calCurve)
+oxcalSingleDate<-function(id="tmp01",ages,error,OxCalExecute,calCurve,normalised=F)
     {
         fn <- tempfile()
         fnRecieve <- paste(fn, ".js", sep = "")
         fn <- paste(fn, ".oxcal", sep = "")
 	
-        cat("Options(){};\n",file=fn,append=FALSE) #Start Sequence#
+        cat("Options(){Resolution=1};\n",file=fn,append=FALSE) #Start Sequence#
         cat("Plot(){\n",file=fn,append=TRUE) #Start Sequence#
         if (calCurve=="marine13")
             {
@@ -371,9 +371,13 @@ oxcalSingleDate<-function(id="tmp01",ages,error,OxCalExecute,calCurve)
   normaliser <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.probNorm=)(.*)(;)")[, 3], ", "))))
 
   if(is.na(normaliser)) {normaliser <- 1}
-
+  print(normaliser)
+  if (normalised==TRUE) 
+  {
+	probs <- probs * normaliser
+  }
   years <- seq(pstart, by = resolution, length.out = length(probs))
-  res <- data.frame(years= 1950-years, dens = probs * normaliser)
+  res <- data.frame(years= 1950-years, dens=probs)
 	return(res)
     }
 
