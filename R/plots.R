@@ -693,7 +693,11 @@ lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
     lines(years, dens,...)
 }
 
-polygon.CalSPD <- function(x, calendar="BP", runm=NA,...){
+polygons <- function (x, ...) {
+   UseMethod("polygons")
+}
+
+polygons.CalSPD <- function(x, calendar="BP", runm=NA,...){
     if (calendar=="BP"){
         years <- x$grid$calBP
     } else if (calendar=="BCAD"){
