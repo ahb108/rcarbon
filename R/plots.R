@@ -692,3 +692,19 @@ lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
     }
     lines(years, dens,...)
 }
+
+polygon.CalSPD <- function(x, calendar="BP", runm=NA,...){
+    if (calendar=="BP"){
+        years <- x$grid$calBP
+    } else if (calendar=="BCAD"){
+        years <- BPtoBCAD(x$grid$calBP)
+    } else {
+        stop("Calendar must be BP or BCAD.")
+    }
+    if (is.na(runm)){
+        dens <- x$grid$PrDens
+    } else {
+        dens <- runMean(x$grid$PrDens, runm, edge="fill")
+    }
+    polygon(x=c(years,rev(years)), y=c(dens,rep(0,length(dens))),...)
+}
