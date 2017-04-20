@@ -2,7 +2,7 @@ calibrate <- function (x, ...) {
    UseMethod("calibrate")
 }
 
-calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, normalised=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, std=FALSE, normalised=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
 
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
@@ -63,23 +63,21 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
 	    {
             	mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
             	tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
-            	dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-            	dens[dens < eps] <- 0
             } else if (F14C==TRUE)
             {
-	    	F14 <- exp(calcurve[,2]/-8033)
-	    	F14Error <-  F14*calcurve[,3]/8033
-	    	calf14 <- approx(calcurve[,1], F14, xout=calBP)$y
-            	calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y
-	    	f14age <- exp(age/-8033);
-	    	f14err <- f14age*error/8033
-	    	p1 <- (f14age - calf14)^2
-            	p2 <- 2 * (f14err^2 + calf14error^2)
-            	p3 <- sqrt(f14err^2 + calf14error^2)
-            	dens <- exp(-p1/p2)/p3
-            	dens[dens < eps] <- 0		    
+	 	age <- exp(age/-8033)
+		error <- age*error/8033
+		mu <- approx(calcurve[,1], exp(calcurve[,2]/-8033), xout=calBP)$y
+		tau <- error^2 + approx(calcurve[,1], exp(calcurve[,2]/-8033)*calcurve[,3]/8033, xout=calBP)$y^2            		    
 	    }
-            if (normalised){ dens <- dens/sum(dens) }
+	    dens <- dnorm(age, mean=mu, sd=sqrt(tau))
+	    if (std) {dens <- dens*sqrt(pi*2)}
+            dens[dens < eps] <- 0	
+            if (normalised){
+		    dens <- dens/sum(dens)
+	   	    dens[dens < eps] <- 0
+                    dens <- dens/sum(dens)
+	    }
             res <- data.frame(calBP=calBP,PrDens=dens)
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             res <- res[res$PrDens > 0,]
@@ -101,22 +99,17 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
             if (F14C==FALSE){
-                mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
-                dens <- dnorm(age, mean=mu, sd=sqrt(tau))
+        	mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
+		tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
                }  else if (F14C==TRUE){
-		F14 <- exp(calcurve[,2]/-8033)
-		F14Error <-  F14*calcurve[,3]/8033
-		calf14 <- approx(calcurve[,1], F14, xout=calBP)$y
-                calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y
-		f14age <- exp(age/-8033)
-		f14err <- f14age*error/8033
-	        p1 <- (f14age - calf14)^2
-                p2 <- 2 * (f14err^2 + calf14error^2)
-                p3 <- sqrt(f14err^2 + calf14error^2)
-                dens <- exp(-p1/p2)/p3
-	    }
-               dens[dens < eps] <- 0
+		age <- exp(age/-8033)
+		error <- age*error/8033
+		mu <- approx(calcurve[,1], exp(calcurve[,2]/-8033), xout=calBP)$y
+		tau <- error^2 + approx(calcurve[,1], exp(calcurve[,2]/-8033)*calcurve[,3]/8033, xout=calBP)$y^2            	
+	       }
+	    dens <- dnorm(age, mean=mu, sd=sqrt(tau))
+	    if (std) {dens <- dens*sqrt(pi*2)}
+            dens[dens < eps] <- 0
             if (normalised){
                 dens <- dens/sum(dens)
                 dens[dens < eps] <- 0
