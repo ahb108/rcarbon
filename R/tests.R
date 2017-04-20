@@ -1,4 +1,4 @@
-modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, method="standard", datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
 
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
@@ -50,14 +50,14 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
         res <- list(result=NA, sim=NA, pval=NA, osbSPD=observed, fit=predgrid, coefficients=coeffs)
         return(res)
     }
-    cragrid <- uncalibrate(as.CalGrid(predgrid), verbose=FALSE)
+    cragrid <- uncalibrate(as.CalGrid(predgrid), calCurves=calCurves, verbose=FALSE)
     obscras <- x$metadata$CRA
     cragrid$PrDens[cragrid$CRA > max(obscras) | cragrid$CRA < min(obscras)] <- 0
     for (s in 1:nsim){
         if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
-        tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', method=method, normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
+        tmp <- calibrate(ages=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
         simDateMatrix <- tmp$calmatrix
         sim[,s] <- apply(simDateMatrix,1,sum)
         sim[,s] <- sim[,s] + plusoffset
