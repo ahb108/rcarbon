@@ -33,8 +33,9 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     tmp <- unique(calCurves)
     if (length(calCurves)==1){ calCurves <- rep(calCurves,length(ages)) }
     cclist <- vector(mode="list", length=length(tmp))
+    names(cclist)=tmp
     for (a in 1:length(tmp)){
-        calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp,".14c", sep="")
+        calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp[1],".14c", sep="")
         options(warn=-1)
         cctmp <- readLines(calCurveFile, encoding="UTF-8")
         cctmp <- cctmp[!grepl("[#]",cctmp)]
