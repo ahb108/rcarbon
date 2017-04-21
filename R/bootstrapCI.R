@@ -18,7 +18,6 @@ if (verbose){
 if (type == "spd")
 {
         errors <- x$metadata$Error
-        method <- x$metadata$CalMethod[1]
         datenormalised <- x$metadata$Normalised[1]
 	samplesize <- length(unique(obs.bins))
   	predgrid <- obs.spd$grid
@@ -77,7 +76,7 @@ for (b in 1:boot)
   {
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
-        tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', method=method, normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
+        tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
         simDateMatrix <- tmp$calmatrix
         resmatrix[,b] <- apply(simDateMatrix,1,sum)
 	resmatrix[,b] <- (resmatrix[,b]/sum(resmatrix[,b])) 
