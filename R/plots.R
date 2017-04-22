@@ -273,7 +273,7 @@ crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE
     }
 }
 
-plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
+plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
 
     types <- c("standard","simple")
     if (!type %in% types){
@@ -299,10 +299,10 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
     if (type=="standard"){
         par(xaxs="i")
         par(yaxs="i")
-        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab="Summed Probability", xlab=xlabel, xaxt=xaxt, yaxt=yaxt, axes=FALSE)
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt)
         polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
     } else if (type=="simple"){
-        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt=xaxt, yaxt=yaxt, axes=FALSE, ...)
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
     }
     box()
     if (calendar=="BP" & xaxt!="n"){
@@ -693,11 +693,7 @@ lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
     lines(years, dens,...)
 }
 
-polygons <- function (x, ...) {
-   UseMethod("polygons")
-}
-
-polygons.CalSPD <- function(x, calendar="BP", runm=NA,...){
+spdpolygon <- function(x, calendar="BP", runm=NA,...){
     if (calendar=="BP"){
         years <- x$grid$calBP
     } else if (calendar=="BCAD"){
