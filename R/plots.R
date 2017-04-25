@@ -296,10 +296,11 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
         stop("Unknown calendar type")
     }
     if (xaxt=='n'){ xlabel <- "" }
+    if (yaxt=='n'){ ylabel <- "" } else { ylabel <- ylab }
     if (type=="standard"){
         par(xaxs="i")
         par(yaxs="i")
-        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt)
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt)
         polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
     } else if (type=="simple"){
         plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
