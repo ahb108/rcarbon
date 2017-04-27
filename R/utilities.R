@@ -124,10 +124,11 @@ smoothGauss <- function(x, alpha, window=0.1){
 
 
 
-rangecheck <- function(x,bins,timeRange,datenormalised=F)
-{
+rangecheck <- function(x,bins,timeRange,datenormalised=FALSE){
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
+    caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
+    caldateyears <- seq(caldateTR[1],caldateTR[2],-1)
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     for (b in 1:length(binNames)){
         index <- which(bins==binNames[b])
@@ -163,7 +164,7 @@ rangecheck <- function(x,bins,timeRange,datenormalised=F)
             binnedMatrix[,b] <- spdtmp[,1]
         }
     }
-return(sum(apply(binnedMatrix,2,sum)==0)/ncol(binnedMatrix)*100)
+    return(sum(apply(binnedMatrix,2,sum)==0)/ncol(binnedMatrix)*100)
 }
 
 BPtoBCAD <- function(x){
