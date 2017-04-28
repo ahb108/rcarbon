@@ -8,11 +8,11 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     }
 
     perOut <- rangecheck(x=x,bins=bins,datenormalised=datenormalised,timeRange=timeRange)
-    if (perOut>0)
-    { 
-     warning(paste(round(perOut,2),"% of the bins have density 0 within the time range of analysis; the null model is likely to overestimate the summed density of dates",sep=""))
-    }	
-
+    ## if (perOut>0)
+    ## { 
+    ##  warning(paste(round(perOut,2),"% of the bins have density 0 within the time range of analysis; the null model is likely to overestimate the summed density of dates",sep=""))
+    ## }
+    
     observed <- spd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
     finalSPD <- observed$grid$PrDens
     if (fitonly == TRUE) {nsim <- 1}
