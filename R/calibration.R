@@ -4,15 +4,56 @@ calibrate <- function (x, ...) {
 
 calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, std=FALSE, normalised=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
 
+    ## age and error checks
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
     }
     if (!is.na(ids[1]) & (length(ages) != length(ids))){
         stop("Ages and errors (and ids/details/offsets if provided) must be the same length.")
     }
-   if (any(is.na(ages))|any(is.na(errors))){
+    if (any(is.na(ages))|any(is.na(errors))){
         stop("Ages or errors contain NAs")
     }
+    ## calCurve checks and set-up
+    if (!all(class(calCurves)=="character")){
+        if (any(class(calCurves) %in% c("matrix","data.frame"))){
+            cctmp <- as.matrix(calCurves)
+            if (ncol(cctmp)!=3 | !all(sapply(mycc,is.numeric))){
+                stop("The custom calibration curve must have just three numeric columns.")
+            } else {
+                colnames(cctmp) <- c("CALBP","C14BP","Error")
+                if (max(cctmp[,2]) < max(ages) | min(cctmp[,2]) > min(ages)){
+                    stop("The custom calibration curve does not cover the input age range.")
+                }
+                cclist <- vector(mode="list", length=1)
+                cclist[[1]] <- cctmp
+                names(cclist) <- "custom"
+                calCurves <- rep("custom",length(ages))
+            }
+        } else {
+            stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+        }
+    } else {
+        if (!all(calCurves %in% c("intcal13","shcal13"))){
+            stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+        } else {
+            tmp <- unique(calCurves)
+            if (length(calCurves)==1){ calCurves <- rep(calCurves,length(ages)) }
+            cclist <- vector(mode="list", length=length(tmp))
+            names(cclist) <- tmp
+            for (a in 1:length(tmp)){
+                calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp[1],".14c", sep="")
+                options(warn=-1)
+                cctmp <- readLines(calCurveFile, encoding="UTF-8")
+                cctmp <- cctmp[!grepl("[#]",cctmp)]
+                cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+                options(warn=0)
+                colnames(cctmp) <- c("CALBP","C14BP","Error")
+                cclist[[tmp[a]]] <- cctmp
+            }
+        }
+    }
+    ## container and reporting set-up
     reslist <- vector(mode="list", length=2)
     sublist <- vector(mode="list", length=length(ages))
     if (calMatrix){
@@ -30,27 +71,14 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     if (length(resErrors)==1){ resErrors <- rep(resErrors,length(ages)) }
     names(sublist) <- ids
     names(reslist) <- c("metadata","grids")
-    tmp <- unique(calCurves)
-    if (length(calCurves)==1){ calCurves <- rep(calCurves,length(ages)) }
-    cclist <- vector(mode="list", length=length(tmp))
-    names(cclist)=tmp
-    for (a in 1:length(tmp)){
-        calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp[1],".14c", sep="")
-        options(warn=-1)
-        cctmp <- readLines(calCurveFile, encoding="UTF-8")
-        cctmp <- cctmp[!grepl("[#]",cctmp)]
-        cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-        options(warn=0)
-        colnames(cctmp) <- c("CALBP","C14BP","Error")
-        cclist[[tmp[a]]] <- cctmp
-    }
     if (length(ages)>1 & verbose){
-            print("Calibrating radiocarbon ages...")
-            flush.console()
-            pb <- txtProgressBar(min=1, max=length(ages), style=3)
+        print("Calibrating radiocarbon ages...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(ages), style=3)
     }
-    # Parallellised
+    ## calibration
     if (ncores>1){
+        ## parallellised
         require(doParallel)
         cl <- makeCluster(ncores)
         registerDoParallel(cl)
@@ -60,25 +88,23 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-	    if (F14C==FALSE)
-	    {
-            	mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-            	tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
-            } else if (F14C==TRUE)
-            {
-	 	age <- exp(age/-8033)
-		error <- age*error/8033
-		mu <- approx(calcurve[,1], exp(calcurve[,2]/-8033), xout=calBP)$y
-		tau <- error^2 + approx(calcurve[,1], exp(calcurve[,2]/-8033)*calcurve[,3]/8033, xout=calBP)$y^2            		    
-	    }
-	    dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-	    if (std) {dens <- dens*sqrt(pi*2)}
+            if (F14C==FALSE){
+                mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
+                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
+            } else if (F14C==TRUE){
+                age <- exp(age/-8033)
+                error <- age*error/8033
+                mu <- approx(calcurve[,1], exp(calcurve[,2]/-8033), xout=calBP)$y
+                tau <- error^2 + approx(calcurve[,1], exp(calcurve[,2]/-8033)*calcurve[,3]/8033, xout=calBP)$y^2            		    
+            }
+            dens <- dnorm(age, mean=mu, sd=sqrt(tau))
+            if (std) { dens <- dens*sqrt(pi*2) }
             dens[dens < eps] <- 0	
             if (normalised){
-		    dens <- dens/sum(dens)
-	   	    dens[dens < eps] <- 0
-                    dens <- dens/sum(dens)
-	    }
+                dens <- dens/sum(dens)
+                dens[dens < eps] <- 0
+                dens <- dens/sum(dens)
+            }
             res <- data.frame(calBP=calBP,PrDens=dens)
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             res <- res[res$PrDens > 0,]
@@ -93,6 +119,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             }
         }
     } else {
+        ## single core
         for (b in 1:length(ages)){
             if (length(ages)>1 & verbose){ setTxtProgressBar(pb, b) }
             calcurve <- cclist[[calCurves[b]]]
@@ -100,30 +127,31 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
             if (F14C==FALSE){
-        	mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-		tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
-               }  else if (F14C==TRUE){
-		age <- exp(age/-8033)
-		error <- age*error/8033
-		mu <- approx(calcurve[,1], exp(calcurve[,2]/-8033), xout=calBP)$y
-		tau <- error^2 + approx(calcurve[,1], exp(calcurve[,2]/-8033)*calcurve[,3]/8033, xout=calBP)$y^2            	
-	       }
-	    dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-	    if (std) {dens <- dens*sqrt(pi*2)}
+                mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
+                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
+            }  else if (F14C==TRUE){
+                age <- exp(age/-8033)
+                error <- age*error/8033
+                mu <- approx(calcurve[,1], exp(calcurve[,2]/-8033), xout=calBP)$y
+                tau <- error^2 + approx(calcurve[,1], exp(calcurve[,2]/-8033)*calcurve[,3]/8033, xout=calBP)$y^2            	
+            }
+            dens <- dnorm(age, mean=mu, sd=sqrt(tau))
+            if (std) {dens <- dens*sqrt(pi*2)}
             dens[dens < eps] <- 0
             if (normalised){
                 dens <- dens/sum(dens)
                 dens[dens < eps] <- 0
                 dens <- dens/sum(dens)
-                }
+            }
             res <- data.frame(calBP=calBP,PrDens=dens)
-	    res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+            res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
             if (calMatrix){ calmat[,b] <- res$PrDens }
             res <- res[res$PrDens > 0,]
             class(res) <- append(class(res),"calGrid")
             sublist[[ids[b]]] <- res
         }
     }
+    ## clean-up and results
     if (length(ages)>1 & verbose){ close(pb) }
     df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], F14CConversion=F14C, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df
