@@ -155,9 +155,12 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     if (length(ages)>1 & verbose){ close(pb) }
     df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], F14CConversion=F14C, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df
-    reslist[["grids"]] <- sublist
     if (calMatrix){
+        reslist[["grids"]] <- NA
         reslist[["calmatrix"]] <- calmat
+    } else {
+        reslist[["grids"]] <- sublist
+        reslist[["calmatrix"]] <- NA
     }
     class(reslist) <- c("CalDates",class(reslist))
     if (verbose){ print("Done.") }
@@ -336,7 +339,6 @@ as.CalDates <- function(x){
 }
 
 
-
 "[.CalDates" <- function(x,i){
     
     if (nrow(x$metadata)==0){
@@ -344,10 +346,10 @@ as.CalDates <- function(x){
     }
     if(!missing(i)) {
         if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
-            if (length(x$calmatrix>0)){
-                res <- list(metadata=x$metadata[i,], grids=x$grids[i], calmatrix=x$calmatrix[,i])
+            if (!is.na(x$calmatrix)){
+                res <- list(metadata=x$metadata[i,], grids=NA, calmatrix=x$calmatrix[,i])
             } else {
-                res <- list(metadata=x$metadata[i,], grids=x$grids[i])
+                res <- list(metadata=x$metadata[i,], grids=x$grids[i], calmatrix=NA)
             }
             class(res) <- c("CalDates", class(res))        
         } else {
@@ -458,27 +460,30 @@ jagsSingleCalibrate<-function(age,error,calCurves='intcal13',init=NA,iter=50000)
 }
 
 
-hpdi<- function(x, credMass=0.95)
-{
-   cl <- class(x)
+hpdi<- function(x, credMass=0.95){
+
+    cl <- class(x)
     if (!"CalDates"%in%cl){
-	    stop("x must be of class CalDates")
+        stop("x must be of class CalDates")
     }
-	
-  n <- nrow(x$metadata)
-  result=vector("list",length=n)
-  for ( i in 1:n)
-  {
-  grd <- x$grids[[i]]	  
-  sorted <- sort(grd$PrDens , decreasing=TRUE )
-  heightIdx = min( which( cumsum( sorted) >= sum(grd$PrDens) * credMass ) )
-  height = sorted[heightIdx]
-  indices = which( grd$PrDens >= height )
-  gaps <- which(diff(indices) > 1)
-  starts <- indices[c(1, gaps + 1)]
-  ends <- indices[c(gaps, length(indices))]
-  result[[i]] <- cbind(startCalBP = grd$calBP[starts], endCalBP = grd$calBP[ends]) 
-  }  
-  return(result)
+    n <- nrow(x$metadata)
+    result <- vector("list",length=n)
+    for (i in 1:n){
+        if (length(x$calmatrix)>1){
+            grd <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,i])
+            grd <- grd[grd$PrDens >0,]
+        } else {
+            grd <- x$grids[[i]]
+        }
+        sorted <- sort(grd$PrDens , decreasing=TRUE)
+        heightIdx = min( which( cumsum( sorted) >= sum(grd$PrDens) * credMass ) )
+        height = sorted[heightIdx]
+        indices = which( grd$PrDens >= height )
+        gaps <- which(diff(indices) > 1)
+        starts <- indices[c(1, gaps + 1)]
+        ends <- indices[c(gaps, length(indices))]
+        result[[i]] <- cbind(startCalBP = grd$calBP[starts], endCalBP = grd$calBP[ends]) 
+    }  
+    return(result)
 }
 

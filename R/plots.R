@@ -4,8 +4,15 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     if (!type %in% types){
         stop("The plot type you have chosen is not currently an option.")
     }
-    yearsBP <- calDates$grids[[ind]]$calBP
-    prob <- calDates$grids[[ind]]$PrDens
+    if (length(x$calmatrix)>1){
+        grd <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,ind])
+        grd <- grd[grd$PrDens >0,]
+        yearsBP <- grd$calBP
+        prob <- grd$PrDens
+    } else {
+        yearsBP <- calDates$grids[[ind]]$calBP
+        prob <- calDates$grids[[ind]]$PrDens
+    }
     cra <- calDates$metadata$CRA[ind]
     error <- calDates$metadata$Error[ind]
     calcurve <- calDates$metadata$CalCurve[ind]
