@@ -2,7 +2,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
-        samplesize <- length(x$grids)
+        samplesize <- nrow(x$metadata)
     } else {
         samplesize <- length(unique(bins))
     }
@@ -93,7 +93,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 
 permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalised=FALSE, spdnormalised=FALSE, raw=FALSE, verbose=TRUE){
 
-    if (is.na(bins[1])){ bins <- as.character(1:length(x$grids)) }
+    if (is.na(bins[1])){ bins <- as.character(1:nrow(x$metadata)) }
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(nrow=nrow(calyears), ncol=length(binNames))
@@ -150,7 +150,6 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
     observedSPD <- vector("list",length=length(unique(GroupList)))
     names(observedSPD) <- unique(GroupList)
     for (d in 1:length(unique(GroupList))){
-
         focus <- unique(GroupList)[d]
         index <- which(GroupList==focus)
         tmpSPD <- apply(binnedMatrix[,index], 1, sum)

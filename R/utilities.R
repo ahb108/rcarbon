@@ -1,14 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
 reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
 
     types <- c("simple","normal", "custom")
@@ -52,16 +42,21 @@ quickMarks <- function(x, verbose=TRUE){
     if (!"CalDates" %in% class(x)){
         stop("Input must be of class \"CalDates\"")
     }
-    df <- as.data.frame(matrix(ncol=8,nrow=length(x$grid)), stringsasFactors=TRUE)
+    df <- as.data.frame(matrix(ncol=8,nrow=nrow(x$metadata)), stringsasFactors=TRUE)
     names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
     print("Extracting approximate values...")
-    if (length(x$grid)>1 & verbose){
+    if (nrow(x$metadata)>1 & verbose){
         flush.console()
-        pb <- txtProgressBar(min=1, max=length(x$grid), style=3)
+        pb <- txtProgressBar(min=1, max=nrow(x$metadata), style=3)
     }
-    for (a in 1:length(x$grid)){
-        if (length(x$grid)>1 & verbose){ setTxtProgressBar(pb, a) }
-        tmp <- x$grid[[a]]
+    for (a in 1:nrow(x$metadata)){
+        if (nrow(x$metadata)>1 & verbose){ setTxtProgressBar(pb, a) }
+        if (length(x$calmatrix)>1){
+            tmp <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,a])
+            tmp <- tmp[tmp$PrDens >0,] 
+        } else {
+            tmp <- x$grids[[a]]
+        }
         tmp <- tmp[tmp$PrDens>0,]
         tmp <- tmp[with(tmp, order(-PrDens)), ]
         tmp$Cumul <- cumsum(tmp$PrDens)

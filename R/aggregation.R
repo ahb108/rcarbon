@@ -88,8 +88,8 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
     }
     speccall <- as.data.frame(lapply(speccall,deparse), stringsAsFactors=FALSE)
     speccall <- speccall[,names(defcall)]
-    speccall$ndates <- length(x$grids)
-    speccall$nbins <- length(x$grids)
+    speccall$ndates <- nrow(x$metadata)
+    speccall$nbins <- nrow(x$metadata)
     if (!"CalDates" %in% class(x)){
         stop("x must be an object of class 'CalDates'.")
     }
@@ -98,11 +98,11 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
         if (any(is.na(bins))){
             stop("Cannot have NA values in bins.")
         }
-        if (length(bins)!=length(x$grids)){
+        if (length(bins)!=nrow(x$metadata)){
             stop("bins (if provided) must be the same length as x.")
         }
     } else {
-        bins <- rep("0_0",length(x$grids))
+        bins <- rep("0_0",nrow(x$metadata))
     }
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
