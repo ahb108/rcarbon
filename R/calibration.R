@@ -346,7 +346,7 @@ as.CalDates <- function(x){
     }
     if(!missing(i)) {
         if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
-            if (!is.na(x$calmatrix)){
+            if (length(x$calmatrix)>1){
                 res <- list(metadata=x$metadata[i,], grids=NA, calmatrix=x$calmatrix[,i])
             } else {
                 res <- list(metadata=x$metadata[i,], grids=x$grids[i], calmatrix=NA)
