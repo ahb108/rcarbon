@@ -152,7 +152,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
     for (d in 1:length(unique(GroupList))){
         focus <- unique(GroupList)[d]
         index <- which(GroupList==focus)
-        tmpSPD <- apply(binnedMatrix[,index], 1, sum)
+        tmpSPD <- apply(binnedMatrix[,index,drop=FALSE], 1, sum)
         if (!is.na(runm)){
             tmpSPD <- runMean(tmpSPD, runm, edge="fill")
         }
@@ -180,7 +180,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
         for (d in 1:length(unique(simGroupList))){
             focus <- unique(GroupList)[d]
             index <- which(simGroupList==focus)
-            tmpSPD <- apply(binnedMatrix[,index],1,sum)
+            tmpSPD <- apply(binnedMatrix[,index,drop=FALSE],1,sum)
             if (!is.na(runm)){
                 tmpSPD <- runMean(tmpSPD, runm, edge="fill")
             }
