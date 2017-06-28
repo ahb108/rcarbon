@@ -445,7 +445,7 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
-    baseline <- rep(0,nrow(obs))
+    baseline <- rep(NA,nrow(obs))
     if (drawaxes & bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
         #axis(side=1,padj=-1)
@@ -461,7 +461,7 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
     counter <- 0
     state <- "off"
     for (x in 1:length(boomPlot)){
-        if (boomPlot[x]>0&state=="off"){
+        if (!is.na(boomPlot[x])&state=="off"){
             counter <- counter+1
             boomBlocks <- c(boomBlocks,vector("list",1))
             boomBlocks[[counter]] <- vector("list",2)
@@ -470,11 +470,11 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
             state <- "on"
         }
         if (state=="on"){
-            if (boomPlot[x]>0){
+            if (!is.na(boomPlot[x])){
                 boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[x])
                 boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[x,"Years"])
             }
-            if (boomPlot[x]==0){
+            if (is.na(boomPlot[x])){
                 state <- "off"
             }
         }    
@@ -483,7 +483,7 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
     counter <- 0
     state <- "off"
     for (x in 1:length(bustPlot)){
-        if (bustPlot[x]>0&state=="off"){
+        if (!is.na(bustPlot[x])&state=="off"){
             counter <- counter+1
             bustBlocks <- c(bustBlocks,vector("list",1))
             bustBlocks[[counter]] <- vector("list",2)
@@ -492,11 +492,11 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
             state <- "on"
         }
         if (state=="on"){
-            if (bustPlot[x]>0){
+            if (!is.na(bustPlot[x])){
                 bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[x])
                 bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[x,"Years"])
             }
-            if (bustPlot[x]==0){
+            if (is.na(bustPlot[x])){
                 state <- "off"
             }
         }    
