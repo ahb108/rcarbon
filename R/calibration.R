@@ -1,6 +1,47 @@
+#' Calibrate Radiocarbon Dates
+#'
+#' Function for calibrating radiocarbon dates.
+#'
+#' @param ages a vector of radiocarbon dates 
+#' @param errors a vector of radiocarbon dates 
+#' @param ids a vector of IDs for each date
+#' @param dateDetails an optional vector of details for each date which will be returned in the output metadata. 
+#' @param calCurves A vector of calibration curves (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13')
+#' @param resOffsets A vector of offset values for the Marine Reservoir Effect
+#' @param resErrors A vector of offset value errors for the Marine Reservoir Effect
+#' @param timeRange Time range of analysis (in calendar years)
+#' @param F14C a logical variable indicating whether the calibration should be conducted in F14C space or not. Default is FALSE
+#' @param std a logical variable indicating whether calibration should be scaled by sqrt(pi*2). Relevant only for F14C space calibration. Default is FALSE. 
+#' @param normalised a logical variable indicating whether the calibration should be normalised or not. Default is FALSE
+#' @param eps Cut-off value for density calculation. Default is 1e-5.
+#' @param calMatrix a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}
+#' @param ncores Number of cores used for for parallel execution. Default is 1.
+#' @param verbose a logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#'
+#' @details This function computes calibrated radiocarbon ages using the algorithm described in Bronk Ramsey 2008, with the option to process the data in F14C space. Multiple dates can be calibrated using different settings (e.g. calibration curves, reservoir offset, normalisation), and calculations can be executed in parallel to reduce computing time.
+#'
+#' @return An object of class CalDates with the following elements
+#' \itemize{
+#' \item{metadata}{A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.}
+#' \item{grids}{A list of calGrid class objects, containing the posterior probabilities for each calendar year. NA when the parameter calMatrix is set to TRUE} 
+#' \item{calMatrix}{A matrix of probability values associated with each calendar year between 1 and 50,000 BP (rows) for each radiocarbon date (columns). NA when the parameter calMatrix is set to FALSE}  
+#' }
+#'
+#' @references 
+#' Bronk Ramsey, C (2008). Radiocarbon dating: Revolutions in Understanding. Archaeometry 50(2), 249–75, DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x 
+#'
+#' @examples
+#' x <- calibrate(ages=4000,errors=30)
+#' plot(x)
+#' # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
+#' x2 <- calibrate(ages=4000,errors=30,calCurves='marine13',resOffsets=300,resErrors=30)
+#' plot(x)
+
 calibrate <- function (x, ...) {
    UseMethod("calibrate")
 }
+
+#' @rdname calibrate
 
 calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, std=FALSE, normalised=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
 
