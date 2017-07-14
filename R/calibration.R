@@ -22,9 +22,9 @@
 #'
 #' @return An object of class CalDates with the following elements
 #' \itemize{
-#' \item{metadata}{A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.}
-#' \item{grids}{A list of calGrid class objects, containing the posterior probabilities for each calendar year. NA when the parameter calMatrix is set to TRUE} 
-#' \item{calMatrix}{A matrix of probability values associated with each calendar year between 1 and 50,000 BP (rows) for each radiocarbon date (columns). NA when the parameter calMatrix is set to FALSE}  
+#' \item{\code{metadata}} {A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.}
+#' \item{\code{grids}} {A list of calGrid class objects, containing the posterior probabilities for each calendar year. NA when the parameter calMatrix is set to TRUE} 
+#' \item{\code{calMatrix}} {A matrix of probability values associated with each calendar year between 1 and 50,000 BP (rows) for each radiocarbon date (columns). NA when the parameter calMatrix is set to FALSE}  
 #' }
 #'
 #' @references 
@@ -41,7 +41,7 @@ calibrate <- function (x, ...) {
    UseMethod("calibrate")
 }
 
-#' @rdname calibrate
+# #' @rdname calibrate
 
 calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, std=FALSE, normalised=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
 
