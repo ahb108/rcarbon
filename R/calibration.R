@@ -36,16 +36,18 @@
 #' # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
 #' x2 <- calibrate(ages=4000,errors=30,calCurves='marine13',resOffsets=300,resErrors=30)
 #' plot(x)
+#' @export
 
 calibrate <- function (x, ...) {
    UseMethod("calibrate")
 }
 
-# #' @rdname calibrate
+#' @rdname calibrate
+#' @export
 
 calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, std=FALSE, normalised=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
 
-    ## age and error checks
+    # age and error checks
     if (length(ages) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
     }
@@ -55,7 +57,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     if (any(is.na(ages))|any(is.na(errors))){
         stop("Ages or errors contain NAs")
     }
-    ## calCurve checks and set-up
+    # calCurve checks and set-up
     if (!all(class(calCurves)=="character")){
         if (any(class(calCurves) %in% c("matrix","data.frame"))){
             cctmp <- as.matrix(calCurves)
@@ -94,7 +96,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             }
         }
     }
-    ## container and reporting set-up
+    # container and reporting set-up
     reslist <- vector(mode="list", length=2)
     sublist <- vector(mode="list", length=length(ages))
     if (calMatrix){
@@ -117,9 +119,9 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         flush.console()
         pb <- txtProgressBar(min=1, max=length(ages), style=3)
     }
-    ## calibration
+    # calibration
     if (ncores>1){
-        ## parallellised
+        # parallellised
         require(doParallel)
         cl <- makeCluster(ncores)
         registerDoParallel(cl)
@@ -160,7 +162,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             }
         }
     } else {
-        ## single core
+        # single core
         for (b in 1:length(ages)){
             if (length(ages)>1 & verbose){ setTxtProgressBar(pb, b) }
             calcurve <- cclist[[calCurves[b]]]
@@ -192,7 +194,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             sublist[[ids[b]]] <- res
         }
     }
-    ## clean-up and results
+    # clean-up and results
     if (length(ages)>1 & verbose){ close(pb) }
     df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], F14CConversion=F14C, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df

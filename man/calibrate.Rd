@@ -2,9 +2,16 @@
 % Please edit documentation in R/calibration.R
 \name{calibrate}
 \alias{calibrate}
+\alias{calibrate.default}
 \title{Calibrate Radiocarbon Dates}
 \usage{
 calibrate(x, ...)
+
+\method{calibrate}{default}(ages, errors, ids = NA, dateDetails = NA,
+  calCurves = "intcal13", resOffsets = 0, resErrors = 0,
+  timeRange = c(50000, 0), F14C = FALSE, std = FALSE,
+  normalised = FALSE, calMatrix = FALSE, eps = 1e-05, ncores = 1,
+  verbose = TRUE)
 }
 \arguments{
 \item{ages}{a vector of radiocarbon dates}
@@ -29,9 +36,9 @@ calibrate(x, ...)
 
 \item{normalised}{a logical variable indicating whether the calibration should be normalised or not. Default is FALSE}
 
-\item{eps}{Cut-off value for density calculation. Default is 1e-5.}
-
 \item{calMatrix}{a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}}
+
+\item{eps}{Cut-off value for density calculation. Default is 1e-5.}
 
 \item{ncores}{Number of cores used for for parallel execution. Default is 1.}
 
