@@ -20,7 +20,7 @@ An object of class spatialweights
 Function for computing a matrix of gaussian or fixed weights from distance matrix
 }
 \details{
-This function generates a weight matrix (required for the \code{\link{spSPDpermtest}}) function. When \code{kernel=="fixed"}, the weight \eqn{w_{ij}} between site \eqn{i} and \eqn{j} is equal to 1 when their interdistance \eqn{d_{ij}} is below \code{h}, and equal to 0 when  \eqn{d_{ij}>h}.When \code{kernel=="gaussian"}, the weight is calculated with formula exp(-d_{ij}^2/h^2).
+This function generates a weight matrix (required for the \code{\link{SPpermTest}}) function. When \code{kernel=="fixed"}, the weight \eqn{w_{ij}} between site \eqn{i} and \eqn{j} is equal to 1 when their interdistance \eqn{d_{ij}} is below \code{h}, and equal to 0 when  \eqn{d_{ij}>h}.When \code{kernel=="gaussian"}, the weight is calculated with formula exp(-d_{ij}^2/h^2).
 }
 \examples{
 lon <- c(11.3426,0.1278,0.1218)
