@@ -20,6 +20,3 @@ A vector of character strings of length(ages) that identifying intra-site or int
 \description{
 Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in agiven site phase will impede comparison between sites or phases.
 }
-\examples{
-binPrep()
-}

@@ -1,4 +1,24 @@
-## Compute weights from distance matrix
+#' Compute weights from distance matrix
+#'
+#' Function for computing a matrix of gaussian or fixed weights from distance matrix
+#'
+#' @param distmat a symmetric matrix of inter-site distances (in km). 
+#' @param h parameter of the Gaussian distance decay function.
+#' @param kernel indicates the type of weighting function, either 'fixed' or 'gaussian'. Default is 'gaussian'. 
+#'
+#' @details This function generates a weight matrix (required for the \code{\link{spSPDpermtest}}) function. When \code{kernel=="fixed"}, the weight \eqn{w_{ij}} between site \eqn{i} and \eqn{j} is equal to 1 when their interdistance \eqn{d_{ij}} is below \code{h}, and equal to 0 when  \eqn{d_{ij}>h}.When \code{kernel=="gaussian"}, the weight is calculated with formula exp(-d_{ij}^2/h^2).
+#'
+#' @return An object of class spatialweights
+#'
+#' @examples
+#' lon <- c(11.3426,0.1278,0.1218)
+#' lat <- c(44.4949,51.5074,52.2053)
+#' d <- greatArcDist(Latitude=lat,Longitude=lon)
+#' defineNeighbour(d,h=100)
+#' defineNeighbour(d,h=100,kernel="fixed")
+#' @export
+
+
 defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
 {
     w=matrix(NA,nrow=nrow(distmat),ncol=ncol(distmat))
@@ -23,8 +43,23 @@ defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
 }
 
 
-
-## Compute Great Arc Distances Matrix 
+#' Compute great-arc distances
+#
+#' Function for computing a matrix of great-arc distances (in km) from a set of decimal degree coordinates.
+#'
+#' @param Latitude A vector lf latitude coordinates in decimal degrees.  
+#' @param Longitude A vector lf longitude coordinates in decimal degrees.  
+#' @param a logical variable indicating whether extra information on progress should be reported. Default is FALSE
+#'
+#'
+#'
+#' @return A matrix of great-arc distances in km.
+#'
+#' @examples
+#' lon <- c(11.3426,0.1278,0.1218)
+#' lat <- c(44.4949,51.5074,52.2053)
+#' d <- greatArcDist(Latitude=lat,Longitude=lon)
+#' @export
 
 greatArcDist<-function(Latitude,Longitude,verbose=FALSE)
     {
@@ -65,10 +100,36 @@ greatArcDist<-function(Latitude,Longitude,verbose=FALSE)
        return(as.matrix(as.dist(res)))
     }
 
+#' Spatial Permutation Test of summed probability distributions.
+#
+#' This function carries out local spatial permutation test of the summed probability distributions of radiocarbon dates for detecting local deviations in growth rates (Crema et al submitted). 
+#' 
+#' @param calDates  A \code{CalDates} class object.
+#' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP
+#' @param bins A vector indicating which bin each radiocarbon date is assigned to. Must have the same length as the number of radiocarbon dates. Can be created using the  \code{\link{binPrep}}) function. Bin names should follow the format "x_y", where x refers to a unique location (e.g. a site) and y is a integer value (e.g. "S023_1", "S023_2","S034_1", etc.).  
+#' @param locations A \code{SpatialPoints} or a \code{SpatialPointsDataFrame} class object. Rownames of each point should much the first part of the bin names supplied (e.g. "S023","S034") 
+#' @param breaks A vector of break points for defining the temporal slices.
+#' @param spatialweights A \code{spatialweights} class object defining the spatial weights between the locations.
+#' @param nsim The total number of simulations. Default is 1000.
+#' @param runm The window size of the moving window average. Must be set to \code{NA} if a the rates of change area calculated from the raw SPDs. 
+#' @param permute Indicates whether the permutations should be based on the \code{"bins"} or the \code{"locations"}. Default is \code{"locations"}. 
+#' @param ncores Number of cores used for for parallel execution. Default is 1.
+#' @param datenormalised a logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1.Default is FALSE. 
+#' @param verbose a logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 
-##Core spatialSPD function##
+#'
+#' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates weighting the contribution of dates from neighbouring site using a weight scheme provided by the \code{spatialweights} class object. 2) define temporal slices (using \code{breaks} as break values) the compute the total probability mass within each slice; 3) compute the rate of change between as abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\delta t}-1)}; 4) randomise the location of indivual bins or the entire sequence of bins associated with a given location and carry out steps 1--3; 5) repeate step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate to the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate (i.e.q-value) for each location.    
+#'
+#' @return A \code{spatialTest} class object
+#'
+#' @references
+#' Crema, E.R., Bevan, A., Shennan, S. (submitted). Spatio-temporal approaches to archaeological radiocarbon dates.
+#' 
+#' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting
+#' @export
+ 
 
-spSPDpermtest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA, verbose=TRUE,permute="locations",ncores=1,datenormalised=FALSE)
+SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA, verbose=TRUE,permute="locations",ncores=1,datenormalised=FALSE)
 {
 
 ###################################
@@ -389,12 +450,28 @@ spSPDpermtest<-function(calDates, timeRange, bins, locations, breaks, spatialwei
 
 
 
-##Plot function for spatial SPD#
+
+#' Plot results of the local spatial permutation test of summed probability distributions.
+#
+#' Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.  
+#'
+#' @param x A \code{spatialTest} class object
+#' @param index A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"} 
+#' @param option Indicates what to display. Must be one of "\code{raw}","\code{test}","\code{rawlegend}", and "\code{testlegend}".  
+#' @param breakRange A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend.
+#' @param breakLenth A numerical vector defining the number of breaks for growth rates to be displayed in the legend.
+#' @param rd Number of decimal places of the growth rate to be displayed in the Legend
+#' @param baseSize Numerical value giving the amount by which points should be magnified relative to the default settings in R. Default is 0.5
+#' @param ... Graphical parameters to be passed to methods. 
+#'
+#' @details 
+#' The function displays a distribution map of local growth rates (when \code{option="raw"}), q- and p-values (when \code{option="test"}), and the associated legends (when \code{option="rawlegend"} or  \code{option="testlegend"}).    
+#'
+#' @seealso \code{\link{SPpermTest}}
+#' @export
 
 
-
-
-plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,legendPlot=FALSE,rd=5,baseSize=0.5,...)
+plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,baseSize=0.5,...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{

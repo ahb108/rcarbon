@@ -9,8 +9,7 @@
 #'
 #' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with rspd()
 #'
-#' @examples
-#' binPrep()
+#' @export
 binPrep <- function(sites, ages, h){
     
     clusters <- rep(NA,length(sites))
@@ -28,12 +27,16 @@ binPrep <- function(sites, ages, h){
     return(clusters)
 }
 
+#' @export
+
 rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
 
     warning("Deprecated and soon to be removed. Using spd() instead.")
     return(spd(x=x, timeRange=timeRange, bins=bins, datenormalised=datenormalised, spdnormalised=spdnormalised, runm=runm, verbose=verbose))
 
 }
+
+#' @export
 
 overlapW <- function(calDates, bins, verbose=TRUE){
     df <- data.frame(Weight=rep(1,length(myCalDates$grids)))
@@ -74,6 +77,8 @@ overlapW <- function(calDates, bins, verbose=TRUE){
     if (verbose){ print("Done.") }
     return(df)
 }
+
+#' @export
 
 spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE){
     

@@ -210,6 +210,8 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     return(reslist)
 }
 
+#' @export
+
 calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(50000,0), compact=TRUE, eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE, ...){
 
     if (length(errors)==1){
@@ -255,9 +257,13 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
     return(res)
 }
 
+#' @export
+
 uncalibrate <- function (x, ...) {
    UseMethod("uncalibrate", x)
 }
+
+#' @export
 
 uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard"){ 
 
@@ -293,6 +299,8 @@ uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='
     }
     return(dates)
 }
+
+#' @export
 
 uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact=TRUE, verbose=TRUE){
 
@@ -332,6 +340,8 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact
     return(res)
 }
 
+#' @export
+
 as.CalGrid <- function(x) {
     df <- as.data.frame(x)
     if (ncol(x) == 2){
@@ -342,6 +352,8 @@ as.CalGrid <- function(x) {
     class(df) <- c("CalGrid", class(df)) 
     return(df)
 }
+
+#' @export
 
 as.CalDates <- function(x){
     cl <- class(x)
@@ -381,6 +393,7 @@ as.CalDates <- function(x){
     return(reslist)
 }
 
+#' @export
 
 "[.CalDates" <- function(x,i){
     
@@ -401,6 +414,7 @@ as.CalDates <- function(x){
         return(res)
     }           
 }
+
 
 oxcalSingleDate<-function(id="tmp01",ages,error,OxCalExecute,calCurve,normalised=F)
     {
@@ -502,6 +516,7 @@ jagsSingleCalibrate<-function(age,error,calCurves='intcal13',init=NA,iter=50000)
     return(finalRes)
 }
 
+#' @export
 
 hpdi<- function(x, credMass=0.95){
 

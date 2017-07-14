@@ -1,3 +1,5 @@
+#' @export
+
 plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab="auto", ylab="auto", axis4=TRUE, HPD=FALSE, credMass=0.95){
 
     types <- c("standard", "simple", "auc")
@@ -120,6 +122,8 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     }
 }
 
+#' @export
+
 plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
     obs <- test$result[,1:2]
@@ -239,6 +243,8 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     if (bbty %in% c("n","b")){ return(bbp) }
 }
 
+#' @export
+
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){
 
     if (!"quickMarks" %in% class(x)){
@@ -251,6 +257,8 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
         polygon(x=c(barcodes[a]-halfbw,barcodes[a]-halfbw,barcodes[a]+halfbw,barcodes[a]+halfbw,barcodes[a]-halfbw),y=c(yrng[1],yrng[2],yrng[2],yrng[1],yrng[1]), border=border, col=col, ...)
     }
 }
+
+#' @export
 
 crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE,...){
 
@@ -279,6 +287,8 @@ crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE
         points(xmed[a],cra[a], pch=pch.pts, cex=cex.pts, ...)
     }
 }
+
+#' @export
 
 plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
 
@@ -330,6 +340,8 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
 	axis(side=1,at=py,labels=pyShown)
     }
 }
+
+#' @export
 
 plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
@@ -384,6 +396,7 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
 }
 
 
+#' @export
 
 
 plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
@@ -425,6 +438,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 
 
 
+#' @export
 
 
 plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
@@ -554,6 +568,7 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
 
 
 
+#' @export
 
 
 bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA, col.boom=rgb(0.7,0,0,0.2), col.bust=rgb(0,0,0.7,0.2), border.boom=NA, border.bust=NA){
@@ -602,6 +617,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
     }
 }
 
+#' @export
 
 binsense<-function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
 {

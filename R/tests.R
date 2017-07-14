@@ -1,3 +1,5 @@
+#' @export
+
 modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
 
     if (verbose){ print("Aggregating observed dates...") }
@@ -90,6 +92,8 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     if (verbose){ print("Done.") }
     return(res)
 }
+
+#' @export
 
 permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalised=FALSE, spdnormalised=FALSE, raw=FALSE, verbose=TRUE){
 

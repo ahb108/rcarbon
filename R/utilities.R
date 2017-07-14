@@ -1,3 +1,4 @@
+#' @export
 
 reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
 
@@ -22,9 +23,13 @@ reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
     return(res)
 }
 
+#' @export
+
 gaussW <- function(x, bw){
     exp(-(x^2)/(2*(bw^2)))
 }
+
+#' @export
 
 runMean <- function(x, n, edge="NA"){
     res <- x
@@ -36,6 +41,8 @@ runMean <- function(x, n, edge="NA"){
     }
     return(res)
 }
+
+#' @export
 
 quickMarks <- function(x, verbose=TRUE){
 
@@ -76,6 +83,8 @@ quickMarks <- function(x, verbose=TRUE){
     class(df) <- append(class(df),"quickMarks")
     return(df)
 }
+
+#' @export
 
 smoothGauss <- function(x, alpha, window=0.1){
   
@@ -118,6 +127,7 @@ smoothGauss <- function(x, alpha, window=0.1){
 }
 
 
+#' @export
 
 rangecheck <- function(x,bins,timeRange,datenormalised=FALSE){
     binNames <- unique(bins)
@@ -162,12 +172,16 @@ rangecheck <- function(x,bins,timeRange,datenormalised=FALSE){
     return(sum(apply(binnedMatrix,2,sum)==0)/ncol(binnedMatrix)*100)
 }
 
+#' @export
+
 BPtoBCAD <- function(x){
     res <- matrix(c(x, rep(NA,length(x))), ncol=2)
     res[x < 1950,2] <- 1950-res[x < 1950,1]
     res[x >= 1950,2] <- 1949-res[x >= 1950,1]
     return(res[,2])
 }
+
+#' @export
 
 BCADtoBP <- function(x){
     res <- matrix(c(x, rep(NA,length(x))), ncol=2)
