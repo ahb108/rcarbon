@@ -1,6 +1,6 @@
-#' Compute weights from distance matrix
+#' @title Compute weights from distance matrix
 #'
-#' Function for computing a matrix of gaussian or fixed weights from distance matrix
+#' @description Function for computing a matrix of gaussian or fixed weights from distance matrix
 #'
 #' @param distmat a symmetric matrix of inter-site distances (in km). 
 #' @param h parameter of the Gaussian distance decay function.
@@ -43,9 +43,9 @@ defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
 }
 
 
-#' Compute great-arc distances
+#' @title Compute great-arc distances
 #
-#' Function for computing a matrix of great-arc distances (in km) from a set of decimal degree coordinates.
+#' @description Function for computing a matrix of great-arc distances (in km) from a set of decimal degree coordinates.
 #'
 #' @param Latitude A vector lf latitude coordinates in decimal degrees.  
 #' @param Longitude A vector lf longitude coordinates in decimal degrees.  
@@ -100,9 +100,9 @@ greatArcDist<-function(Latitude,Longitude,verbose=FALSE)
        return(as.matrix(as.dist(res)))
     }
 
-#' Spatial Permutation Test of summed probability distributions.
+#' @title Spatial Permutation Test of summed probability distributions.
 #
-#' This function carries out local spatial permutation test of the summed probability distributions of radiocarbon dates for detecting local deviations in growth rates (Crema et al submitted). 
+#' @description This function carries out local spatial permutation test of the summed probability distributions of radiocarbon dates for detecting local deviations in growth rates (Crema et al submitted). 
 #' 
 #' @param calDates  A \code{CalDates} class object.
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP
@@ -451,9 +451,9 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
 
 
-#' Plot results of the local spatial permutation test of summed probability distributions.
+#' @title Plot results of the local spatial permutation test of summed probability distributions.
 #
-#' Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.  
+#' @description Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.  
 #'
 #' @param x A \code{spatialTest} class object
 #' @param index A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"} 

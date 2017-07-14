@@ -2,8 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{plot.spatialTest}
 \alias{plot.spatialTest}
-\title{Plot results of the local spatial permutation test of summed probability distributions.
-Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.}
+\title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
 \method{plot}{spatialTest}(x, index = NULL, option, breakRange,
   breakLength = 7, rd = 5, baseSize = 0.5, ...)
@@ -26,7 +25,6 @@ Displays local growth rates, p-values, and q-values retrieved from a \code{spati
 \item{breakLenth}{A numerical vector defining the number of breaks for growth rates to be displayed in the legend.}
 }
 \description{
-Plot results of the local spatial permutation test of summed probability distributions.
 Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.
 }
 \details{

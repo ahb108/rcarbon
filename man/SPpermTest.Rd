@@ -2,8 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{SPpermTest}
 \alias{SPpermTest}
-\title{Spatial Permutation Test of summed probability distributions.
-This function carries out local spatial permutation test of the summed probability distributions of radiocarbon dates for detecting local deviations in growth rates (Crema et al submitted).}
+\title{Spatial Permutation Test of summed probability distributions.}
 \usage{
 SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
   nsim = 1000, runm = NA, verbose = TRUE, permute = "locations",
@@ -38,7 +37,6 @@ SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
 A \code{spatialTest} class object
 }
 \description{
-Spatial Permutation Test of summed probability distributions.
 This function carries out local spatial permutation test of the summed probability distributions of radiocarbon dates for detecting local deviations in growth rates (Crema et al submitted).
 }
 \details{

@@ -2,8 +2,7 @@
 % Please edit documentation in R/spatial.R
 \name{greatArcDist}
 \alias{greatArcDist}
-\title{Compute great-arc distances
-Function for computing a matrix of great-arc distances (in km) from a set of decimal degree coordinates.}
+\title{Compute great-arc distances}
 \usage{
 greatArcDist(Latitude, Longitude, verbose = FALSE)
 }
@@ -18,7 +17,6 @@ greatArcDist(Latitude, Longitude, verbose = FALSE)
 A matrix of great-arc distances in km.
 }
 \description{
-Compute great-arc distances
 Function for computing a matrix of great-arc distances (in km) from a set of decimal degree coordinates.
 }
 \examples{
