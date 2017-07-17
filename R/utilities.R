@@ -79,7 +79,7 @@ quickMarks <- function(x, verbose=TRUE){
         df[a,"CRA"] <- x$metadata$CRA[a]
         df[a,"Error"] <- x$metadata$Error[a]
     }
-    if (length(x)>1 & verbose){ close(pb) }
+    if (nrow(x$metadata)>1 & verbose){ close(pb) }
     class(df) <- append(class(df),"quickMarks")
     return(df)
 }
