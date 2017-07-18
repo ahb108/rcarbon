@@ -1,14 +1,15 @@
-#' Prepare a set of bins for controlling the aggregation of radiocarbon dates
-#' known to be from the same phase of same archaeological site (for use with rspd)
+#' @title Binning function of radiocarbon dates.  
 #'
-#' Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in agiven site phase will impede comparison between sites or phases. 
+#' @description Prepare a set of bins for controlling the aggregation of radiocarbon dates
+#' known to be from the same phase of same archaeological site (for use with \code{\link{spd}}). Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in a given site phase will impede comparison between sites or phases. 
 #' 
 #' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases
 #' @param calcurve a vector uncalibrated conventional radiocarbon ages
-#' @param h a single numeric value passed to hclust() to control degree of grouping of similar ages in a phase site.
+#' @param h a single numeric value passed to \code{\link{hclust}} control degree of grouping of similar ages in a phase site.
 #'
 #' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with rspd()
 #'
+#' @seealso \code{\link{spd}}) for generating SPD; \code{\link{binsense}} for sensitivity analysis pertaining the choice of the parameter \code{h}.
 #' @export
 binPrep <- function(sites, ages, h){
     
@@ -78,6 +79,32 @@ overlapW <- function(calDates, bins, verbose=TRUE){
     return(df)
 }
 
+
+
+#' @title Summed probability distributions (SPD) of radiocarbon dates.  
+#'
+#' @description The function generates Summed probability distributions (SPD) of radiocarbon dates, with optional binning routine for controlling inter-site or inter-phase variation in sampling intensity.
+#'
+#' @param x A \code{CalDates} class object containing the calibrated radiocarbon dates.
+#' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
+#' @param bins A vector containing the bin names associated with each radiocarbon date. If set to NA, binning is not carried out. 
+#' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE. 
+#' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity. 
+#' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied.Default is NA  
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#'
+#' @details The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link{binPrep}}) function, and sensitivity to its parameter choice can be explored with the \code{\link{binsense}}) function.
+#'
+#' @return An object of class \code{CalSPD} with the following elements
+#' \itemize{
+#' \item{\code{metadata}} {A data.frame containing relevant information regarding the parameters used to create the SPD as well as sample size and number of bins}
+#' \item{\code{grid}} {A \code{CalGrid} class object containing the summed probability associated to each calendar year between \code{timeRange[1]} and \code{timeRange[2]}}
+#'}
+#'
+#' @references 
+#' Timpson, A., et al, (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52: 549–557. DOI:10.1016/j.jas.2014.08.011
+#'
+#' @seealso \code{\link{calibrate}}) for calibrating rardiocabon dates; \code{\link{binPrep}} for preparing bins.
 #' @export
 
 spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE){

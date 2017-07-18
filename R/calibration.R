@@ -2,8 +2,8 @@
 #'
 #' Function for calibrating radiocarbon dates.
 #'
-#' @param ages a vector of radiocarbon dates 
-#' @param errors a vector of radiocarbon dates 
+#' @param ages a vector of radiocarbon ages 
+#' @param errors a vector of errors corresponding to each radiocarbon age
 #' @param ids a vector of IDs for each date
 #' @param dateDetails an optional vector of details for each date which will be returned in the output metadata. 
 #' @param calCurves A vector of calibration curves (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13')

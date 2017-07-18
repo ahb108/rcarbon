@@ -14,9 +14,9 @@ calibrate(x, ...)
   verbose = TRUE)
 }
 \arguments{
-\item{ages}{a vector of radiocarbon dates}
+\item{ages}{a vector of radiocarbon ages}
 
-\item{errors}{a vector of radiocarbon dates}
+\item{errors}{a vector of errors corresponding to each radiocarbon age}
 
 \item{ids}{a vector of IDs for each date}
 
