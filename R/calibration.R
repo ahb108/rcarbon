@@ -1,6 +1,6 @@
-#' Calibrate Radiocarbon Dates
+#' @title Calibrate Radiocarbon Dates
 #'
-#' Function for calibrating radiocarbon dates.
+#' @description Function for calibrating radiocarbon dates.
 #'
 #' @param ages a vector of radiocarbon ages 
 #' @param errors a vector of errors corresponding to each radiocarbon age

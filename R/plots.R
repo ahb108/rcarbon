@@ -1,5 +1,5 @@
 #' @title Plot calibrated dates
-#
+#'
 #' @description Plot calibrated radiocarbon dates
 #'
 #' @param calDates A \code{CalDates} class object containing calibrated radiocarbon dates.
