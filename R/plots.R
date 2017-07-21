@@ -14,11 +14,12 @@
 #' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95%).
 #'
 #' @seealso \code{\link{calibrate}}
+#'
 #' @examples
-#' x<-calibrate(ages=c(3402,3490,4040),errors=c(20,20,30))
+#' x <- calibrate(ages=c(3402,3490,4042),errors=c(20,20,30))
 #' plot(x) #display the first date
 #' plot(x,2) #displays the second date
-#' plot(x,3,calendar="BCAD",HPD=T) #display in BC/AD with higher posterior density interval
+#' plot(x,3, calendar="BCAD", HPD=T) #display in BC/AD with higher posterior density interval
 #' @export
 
 
