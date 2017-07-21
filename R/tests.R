@@ -132,7 +132,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 }
 
 
-#' @title  Random permutation test for SPDs
+#' @title  Random mark permutation test for SPDs
 #'
 #' @description Global and local signficance test for comparing shapes of multiple SPDs using random permutations. 
 #'

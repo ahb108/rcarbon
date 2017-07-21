@@ -2,7 +2,7 @@
 % Please edit documentation in R/tests.R
 \name{permTest}
 \alias{permTest}
-\title{Random permutation test for SPDs}
+\title{Random mark permutation test for SPDs}
 \usage{
 permTest(x, marks, timeRange, nsim, bins = NA, runm = NA,
   datenormalised = FALSE, spdnormalised = FALSE, raw = FALSE,

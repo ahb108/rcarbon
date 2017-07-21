@@ -1,6 +1,28 @@
+#' @title Plot calibrated dates
+#
+#' @description Plot calibrated radiocarbon dates
+#'
+#' @param calDates A \code{CalDates} class object containing calibrated radiocarbon dates.
+#' @param ind Number indicating the index value of the calibrated radiocarbon date to be displayed. Default is 1.
+#' @param label (optional) Character vector to be shown on the top-right corner of the display window.
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param type Either \code{'standard'} or \code{'auc'}. If set to \code{'auc'}, displays both the normalised (dashed line) and unnormalised curves. Default is \code{'standard'}.
+#' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD") 
+#' @param ylab (optional) Label for the y axis. If unspecified the default setting will be applied ("Radiocarbon Age") 
+#' @param axis4  Logical value indicating whether an axis of probabilities values should be displayed. Default is TRUE. 
+#' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
+#' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95%).
+#'
+#' @seealso \code{\link{calibrate}}
+#' @examples
+#' x<-calibrate(ages=c(3402,3490,4040),errors=c(20,20,30))
+#' plot(x) #display the first date
+#' plot(x,2) #displays the second date
+#' plot(x,3,calendar="BCAD",HPD=T) #display in BC/AD with higher posterior density interval
 #' @export
 
-plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab="auto", ylab="auto", axis4=TRUE, HPD=FALSE, credMass=0.95){
+
+plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
@@ -30,11 +52,11 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     if (calendar=="BP"){
         plotyears <- yearsBP
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
-        if (xlab=="auto"){ xlabel <- "Years cal BP" } else { xlabel <- xlab } 
+        if (is.na(xlab)){ xlabel <- "Years cal BP" } else { xlabel <- xlab } 
     } else if (calendar=="BCAD"){
         plotyears <- 1950-yearsBP
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
-        if (xlab=="auto"){ xlabel <- "Years BC/AD" } else { xlabel <- xlab }       
+        if (is.na(xlab)){ xlabel <- "Years BC/AD" } else { xlabel <- xlab }       
     } else {
         stop("Unknown calendar type")
     }
@@ -91,7 +113,7 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         plot(cradf1$RX,cradf1$CRA,type="l", axes=FALSE, xlab=NA, ylab=NA, xlim=xlim, ylim=ylim, col=rgb(144,238,144,120,maxColorValue=255))
         polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
         axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
-        if (ylab=="auto"){
+        if (is.na(ylab)){
             mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)
         } else {
             mtext(side=2, line=3, xlab, cex=0.75)
@@ -122,6 +144,28 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     }
 }
 
+
+
+#' @title Plot result of Monte-Carlo Test for SPDs
+#'
+#' @description The function visualises the observed summed probability distribution of radiocarbon dates along with the simulation envelope for the null model and regions of positive and negative deviation.
+#'
+#' @param test A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param xlim the x limits of the plot.
+#' @param ylim the y limits of the plot.
+#' @param col.obs Line colour for the observed SPD
+#' @param lwd.obs Line width for the observed SPD
+#' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
+#' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
+#' @param bbty Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details below.
+#' @param drawaxes A logical value determining whether the axes should be displayed or not. Default is TRUE.
+#' @param ... Additional arguments affecting the plot
+
+#' @details The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observbed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of signficance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot. 
+
+#' @seealso \code{\link{SpdModelTest}}
+
 #' @export
 
 plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
@@ -148,8 +192,9 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     } else if (bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
-    box()
-    axis(side=2)
+    if (drawaxes){
+	box()
+    axis(side=2)}
     boomPlot <- baseline
     boomPlot[booms] <- obs[booms,2]
     bustPlot <- baseline
@@ -288,6 +333,27 @@ crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE
     }
 }
 
+
+#' @title Plot Summed Probability Distribution (SPD) of radiocarbon dates
+#'
+#'
+#' @param spd A \code{CalSPD} class object.
+#' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied.Default is NA  
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param type Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart. 
+#' @param xlim the x limits of the plot.
+#' @param ylim the y limits of the plot.
+#' @param ylab (optional) Label for the y axis. If unspecified the default setting will be applied ("Summed Probability") 
+#' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity. 
+#' @param rescale  A logical variable indicating whether the SPD should be rescaled to range 0 to 1.
+#' @param fill.p Fill colour for the SPD
+#' @param border.p Border colour for the SPD
+#' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
+#' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
+#'
+#'
+#'
+#' @seealso \code{\link{spd}}
 #' @export
 
 plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
@@ -438,8 +504,25 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 
 
 
+#' @title Plot result of mark permutation test of SPDs
+#'
+#' @description Vsualise the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
+#'
+#' @param test A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})
+#' @param focal Value specifying the name of the focal mark (group) to be plotted. 
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param xlim the x limits of the plot.
+#' @param ylim the y limits of the plot.
+#' @param col.obs Line colour for the observed SPD
+#' @param lwd.obs Line width for the observed SPD
+#' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
+#' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
+#' @param bbty Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details in \code{\link{plot.SpdModelTest}}.
+#' @param drawaxes A logical value determining whether the axes should be displayed or not. Default is TRUE.
+#' @param ... Additional arguments affecting the plot
+#'
+#' @seealso \code{\link{permTest}}; \code{\link{plot.SpdModelTest}};
 #' @export
-
 
 plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
@@ -617,6 +700,26 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
     }
 }
 
+
+#' @title Bin sensitivity analysis
+#' 
+#' @description Visually explores how choosing different values for \code{h} in the \code{\link{binPrep}} function affects the shape of the SPD.
+#' 
+#' @param x A \code{CalDates} class object containing calibrated radiocarbon dates.
+#' @param y A data.frame containing the radiocarbon ages and the site ID for each date.
+#' @param h A vector of numbers containing values for the \code{h} parameter to be used in the \code{\link{binPrep}} function. 
+#' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param sitecol Column name in \code{y} where Site IDs are stored.
+#' @param agecol Column name in \code{y} where radiocarbon ages are stored.
+#' @param raw A logical variable indicating whether all  SPDs should be returned or not. Default is FALSE.
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#' @param legend A logical variable indicating whether the legend should be displayed. Default is TRUE
+#' @param ... Additional arguments to be passed to the \code{\link{spd}} function. 
+#'
+#' 
+#' @seealso 
+#' \code{\link{binPrep}};\code{\link{pd}};
 #' @export
 
 binsense<-function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
