@@ -1,18 +1,15 @@
 #' @title Plot calibrated dates
-#'
-#' @description Plot calibrated radiocarbon dates
-#'
+#' @description Plot calibrated radiocarbon dates.
 #' @param calDates A \code{CalDates} class object containing calibrated radiocarbon dates.
 #' @param ind Number indicating the index value of the calibrated radiocarbon date to be displayed. Default is 1.
 #' @param label (optional) Character vector to be shown on the top-right corner of the display window.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param type Either \code{'standard'} or \code{'auc'}. If set to \code{'auc'}, displays both the normalised (dashed line) and unnormalised curves. Default is \code{'standard'}.
-#' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD") 
-#' @param ylab (optional) Label for the y axis. If unspecified the default setting will be applied ("Radiocarbon Age") 
+#' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD"). 
+#' @param ylab (optional) Label for the y axis. If unspecified the default setting will be applied ("Radiocarbon Age"). 
 #' @param axis4  Logical value indicating whether an axis of probabilities values should be displayed. Default is TRUE. 
 #' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
-#' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95%).
-#'
+#' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).
 #' @seealso \code{\link{calibrate}}
 #'
 #' @examples
@@ -21,7 +18,6 @@
 #' plot(x,2) #displays the second date
 #' plot(x,3, calendar="BCAD", HPD=T) #display in BC/AD with higher posterior density interval
 #' @export
-
 
 plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95){
 

@@ -19,18 +19,18 @@
 
 \item{type}{Either \code{'standard'} or \code{'auc'}. If set to \code{'auc'}, displays both the normalised (dashed line) and unnormalised curves. Default is \code{'standard'}.}
 
-\item{xlab}{(optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD")}
+\item{xlab}{(optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").}
 
-\item{ylab}{(optional) Label for the y axis. If unspecified the default setting will be applied ("Radiocarbon Age")}
+\item{ylab}{(optional) Label for the y axis. If unspecified the default setting will be applied ("Radiocarbon Age").}
 
 \item{axis4}{Logical value indicating whether an axis of probabilities values should be displayed. Default is TRUE.}
 
 \item{HPD}{Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.}
 
-\item{credMass}{A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95%).}
+\item{credMass}{A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).}
 }
 \description{
-Plot calibrated radiocarbon dates
+Plot calibrated radiocarbon dates.
 }
 \examples{
 x <- calibrate(ages=c(3402,3490,4042),errors=c(20,20,30))
