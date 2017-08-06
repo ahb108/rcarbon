@@ -25,12 +25,6 @@ reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
 
 #' @export
 
-gaussW <- function(x, bw){
-    exp(-(x^2)/(2*(bw^2)))
-}
-
-#' @export
-
 runMean <- function(x, n, edge="NA"){
     res <- x
     tmp <- filter(res,rep(1/n,n), sides=2)
@@ -93,7 +87,6 @@ smoothGauss <- function(x, alpha, window=0.1){
     ##http://uk.mathworks.com/help/signal/ref/gausswin.html?s_tid=gn_loc_drop
     ## alpha is the proportional to the standard deviation of the Gaussian smoothing kernel. Specifically: σ=(N – 1)/(2α) where σ is the Gaussian sd, N the length of the series and α the function argument
     ## window must be a fraction
-
     ## Convolution
     windowLength <- as.integer(max(abs(window*length(x)),1))
     hw <- abs(windowLength / 2.0)
@@ -107,7 +100,6 @@ smoothGauss <- function(x, alpha, window=0.1){
     w <- w/sum(w)
     hkwL <- as.integer(sizeW/2) 
     hkwR <- sizeW - hkwL
-  
     ## Smoothing
     smthfun <- function(i){
         ix.d <- c((i-hkwL):(i+hkwR-1))
@@ -189,7 +181,6 @@ BCADtoBP <- function(x){
     res[x < 0,2] <- abs(res[x < 0,1] - 1949)
     return(res[,2])
 }
-
 
 #' @export
 
@@ -369,8 +360,9 @@ greatArcDist<-function(Latitude,Longitude,verbose=FALSE)
        return(as.matrix(as.dist(res)))
     }
 
-
-
+gaussW <- function(x, bw){
+    exp(-(x^2)/(2*(bw^2)))
+}
 
 rybcolourmap <- function(range, ...) {
   col <- rybcolours(range, ...)
@@ -378,7 +370,7 @@ rybcolourmap <- function(range, ...) {
   return(z)
 }
 
-rybcolours <- function(range, sealevel=0, ncolours=100,nbeach=0){
+rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
   stopifnot(is.numeric(range) && length(range)==2)
   stopifnot(all(is.finite(range)))
   yr <- colorRampPalette(c("yellow","orangered","darkred"), space="rgb")

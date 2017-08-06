@@ -28,59 +28,6 @@ binPrep <- function(sites, ages, h){
     return(clusters)
 }
 
-#' @export
-
-rspd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=TRUE, runm=NA, verbose=TRUE){
-
-    warning("Deprecated and soon to be removed. Using spd() instead.")
-    return(spd(x=x, timeRange=timeRange, bins=bins, datenormalised=datenormalised, spdnormalised=spdnormalised, runm=runm, verbose=verbose))
-
-}
-
-#' @export
-
-overlapW <- function(calDates, bins, verbose=TRUE){
-    df <- data.frame(Weight=rep(1,length(myCalDates$grids)))
-    binNames <- unique(bins)
-    if (any(is.na(binNames))){ stop("Cannot have missing bin IDs") }
-    if (verbose){
-        print("Checking overlaps within each bin...")
-        flush.console()
-        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Checking overlaps within each bin...")
-    }
-    for (a in 1:length(binNames)){
-        if (verbose & length(binNames)>1){ setTxtProgressBar(pb, a) }
-        index <- which(bins==binNames[a])
-        binneddates <- calDates$metadata[index,"DateID"]
-        tmpc <- calDates$grids[index]
-        if (length(tmpc)>1){
-            maxbp <- max(sapply(tmpc,FUN=function(x) max(x$calBP)))
-            minbp <- min(sapply(tmpc,FUN=function(x) min(x$calBP)))
-            calyears <- data.frame(calBP=seq(maxbp, minbp,-1))
-            slist <- lapply(tmpc,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
-            slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
-            slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
-            for (i in 1:length(slist)){
-                mydateid <- binneddates[i]
-                focal <- slist[[i]]
-                others <- slist[-i]
-                overlaps <- rep(NA,length(others))
-                for (j in 1:length(others)){             
-                    tmp <- apply(cbind(focal$PrDens,others[[j]]$PrDens),1,min)
-                    overlaps[j] <- sum(tmp)
-                }
-                wt <- sum(focal$PrDens) * (1 - (sum(overlaps) / (sum(focal$PrDens)*length(overlaps))))
-                df$Weight[calDates$metadata$DateID==mydateid] <- wt
-            }
-        }
-    }
-    if (verbose & length(binNames)>1){ close(pb) }
-    if (verbose){ print("Done.") }
-    return(df)
-}
-
-
-
 #' @title Summed probability distributions (SPD) of radiocarbon dates.  
 #'
 #' @description The function generates Summed probability distributions (SPD) of radiocarbon dates, with optional binning routine for controlling inter-site or inter-phase variation in sampling intensity.

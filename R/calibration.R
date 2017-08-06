@@ -401,7 +401,7 @@ as.CalDates <- function(x){
 
 #' @export
 
-hpdi<- function(x, credMass=0.95){
+hpdi <- function(x, credMass=0.95){
 
     cl <- class(x)
     if (!"CalDates"%in%cl){

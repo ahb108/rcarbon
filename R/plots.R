@@ -715,7 +715,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' \code{\link{binPrep}};\code{\link{pd}};
 #' @export
 
-binsense<-function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
+binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
 {
 
   if (!calendar %in% c("BP","BCAD")){ stop("Unknown calendar type") }
@@ -797,6 +797,8 @@ res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 }
 }
 
+#' @export
+
 lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
     if (calendar=="BP"){
         years <- x$grid$calBP
@@ -812,6 +814,8 @@ lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
     }
     lines(years, dens,...)
 }
+
+#' @export
 
 spdpolygon <- function(x, calendar="BP", runm=NA,...){
     if (calendar=="BP"){
