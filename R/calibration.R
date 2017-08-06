@@ -1,19 +1,19 @@
 #' @title Calibrate radiocarbon dates
 #'
-#' @description Function for calibrating radiocarbon dates.
+#' @description Function for calibrating one or more radiocarbon dates.
 #'
-#' @param ages A vector of radiocarbon ages 
-#' @param errors A vector of errors corresponding to each radiocarbon age
-#' @param ids A vector of IDs for each date
+#' @param ages A vector of uncalibrated radiocarbon ages .
+#' @param errors A vector of standard deviations corresponding to each estimated radiocarbon age.
+#' @param ids An optional vector of IDs for each date.
 #' @param dateDetails An optional vector of details for each date which will be returned in the output metadata. 
-#' @param calCurves Either a string naming a calibration curve already provided with the rcarbon package (currently 'intcal13','shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibartion curve with three columns (a matrix/data.frame with the calibrated year BP, uncalibrated age bp, and standard deviation).
+#' @param calCurves Either a string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve with three columns (calibrated year BP, uncalibrated age bp, standard deviation).
 #' @param resOffsets A vector of offset values for any marine reservoir effect (default is no offset).
 #' @param resErrors A vector of offset value errors for any marine reservoir effect (default is no offset).
-#' @param timeRange Earliest and latest data to calibrate for, in calibrated calendar years. Posterior probabilites beyond this range will be excluded (the default is sensible in most cases).
-#' @param normalised A logical variable indicating whether the calibration should be normalised or not. Default is FALSE
+#' @param timeRange Earliest and latest data to calibrate for, in calendar years. Posterior probabilites beyond this range will be excluded (the default is sensible in most cases).
+#' @param normalised A logical variable indicating whether the calibration should be normalised or not. Default is FALSE (to produce a calibration that is very similar to most other available calibration packages, set to TRUE).
 #' @param eps Cut-off value for density calculation. Default is 1e-5.
 #' @param calMatrix a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}
-#' @param ncores Number of cores used for for parallel execution. Default is 1 (>1 requires doParallel package).
+#' @param ncores Number of cores/workers used for parallel execution. Default is 1 (>1 requires doParallel package).
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #' @details This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
@@ -26,7 +26,7 @@
 #' }
 #'
 #' @references 
-#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, Archaeometry 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x 
+#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x 
 #'
 #' @examples
 #' x1 <- calibrate(ages=4000, errors=30)
@@ -239,12 +239,29 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
     return(res)
 }
 
+#' @title Uncalibrate (back-calibrate) a radiocarbon date.
+#'
+#' @description Function for uncalibrating one or more radiocarbon dates.
+#'
+#' @param calBP A vector of uncalibrated radiocarbon ages .
+#' @param CRAerrors A vector of standard deviations corresponding to each estimated radiocarbon age.
+#' @param roundyear An optional vector of IDs for each date.
+#' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13' and only one can currently be specified for all dates). 
+#' @param method Either the standard rcarbon method or one that replicates Crema et al 2016.
+#'
+#' @details This function takes one or more calibrated calendars and looks-up the corresponding uncalibrated age, error of the stated calibration curve at that point. It also provides a randomised estimate of the uncalibrate age based on the curve error (and optionally also a hypothetical measurement error.
+#'
+#' @return A data.frame with specifying the original data, the uncalibrated age without the calibration curve error (ccCRA), the calibration curve error at this point in the curve (ccError), a randomised uncalibrated age (rCRA) given both the stated ccError and any further hypothesised instrumental error provided by the CRAerrors argument (rError). 
+#'
+#' @examples
+#' # Uncalibrate two calendar dates
+#' uncalibrate(c(3050,2950))
 #' @export
 
 uncalibrate <- function (x, ...) {
    UseMethod("uncalibrate", x)
 }
-
+#' @rdname uncalibrate
 #' @export
 
 uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard"){ 
