@@ -7,7 +7,7 @@
 #' @param calcurve a vector uncalibrated conventional radiocarbon ages
 #' @param h a single numeric value passed to \code{\link{hclust}} control degree of grouping of similar ages in a phase site.
 #'
-#' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with rspd()
+#' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with spd()
 #'
 #' @seealso \code{\link{spd}}) for generating SPD; \code{\link{binsense}} for sensitivity analysis pertaining the choice of the parameter \code{h}.
 #' @export

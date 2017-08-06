@@ -14,7 +14,7 @@ binPrep(sites, ages, h)
 \item{calcurve}{a vector uncalibrated conventional radiocarbon ages}
 }
 \value{
-A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with rspd()
+A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with spd()
 }
 \description{
 Prepare a set of bins for controlling the aggregation of radiocarbon dates
