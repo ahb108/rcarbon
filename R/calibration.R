@@ -261,7 +261,8 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 uncalibrate <- function (x, ...) {
    UseMethod("uncalibrate", x)
 }
-#' @rdname uncalibrate
+
+
 #' @export
 
 uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard"){ 
