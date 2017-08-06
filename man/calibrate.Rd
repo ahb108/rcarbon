@@ -14,29 +14,29 @@ calibrate(x, ...)
   verbose = TRUE)
 }
 \arguments{
-\item{ages}{A vector of radiocarbon ages}
+\item{ages}{A vector of uncalibrated radiocarbon ages .}
 
-\item{errors}{A vector of errors corresponding to each radiocarbon age}
+\item{errors}{A vector of standard deviations corresponding to each estimated radiocarbon age.}
 
-\item{ids}{A vector of IDs for each date}
+\item{ids}{An optional vector of IDs for each date.}
 
 \item{dateDetails}{An optional vector of details for each date which will be returned in the output metadata.}
 
-\item{calCurves}{Either a string naming a calibration curve already provided with the rcarbon package (currently 'intcal13','shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibartion curve with three columns (a matrix/data.frame with the calibrated year BP, uncalibrated age bp, and standard deviation).}
+\item{calCurves}{Either a string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve with three columns (calibrated year BP, uncalibrated age bp, standard deviation).}
 
 \item{resOffsets}{A vector of offset values for any marine reservoir effect (default is no offset).}
 
 \item{resErrors}{A vector of offset value errors for any marine reservoir effect (default is no offset).}
 
-\item{timeRange}{Earliest and latest data to calibrate for, in calibrated calendar years. Posterior probabilites beyond this range will be excluded (the default is sensible in most cases).}
+\item{timeRange}{Earliest and latest data to calibrate for, in calendar years. Posterior probabilites beyond this range will be excluded (the default is sensible in most cases).}
 
-\item{normalised}{A logical variable indicating whether the calibration should be normalised or not. Default is FALSE}
+\item{normalised}{A logical variable indicating whether the calibration should be normalised or not. Default is FALSE (to produce a calibration that is very similar to most other available calibration packages, set to TRUE).}
 
 \item{calMatrix}{a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}}
 
 \item{eps}{Cut-off value for density calculation. Default is 1e-5.}
 
-\item{ncores}{Number of cores used for for parallel execution. Default is 1 (>1 requires doParallel package).}
+\item{ncores}{Number of cores/workers used for parallel execution. Default is 1 (>1 requires doParallel package).}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
@@ -49,7 +49,7 @@ An object of class CalDates with the following elements
 }
 }
 \description{
-Function for calibrating radiocarbon dates.
+Function for calibrating one or more radiocarbon dates.
 }
 \details{
 This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
@@ -62,5 +62,5 @@ x2 <- calibrate(ages=4000, errors=30, calCurves='marine13', resOffsets=300, resE
 plot(x2)
 }
 \references{
-Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, Archaeometry 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x
+Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x
 }
