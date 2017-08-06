@@ -288,11 +288,7 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 #' @export
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){
-
-    if (!"quickMarks" %in% class(x)){
-        stop("Input must be of class \"quickMarks\"")
-    }
-    barcodes <- x$qMed
+    barcodes <- x
     if (fixXorder){ barcodes <- barcodes*-1 }
     halfbw <- width/2
     for (a in 1:length(barcodes)){
@@ -832,3 +828,128 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
     }
     polygon(x=c(years,rev(years)), y=c(dens,rep(0,length(dens))),...)
 }
+
+#' @title Plot results of the local spatial permutation test of summed probability distributions.
+#
+#' @description Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.
+#'
+#' @param x A \code{spatialTest} class object
+#' @param index A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}
+#' @param option Indicates what to display. Must be one of "\code{raw}","\code{test}","\code{rawlegend}", and "\code{testlegend}".
+#' @param breakRange A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend.
+#' @param breakLenth A numerical vector defining the number of breaks for growth rates to be displayed in the legend.
+#' @param rd Number of decimal places of the growth rate to be displayed in the Legend
+#' @param baseSize Numerical value giving the amount by which points should be magnified relative to the default settings in R. Default is 0.5
+#' @param ... Graphical parameters to be passed to methods.
+#'
+#' @details
+#' The function displays a distribution map of local growth rates (when \code{option="raw"}), q- and p-values (when \code{option="test"}), and the associated legends (when \code{option="rawlegend"} or  \code{option="testlegend"}).
+#'
+#' @seealso \code{\link{SPpermTest}}
+#' @export
+
+
+plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,baseSize=0.5,...)
+{
+	if (!any(class(x)%in%c("spatialTest")))
+	{
+        stop("x is not a spatialTest class object")
+	}
+
+        if (is.null(index)&option%in%c("raw","test"))
+	{
+        stop("index value missing")
+	}
+
+	if (!option%in%c("raw","test","rawlegend","testlegend"))
+	{
+        stop(paste("The option ",option," is not available",sep=""))
+	}
+
+        require(sp)
+        locations=x$locations
+
+	if (option=="raw")
+	{
+	breaks=seq(breakRange[1],breakRange[2],length.out=breakLength)
+	outbreak=c(-Inf,breaks,Inf)
+	classes=cut(x$rocaObs[,index], outbreak,labels=F)
+	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
+	classes=cols[classes]
+	plot(locations,col=classes,pch=20,add=TRUE,cex=baseSize)
+	}
+
+
+	if (option=="rawlegend")
+	{
+	breaks=round(seq(breakRange[1],breakRange[2],length.out=breakLength),rd)
+	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
+	breaksLab=numeric(breakLength+1)
+	breaksLab[1]= paste("<",breaks[1])
+	for (j in 2:c(breakLength+1))
+	{
+	 breaksLab[j] = paste(breaks[j-1],"to", breaks[j])
+	 if (j==c(breakLength+1)) {breaksLab[j] = paste(">",breaks[length(breaks)])}
+	}
+	par(mar=c(2,0,2,0))
+        plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
+	legend("center",legend=breaksLab,col=cols,pch=20,bty="n")
+
+        }
+
+
+	if (option=="testlegend")
+	{
+	par(mar=c(2,0,2,0))
+	plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
+	legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=1.4,bty="n")
+	legend("bottom",title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=1.4,bty="n")
+	}
+
+	if (option=="test")
+	{
+	nBreaks=ncol(x$rocaObs)
+	plusPoints=locations[which(x$pvalHi[,index]>0.5),]
+	minusPoints=locations[which(x$pvalHi[,index]<0.5),]
+
+	# Set Base
+	plot(locations,col=NA,xlab="",ylab="",axes=FALSE,...)
+	points(plusPoints,col="darkgrey",pch=20,cex=baseSize)
+	points(minusPoints,col="darkgrey",pch=20,cex=baseSize)
+
+
+	# Set Positive
+	positive.index=which(x$pvalLo[,index]<=0.05)
+
+	if (length(positive.index)>0)
+		{
+		positive=locations[positive.index,]
+		points(positive,pch=20,col="orange",cex=baseSize)
+		qpositive.index=which(x$qvalLo[,index]<=0.05&x$pvalLo[,index]<=0.05) #Originally based on qvalHi
+		if (length(qpositive.index)>0)
+			{
+				qpositive=locations[qpositive.index,]
+				points(qpositive,pch=20,col="red",cex=baseSize)
+
+			}
+		}
+	negative.index=which(x$pvalHi[,index]<=0.05)
+
+	if (length(negative.index)>0)
+		{
+		negative=locations[negative.index,]
+		points(negative,pch=20,col="cornflowerblue",cex=baseSize)
+		qnegative.index=which(x$qvalHi[,index]<=0.05&x$pvalHi[,index]<=0.05) #Originally based on qvalLo
+		if (length(qnegative.index)>0)
+			{
+				qnegative=locations[qnegative.index,]
+				points(qnegative,pch=20,col="darkblue",cex=baseSize)
+
+			}
+
+		}
+	}
+
+}
+
+

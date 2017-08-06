@@ -10,8 +10,6 @@
 #' @param resOffsets A vector of offset values for the Marine Reservoir Effect
 #' @param resErrors A vector of offset value errors for the Marine Reservoir Effect
 #' @param timeRange Time range of analysis (in calendar years)
-#' @param F14C a logical variable indicating whether the calibration should be conducted in F14C space or not. Default is FALSE
-#' @param std a logical variable indicating whether calibration should be scaled by sqrt(pi*2). Relevant only for F14C space calibration. Default is FALSE. 
 #' @param normalised a logical variable indicating whether the calibration should be normalised or not. Default is FALSE
 #' @param eps Cut-off value for density calculation. Default is 1e-5.
 #' @param calMatrix a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}
@@ -131,17 +129,9 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-            if (F14C==FALSE){
-                mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
-            } else if (F14C==TRUE){
-                age <- exp(age/-8033)
-                error <- age*error/8033
-                mu <- approx(calcurve[,1], exp(calcurve[,2]/-8033), xout=calBP)$y
-                tau <- error^2 + approx(calcurve[,1], exp(calcurve[,2]/-8033)*calcurve[,3]/8033, xout=calBP)$y^2            		    
-            }
+            mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
+            tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
             dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-            if (std) { dens <- dens*sqrt(pi*2) }
             dens[dens < eps] <- 0	
             if (normalised){
                 dens <- dens/sum(dens)
@@ -169,17 +159,9 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- ages[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
-            if (F14C==FALSE){
-                mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-                tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
-            }  else if (F14C==TRUE){
-                age <- exp(age/-8033)
-                error <- age*error/8033
-                mu <- approx(calcurve[,1], exp(calcurve[,2]/-8033), xout=calBP)$y
-                tau <- error^2 + approx(calcurve[,1], exp(calcurve[,2]/-8033)*calcurve[,3]/8033, xout=calBP)$y^2            	
-            }
+            mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
+            tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
             dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-            if (std) {dens <- dens*sqrt(pi*2)}
             dens[dens < eps] <- 0
             if (normalised){
                 dens <- dens/sum(dens)
@@ -196,7 +178,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     }
     # clean-up and results
     if (length(ages)>1 & verbose){ close(pb) }
-    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], F14CConversion=F14C, Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
+    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df
     if (calMatrix){
         reslist[["grids"]] <- NA
@@ -416,105 +398,6 @@ as.CalDates <- function(x){
 }
 
 
-oxcalSingleDate<-function(id="tmp01",ages,error,OxCalExecute,calCurve,normalised=F)
-    {
-        fn <- tempfile()
-        fnRecieve <- paste(fn, ".js", sep = "")
-        fn <- paste(fn, ".oxcal", sep = "")
-	
-        cat("Options(){Resolution=1};\n",file=fn,append=FALSE) #Start Sequence#
-        cat("Plot(){\n",file=fn,append=TRUE) #Start Sequence#
-        if (calCurve=="marine13")
-            {
-                cat('Curve("Marine13.14c");',file=fn,append=TRUE)
-                cat(paste('Delta_R(',DeltaR,',',DeltaRsd,');\n',sep=""),file=fn,append=TRUE)
-            }
-        if (calCurve=="shcal13")
-            {
-                cat('Curve("ShCal13");',file=fn,append=TRUE)
-            }
-
-        if (calCurve=="intcal13")
-            {
-                cat('Curve("IntCal13");',file=fn,append=TRUE)
-            }
-        cat(paste('R_Date(','\"',id,'\",',ages,',',error,');\n',sep=""),file=fn,append=TRUE)
-        cat('};\n',file=fn,append=TRUE)
-        excecuter=paste(OxCalExecute,fn)
-        system(excecuter)        
-	result <- scan(fnRecieve, character(0), sep = "\n",quiet=T)
-
-
-  probs <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.prob=\\[)(.*)(\\];)")[, 3], ", "))))
-  pstart <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.start=)(.*)(;)")[, 3], ", "))))
-  resolution <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.resolution=)(.*)(;)")[, 3], ", "))))
-  normaliser <- as.double(na.omit(unlist(strsplit(stringr::str_match(result, "(ocd\\[\\d+\\].likelihood.probNorm=)(.*)(;)")[, 3], ", "))))
-
-  if(is.na(normaliser)) {normaliser <- 1}
-  print(normaliser)
-  if (normalised==TRUE) 
-  {
-	probs <- probs * normaliser
-  }
-  years <- seq(pstart, by = resolution, length.out = length(probs))
-  res <- data.frame(years= 1950-years, dens=probs)
-	return(res)
-    }
-
-
-jagsSingleCalibrate<-function(age,error,calCurves='intcal13',init=NA,iter=50000)
-{
-
- #   calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
-
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
-    options(warn=-1)
-    calcurve <- readLines(calCurveFile, encoding="UTF-8")
-    calcurve <- calcurve[!grepl("[#]",calcurve)]
-    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-    options(warn=0)
-    colnames(calcurve) <- c("CALBP","C14BP","Error")
-
-
-    require(rjags) 
-    calBP <- calcurve[,1]
-    C14BP <- calcurve[,2]
-    C14err <- calcurve[,3]
-    dataList <- list(nDate=1, X=age, sigma=error, calBP=rev(calBP), C14BP=rev(C14BP),C14err=rev(C14err))
-
-    if (is.na(init)){init=calBP[which(abs(C14BP-age)==min(abs(C14BP-age)))[1]]}
-
-    ##Specify JAGS Model
-    modelString="
-      model{
-      for (i in 1:nDate) {
-      theta[i] ~ dunif(0,50000)
-      mu[i] <- interp.lin(theta[i], calBP[], C14BP[])
-      sigmaCurve[i] <- interp.lin(theta[i], calBP[], C14err[])
-      tau[i] <- 1/(pow(sigma[i],2)+pow(sigmaCurve[i],2))
-      X[i] ~ dnorm(mu[i],tau[i])
-      twenty.year[i] <- 20*round(theta[i]/20)
-      ten.year[i] <- 10*round(theta[i]/10)
-      one.year[i] <- round(theta[i])
- 	}
-      
-      }"
-
-    initsList <- list(theta=init)
-    jagsModel <- jags.model(file=textConnection(modelString),data=dataList,inits=initsList,n.chains=1,n.adapt=3000)
-    update(jagsModel)
-    codaSamples=coda.samples(jagsModel,variable.names=c("one.year"),n.iter=iter)
-    
-    BP <- as.numeric(names(table(codaSamples)))
-    PrDens <- as.numeric(table(codaSamples)/iter)
-
-    fullBP <- min(BP):max(BP)
-    res <- data.frame(BP=fullBP,PrDens=0)	
-    res <- merge(x=res,y=data.frame(BP=BP,PrDens=PrDens),by.x="BP",by.y="BP",all=TRUE)
-    res$PrDens.y[which(is.na(res$PrDens.y))] <- 0
-    finalRes <- data.frame(calBP=rev(res$BP),PrDens=rev(res$PrDens.y)) 	
-    return(finalRes)
-}
 
 #' @export
 
@@ -545,3 +428,79 @@ hpdi<- function(x, credMass=0.95){
     return(result)
 }
 
+
+#' @title Summarise a CalDates object
+#'
+#' @export
+summary.CalDates<-function(x,prob=NA,calendar="BP") {
+	
+	foo = function(x,i){if(nrow(x)>=i){return(x[i,])}else{return(c(NA,NA))}}
+	if (is.na(prob)) 
+		{
+		prob = c(0.683,0.954)
+		pnames = c("OneSigma","TwoSigma")
+		} else {
+		pnames = paste("p",prob,sep="_")
+		}	
+	pnames=paste(pnames,calendar,sep="_")
+	probMats = vector("list",length=length(prob))
+	for (i in 1:length(prob))
+		{
+		cols = max(unlist(lapply(hpdi(x,prob[i]),nrow)))
+		tmpMatrix=matrix(NA,ncol=cols,nrow=nrow(x$metadata))
+
+		for (j in 1:cols)
+		{
+		tmp=t(sapply(hpdi(x,prob[i]),foo,i=j))
+		if (calendar=="BC/AD")
+		{
+			tmp = t(apply(tmp,1,BPtoBCAD))
+			
+		}
+                tmpMatrix[,j]=apply(tmp,1,paste,collapse=" to ")
+		}
+		colnames(tmpMatrix)=paste(pnames[i],1:cols,sep="_")
+		probMats[[i]]=tmpMatrix
+		}
+      
+        med.dates=medCal(x)
+
+	if (calendar=="BP")
+	{res=data.frame(DateID=x$metadata$DateID,MedianBP=med.dates)}
+	else
+	{res=data.frame(DateID=x$metadata$DateID,BPtoBCAD(med.dates))
+	colnames(res)[2]="MedianBC/AD"}
+	for (k in 1:length(probMats))
+	{
+	res=cbind.data.frame(res,probMats[[k]])
+	}
+return(res)
+}
+
+
+
+#' @export
+medCal <- function(x)
+{
+	ndates=nrow(x$metadata)
+	meddates=numeric()
+	if (is.na(x$calmatrix))
+	{
+		for (i in 1:ndates)
+		{
+      		tmp=x$grids[[i]]
+      		tmp$Cumul=cumsum(tmp$PrDens)	 
+		meddates[i]=tmp[which.min(abs(tmp$Cumul-max(tmp$Cumul)/2)),1]
+		}		
+	} else
+	
+	{
+		cumcal=apply(x$calmatrix,2,cumsum)
+		for (i in 1:ndates)
+		{
+		index = which.min(abs(cumcal[,i]-max(cumcal[,i])/2))
+		meddates[i]=as.numeric(rownames(cumcal)[index])
+		}
+	}
+return(meddates)
+}

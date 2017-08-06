@@ -30,10 +30,6 @@ calibrate(x, ...)
 
 \item{timeRange}{Time range of analysis (in calendar years)}
 
-\item{F14C}{a logical variable indicating whether the calibration should be conducted in F14C space or not. Default is FALSE}
-
-\item{std}{a logical variable indicating whether calibration should be scaled by sqrt(pi*2). Relevant only for F14C space calibration. Default is FALSE.}
-
 \item{normalised}{a logical variable indicating whether the calibration should be normalised or not. Default is FALSE}
 
 \item{calMatrix}{a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}}
