@@ -7,15 +7,19 @@
 uncalibrate(x, ...)
 }
 \arguments{
-\item{calBP}{A vector of uncalibrated radiocarbon ages .}
+\item{x}{Either a vector of uncalibrated radiocarbon ages or an object of class CalGrid.}
 
-\item{CRAerrors}{A vector of standard deviations corresponding to each estimated radiocarbon age.}
+\item{CRAerrors}{A vector of standard deviations corresponding to each estimated radiocarbon age (ignored if x is a CalGrid object).}
 
-\item{roundyear}{An optional vector of IDs for each date.}
+\item{roundyear}{An optional vector of IDs for each date (ignored if x is a CalGrid object).}
 
 \item{calCurves}{A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13' and only one can currently be specified for all dates).}
 
-\item{method}{Either the standard rcarbon method or one that replicates Crema et al 2016.}
+\item{eps}{Cut-off value for density calculation (for CalGrid objects only).}
+
+\item{compact}{A logical variable indicating whether only uncalibrated ages with non-zero probabilities should be returned (for CalGrid objects only).}
+
+\item{verbose}{A logical variable indicating whether extra information on progress should be reported (for CalGrid objects only).}
 }
 \value{
 A data.frame with specifying the original data, the uncalibrated age without the calibration curve error (ccCRA), the calibration curve error at this point in the curve (ccError), a randomised uncalibrated age (rCRA) given both the stated ccError and any further hypothesised instrumental error provided by the CRAerrors argument (rError).

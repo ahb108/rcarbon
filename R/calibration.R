@@ -243,12 +243,13 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #'
 #' @description Function for uncalibrating one or more radiocarbon dates.
 #'
-#' @param calBP A vector of uncalibrated radiocarbon ages .
-#' @param CRAerrors A vector of standard deviations corresponding to each estimated radiocarbon age.
-#' @param roundyear An optional vector of IDs for each date.
+#' @param x Either a vector of uncalibrated radiocarbon ages or an object of class CalGrid.
+#' @param CRAerrors A vector of standard deviations corresponding to each estimated radiocarbon age (ignored if x is a CalGrid object).
+#' @param roundyear An optional vector of IDs for each date (ignored if x is a CalGrid object).
 #' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13' and only one can currently be specified for all dates). 
-#' @param method Either the standard rcarbon method or one that replicates Crema et al 2016.
-#'
+#' @param  eps Cut-off value for density calculation (for CalGrid objects only).
+#' @param  compact A logical variable indicating whether only uncalibrated ages with non-zero probabilities should be returned (for CalGrid objects only).
+#' @param  verbose A logical variable indicating whether extra information on progress should be reported (for CalGrid objects only).
 #' @details This function takes one or more calibrated calendars and looks-up the corresponding uncalibrated age, error of the stated calibration curve at that point. It also provides a randomised estimate of the uncalibrate age based on the curve error (and optionally also a hypothetical measurement error.
 #'
 #' @return A data.frame with specifying the original data, the uncalibrated age without the calibration curve error (ccCRA), the calibration curve error at this point in the curve (ccError), a randomised uncalibrated age (rCRA) given both the stated ccError and any further hypothesised instrumental error provided by the CRAerrors argument (rError). 
@@ -265,9 +266,9 @@ uncalibrate <- function (x, ...) {
 
 #' @export
 
-uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', method="standard"){ 
-
-    if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(calBP)) } 
+uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13'){
+    
+    if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
@@ -275,37 +276,22 @@ uncalibrate.default <- function(calBP, CRAerrors=NA, roundyear=TRUE, calCurves='
     calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
     options(warn=0)
     colnames(calcurve) <- c("CALBP","C14BP","Error")
-    dates <- data.frame(approx(calcurve, xout=calBP))
+    dates <- data.frame(approx(calcurve, xout=x))
     colnames(dates) <- c("calBP", "ccCRA")
     calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$calBP)$y
-    if (method == "standard"){
-        dates$ccError <- calcurve.error
-        dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=dates$ccError)
-        dates$rError <- CRAerrors
-        if (roundyear){ dates$rCRA <- round(dates$rCRA) }
-    } else if (method == "Cremaetal16"){
-        if (is.na(CRAerrors[1])){
-            stop("For this method you must provide a numeric error argument for the anticipated measurement error")
-        }
-        dates$ccError <- calcurve.error       
-        dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=CRAerrors)
-        dates$rError <- sqrt(CRAerrors^2 + calcurve.error^2)
-        if (roundyear){
-            dates$rCRA <- round(dates$rCRA)
-            dates$rError <- round(dates$rError)
-        }
-    } else {
-        stop("Not one of the currently supplied methods." )   
-    }
+    dates$ccError <- calcurve.error
+    dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=dates$ccError)
+    dates$rError <- CRAerrors
+    if (roundyear){ dates$rCRA <- round(dates$rCRA) }
     return(dates)
 }
 
 #' @export
 
-uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact=TRUE, verbose=TRUE){
+uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE, verbose=TRUE){
 
     if (verbose){ print("Uncalibrating...") }
-    names(calgrid) <- c("calBP","PrDens")
+    names(x) <- c("calBP","PrDens")
     calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
@@ -313,7 +299,7 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact
     calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
     options(warn=0)
     colnames(calcurve) <- c("CALBP","C14BP","Error")
-    mycras <- uncalibrate(calgrid$calBP)
+    mycras <- uncalibrate(x$calBP)
     res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=0)
     tmp <- vector(mode="list",length=nrow(mycras))
     basetmp <- vector(mode="list",length=nrow(mycras))
@@ -323,7 +309,7 @@ uncalibrate.CalGrid <- function(calgrid, calCurves='intcal13', eps=1e-5, compact
     }
     for (a in 1:length(tmp)){
         basetmp[[a]] <- dnorm(res$CRA, mean=mycras$ccCRA[a], sd=mycras$ccError[a])
-        tmp[[a]] <- basetmp[[a]] * calgrid$PrDens[a]
+        tmp[[a]] <- basetmp[[a]] * x$PrDens[a]
         if (verbose){ setTxtProgressBar(pb, a) }
     }
     if (verbose){ close(pb) }
