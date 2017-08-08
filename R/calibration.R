@@ -10,7 +10,7 @@
 #' @param resOffsets A vector of offset values for any marine reservoir effect (default is no offset).
 #' @param resErrors A vector of offset value errors for any marine reservoir effect (default is no offset).
 #' @param timeRange Earliest and latest data to calibrate for, in calendar years. Posterior probabilites beyond this range will be excluded (the default is sensible in most cases).
-#' @param normalised A logical variable indicating whether the calibration should be normalised or not. Default is FALSE (to produce a calibration that is very similar to most other available calibration packages, set to TRUE).
+#' @param normalised A logical variable indicating whether the calibration should be normalised or not. Default is TRUE.
 #' @param eps Cut-off value for density calculation. Default is 1e-5.
 #' @param calMatrix a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}
 #' @param ncores Number of cores/workers used for parallel execution. Default is 1 (>1 requires doParallel package).
@@ -43,7 +43,7 @@ calibrate <- function (x, ...) {
 #' @rdname calibrate
 #' @export
 
-calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), F14C=FALSE, std=FALSE, normalised=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
 
     # age and error checks
     if (length(ages) != length(errors)){
