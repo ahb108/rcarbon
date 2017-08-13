@@ -63,9 +63,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     flush.console()
         pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
-    time <- seq(min(50000,timeRange[1]+bracket),max(0,timeRange[2]-bracket),-1)
     time <- seq(timeRange[1],timeRange[2],-1)
-    ## time <- fittime
     fit <- NA
     if (model=="exponential"){
         fit <- nls(y ~ exp(a + b * x), data=data.frame(x=fittime, y=finalSPD), start=list(a=0, b=0))
