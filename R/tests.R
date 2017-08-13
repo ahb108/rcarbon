@@ -38,15 +38,15 @@
 #' @examples
 #' ## Example with Younger Dryas period Near East, including site bins
 #' data(emedyd)
-#' caldates <- calibrate(ages=dates$CRA, errors=dates$Error, normalised=FALSE, calMatrix=TRUE)
-#' bins <- binPrep(sites=dates$SiteName, ages=dates$CRA, h=50)
+#' caldates <- calibrate(ages=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+#' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 #' nsim=5 #toy example
-#' expnull <- modelTest(caldates, errors=dates$Error, bins=bins, nsim=nsim, runm=50, timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
+#' expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50, timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
 #' plot(expnull, xlim=c(16000,9000))
 #' round(expnull$pval,4)
 #' @export
 
-modelTest <- function(x, errors, nsim, bracket=1000, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bracket=0, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
         samplesize <- nrow(x$metadata)
@@ -65,7 +65,7 @@ modelTest <- function(x, errors, nsim, bracket=1000, bins=NA, runm=NA, timeRange
     }
     time <- seq(min(50000,timeRange[1]+bracket),max(0,timeRange[2]-bracket),-1)
     fittime <- seq(timeRange[1],timeRange[2],-1)
-    time <- fittime
+    ## time <- fittime
     fit <- NA
     if (model=="exponential"){
         fit <- nls(y ~ exp(a + b * x), data=data.frame(x=fittime, y=finalSPD), start=list(a=0, b=0))
