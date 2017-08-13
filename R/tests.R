@@ -46,7 +46,7 @@
 #' round(expnull$pval,4)
 #' @export
 
-modelTest <- function(x, errors, nsim, bracket=0, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
         samplesize <- nrow(x$metadata)
@@ -64,7 +64,7 @@ modelTest <- function(x, errors, nsim, bracket=0, bins=NA, runm=NA, timeRange=NA
         pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
     time <- seq(min(50000,timeRange[1]+bracket),max(0,timeRange[2]-bracket),-1)
-    fittime <- seq(timeRange[1],timeRange[2],-1)
+    time <- seq(timeRange[1],timeRange[2],-1)
     ## time <- fittime
     fit <- NA
     if (model=="exponential"){
