@@ -66,13 +66,13 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     time <- seq(timeRange[1],timeRange[2],-1)
     fit <- NA
     if (model=="exponential"){
-        fit <- nls(y ~ exp(a + b * x), data=data.frame(x=fittime, y=finalSPD), start=list(a=0, b=0))
+        fit <- nls(y ~ exp(a + b * x), data=data.frame(x=time, y=finalSPD), start=list(a=0, b=0))
         est <- predict(fit, list(x=time))
         predgrid <- data.frame(calBP=time, PrDens=est)
     } else if (model=="uniform"){
         predgrid <- data.frame(calBP=time, PrDens=mean(finalSPD))
     } else if (model=="linear"){
-        fit <- lm(y ~ x, data=data.frame(x=fittime, y=finalSPD))
+        fit <- lm(y ~ x, data=data.frame(x=time, y=finalSPD))
         est <- predict(fit, list(x=time))
         predgrid <- data.frame(calBP=time, PrDens=est)
     } else if (model=="custom"){
