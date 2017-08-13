@@ -16,7 +16,6 @@
 #' @param datenormalised If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity for both observed and simulated data. 
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
-#' @param bracket Controls handling of edge effects in simulations, by applying the fitted model to a slaightly larger calendar range. The default is sensible in most cases. Ignored for \code{model='custom'}.
 #' @param fitonly A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE. 
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
