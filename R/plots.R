@@ -16,7 +16,7 @@
 #' x <- calibrate(ages=c(3402,3490,4042),errors=c(20,20,30))
 #' plot(x) #display the first date
 #' plot(x,2) #displays the second date
-#' plot(x,3, calendar="BCAD", HPD=T) #display in BC/AD with higher posterior density interval
+#' plot(x,3, calendar="BCAD", HPD=TRUE) #display in BC/AD with higher posterior density interval
 #' @export
 
 plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95){
@@ -79,7 +79,6 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
     ## axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
     
-
     if (axis4){ axis(4, cex.axis=0.75) }
     if (!HPD){
     polygon(xvals,yvals, col="grey50", border="grey50")
@@ -104,7 +103,7 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         cradf1 <- data.frame(CRA=50000:0,Prob=dnorm(50000:0, mean=cra, sd=error))
         cradf1 <- cradf1[cradf1$Prob>0.0001,]
         ylim <- c(cra-(12*error),cra+(8*error))    
-        cradf1$RX <- reScale(cradf1$Prob, type="custom", crng=c(xlim[1],(xlim[1]+diff(xlim)*0.33)))
+        cradf1$RX <- reScale(cradf1$Prob, to=c(xlim[1],(xlim[1]+diff(xlim)*0.33)))
         yticks <- ylim[1]:ylim[2]
         yticks <- yticks[yticks %% 200 == 0]
         plot(cradf1$RX,cradf1$CRA,type="l", axes=FALSE, xlab=NA, ylab=NA, xlim=xlim, ylim=ylim, col=rgb(144,238,144,120,maxColorValue=255))
@@ -143,9 +142,9 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
 
 
 
-#' @title Plot result of Monte-Carlo Test for SPDs
+#' @title Plot result of Monte-Carlo simulation of observed veruss modelled SPDs
 #'
-#' @description The function visualises the observed summed probability distribution of radiocarbon dates along with the simulation envelope for the null model and regions of positive and negative deviation.
+#' @description The function visualises the observed summed probability distribution of radiocarbon dates along with a simulation envelope for the null model and regions of positive and negative deviation.
 #'
 #' @param test A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
@@ -285,6 +284,17 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     if (bbty %in% c("n","b")){ return(bbp) }
 }
 
+#' @title Plot the median values of calibrated radiocarbon dates. 
+#' @description Plot the median values of multiple calibrated radiocarbon dates in a barcode-like strip.
+#' @param x A \code{CalDates} class object containing calibrated radiocarbon dates.
+#' @param yrng Number indicating the index value of the calibrated radiocarbon date to be displayed. Default is 1.
+#' @param width (optional) Character vector to be shown on the top-right corner of the display window.
+#' @param fixXorder Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' 
+#' @seealso \code{\link{calibrate}}
+#'
+#' @examples
+#' to do
 #' @export
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){
@@ -331,7 +341,7 @@ crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE
 #'
 #'
 #' @param spd A \code{CalSPD} class object.
-#' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied.Default is NA  
+#' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param type Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart. 
 #' @param xlim the x limits of the plot.

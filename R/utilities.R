@@ -1,28 +1,42 @@
+#' @title Rescale a numeric vector to a specified minimum and maximum 
+#' @description Rescale a numeric vector to a specified minimum and maximum.  
+#' @param x numeric vector to smooth.
+#' @param type what kind of rescaling to perform. Current options are 'simple' (default) and 'normal' which produces a z-score and 'custom' for which the 'to' argument must be specified.
+#' @param to numeric vector of length 2 specifying the minimum and maximum value to perform a linear rescale between (default is 0 and 1)
+#' @param na.rm Set to TRUE,this removes NAs before rescaling.
+#' @return A numeric vector of rescaled values.
+#' @examples
+#' reScale(15:200)
 #' @export
 
-reScale <- function(x, type="simple", crng=NULL, na.rm=TRUE){
+reScale <- function(x, type="simple", to=c(0,1), na.rm=TRUE){
 
-    types <- c("simple","normal", "custom")
+    types <- c("simple","normal")
     if (!type %in% types){
         stop("The rescale type you have chosen is not currently an option.")
     }
     if (na.rm){ x <- na.omit(x) }
     if (type=="normal"){
         res <- (x-mean(x))/sd(x)
-    } else if (type=="custom"){
-        if (is.null(crng)){
-            stop("For custom type you need to specify a crng.")
-        } else {
-            xrange <- range(x)
-            mfac <- (crng[2] - crng[1])/(xrange[2] - xrange[1])
-            res <- crng[1] + (x - xrange[1]) * mfac
-        }
     } else {
-       res <- (x-min(x))/(max(x) - min(x))
-   }
+        xrange <- range(x)
+        mfac <- (to[2] - to[1])/(xrange[2] - xrange[1])
+        res <- to[1] + (x - xrange[1]) * mfac
+    }
     return(res)
 }
 
+#' @title Calculate a running mean from a numeric vector. 
+#' @description Calculate a running mean from a numeric vector.  
+#' @param x numeric vector to smooth.
+#' @param n the size of the window in whicih to smooth.
+#' @param edge How to treat edge cases where a full window is unavailable. Current options are 'NA' to fill with NAs or 'fill' to fill with original values 
+#' @return A numeric vector of smoothed values.
+#' @examples
+#' x <- rnorm(1000)
+#' y <- c(1:1000)
+#' plot(y,x, type="l")
+#' lines(runMean(x,50), col="red")
 #' @export
 
 runMean <- function(x, n, edge="NA"){
@@ -78,16 +92,21 @@ quickMarks <- function(x, verbose=TRUE){
     return(df)
 }
 
+
+#' Smooth a numeric vector using a Gaussian window
+#' 
+#' @description Smooth a numeric vector using a Gaussian window
+#' @param x numeric vector of values to smooth.
+#' @param alpha numeric value controlling the size of the gaussian smoothing window. Proportional to the standard deviation of the Gaussian smoothing kernel where sd=(N–1)/(2.alpha) with N being the length of the input vector.
+#' @param window a fraction between 0 and 1 representing the proportion of the input vector to include in the moving window.
+#' @references
+#' Adapted from \code{\link[smoother]{smth.gaussian}}
+#' @examples
+#' smoothGauss(runif(200))
 #' @export
 
 smoothGauss <- function(x, alpha, window=0.1){
-  
-    ## adapted from
-    ##https://github.com/cran/smoother/blob/master/R/smth-gaussian.R
-    ##http://uk.mathworks.com/help/signal/ref/gausswin.html?s_tid=gn_loc_drop
-    ## alpha is the proportional to the standard deviation of the Gaussian smoothing kernel. Specifically: σ=(N – 1)/(2α) where σ is the Gaussian sd, N the length of the series and α the function argument
-    ## window must be a fraction
-    ## Convolution
+
     windowLength <- as.integer(max(abs(window*length(x)),1))
     hw <- abs(windowLength / 2.0)
     w <- sapply(c(0:(windowLength-1)), function(x){
@@ -100,7 +119,6 @@ smoothGauss <- function(x, alpha, window=0.1){
     w <- w/sum(w)
     hkwL <- as.integer(sizeW/2) 
     hkwR <- sizeW - hkwL
-    ## Smoothing
     smthfun <- function(i){
         ix.d <- c((i-hkwL):(i+hkwR-1))
         ix.w <- which(ix.d %in% 1:sizeD)
@@ -121,7 +139,7 @@ smoothGauss <- function(x, alpha, window=0.1){
 
 #' @export
 
-rangecheck <- function(x,bins,timeRange,datenormalised=FALSE){
+rangecheck <- function(x, bins, timeRange, datenormalised=FALSE){
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
@@ -164,6 +182,12 @@ rangecheck <- function(x,bins,timeRange,datenormalised=FALSE){
     return(sum(apply(binnedMatrix,2,sum)==0)/ncol(binnedMatrix)*100)
 }
 
+#' @title Convert BP dates to BC/AD format 
+#' @description Converts calibrated BP dates to BC/AD dates, omitting 'year 0' 
+#' @param x A numerical vector (currently no checks that these numbers are in a sensible range). 
+#' @return A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
+#' @examples
+#' BPtoBCAD(4200)
 #' @export
 
 BPtoBCAD <- function(x){
@@ -173,6 +197,12 @@ BPtoBCAD <- function(x){
     return(res[,2])
 }
 
+#' @title Convert BC/AD dates to BP format
+#' @description Converts BC/AD dates to BP fromat while handling the absence of 'year 0' 
+#' @param x A numerical vector (currently no checks that these numbers are in a sensible range).
+#' @return A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
+#' @examples
+#' BCADtoBP(-1268)
 #' @export
 
 BCADtoBP <- function(x){
@@ -304,17 +334,11 @@ defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
 
 
 #' @title Compute great-arc distances
-#
 #' @description Function for computing a matrix of great-arc distances (in km) from a set of decimal degree coordinates.
-#'
 #' @param Latitude A vector lf latitude coordinates in decimal degrees.  
 #' @param Longitude A vector lf longitude coordinates in decimal degrees.  
 #' @param a logical variable indicating whether extra information on progress should be reported. Default is FALSE
-#'
-#'
-#'
 #' @return A matrix of great-arc distances in km.
-#'
 #' @examples
 #' lon <- c(11.3426,0.1278,0.1218)
 #' lat <- c(44.4949,51.5074,52.2053)

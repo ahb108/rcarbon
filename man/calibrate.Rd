@@ -9,9 +9,8 @@ calibrate(x, ...)
 
 \method{calibrate}{default}(ages, errors, ids = NA, dateDetails = NA,
   calCurves = "intcal13", resOffsets = 0, resErrors = 0,
-  timeRange = c(50000, 0), F14C = FALSE, std = FALSE,
-  normalised = FALSE, calMatrix = FALSE, eps = 1e-05, ncores = 1,
-  verbose = TRUE)
+  timeRange = c(50000, 0), normalised = TRUE, calMatrix = FALSE,
+  eps = 1e-05, ncores = 1, verbose = TRUE)
 }
 \arguments{
 \item{ages}{A vector of uncalibrated radiocarbon ages .}
@@ -30,7 +29,7 @@ calibrate(x, ...)
 
 \item{timeRange}{Earliest and latest data to calibrate for, in calendar years. Posterior probabilites beyond this range will be excluded (the default is sensible in most cases).}
 
-\item{normalised}{A logical variable indicating whether the calibration should be normalised or not. Default is FALSE (to produce a calibration that is very similar to most other available calibration packages, set to TRUE).}
+\item{normalised}{A logical variable indicating whether the calibration should be normalised or not. Default is TRUE.}
 
 \item{calMatrix}{a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}}
 
