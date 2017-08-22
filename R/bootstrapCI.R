@@ -1,6 +1,11 @@
 bootstrapCI <- function(x,sites,h,boot=100,timeRange=c(7000,3000),type="sites",verbose=TRUE,ncores=1,runm=NA,...)
 {
-cralist <- x$metadata$CRA
+if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
+	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
+	ncores=1
+    }	
+
+	cralist <- x$metadata$CRA
 
 #obs
 obs.bins <- binPrep(ages=cralist,h=h,sites=sites)

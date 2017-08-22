@@ -46,6 +46,11 @@
 #' @export
 
 modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
+
+    if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
+	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
+	ncores=1
+    }	
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
         samplesize <- nrow(x$metadata)
@@ -333,7 +338,10 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 ###################################
 #### Load Dependency Libraries ####
 ###################################
-    if (ncores>1) {require(doParallel)}
+    if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
+	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
+	ncores=1
+    }	
 
 ##################################
 #### Initial warning messages ####
@@ -460,7 +468,8 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 ############################## 
 
     if (ncores>1)
-   	 {	
+   	 {
+	  require(doParallel)	 
           cl <- makeCluster(ncores)
           registerDoParallel(cl)
           print(paste("Running permutation test in parallel on ",getDoParWorkers()," workers...",sep=""))
