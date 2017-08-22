@@ -332,58 +332,6 @@ defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
 }
 
 
-
-#' @title Compute great-arc distances
-#' @description Function for computing a matrix of great-arc distances (in km) from a set of decimal degree coordinates.
-#' @param Latitude A vector lf latitude coordinates in decimal degrees.  
-#' @param Longitude A vector lf longitude coordinates in decimal degrees.  
-#' @param a logical variable indicating whether extra information on progress should be reported. Default is FALSE
-#' @return A matrix of great-arc distances in km.
-#' @examples
-#' lon <- c(11.3426,0.1278,0.1218)
-#' lat <- c(44.4949,51.5074,52.2053)
-#' d <- greatArcDist(Latitude=lat,Longitude=lon)
-#' @export
-
-greatArcDist<-function(Latitude,Longitude,verbose=FALSE)
-    {
-
-	if (length(Latitude)!=length(Longitude))
-	{
-        stop("Latitude and Longitude must have the same length.")
-	}
-
-        n=length(Latitude)
-        res<-matrix(0,nrow=n,ncol=n)
-
-	 if (verbose)
-	 {
-         print("Calculating great-arc distances...")
-         flush.console()
-         pb <- txtProgressBar(min = 1, max =n, style=3)
-	 }
-        for (i in 1:n)
-            {
-                 if (verbose){setTxtProgressBar(pb, i)}
-                for (j in 1:n)
-                    {
-			if ((i>j)&((Latitude[i]!=Latitude[j])|(Longitude[i]!=Longitude[j])))
-			{   	
-                                res[i,j]<- c(60 * (180/pi) * acos(sin((pi/180)*Latitude[i]) * sin((pi/180)*Latitude[j])
-								  + cos((pi/180)*Latitude[i]) * cos((pi/180)*Latitude[j]) *
-									  cos((pi/180)*(Longitude[j] - Longitude[i])))) * 1852/1000
-
-                        }
-		    }
-            }
-        if (verbose)
-	{ 
-	close(pb)
-        print("Done.") 
-	}	
-       return(as.matrix(as.dist(res)))
-    }
-
 gaussW <- function(x, bw){
     exp(-(x^2)/(2*(bw^2)))
 }

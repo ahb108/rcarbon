@@ -316,7 +316,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @param verbose a logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 
 #'
-#' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates weighting the contribution of dates from neighbouring site using a weight scheme provided by the \code{spatialweights} class object. 2) define temporal slices (using \code{breaks} as break values) the compute the total probability mass within each slice; 3) compute the rate of change between as abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of indivual bins or the entire sequence of bins associated with a given location and carry out steps 1--3; 5) repeate step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate to the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate (i.e.q-value) for each location.    
+#' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates weighting the contribution of dates from neighbouring site using a weight scheme provided by the \code{spatialweights} class object. 2) define temporal slices (using \code{breaks} as break values) the compute the total probability mass within each slice; 3) compute the rate of change between as abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of indivual bins or the entire sequence of bins associated with a given location and carry out steps 1--3; 5) repeate step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate to the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.    
 #'
 #' @return A \code{spatialTest} class object
 #'
@@ -333,9 +333,6 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 ###################################
 #### Load Dependency Libraries ####
 ###################################
-    require(sp)	
-    require(fdrtool)
-    require(rcarbon)
     if (ncores>1) {require(doParallel)}
 
 ##################################
@@ -632,11 +629,14 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
     	 pval[which(pval>1)]=1
     }
 
-    ## Compute False Discovery Rate (q-value) ##
+    ## Compute False Discovery Rate ##
     
-    qvalHi=apply(pvalHi,2,function(x){return(fdrtool(x,statistic="pvalue",plot=FALSE,verbose=FALSE)$qval)})
-    qvalLo=apply(pvalLo,2,function(x){return(fdrtool(x,statistic="pvalue",plot=FALSE,verbose=FALSE)$qval)})
-    qval=apply(pval,2,function(x){return(fdrtool(x,statistic="pvalue",plot=FALSE,verbose=FALSE)$qval)})
+    qvalHi=apply(pvalHi,2,function(x){return(p.adjust(x,method="fdr"))})
+    qvalLo=apply(pvalLo,2,function(x){return(p.adjust(x,method="fdr"))})
+    qval=apply(pval,2,function(x){return(p.adjust(x,method="fdr"))})
+
+
+
 
     metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""),weights.h=spatialweights$h,weights.kernel=spatialweights$kernel)
    

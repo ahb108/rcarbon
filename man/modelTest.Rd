@@ -4,11 +4,10 @@
 \alias{modelTest}
 \title{Monte-Carlo simulation test for SPDs}
 \usage{
-modelTest(x, errors, nsim, bracket = 1000, bins = NA, runm = NA,
-  timeRange = NA, raw = FALSE, model = c("exponential", "explog",
-  "custom"), predgrid = NA, calCurves = "intcal13",
-  datenormalised = FALSE, spdnormalised = FALSE, ncores = 1,
-  fitonly = FALSE, verbose = TRUE)
+modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
+  raw = FALSE, model = c("exponential", "explog", "custom"),
+  predgrid = NA, calCurves = "intcal13", datenormalised = FALSE,
+  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{x}{A vector of radiocarbon ages}
@@ -16,8 +15,6 @@ modelTest(x, errors, nsim, bracket = 1000, bins = NA, runm = NA,
 \item{errors}{A vector of errors corresponding to each radiocarbon age}
 
 \item{nsim}{Number of simulations}
-
-\item{bracket}{Controls handling of edge effects in simulations, by applying the fitted model to a slaightly larger calendar range. The default is sensible in most cases. Ignored for \code{model='custom'}.}
 
 \item{bins}{A vector indicating which bin each radiocarbon date is assigned to.}
 
@@ -62,10 +59,10 @@ The function implements a modified version of Timpson et al (2014) Monte-Carlo t
 \examples{
 ## Example with Younger Dryas period Near East, including site bins
 data(emedyd)
-caldates <- calibrate(ages=dates$CRA, errors=dates$Error, normalised=FALSE, calMatrix=TRUE)
-bins <- binPrep(sites=dates$SiteName, ages=dates$CRA, h=50)
+caldates <- calibrate(ages=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 nsim=5 #toy example
-expnull <- modelTest(caldates, errors=dates$Error, bins=bins, nsim=nsim, runm=50, timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
+expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50, timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
 plot(expnull, xlim=c(16000,9000))
 round(expnull$pval,4)
 }
