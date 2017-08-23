@@ -907,7 +907,7 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,bas
 	}
 	par(mar=c(2,0,2,0))
         plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	legend("center",legend=breaksLab,col=cols,pch=20,bty="n")
+	legend("center",legend=breaksLab,col=cols,pch=20,bty="n",cex=1.3)
 
         }
 
