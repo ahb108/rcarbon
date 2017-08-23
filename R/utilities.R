@@ -308,7 +308,7 @@ return(medbins)
 #' @export
 
 
-defineNeighbour<-function(distmat,h=NULL,kernel="gaussian")
+spweigths<-function(distmat,h=NULL,kernel="gaussian")
 {
     w=matrix(NA,nrow=nrow(distmat),ncol=ncol(distmat))
     kernels <- c("gaussian","fixed")
