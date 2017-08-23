@@ -157,8 +157,18 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 #'
 #' @references 
 #' Crema, E.R., Habu, J., Kobayashi, K., Madella, M., (2016). Summed Probability Distribution of 14 C Dates Suggests Regional Divergences in the Population Dynamics of the Jomon Period in Eastern Japan. PLOS ONE 11, e0154809. doi:10.1371/journal.pone.0154809
-
 #'
+#' @examples
+#' ## compare demographic trajectories in Netherlands and Denmark  
+#' data(euroevol)
+#' nld.dnk = subset(euroevol,Country=="Netherlands"|Country=="Denmark")
+#' bins = binPrep(nld.dnk$SiteID,nld.dnk$C14Age,h=200)
+#' dates = calibrate(nld.dnk$C14Age,nld.dnk$C14SD,normalised=F)
+#' res = permTest(dates,marks=as.character(nld.dnk$Country),nsim=1000,bins=bins,runm=200,timeRange=c(10000,4000))
+#' res$pValueList #extract p-values
+#' par(mfrow=c(2,1))
+#' plot(res,focalm="Netherlands",main="Netherlands")
+#' plot(res,focalm="Denmark",main="Denmark")
 #' @export
 
 
@@ -304,7 +314,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 
 
 #' @title Spatial Permutation Test of summed probability distributions.
-#
+#'
 #' @description This function carries out local spatial permutation test of the summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al submitted). 
 #' 
 #' @param calDates  A \code{CalDates} class object.
@@ -319,16 +329,65 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
 #' @param datenormalised a logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1.Default is FALSE. 
 #' @param verbose a logical variable indicating whether extra information on progress should be reported. Default is TRUE.
-
+#'
 #'
 #' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates weighting the contribution of dates from neighbouring site using a weight scheme provided by the \code{spatialweights} class object. 2) define temporal slices (using \code{breaks} as break values) the compute the total probability mass within each slice; 3) compute the rate of change between as abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of indivual bins or the entire sequence of bins associated with a given location and carry out steps 1--3; 5) repeate step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate to the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.    
 #'
 #' @return A \code{spatialTest} class object
 #'
 #' @references
-#' Crema, E.R., Bevan, A., Shennan, S. (submitted). Spatio-temporal approaches to archaeological radiocarbon dates.
+#' Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates.
 #' 
 #' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting
+#'
+#' @examples
+#' ## Reproduce Crema et al 2017 ##
+#' data(euroevol) #load data
+#'
+#' ## Subset only for 8000 to 5000 Cal BP (c7200-4200 C14BP)
+#' edge=800
+#' timeRange=c(8000,5000)
+#' euroevol2=subset(euroevol,C14Age<=c(timeRange[1]-edge)&C14Age>=c(timeRange[2]-edge))
+#'
+#' ## define chronological breaks
+#' breaks=seq(8000,5000,-500)
+#'
+#' ## Create a SpatialPoints class object 
+#' library(sp)
+#' sites = unique(data.frame(SiteID=euroevol2$SiteID,Longitude=euroevol2$Longitude,Latitude=euroevol2$Latitude))
+#' locations=data.frame(Longitude=sites$Longitude,Latitude=sites$Latitude)
+#' rownames(locations)=sites$SiteID
+#' coordinates(locations)<-c("Longitude","Latitude")
+#' proj4string(locations)<- CRS("+proj=longlat +datum=WGS84")
+#'
+#' ## Compute Distance and Spatial Weights 
+#' distSamples=spDists(locations,locations,longlat = TRUE)
+#' spatialweights=defineNeighbour(distSamples,h=100) #using a kernal bandwidth of 100km
+#'
+#' ## Calibration and binning
+#' bins=binPrep(sites=euroevol2$SiteID,ages=euroevol2$C14Age,h=200)  
+#' calDates=calibrate(ages=euroevol2$C14Age,errors=euroevol2$C14SD,timeRange=timeRange,normalised=FALSE)
+#'
+#' ## Main Analysis (over 3 cores; requires doParallel package) NOTE: the number of simulations should be ideally larger to ensure a better resolution of the p/q-values.
+#' res.locations=SPpermTest(calDates,timeRange=yearRange,bins=bins,ocations=locations,spatialweights=spatialweights,breaks=breaks,ncores=3,nsim=1000,permute="locations",datenormalised=FALSE)
+#' 
+#' ## Plot results
+#' library(rworldmap)
+#' base=getMap(resolution="low") #add base map
+#' #retrieve coordinate limits#
+#' xrange=bbox(res.locations$locations)[1,] 
+#' yrange=bbox(res.locations$locations)[2,]
+#'
+#' par(mfrow=c(2,2))  
+#' par(mar=c(0.1,0.1,0,0.5))
+#' plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
+#' plot(res.locations,index=4,add=TRUE,option="raw",breakRange=c(-0.005,0.005))
+#' plot(res.locations,option="rawlegend",breakRange=c(-0.005,0.005),rd=3)
+#' par(mar=c(0.1,0.1,0,0.5))
+#' plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
+#' plot(res.locations,index=4,add=TRUE,option="test")
+#' plot(res.locations,option="testlegend")
+#' 
 #' @export
  
 

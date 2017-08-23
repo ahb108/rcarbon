@@ -844,7 +844,7 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 }
 
 #' @title Plot results of the local spatial permutation test of summed probability distributions.
-#
+#'
 #' @description Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.
 #'
 #' @param x A \code{spatialTest} class object
