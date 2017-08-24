@@ -284,17 +284,44 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     if (bbty %in% c("n","b")){ return(bbp) }
 }
 
-#' @title Plot the median values of calibrated radiocarbon dates. 
-#' @description Plot the median values of multiple calibrated radiocarbon dates in a barcode-like strip.
-#' @param x A \code{CalDates} class object containing calibrated radiocarbon dates.
-#' @param yrng Number indicating the index value of the calibrated radiocarbon date to be displayed. Default is 1.
-#' @param width (optional) Character vector to be shown on the top-right corner of the display window.
-#' @param fixXorder Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @title Plot the median values of calibrated radiocarbon dates or bins 
+#' @description Plot the median values of multiple calibrated radiocarbon dates or bins in a barcode-like strip.
+#' @param x A vector containing median values obtained from \code{\link{medCal}} or \code{\link{binMed}}  
+#' @param yrng y-axis range of the bars.
+#' @param width width of the bars (optional) 
+#' @param color color of the bars
+#' @param border the color to draw the border. Use border = NA to omit borders.
+#' @param fixXorder 
 #' 
-#' @seealso \code{\link{calibrate}}
+#' @seealso \code{\link{medCal}}, \code{\link{binMed}},
 #'
 #' @examples
-#' to do
+#' #Load EUROEVOL Data
+#' data(euroevol)
+#' 
+#' #Subset Danish Dates
+#' denmark <- subset(euroevol,Country=="Denmark")
+#'
+#' #Calibrate and Bin
+#' denmarkDates <- calibrate(denmark$C14Age,denmark$C14SD) 
+#' denmarkBins <- binPrep(denmark$SiteID,denmark$C14Age,200) #200 years bin size
+#'
+#' #Compute median date for each bin
+#' bm <- binMed(denmarkDates,denmarkBins)
+#'
+#' #Compute median date for each date
+#' dm <- medCal(denmarkDates)
+#' 
+#' #Compute SPD 
+#' denmarkSPD <- spd(denmarkDates,denmarkBins,timeRange=c(10000,4000))
+#' 
+#' #Plot SPD and barCodes of median dates
+#' plot(denmarkSPD,runm=200)
+#' barCodes(dm,yrng=c(0,0.01)) 
+#'
+#' #Plot SPD and barCodes of median bins in BC/AD
+#' plot(denmarkSPD,runm=200,calendar="BCAD")
+#' barCodes(BPtoBCAD(bm),yrng=c(0,0.01)) 
 #' @export
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){

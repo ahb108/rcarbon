@@ -21,7 +21,7 @@
 #' @return An object of class CalDates with the following elements
 #' \itemize{
 #' \item{\code{metadata}} {A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.}
-#' \item{\code{grids}} {A list of calGrid class objects, containing the posterior probabilities for each calendar year. The most memor-efficient way to store calibrated dates, as only years with non-zero probability are stored, but aggregation methods such as spd() may then take longer to extract and combine multiple dates. NA when the parameter calMatrix is set to TRUE.} 
+#' \item{\code{grids}} {A list of calGrid class objects, containing the posterior probabilities for each calendar year. The most memor-efficient way to store calibrated dates, as only years with non-zero probability are stored, but aggregation methods such as \code{spd()} may then take longer to extract and combine multiple dates. NA when the parameter calMatrix is set to TRUE.} 
 #' \item{\code{calMatrix}} {A matrix of probability values, one row per calendar year in timeRange and one column per date. By storing all possible years, not just those with non-zero probabilty, this approach takes more memory, but speeds up spd() and is suggested whenever the latter is to be used. NA when the parameter calMatrix is set to FALSE.}  
 #' }
 #'
@@ -487,7 +487,17 @@ return(res)
 }
 
 
-
+#' @title Computes the median date of calibrated dates 
+#'
+#' @description Function for generating a vector median calibrated dates from a \code{CalDates} class object.
+#' 
+#' @param x A \code{CalDates} class object.
+#'
+#' @return A vector of median dates in cal BP
+#' @examples
+#' x <- calibrate(c(3050,2950),c(20,20))
+#' medCal(x)
+#' @seealso \code{\link{calibrate}},\code{\link{barCodes}}
 #' @export
 medCal <- function(x)
 {

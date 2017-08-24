@@ -212,6 +212,29 @@ BCADtoBP <- function(x){
     return(res[,2])
 }
 
+
+
+#' @title Computes the median date of each bin
+#'
+#' @description Function for generating a vector of median calibrated dates for each each bin.
+#' 
+#' @param x A \code{CalDates} class object.
+#' @param bin A vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#'
+#' @return A vector of median dates in cal BP
+#' @examples
+#' #Load EUROEVOL Data
+#' data(euroevol)
+#' #Subset Danish Dates
+#' denmark <- subset(euroevol,Country=="Denmark")
+#' #Calibrate and Bin
+#' denmarkDates <- calibrate(denmark$C14Age,denmark$C14SD) 
+#' denmarkBins <- binPrep(denmark$SiteID,denmark$C14Age,200) #200 years bin size
+#' #Compute median date for each bin
+#' binMed(denmarkDates,denmarkBins)
+#'
+#' @seealso \code{\link{binPrep}},\code{\link{barCodes}}
 #' @export
 
 binMed <- function(x,bins,verbose=TRUE){
