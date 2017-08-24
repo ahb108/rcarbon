@@ -5,7 +5,7 @@
 \title{Plot the median values of calibrated radiocarbon dates or bins}
 \usage{
 barCodes(x, yrng = c(0, 0.03), width = 20, col = rgb(0, 0, 0, 25,
-  maxColorValue = 255), border = NA, fixXorder = FALSE, ...)
+  maxColorValue = 255), border = NA, ...)
 }
 \arguments{
 \item{x}{A vector containing median values obtained from \code{\link{medCal}} or \code{\link{binMed}}}
@@ -16,7 +16,7 @@ barCodes(x, yrng = c(0, 0.03), width = 20, col = rgb(0, 0, 0, 25,
 
 \item{border}{the color to draw the border. Use border = NA to omit borders.}
 
-\item{fixXorder}{}
+\item{...}{Additional arguments affecting the plot}
 
 \item{color}{color of the bars}
 }

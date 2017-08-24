@@ -291,7 +291,8 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 #' @param width width of the bars (optional) 
 #' @param color color of the bars
 #' @param border the color to draw the border. Use border = NA to omit borders.
-#' @param fixXorder 
+#' @param ... Additional arguments affecting the plot
+#'
 #' 
 #' @seealso \code{\link{medCal}}, \code{\link{binMed}},
 #'
@@ -324,9 +325,8 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 #' barCodes(BPtoBCAD(bm),yrng=c(0,0.01)) 
 #' @export
 
-barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, fixXorder=FALSE,...){
+barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, ...){
     barcodes <- x
-    if (fixXorder){ barcodes <- barcodes*-1 }
     halfbw <- width/2
     for (a in 1:length(barcodes)){
         polygon(x=c(barcodes[a]-halfbw,barcodes[a]-halfbw,barcodes[a]+halfbw,barcodes[a]+halfbw,barcodes[a]-halfbw),y=c(yrng[1],yrng[2],yrng[2],yrng[1],yrng[1]), border=border, col=col, ...)
