@@ -5,7 +5,7 @@
 \title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
 \method{plot}{spatialTest}(x, index = NULL, option, breakRange,
-  breakLength = 7, rd = 5, baseSize = 0.5, ...)
+  breakLength = 7, rd = 5, baseSize = 0.5, legSize = 1, ...)
 }
 \arguments{
 \item{x}{A \code{spatialTest} class object}
@@ -16,13 +16,15 @@
 
 \item{breakRange}{A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend.}
 
+\item{breakLength}{A numerical vector defining the number of breaks for growth rates to be displayed in the legend.}
+
 \item{rd}{Number of decimal places of the growth rate to be displayed in the Legend}
 
 \item{baseSize}{Numerical value giving the amount by which points should be magnified relative to the default settings in R. Default is 0.5}
 
-\item{...}{Graphical parameters to be passed to methods.}
+\item{legSize}{Numerical value giving the amount by which points should be magnified relative to the default settings in R for the Legend plot (i.e. when \code{option=rawlegend} or \code{option=rawlegend}. Default is 1.}
 
-\item{breakLenth}{A numerical vector defining the number of breaks for growth rates to be displayed in the legend.}
+\item{...}{Graphical parameters to be passed to methods.}
 }
 \description{
 Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.

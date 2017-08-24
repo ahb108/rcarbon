@@ -878,9 +878,10 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 #' @param index A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}
 #' @param option Indicates what to display. Must be one of "\code{raw}","\code{test}","\code{rawlegend}", and "\code{testlegend}".
 #' @param breakRange A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend.
-#' @param breakLenth A numerical vector defining the number of breaks for growth rates to be displayed in the legend.
+#' @param breakLength A numerical vector defining the number of breaks for growth rates to be displayed in the legend.
 #' @param rd Number of decimal places of the growth rate to be displayed in the Legend
 #' @param baseSize Numerical value giving the amount by which points should be magnified relative to the default settings in R. Default is 0.5
+#' @param legSize Numerical value giving the amount by which points should be magnified relative to the default settings in R for the Legend plot (i.e. when \code{option=rawlegend} or \code{option=rawlegend}. Default is 1. 
 #' @param ... Graphical parameters to be passed to methods.
 #'
 #' @details
@@ -890,7 +891,7 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 #' @export
 
 
-plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,baseSize=0.5,...)
+plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,baseSize=0.5,legSize=1,...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{
@@ -934,7 +935,7 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,bas
 	}
 	par(mar=c(2,0,2,0))
         plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	legend("center",legend=breaksLab,col=cols,pch=20,bty="n",cex=1.3)
+	legend("center",legend=breaksLab,col=cols,pch=20,bty="n",cex=legSize)
 
         }
 
@@ -943,8 +944,8 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,bas
 	{
 	par(mar=c(2,0,2,0))
 	plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=1.4,bty="n")
-	legend("bottom",title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=1.4,bty="n")
+	legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=legSize,bty="n")
+	legend("bottom",title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=legSize,bty="n")
 	}
 
 	if (option=="test")
