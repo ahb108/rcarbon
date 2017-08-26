@@ -285,11 +285,12 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 }
 
 #' @title Plot the median values of calibrated radiocarbon dates or bins 
+#'
 #' @description Plot the median values of multiple calibrated radiocarbon dates or bins in a barcode-like strip.
 #' @param x A vector containing median values obtained from \code{\link{medCal}} or \code{\link{binMed}}  
 #' @param yrng y-axis range of the bars.
 #' @param width width of the bars (optional) 
-#' @param color color of the bars
+#' @param col color of the bars
 #' @param border the color to draw the border. Use border = NA to omit borders.
 #' @param ... Additional arguments affecting the plot
 #'
@@ -304,17 +305,17 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 #' denmark <- subset(euroevol,Country=="Denmark")
 #'
 #' #Calibrate and Bin
-#' denmarkDates <- calibrate(denmark$C14Age,denmark$C14SD) 
-#' denmarkBins <- binPrep(denmark$SiteID,denmark$C14Age,200) #200 years bin size
+#' denmarkDates <- calibrate(ages=denmark$C14Age,errors=denmark$C14SD) 
+#' denmarkBins <- binPrep(sites=denmark$SiteID,ages=denmark$C14Age,h=200) #200 years bin size
 #'
 #' #Compute median date for each bin
-#' bm <- binMed(denmarkDates,denmarkBins)
+#' bm <- binMed(x=denmarkDates,bins=denmarkBins)
 #'
 #' #Compute median date for each date
 #' dm <- medCal(denmarkDates)
 #' 
 #' #Compute SPD 
-#' denmarkSPD <- spd(denmarkDates,denmarkBins,timeRange=c(10000,4000))
+#' denmarkSPD <- spd(x=denmarkDates,bins=denmarkBins,timeRange=c(10000,4000))
 #' 
 #' #Plot SPD and barCodes of median dates
 #' plot(denmarkSPD,runm=200)
@@ -746,15 +747,19 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param legend A logical variable indicating whether the legend should be displayed. Default is TRUE
 #' @param ... Additional arguments to be passed to the \code{\link{spd}} function. 
-#'
 #' 
 #' @seealso 
-#' \code{\link{binPrep}};\code{\link{pd}};
+#' \code{\link{binPrep}};\code{\link{spd}};
+#' @examples
+#' data(euroevol)
+#' #subset Danish dates
+#' denmark=subset(euroevol,Country=="Denmark")
+#' denmarkDates=calibrate(ages=denmark$C14Age,errors=denmark$C14SD)
+#' binsense(x=denmarkDates,y=denmark,h=seq(0,200,20),timeRange=c(10000,4000),sitecol="SiteID",agecol="C14Age",runm=200)
 #' @export
 
 binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
 {
-
   if (!calendar %in% c("BP","BCAD")){ stop("Unknown calendar type") }
   	
   years <- timeRange[1]:timeRange[2]

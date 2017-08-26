@@ -146,7 +146,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 #' @param raw A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95% simulation evnelope is computed. Local signficance departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global signicance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data. 
+#' @details The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation evnelope is computed. Local signficance departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global signicance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data. 
 #'
 #' @return An object of class \code{SpdPermTest} with the following elements
 #' \itemize{
@@ -322,7 +322,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @param bins A vector indicating which bin each radiocarbon date is assigned to. Must have the same length as the number of radiocarbon dates. Can be created using the  \code{\link{binPrep}}) function. Bin names should follow the format "x_y", where x refers to a unique location (e.g. a site) and y is a integer value (e.g. "S023_1", "S023_2","S034_1", etc.).  
 #' @param locations A \code{SpatialPoints} or a \code{SpatialPointsDataFrame} class object. Rownames of each point should much the first part of the bin names supplied (e.g. "S023","S034") 
 #' @param breaks A vector of break points for defining the temporal slices.
-#' @param spatialweights A \code{spatialweights} class object defining the spatial weights between the locations.
+#' @param spatialweights A \code{spatialweights} class object defining the spatial weights between the locations (cd. \code{\link{spweights}})
 #' @param nsim The total number of simulations. Default is 1000.
 #' @param runm The window size of the moving window average. Must be set to \code{NA} if a the rates of change area calculated from the raw SPDs. 
 #' @param permute Indicates whether the permutations should be based on the \code{"bins"} or the \code{"locations"}. Default is \code{"locations"}. 
@@ -338,7 +338,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @references
 #' Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates.
 #' 
-#' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting
+#' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights;
 #'
 #' @examples
 #' ## Reproduce Crema et al 2017 ##

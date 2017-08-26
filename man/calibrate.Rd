@@ -40,7 +40,7 @@ calibrate(x, ...)
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
 \value{
-An object of class CalDates with the following elements
+An object of class CalDates with the following elements:
 \itemize{
 \item{\code{metadata}} {A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.}
 \item{\code{grids}} {A list of calGrid class objects, containing the posterior probabilities for each calendar year. The most memor-efficient way to store calibrated dates, as only years with non-zero probability are stored, but aggregation methods such as \code{spd()} may then take longer to extract and combine multiple dates. NA when the parameter calMatrix is set to TRUE.} 
@@ -56,6 +56,7 @@ This function computes one or more calibrated radiocarbon ages using the method 
 \examples{
 x1 <- calibrate(ages=4000, errors=30)
 plot(x1)
+summary(x1)
 # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
 x2 <- calibrate(ages=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
 plot(x2)

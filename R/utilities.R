@@ -219,7 +219,7 @@ BCADtoBP <- function(x){
 #' @description Function for generating a vector of median calibrated dates for each each bin.
 #' 
 #' @param x A \code{CalDates} class object.
-#' @param bin A vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}
+#' @param bins vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #' @return A vector of median dates in cal BP
@@ -229,10 +229,10 @@ BCADtoBP <- function(x){
 #' #Subset Danish Dates
 #' denmark <- subset(euroevol,Country=="Denmark")
 #' #Calibrate and Bin
-#' denmarkDates <- calibrate(denmark$C14Age,denmark$C14SD) 
-#' denmarkBins <- binPrep(denmark$SiteID,denmark$C14Age,200) #200 years bin size
+#' denmarkDates <- calibrate(ages=denmark$C14Age,errors=denmark$C14SD) 
+#' denmarkBins <- binPrep(sites=denmark$SiteID,ages=denmark$C14Age,h=200) #200 years bin size
 #' #Compute median date for each bin
-#' binMed(denmarkDates,denmarkBins)
+#' binMed(x=denmarkDates,bins=denmarkBins)
 #'
 #' @seealso \code{\link{binPrep}},\code{\link{barCodes}}
 #' @export
@@ -325,7 +325,8 @@ return(medbins)
 #' @examples
 #' lon <- c(11.3426,0.1278,0.1218)
 #' lat <- c(44.4949,51.5074,52.2053)
-#' d <- greatArcDist(Latitude=lat,Longitude=lon)
+#' library(sp)
+#' d <- spDists(x=cbind(lon,lat),y=cbind(lon,lat))
 #' defineNeighbour(d,h=100)
 #' defineNeighbour(d,h=100,kernel="fixed")
 #' @export

@@ -14,11 +14,11 @@ barCodes(x, yrng = c(0, 0.03), width = 20, col = rgb(0, 0, 0, 25,
 
 \item{width}{width of the bars (optional)}
 
+\item{col}{color of the bars}
+
 \item{border}{the color to draw the border. Use border = NA to omit borders.}
 
 \item{...}{Additional arguments affecting the plot}
-
-\item{color}{color of the bars}
 }
 \description{
 Plot the median values of multiple calibrated radiocarbon dates or bins in a barcode-like strip.
@@ -31,17 +31,17 @@ data(euroevol)
 denmark <- subset(euroevol,Country=="Denmark")
 
 #Calibrate and Bin
-denmarkDates <- calibrate(denmark$C14Age,denmark$C14SD) 
-denmarkBins <- binPrep(denmark$SiteID,denmark$C14Age,200) #200 years bin size
+denmarkDates <- calibrate(ages=denmark$C14Age,errors=denmark$C14SD) 
+denmarkBins <- binPrep(sites=denmark$SiteID,ages=denmark$C14Age,h=200) #200 years bin size
 
 #Compute median date for each bin
-bm <- binMed(denmarkDates,denmarkBins)
+bm <- binMed(x=denmarkDates,bins=denmarkBins)
 
 #Compute median date for each date
 dm <- medCal(denmarkDates)
 
 #Compute SPD 
-denmarkSPD <- spd(denmarkDates,denmarkBins,timeRange=c(10000,4000))
+denmarkSPD <- spd(x=denmarkDates,bins=denmarkBins,timeRange=c(10000,4000))
 
 #Plot SPD and barCodes of median dates
 plot(denmarkSPD,runm=200)

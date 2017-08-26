@@ -33,6 +33,13 @@ binsense(x, y, h, timeRange, calendar = "BP", sitecol, agecol, raw = F,
 \description{
 Visually explores how choosing different values for \code{h} in the \code{\link{binPrep}} function affects the shape of the SPD.
 }
+\examples{
+data(euroevol)
+#subset Danish dates
+denmark=subset(euroevol,Country=="Denmark")
+denmarkDates=calibrate(ages=denmark$C14Age,errors=denmark$C14SD)
+binsense(x=denmarkDates,y=denmark,h=seq(0,200,20),timeRange=c(10000,4000),sitecol="SiteID",agecol="C14Age",runm=200)
+}
 \seealso{
-\code{\link{binPrep}};\code{\link{pd}};
+\code{\link{binPrep}};\code{\link{spd}};
 }

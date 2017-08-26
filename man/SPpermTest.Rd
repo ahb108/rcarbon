@@ -19,7 +19,7 @@ SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
 
 \item{breaks}{A vector of break points for defining the temporal slices.}
 
-\item{spatialweights}{A \code{spatialweights} class object defining the spatial weights between the locations.}
+\item{spatialweights}{A \code{spatialweights} class object defining the spatial weights between the locations (cd. \code{\link{spweights}})}
 
 \item{nsim}{The total number of simulations. Default is 1000.}
 
@@ -95,5 +95,5 @@ plot(res.locations,option="testlegend")
 Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates.
 }
 \seealso{
-\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting
+\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights;
 }

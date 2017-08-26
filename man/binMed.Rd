@@ -9,9 +9,9 @@ binMed(x, bins, verbose = TRUE)
 \arguments{
 \item{x}{A \code{CalDates} class object.}
 
-\item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
+\item{bins}{vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}}
 
-\item{bin}{A vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}}
+\item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
 \value{
 A vector of median dates in cal BP
@@ -25,10 +25,10 @@ data(euroevol)
 #Subset Danish Dates
 denmark <- subset(euroevol,Country=="Denmark")
 #Calibrate and Bin
-denmarkDates <- calibrate(denmark$C14Age,denmark$C14SD) 
-denmarkBins <- binPrep(denmark$SiteID,denmark$C14Age,200) #200 years bin size
+denmarkDates <- calibrate(ages=denmark$C14Age,errors=denmark$C14SD) 
+denmarkBins <- binPrep(sites=denmark$SiteID,ages=denmark$C14Age,h=200) #200 years bin size
 #Compute median date for each bin
-binMed(denmarkDates,denmarkBins)
+binMed(x=denmarkDates,bins=denmarkBins)
 
 }
 \seealso{

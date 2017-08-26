@@ -18,7 +18,7 @@
 #'
 #' @details This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
 #'
-#' @return An object of class CalDates with the following elements
+#' @return An object of class CalDates with the following elements:
 #' \itemize{
 #' \item{\code{metadata}} {A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.}
 #' \item{\code{grids}} {A list of calGrid class objects, containing the posterior probabilities for each calendar year. The most memor-efficient way to store calibrated dates, as only years with non-zero probability are stored, but aggregation methods such as \code{spd()} may then take longer to extract and combine multiple dates. NA when the parameter calMatrix is set to TRUE.} 
@@ -31,6 +31,7 @@
 #' @examples
 #' x1 <- calibrate(ages=4000, errors=30)
 #' plot(x1)
+#' summary(x1)
 #' # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
 #' x2 <- calibrate(ages=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
 #' plot(x2)
@@ -437,8 +438,15 @@ hpdi <- function(x, credMass=0.95){
     return(result)
 }
 
-
-#' @title Summarise a CalDates object
+#' @title Summarise a \code{CalDates} class object
+#'
+#' @description Returns summary statistics of calibrated dates
+#'
+#' @param x A \code{CalDates} class object
+#' @param prob A vector containing probabilities for the higher posterior density interval. Default is \code{c(0.683,0.954)}, i.e. 1 and 2-Sigma range.
+#' @param calendar Whether the summary statistics should be computed in cal BP (\code{"BP"}) or in BCAD (\code{"BCAD"})
+#'
+#' @return A \code{data.frame} class object containing the ID of each date, along with the median date and one and two sigma (or a user specified probability) higher posterior density ranges.
 #'
 #' @export
 summary.CalDates<-function(x,prob=NA,calendar="BP") {
@@ -497,7 +505,7 @@ return(res)
 #' @examples
 #' x <- calibrate(c(3050,2950),c(20,20))
 #' medCal(x)
-#' @seealso \code{\link{calibrate}},\code{\link{barCodes}}
+#' @seealso \code{\link{calibrate}}, \code{\link{barCodes}}
 #' @export
 medCal <- function(x)
 {
