@@ -923,7 +923,7 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,bas
 	classes=cut(x$rocaObs[,index], outbreak,labels=F)
 	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
 	classes=cols[classes]
-	plot(locations,col=classes,pch=20,add=TRUE,cex=baseSize)
+	plot(locations,col=classes,pch=20,add=TRUE,cex=baseSize,...)
 	}
 
 
