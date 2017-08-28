@@ -362,7 +362,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #'
 #' ## Compute Distance and Spatial Weights 
 #' distSamples=spDists(locations,locations,longlat = TRUE)
-#' spatialweights=defineNeighbour(distSamples,h=100) #using a kernal bandwidth of 100km
+#' spatialweights=spweights(distSamples,h=100) #using a kernal bandwidth of 100km
 #'
 #' ## Calibration and binning
 #' bins=binPrep(sites=euroevol2$SiteID,ages=euroevol2$C14Age,h=200)  
