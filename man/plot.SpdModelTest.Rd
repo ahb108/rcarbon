@@ -4,7 +4,7 @@
 \alias{plot.SpdModelTest}
 \title{Plot result of Monte-Carlo simulation of observed veruss modelled SPDs}
 \usage{
-\method{plot}{SpdModelTest}(test, calendar = "BP", ylim = NA, xlim = NA,
+plot.SpdModelTest(test, calendar = "BP", ylim = NA, xlim = NA,
   col.obs = "black", lwd.obs = 0.5, xaxs = "i", yaxs = "i",
   bbty = "f", drawaxes = TRUE, ...)
 }
