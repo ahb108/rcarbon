@@ -4,8 +4,8 @@
 \alias{plot.spatialTest}
 \title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
-plot.spatialTest(x, index = NULL, option, breakRange, breakLength = 7,
-  rd = 5, baseSize = 0.5, legSize = 1, ...)
+\method{plot}{spatialTest}(x, index = NULL, option, breakRange,
+  breakLength = 7, rd = 5, baseSize = 0.5, legSize = 1, ...)
 }
 \arguments{
 \item{x}{A \code{spatialTest} class object}

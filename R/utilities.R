@@ -332,7 +332,7 @@ return(medbins)
 #' @export
 
 
-spweigths<-function(distmat,h=NULL,kernel="gaussian")
+spweights<-function(distmat,h=NULL,kernel="gaussian")
 {
     w=matrix(NA,nrow=nrow(distmat),ncol=ncol(distmat))
     kernels <- c("gaussian","fixed")
