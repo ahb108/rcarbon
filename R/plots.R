@@ -880,7 +880,7 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 #' @description Displays local growth rates, p-values, and q-values retrieved from a \code{spatialTest} class object.
 #'
 #' @param x A \code{spatialTest} class object
-#' @param index A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}
+#' @param index A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}. Default is 1.
 #' @param option Indicates what to display. Must be one of "\code{raw}","\code{test}","\code{rawlegend}", and "\code{testlegend}".
 #' @param breakRange A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend. If set to NA its computed from data range (default).
 #' @param breakLength A numerical vector defining the number of breaks for growth rates to be displayed in the legend.
@@ -896,7 +896,7 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 #' @export
 
 
-plot.spatialTest<-function(x,index=NULL,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,legSize=1,...)
+plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,legSize=1,...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{
@@ -951,8 +951,8 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange=NA,breakLength=7,rd=5,
 	{
 	par(mar=c(2,0,2,0))
 	plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=legSize,bty="n")
-	legend("bottom",title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=legSize,bty="n")
+	l1 = legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=legSize,bty="n")
+	legend(l1$rect$left, y = with(l1$rect, top - h),title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=legSize,bty="n")
 	}
 
 	if (option=="test")

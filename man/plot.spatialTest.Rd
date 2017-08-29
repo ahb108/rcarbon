@@ -4,13 +4,13 @@
 \alias{plot.spatialTest}
 \title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
-\method{plot}{spatialTest}(x, index = NULL, option, breakRange = NA,
+\method{plot}{spatialTest}(x, index = 1, option, breakRange = NA,
   breakLength = 7, rd = 5, baseSize = 0.5, legSize = 1, ...)
 }
 \arguments{
 \item{x}{A \code{spatialTest} class object}
 
-\item{index}{A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}}
+\item{index}{A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}. Default is 1.}
 
 \item{option}{Indicates what to display. Must be one of "\code{raw}","\code{test}","\code{rawlegend}", and "\code{testlegend}".}
 
