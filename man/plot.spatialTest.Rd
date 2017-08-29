@@ -4,7 +4,7 @@
 \alias{plot.spatialTest}
 \title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
-\method{plot}{spatialTest}(x, index = NULL, option, breakRange,
+\method{plot}{spatialTest}(x, index = NULL, option, breakRange = NA,
   breakLength = 7, rd = 5, baseSize = 0.5, legSize = 1, ...)
 }
 \arguments{
@@ -14,7 +14,7 @@
 
 \item{option}{Indicates what to display. Must be one of "\code{raw}","\code{test}","\code{rawlegend}", and "\code{testlegend}".}
 
-\item{breakRange}{A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend.}
+\item{breakRange}{A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend. If set to NA its computed from data range (default).}
 
 \item{breakLength}{A numerical vector defining the number of breaks for growth rates to be displayed in the legend.}
 

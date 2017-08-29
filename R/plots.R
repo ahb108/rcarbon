@@ -882,7 +882,7 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 #' @param x A \code{spatialTest} class object
 #' @param index A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}
 #' @param option Indicates what to display. Must be one of "\code{raw}","\code{test}","\code{rawlegend}", and "\code{testlegend}".
-#' @param breakRange A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend.
+#' @param breakRange A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend. If set to NA its computed from data range (default).
 #' @param breakLength A numerical vector defining the number of breaks for growth rates to be displayed in the legend.
 #' @param rd Number of decimal places of the growth rate to be displayed in the Legend
 #' @param baseSize Numerical value giving the amount by which points should be magnified relative to the default settings in R. Default is 0.5
@@ -896,7 +896,7 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 #' @export
 
 
-plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,baseSize=0.5,legSize=1,...)
+plot.spatialTest<-function(x,index=NULL,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,legSize=1,...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{
@@ -916,6 +916,8 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,bas
         require(sp)
         locations=x$locations
 
+	if(all(is.na(breakRange))){breakRange=range((x$rocaObs[,index]))} 
+
 	if (option=="raw")
 	{
 	breaks=seq(breakRange[1],breakRange[2],length.out=breakLength)
@@ -923,7 +925,7 @@ plot.spatialTest<-function(x,index=NULL,option,breakRange,breakLength=7,rd=5,bas
 	classes=cut(x$rocaObs[,index], outbreak,labels=F)
 	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
 	classes=cols[classes]
-	plot(locations,col=classes,pch=20,add=TRUE,cex=baseSize,...)
+	plot(locations,col=classes,pch=20,cex=baseSize,...)
 	}
 
 
