@@ -469,7 +469,7 @@ summary.CalDates<-function(x,prob=NA,calendar="BP") {
 		for (j in 1:cols)
 		{
 		tmp=t(sapply(hpdi(x,prob[i]),foo,i=j))
-		if (calendar=="BC/AD")
+		if (calendar=="BCAD")
 		{
 			tmp = t(apply(tmp,1,BPtoBCAD))
 			
