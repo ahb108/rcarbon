@@ -27,12 +27,14 @@ emedyd
 Radiocarbon dates (n=1915) and site coordinates (n=201) from a paper considering the relationship between human activity in the eastern Mediterranean/Middle East and early Holocene climate change, inlcuding the Younger Dryas.
 }
 \examples{
+\dontrun{
 data(emedyd)
 northernlevant <- emedyd[emedyd$Region=="2",]
 bins <- binPrep(northernlevant$SiteName, northernlevant$CRA, h=50)
 x <- calibrate(northernlevant$CRA, northernlevant$Error, normalised=FALSE)
 spd.northernlevant <- spd(x, bins=bins, runm=50, timeRange=c(17000,8000))
 plot(spd.northernlevant)
+}
 }
 \references{
 Roberts, N., Woodbridge, J., Bevan, A., Palmisano, A., Shennan, S. and E. Asouti 2017. under review. Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean.

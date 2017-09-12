@@ -102,7 +102,7 @@ quickMarks <- function(x, verbose=TRUE){
 #' @references
 #' Adapted from \code{\link[smoother]{smth.gaussian}}
 #' @examples
-#' smoothGauss(runif(200))
+#' smoothGauss(runif(200),alpha=5)
 #' @export
 
 smoothGauss <- function(x, alpha, window=0.1){
@@ -224,6 +224,7 @@ BCADtoBP <- function(x){
 #'
 #' @return A vector of median dates in cal BP
 #' @examples
+#' \dontrun{
 #' #Load EUROEVOL Data
 #' data(euroevol)
 #' #Subset Danish Dates
@@ -233,7 +234,7 @@ BCADtoBP <- function(x){
 #' denmarkBins <- binPrep(sites=denmark$SiteID,ages=denmark$C14Age,h=200) #200 years bin size
 #' #Compute median date for each bin
 #' binMed(x=denmarkDates,bins=denmarkBins)
-#'
+#' }
 #' @seealso \code{\link{binPrep}},\code{\link{barCodes}}
 #' @export
 
@@ -327,8 +328,8 @@ return(medbins)
 #' lat <- c(44.4949,51.5074,52.2053)
 #' library(sp)
 #' d <- spDists(x=cbind(lon,lat),y=cbind(lon,lat))
-#' defineNeighbour(d,h=100)
-#' defineNeighbour(d,h=100,kernel="fixed")
+#' spweights(d,h=100)
+#' spweights(d,h=100,kernel="fixed")
 #' @export
 
 

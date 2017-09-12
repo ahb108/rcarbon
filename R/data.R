@@ -20,12 +20,14 @@
 #' Timpson, A., Colledge, S., Crema, E., Edinborough, K., Kerig, T., Manning, K., Thomas, M.G., Shennan, S., 2014. Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52, 549–557. doi:10.1016/j.jas.2014.08.011
 #'
 #' @examples
+#' \dontrun{
 #' data(euroevol)
 #' Ireland <- subset(euroevol,Country=="Ireland")
 #' bins <- binPrep(Ireland$SiteID,Ireland$C14Age,h=200)
 #' x <- calibrate(Ireland$C14Age,Ireland$C14SD)
 #' spd.ireland <- spd(x,bins=bins,runm=200,timeRange=c(8000,4000))
 #' plot(spd.ireland)
+#'}
 "euroevol"
 
 #' @title Radiocarbon dates for the Eastern Mediterranan around the Younger Dryas
@@ -49,10 +51,12 @@
 #' Roberts, N., Woodbridge, J., Bevan, A., Palmisano, A., Shennan, S. and E. Asouti 2017. under review. Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean.
 #' 
 #' @examples
+#' \dontrun{
 #' data(emedyd)
 #' northernlevant <- emedyd[emedyd$Region=="2",]
 #' bins <- binPrep(northernlevant$SiteName, northernlevant$CRA, h=50)
 #' x <- calibrate(northernlevant$CRA, northernlevant$Error, normalised=FALSE)
 #' spd.northernlevant <- spd(x, bins=bins, runm=50, timeRange=c(17000,8000))
 #' plot(spd.northernlevant)
+#'}
 "emedyd"

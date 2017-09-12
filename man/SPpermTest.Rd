@@ -44,6 +44,7 @@ The function consists of the following seven steps: 1) for each location (e.g. a
 }
 \examples{
 ## Reproduce Crema et al 2017 ##
+\dontrun{
 data(euroevol) #load data
 
 ## Subset only for 8000 to 5000 Cal BP (c7200-4200 C14BP)
@@ -56,7 +57,8 @@ breaks=seq(8000,5000,-500)
 
 ## Create a SpatialPoints class object 
 library(sp)
-sites = unique(data.frame(SiteID=euroevol2$SiteID,Longitude=euroevol2$Longitude,Latitude=euroevol2$Latitude))
+sites = unique(data.frame(SiteID=euroevol2$SiteID,
+Longitude=euroevol2$Longitude,Latitude=euroevol2$Latitude))
 locations=data.frame(Longitude=sites$Longitude,Latitude=sites$Latitude)
 rownames(locations)=sites$SiteID
 coordinates(locations)<-c("Longitude","Latitude")
@@ -68,28 +70,33 @@ spatialweights=spweights(distSamples,h=100) #using a kernal bandwidth of 100km
 
 ## Calibration and binning
 bins=binPrep(sites=euroevol2$SiteID,ages=euroevol2$C14Age,h=200)  
-calDates=calibrate(ages=euroevol2$C14Age,errors=euroevol2$C14SD,timeRange=timeRange,normalised=FALSE)
+calDates=calibrate(ages=euroevol2$C14Age,errors=euroevol2$C14SD,
+timeRange=timeRange,normalised=FALSE)
 
-## Main Analysis (over 3 cores; requires doParallel package) NOTE: the number of simulations should be ideally larger to ensure a better resolution of the p/q-values.
-res.locations=SPpermTest(calDates,timeRange=yearRange,bins=bins,ocations=locations,spatialweights=spatialweights,breaks=breaks,ncores=3,nsim=1000,permute="locations",datenormalised=FALSE)
+## Main Analysis (over 2 cores; requires doParallel package) 
+## NOTE: the number of simulations should be ideally larger 
+## to ensure a better resolution of the p/q-values.
+res.locations=SPpermTest(calDates,timeRange=timeRange,bins=bins,locations=locations,
+spatialweights=spatialweights,breaks=breaks,ncores=2,nsim=100,
+permute="locations",datenormalised=FALSE)
 
 ## Plot results
-library(rworldmap)
-base=getMap(resolution="low") #add base map
+## library(rworldmap)
+## base=getMap(resolution="low") #optionally add base map
 #retrieve coordinate limits#
 xrange=bbox(res.locations$locations)[1,] 
 yrange=bbox(res.locations$locations)[2,]
 
 par(mfrow=c(2,2))  
 par(mar=c(0.1,0.1,0,0.5))
-plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
-plot(res.locations,index=4,add=TRUE,option="raw",breakRange=c(-0.005,0.005))
-plot(res.locations,option="rawlegend",breakRange=c(-0.005,0.005),rd=3)
+## plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
+##set add=TRUE with basemap:
+plot(res.locations,index=4,add=FALSE,option="raw",breakRange=c(-0.005,0.005)) #' plot(res.locations,option="rawlegend",breakRange=c(-0.005,0.005),rd=3)
 par(mar=c(0.1,0.1,0,0.5))
-plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
-plot(res.locations,index=4,add=TRUE,option="test")
-plot(res.locations,option="testlegend")
-
+## plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange) 
+##set add=TRUE with basemap
+plot(res.locations,index=4,add=FALSE,option="test")  #' plot(res.locations,option="testlegend")
+}
 }
 \references{
 Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates.

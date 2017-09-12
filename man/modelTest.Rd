@@ -58,13 +58,16 @@ The function implements a modified version of Timpson et al (2014) Monte-Carlo t
 }
 \examples{
 ## Example with Younger Dryas period Near East, including site bins
+\dontrun{
 data(emedyd)
 caldates <- calibrate(ages=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
 bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 nsim=5 #toy example
-expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50, timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
+expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,
+timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
 plot(expnull, xlim=c(16000,9000))
 round(expnull$pval,4)
+}
 }
 \references{
 Timpson, A., Colledge, S., Crema, E., Edinborough, K., Kerig, T., Manning, K., Thomas, M.G., Shennan, S., (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52, 549–557. doi:10.1016/j.jas.2014.08.011

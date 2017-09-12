@@ -17,7 +17,7 @@ smoothGauss(x, alpha, window = 0.1)
 Smooth a numeric vector using a Gaussian window
 }
 \examples{
-smoothGauss(runif(200))
+smoothGauss(runif(200),alpha=5)
 }
 \references{
 Adapted from \code{\link[smoother]{smth.gaussian}}

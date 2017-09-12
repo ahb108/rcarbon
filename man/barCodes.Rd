@@ -24,6 +24,7 @@ barCodes(x, yrng = c(0, 0.03), width = 20, col = rgb(0, 0, 0, 25,
 Plot the median values of multiple calibrated radiocarbon dates or bins in a barcode-like strip.
 }
 \examples{
+\dontrun{
 #Load EUROEVOL Data
 data(euroevol)
 
@@ -50,6 +51,7 @@ barCodes(dm,yrng=c(0,0.01))
 #Plot SPD and barCodes of median bins in BC/AD
 plot(denmarkSPD,runm=200,calendar="BCAD")
 barCodes(BPtoBCAD(bm),yrng=c(0,0.01)) 
+}
 }
 \seealso{
 \code{\link{medCal}}, \code{\link{binMed}},

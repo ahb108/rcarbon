@@ -26,12 +26,14 @@ euroevol
 Radiocarbon dates (n=14,053) and site coordinates (n=4,213) from the EUROEVOL project database. Sites without radiocarbon dates (n=544), phase-codes, and other data have been omitted (the complete dataset can be found on \url{http://discovery.ucl.ac.uk/1469811/}).
 }
 \examples{
+\dontrun{
 data(euroevol)
 Ireland <- subset(euroevol,Country=="Ireland")
 bins <- binPrep(Ireland$SiteID,Ireland$C14Age,h=200)
 x <- calibrate(Ireland$C14Age,Ireland$C14SD)
 spd.ireland <- spd(x,bins=bins,runm=200,timeRange=c(8000,4000))
 plot(spd.ireland)
+}
 }
 \references{
 Shennan, S., Downey, S.S., Timpson, A., Edinborough, K., Colledge, S., Kerig, T., Manning, K., Thomas, M.G., 2013. Regional population collapse followed initial agriculture booms in mid-Holocene Europe. Nature Communications 4, ncomms3486. doi:10.1038/ncomms3486

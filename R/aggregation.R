@@ -52,6 +52,9 @@ binPrep <- function(sites, ages, h){
 #' Timpson, A., et al, (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52: 549–557. DOI:10.1016/j.jas.2014.08.011
 #'
 #' @seealso \code{\link{calibrate}}) for calibrating rardiocabon dates; \code{\link{binPrep}} for preparing bins.
+#' @importFrom utils flush.console
+#' @importFrom utils txtProgressBar
+#' @importFrom utils setTxtProgressBar
 #' @export
 
 spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE){

@@ -45,15 +45,18 @@ The function generates a distribution of expected SPDs by randomly shuffling the
 }
 \examples{
 ## compare demographic trajectories in Netherlands and Denmark  
+\dontrun{ 
 data(euroevol)
 nld.dnk = subset(euroevol,Country=="Netherlands"|Country=="Denmark")
 bins = binPrep(nld.dnk$SiteID,nld.dnk$C14Age,h=200)
-dates = calibrate(nld.dnk$C14Age,nld.dnk$C14SD,normalised=F)
-res = permTest(dates,marks=as.character(nld.dnk$Country),nsim=1000,bins=bins,runm=200,timeRange=c(10000,4000))
+dates = calibrate(nld.dnk$C14Age,nld.dnk$C14SD,normalised=FALSE)
+res = permTest(dates,marks=as.character(nld.dnk$Country),nsim=1000,
+bins=bins,runm=200,timeRange=c(10000,4000))
 res$pValueList #extract p-values
 par(mfrow=c(2,1))
 plot(res,focalm="Netherlands",main="Netherlands")
 plot(res,focalm="Denmark",main="Denmark")
+}
 }
 \references{
 Crema, E.R., Habu, J., Kobayashi, K., Madella, M., (2016). Summed Probability Distribution of 14 C Dates Suggests Regional Divergences in the Population Dynamics of the Jomon Period in Eastern Japan. PLOS ONE 11, e0154809. doi:10.1371/journal.pone.0154809

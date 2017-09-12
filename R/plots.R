@@ -298,6 +298,7 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 #' @seealso \code{\link{medCal}}, \code{\link{binMed}},
 #'
 #' @examples
+#'\dontrun{
 #' #Load EUROEVOL Data
 #' data(euroevol)
 #' 
@@ -324,6 +325,7 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 #' #Plot SPD and barCodes of median bins in BC/AD
 #' plot(denmarkSPD,runm=200,calendar="BCAD")
 #' barCodes(BPtoBCAD(bm),yrng=c(0,0.01)) 
+#'}
 #' @export
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, ...){
@@ -751,11 +753,13 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' @seealso 
 #' \code{\link{binPrep}};\code{\link{spd}};
 #' @examples
+#' \dontrun{
 #' data(euroevol)
 #' #subset Danish dates
 #' denmark=subset(euroevol,Country=="Denmark")
 #' denmarkDates=calibrate(ages=denmark$C14Age,errors=denmark$C14SD)
-#' binsense(x=denmarkDates,y=denmark,h=seq(0,200,20),timeRange=c(10000,4000),sitecol="SiteID",agecol="C14Age",runm=200)
+#'binsense(x=denmarkDates,y=denmark,h=seq(0,200,20),timeRange=c(10000,4000),sitecol="SiteID",agecol="C14Age",runm=200)
+#' }
 #' @export
 
 binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
