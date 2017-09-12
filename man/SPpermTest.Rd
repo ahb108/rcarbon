@@ -81,21 +81,21 @@ spatialweights=spatialweights,breaks=breaks,ncores=2,nsim=100,
 permute="locations",datenormalised=FALSE)
 
 ## Plot results
-## library(rworldmap)
-## base=getMap(resolution="low") #optionally add base map
+library(rworldmap)
+base=getMap(resolution="low") #optionally add base map
 #retrieve coordinate limits#
 xrange=bbox(res.locations$locations)[1,] 
 yrange=bbox(res.locations$locations)[2,]
 
 par(mfrow=c(2,2))  
 par(mar=c(0.1,0.1,0,0.5))
-## plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
-##set add=TRUE with basemap:
-plot(res.locations,index=4,add=FALSE,option="raw",breakRange=c(-0.005,0.005)) #' plot(res.locations,option="rawlegend",breakRange=c(-0.005,0.005),rd=3)
+plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
+plot(res.locations,index=4,add=TRUE,option="raw",breakRange=c(-0.005,0.005)) 
+plot(res.locations,option="rawlegend",breakRange=c(-0.005,0.005),rd=3)
 par(mar=c(0.1,0.1,0,0.5))
-## plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange) 
-##set add=TRUE with basemap
-plot(res.locations,index=4,add=FALSE,option="test")  #' plot(res.locations,option="testlegend")
+plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange) 
+plot(res.locations,index=4,add=TRUE,option="test")  
+plot(res.locations,option="testlegend")
 }
 }
 \references{
