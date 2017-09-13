@@ -7,8 +7,8 @@ Authors@R: as.person(c(
   ))
 Description: This package handles the calibration and analysis of radiocarbon, often but not exclusively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists. 
 Depends: R (>= 3.3.1)
-Imports: sp,stats,graphics
-Suggests: doParallel
+Imports: sp,stats,graphics,utils
+Suggests: doParallel,
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

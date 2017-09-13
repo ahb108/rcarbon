@@ -114,7 +114,7 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         } else {
             mtext(side=2, line=3, xlab, cex=0.75)
         }
-        calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calcurve,".14c", sep="")
+        calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calcurve,".14c", sep="")
         options(warn=-1)
         cc <- readLines(calCurveFile, encoding="UTF-8")
         cc <- cc[!grepl("[#]",cc)]

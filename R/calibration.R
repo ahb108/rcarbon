@@ -89,7 +89,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             cclist <- vector(mode="list", length=length(tmp))
             names(cclist) <- tmp
             for (a in 1:length(tmp)){
-                calCurveFile <- paste(system.file("data", package="rcarbon"), "/", tmp[1],".14c", sep="")
+                calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", tmp[1],".14c", sep="")
                 options(warn=-1)
                 cctmp <- readLines(calCurveFile, encoding="UTF-8")
                 cctmp <- cctmp[!grepl("[#]",cctmp)]
@@ -205,7 +205,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
     if (length(errors)==1){
         errors <- rep(errors,length(x$CRA))
     }
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
+    calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
     calcurve <- calcurve[!grepl("[#]",calcurve)]
@@ -275,7 +275,7 @@ uncalibrate <- function (x, ...) {
 uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13'){
     
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
+    calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
     calcurve <- calcurve[!grepl("[#]",calcurve)]
@@ -298,7 +298,7 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
 
     if (verbose){ print("Uncalibrating...") }
     names(x) <- c("calBP","PrDens")
-    calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves,".14c", sep="")
+    calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
     options(warn=-1)
     calcurve <- readLines(calCurveFile, encoding="UTF-8")
     calcurve <- calcurve[!grepl("[#]",calcurve)]
@@ -367,7 +367,7 @@ as.CalDates <- function(x){
 	tmp <- x[[i]]
 	res <- data.frame(calBP=rev(tmp$ageGrid),PrDens=rev(tmp$densities))
         class(res) <- append(class(res),"calGrid")        
-	calCurveFile <- paste(system.file("data", package="rcarbon"), "/", calCurves[i],".14c", sep="")
+	calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves[i],".14c", sep="")
         options(warn=-1)
         cctmp <- readLines(calCurveFile, encoding="UTF-8")
         cctmp <- cctmp[!grepl("[#]",cctmp)]
