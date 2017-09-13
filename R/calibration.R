@@ -26,8 +26,7 @@
 #' }
 #'
 #' @references 
-#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x 
-#'
+#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x#'
 #' @examples
 #' x1 <- calibrate(ages=4000, errors=30)
 #' plot(x1)
@@ -35,6 +34,11 @@
 #' # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
 #' x2 <- calibrate(ages=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
 #' plot(x2)
+#' @importFrom stats dnorm approx
+#' @importFrom utils read.csv
+#' @importFrom foreach foreach getDoParWorkers %dopar%
+#' @importFrom parallel makeCluster stopCluster 
+#' @importFrom doParallel registerDoParallel
 #' @export
 
 calibrate <- function (x, ...) {
@@ -65,7 +69,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     if (!all(class(calCurves)=="character")){
         if (any(class(calCurves) %in% c("matrix","data.frame"))){
             cctmp <- as.matrix(calCurves)
-            if (ncol(cctmp)!=3 | !all(sapply(mycc,is.numeric))){
+            if (ncol(cctmp)!=3 | !all(sapply(cctmp,is.numeric))){
                 stop("The custom calibration curve must have just three numeric columns.")
             } else {
                 colnames(cctmp) <- c("CALBP","C14BP","Error")
@@ -262,6 +266,11 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #' @examples
 #' # Uncalibrate two calendar dates
 #' uncalibrate(c(3050,2950))
+#' @importFrom stats dnorm approx rnorm
+#' @importFrom utils read.csv
+#' @importFrom foreach foreach getDoParWorkers %dopar%
+#' @importFrom parallel makeCluster stopCluster 
+#' @importFrom doParallel registerDoParallel
 #' @export
 
 uncalibrate <- function (x, ...) {

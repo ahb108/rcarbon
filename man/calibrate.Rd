@@ -62,5 +62,5 @@ x2 <- calibrate(ages=4000, errors=30, calCurves='marine13', resOffsets=300, resE
 plot(x2)
 }
 \references{
-Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x
+Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x#'
 }
