@@ -4,13 +4,13 @@
 \alias{plot.SpdPermTest}
 \title{Plot result of mark permutation test of SPDs}
 \usage{
-\method{plot}{SpdPermTest}(test, focalm = "1", calendar = "BP", xlim = NA,
-  ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0, 0.2),
+\method{plot}{SpdPermTest}(SpdPermTest, focalm = "1", calendar = "BP",
+  xlim = NA, ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0, 0.2),
   lwd.obs = 0.5, xaxs = "i", yaxs = "i", bbty = "f", drawaxes = TRUE,
   ...)
 }
 \arguments{
-\item{test}{A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})}
+\item{focalm}{Value specifying the name of the focal mark (group) to be plotted.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
@@ -19,6 +19,8 @@
 \item{ylim}{the y limits of the plot.}
 
 \item{col.obs}{Line colour for the observed SPD}
+
+\item{col.env}{Colour for the simulation envelope}
 
 \item{lwd.obs}{Line width for the observed SPD}
 
@@ -32,7 +34,7 @@
 
 \item{...}{Additional arguments affecting the plot}
 
-\item{focal}{Value specifying the name of the focal mark (group) to be plotted.}
+\item{test}{A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})}
 }
 \description{
 Vsualise the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.

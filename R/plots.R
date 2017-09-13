@@ -160,7 +160,7 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
 
 #' @details The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observbed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of signficance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot. 
 
-#' @seealso \code{\link{SpdModelTest}}
+#' @seealso \code{\link{modelTest}}
 
 #' @export
 
@@ -367,9 +367,9 @@ crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE
 }
 
 
-#' @title Plot Summed Probability Distribution (SPD) of radiocarbon dates
+#' @title Plot Summed Probability Distributions 
 #'
-#'
+#' @description Plot Summed Probability Distribution (SPD) of radiocarbon dates 
 #' @param spd A \code{CalSPD} class object.
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
@@ -383,6 +383,7 @@ crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE
 #' @param border.p Border colour for the SPD
 #' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
 #' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
+#' @param ... Additional arguments affecting the plot
 #'
 #'
 #'
@@ -542,11 +543,12 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @description Vsualise the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
 #'
 #' @param test A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})
-#' @param focal Value specifying the name of the focal mark (group) to be plotted. 
+#' @param focalm Value specifying the name of the focal mark (group) to be plotted. 
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param xlim the x limits of the plot.
 #' @param ylim the y limits of the plot.
 #' @param col.obs Line colour for the observed SPD
+#' @param col.env Colour for the simulation envelope
 #' @param lwd.obs Line width for the observed SPD
 #' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
 #' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
@@ -557,9 +559,9 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @seealso \code{\link{permTest}}; \code{\link{plot.SpdModelTest}};
 #' @export
 
-plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
+plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
-    obs <- test$observed[[focalm]]
+    obs <- SpdPermTest$observed[[focalm]]
     if (calendar=="BP"){
         obs$Years <- obs$calBP
         xlabel <- "Years cal BP"
@@ -571,7 +573,7 @@ plot.SpdPermTest <- function(test, focalm="1", calendar="BP", xlim=NA, ylim=NA, 
     } else {
         stop("Unknown calendar type")
     }
-    envelope <- test$envelope[[focalm]]
+    envelope <- SpdPermTest$envelope[[focalm]]
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
@@ -918,7 +920,6 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
         stop(paste("The option ",option," is not available",sep=""))
 	}
 
-        require(sp)
         locations=x$locations
 
 	if(all(is.na(breakRange))){breakRange=range((x$rocaObs[,index]))} 

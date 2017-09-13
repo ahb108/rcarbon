@@ -126,7 +126,6 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     # calibration
     if (ncores>1){
         # parallellised
-        require(doParallel)
         cl <- makeCluster(ncores)
         registerDoParallel(cl)
         if (verbose){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
@@ -440,16 +439,16 @@ hpdi <- function(x, credMass=0.95){
 
 #' @title Summarise a \code{CalDates} class object
 #'
-#' @description Returns summary statistics of calibrated dates
+#' @description Returns summary statistics of calibrated dates.
 #'
-#' @param x A \code{CalDates} class object
+#' @param object A \code{CalDates} class object.
 #' @param prob A vector containing probabilities for the higher posterior density interval. Default is \code{c(0.683,0.954)}, i.e. 1 and 2-Sigma range.
-#' @param calendar Whether the summary statistics should be computed in cal BP (\code{"BP"}) or in BCAD (\code{"BCAD"})
-#'
+#' @param calendar Whether the summary statistics should be computed in cal BP (\code{"BP"}) or in BCAD (\code{"BCAD"}).
+#' @param ... further arguments passed to or from other methods.
 #' @return A \code{data.frame} class object containing the ID of each date, along with the median date and one and two sigma (or a user specified probability) higher posterior density ranges.
 #'
 #' @export
-summary.CalDates<-function(x,prob=NA,calendar="BP") {
+summary.CalDates<-function(object,prob=NA,calendar="BP",...) {
 	
 	foo = function(x,i){if(nrow(x)>=i){return(x[i,])}else{return(c(NA,NA))}}
 	if (is.na(prob)) 
@@ -463,12 +462,12 @@ summary.CalDates<-function(x,prob=NA,calendar="BP") {
 	probMats = vector("list",length=length(prob))
 	for (i in 1:length(prob))
 		{
-		cols = max(unlist(lapply(hpdi(x,prob[i]),nrow)))
-		tmpMatrix=matrix(NA,ncol=cols,nrow=nrow(x$metadata))
+		cols = max(unlist(lapply(hpdi(object,prob[i]),nrow)))
+		tmpMatrix=matrix(NA,ncol=cols,nrow=nrow(object$metadata))
 
 		for (j in 1:cols)
 		{
-		tmp=t(sapply(hpdi(x,prob[i]),foo,i=j))
+		tmp=t(sapply(hpdi(object,prob[i]),foo,i=j))
 		if (calendar=="BCAD")
 		{
 			tmp = t(apply(tmp,1,BPtoBCAD))
@@ -480,12 +479,12 @@ summary.CalDates<-function(x,prob=NA,calendar="BP") {
 		probMats[[i]]=tmpMatrix
 		}
       
-        med.dates=medCal(x)
+        med.dates=medCal(object)
 
 	if (calendar=="BP")
-	{res=data.frame(DateID=x$metadata$DateID,MedianBP=med.dates)}
+	{res=data.frame(DateID=object$metadata$DateID,MedianBP=med.dates)}
 	else
-	{res=data.frame(DateID=x$metadata$DateID,BPtoBCAD(med.dates))
+	{res=data.frame(DateID=object$metadata$DateID,BPtoBCAD(med.dates))
 	colnames(res)[2]="MedianBC/AD"}
 	for (k in 1:length(probMats))
 	{

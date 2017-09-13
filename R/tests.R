@@ -542,7 +542,6 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
     if (ncores>1)
    	 {
-	  require(doParallel)	 
           cl <- makeCluster(ncores)
           registerDoParallel(cl)
           print(paste("Running permutation test in parallel on ",getDoParWorkers()," workers...",sep=""))

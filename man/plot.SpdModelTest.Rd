@@ -38,5 +38,5 @@ The function visualises the observed summed probability distribution of radiocar
 The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observbed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of signficance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot.
 }
 \seealso{
-\code{\link{SpdModelTest}}
+\code{\link{modelTest}}
 }

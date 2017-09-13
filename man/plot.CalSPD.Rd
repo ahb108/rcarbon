@@ -2,7 +2,7 @@
 % Please edit documentation in R/plots.R
 \name{plot.CalSPD}
 \alias{plot.CalSPD}
-\title{Plot Summed Probability Distribution (SPD) of radiocarbon dates}
+\title{Plot Summed Probability Distributions}
 \usage{
 \method{plot}{CalSPD}(spd, runm = NA, calendar = "BP", type = "standard",
   xlim = NA, ylim = NA, ylab = "Summed Probability",
@@ -35,6 +35,11 @@
 \item{xaxt}{Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.}
 
 \item{yaxt}{Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.}
+
+\item{...}{Additional arguments affecting the plot}
+}
+\description{
+Plot Summed Probability Distribution (SPD) of radiocarbon dates
 }
 \seealso{
 \code{\link{spd}}

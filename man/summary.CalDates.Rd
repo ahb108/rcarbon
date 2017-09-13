@@ -4,18 +4,20 @@
 \alias{summary.CalDates}
 \title{Summarise a \code{CalDates} class object}
 \usage{
-\method{summary}{CalDates}(x, prob = NA, calendar = "BP")
+\method{summary}{CalDates}(object, prob = NA, calendar = "BP", ...)
 }
 \arguments{
-\item{x}{A \code{CalDates} class object}
+\item{object}{A \code{CalDates} class object.}
 
 \item{prob}{A vector containing probabilities for the higher posterior density interval. Default is \code{c(0.683,0.954)}, i.e. 1 and 2-Sigma range.}
 
-\item{calendar}{Whether the summary statistics should be computed in cal BP (\code{"BP"}) or in BCAD (\code{"BCAD"})}
+\item{calendar}{Whether the summary statistics should be computed in cal BP (\code{"BP"}) or in BCAD (\code{"BCAD"}).}
+
+\item{...}{further arguments passed to or from other methods.}
 }
 \value{
 A \code{data.frame} class object containing the ID of each date, along with the median date and one and two sigma (or a user specified probability) higher posterior density ranges.
 }
 \description{
-Returns summary statistics of calibrated dates
+Returns summary statistics of calibrated dates.
 }
