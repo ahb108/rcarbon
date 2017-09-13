@@ -4,7 +4,7 @@
 \alias{plot.CalSPD}
 \title{Plot Summed Probability Distribution (SPD) of radiocarbon dates}
 \usage{
-plot.CalSPD(spd, runm = NA, calendar = "BP", type = "standard",
+\method{plot}{CalSPD}(spd, runm = NA, calendar = "BP", type = "standard",
   xlim = NA, ylim = NA, ylab = "Summed Probability",
   spdnormalised = FALSE, rescale = FALSE, fill.p = "grey75",
   border.p = NA, xaxt = "s", yaxt = "s", ...)
