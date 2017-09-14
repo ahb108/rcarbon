@@ -46,6 +46,11 @@
 #' plot(expnull, xlim=c(16000,9000))
 #' round(expnull$pval,4)
 #' }
+#' @import utils
+#' @import stats
+#' @import foreach
+#' @import parallel
+#' @import doParallel
 #' @export
 
 modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
@@ -175,6 +180,11 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 #' plot(res,focalm="Netherlands",main="Netherlands")
 #' plot(res,focalm="Denmark",main="Denmark")
 #' }
+#' @import utils
+#' @import stats
+#' @import foreach
+#' @import parallel
+#' @import doParallel
 #' @export
 
 
@@ -401,7 +411,12 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' plot(res.locations,index=4,add=TRUE,option="test")  
 #' plot(res.locations,option="testlegend")
 #' }
-#' @importFrom stats p.adjust
+#' @import utils
+#' @import stats
+#' @import foreach
+#' @import parallel
+#' @import doParallel
+#' @import sp
 #' @export
  
 

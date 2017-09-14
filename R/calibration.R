@@ -34,11 +34,11 @@
 #' # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
 #' x2 <- calibrate(ages=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
 #' plot(x2)
-#' @importFrom stats dnorm approx
-#' @importFrom utils read.csv
-#' @importFrom foreach foreach getDoParWorkers %dopar%
-#' @importFrom parallel makeCluster stopCluster 
-#' @importFrom doParallel registerDoParallel
+#' @import stats 
+#' @import utils 
+#' @import foreach 
+#' @import parallel  
+#' @import doParallel 
 #' @export
 
 calibrate <- function (x, ...) {
@@ -266,11 +266,11 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #' @examples
 #' # Uncalibrate two calendar dates
 #' uncalibrate(c(3050,2950))
-#' @importFrom stats dnorm approx rnorm
-#' @importFrom utils read.csv
-#' @importFrom foreach foreach getDoParWorkers %dopar%
-#' @importFrom parallel makeCluster stopCluster 
-#' @importFrom doParallel registerDoParallel
+#' @import stats 
+#' @import utils 
+#' @import foreach 
+#' @import parallel  
+#' @import doParallel 
 #' @export
 
 uncalibrate <- function (x, ...) {

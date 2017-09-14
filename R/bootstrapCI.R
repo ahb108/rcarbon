@@ -134,7 +134,7 @@ if (calendar=="BCAD")
    xticksLab=xticksAt
    if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
    if (any(xticksAt>1)){xticksAt[which(xticksAt>1)]=xticksAt[which(xticksAt>1)]-1}
-   axis(side=1,at=xticksAt,label=xticksLab)
+   axis(side=1,at=xticksAt,labels=xticksLab)
   }  
 box()
 

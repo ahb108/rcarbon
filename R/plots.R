@@ -17,6 +17,10 @@
 #' plot(x) #display the first date
 #' plot(x,2) #displays the second date
 #' plot(x,3, calendar="BCAD", HPD=TRUE) #display in BC/AD with higher posterior density interval
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95){
@@ -66,8 +70,8 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         xticks <- seq(xticks[1]-100, xticks[2], 100)
     }
     yrng <- c(min(yvals[yvals>0]),max(yvals[yvals>0])+(max(yvals[yvals>0])*2))
-    graphics::par(cex.lab=0.75)
-    graphics::plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75)
+    par(cex.lab=0.75)
+    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75)
     
 
     xticksLab <- xticks
@@ -76,20 +80,20 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
       if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
       xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
-    graphics::axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
-    ## graphics::axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
+    axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
+    ## axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
     
-    if (axis4){ graphics::axis(4, cex.axis=0.75) }
+    if (axis4){ axis(4, cex.axis=0.75) }
     if (!HPD){
-    graphics::polygon(xvals,yvals, col="grey50", border="grey50")
+    polygon(xvals,yvals, col="grey50", border="grey50")
     } else {
-    graphics::polygon(xvals,yvals, col="grey82", border="grey82")
+    polygon(xvals,yvals, col="grey82", border="grey82")
     hdres <- hpdi(calDates,credMass=credMass)[[ind]]
     if(calendar=="BCAD"){hdres=1950-hdres}
 	for (i in 1:nrow(hdres))
 	{
 	 index=which(xvals%in%hdres[i,1]:hdres[i,2])
-         graphics::polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],0,0), col="grey50", border="grey50")
+         polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],0,0), col="grey50", border="grey50")
 	}
     }
 
@@ -99,16 +103,16 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         if (type=="auc"){
             lines(xvals, yvals/sum(yvals), col="black", lty="dotted")
         }
-        graphics::par(new=TRUE)
+        par(new=TRUE)
         cradf1 <- data.frame(CRA=50000:0,Prob=dnorm(50000:0, mean=cra, sd=error))
         cradf1 <- cradf1[cradf1$Prob>0.0001,]
         ylim <- c(cra-(12*error),cra+(8*error))    
         cradf1$RX <- reScale(cradf1$Prob, to=c(xlim[1],(xlim[1]+diff(xlim)*0.33)))
         yticks <- ylim[1]:ylim[2]
         yticks <- yticks[yticks %% 200 == 0]
-        graphics::plot(cradf1$RX,cradf1$CRA,type="l", axes=FALSE, xlab=NA, ylab=NA, xlim=xlim, ylim=ylim, col=rgb(144,238,144,120,maxColorValue=255))
-        graphics::polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
-        graphics::axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
+        plot(cradf1$RX,cradf1$CRA,type="l", axes=FALSE, xlab=NA, ylab=NA, xlim=xlim, ylim=ylim, col=rgb(144,238,144,120,maxColorValue=255))
+        polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
+        axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
         if (is.na(ylab)){
             mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)
         } else {
@@ -132,11 +136,11 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
         cc$Hi <- cc$CRA + 10
         cc$Lo <- cc$CRA - 10
         ccbox <- c((max(yrng)*0.2),(max(yrng)*0.9))
-        graphics::polygon(c(cc$RX,rev(cc$RX)),c(cc$Hi,rev(cc$Lo)), col=rgb(255,140,0,120,maxColorValue=255), border=NA)
+        polygon(c(cc$RX,rev(cc$RX)),c(cc$Hi,rev(cc$Lo)), col=rgb(255,140,0,120,maxColorValue=255), border=NA)
         lines(cc$RX,cc$CRA, col=rgb(255,140,0,60,maxColorValue=255))
     }
     if (!is.na(label)){
-        graphics::legend("topright", label, bty="n", cex=0.75)
+        legend("topright", label, bty="n", cex=0.75)
     }
 }
 
@@ -161,7 +165,10 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
 #' @details The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observbed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of signficance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot. 
 
 #' @seealso \code{\link{modelTest}}
-
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
@@ -184,13 +191,13 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(0,nrow(obs))
     if (drawaxes & bbty != "n"){
-        graphics::plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     } else if (bbty != "n"){
-        graphics::plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     if (drawaxes){
-	graphics::box()
-    graphics::axis(side=2)}
+	box()
+    axis(side=2)}
     boomPlot <- baseline
     boomPlot[booms] <- obs[booms,2]
     bustPlot <- baseline
@@ -242,7 +249,7 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     if (length(booms)>0){
         for (x in 1:length(boomBlocks)){
             if (bbty=="f"){
-                graphics::polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+                polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
             } else if (bbty %in% c("s","b","n")){
             } else {
                 stop("Incorrect bbty argument.")
@@ -252,31 +259,31 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     if (length(busts)>0){
         for (x in 1:length(bustBlocks)){
             if (bbty=="f"){
-                graphics::polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+                polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
             } else if (bbty %in% c("s","b","n")){
             } else {
                 stop("Incorrect bbty argument.")
             }
         }
     }  
-    graphics::polygon(x=c(obs[,"Years"],rev(obs[,"Years"])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
+    polygon(x=c(obs[,"Years"],rev(obs[,"Years"])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
     if (drawaxes & bbty != "n" & calendar=="BP"){
 	rr <- range(pretty(obs[,"Years"]))    
-        graphics::axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        graphics::axis(side=1,at=pretty(obs[,"Years"]))
+        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+        axis(side=1,at=pretty(obs[,"Years"]))
     } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
 	yy <-  obs[,"Years"]
        
 	rr <- range(pretty(yy))    
         prettyTicks <- seq(rr[1],rr[2],+100)
 	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
-        graphics::axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
 
         py <- pretty(yy)
 	pyShown <- py
 	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
 	py[which(py>1)] <-  py[which(py>1)]-1
-	graphics::axis(side=1,at=py,labels=pyShown)
+	axis(side=1,at=py,labels=pyShown)
     }
 
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
@@ -296,7 +303,10 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 #'
 #' 
 #' @seealso \code{\link{medCal}}, \code{\link{binMed}},
-#'
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @examples
 #'\dontrun{
 #' #Load EUROEVOL Data
@@ -326,46 +336,50 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
 #' plot(denmarkSPD,runm=200,calendar="BCAD")
 #' barCodes(BPtoBCAD(bm),yrng=c(0,0.01)) 
 #'}
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, ...){
     barcodes <- x
     halfbw <- width/2
     for (a in 1:length(barcodes)){
-        graphics::polygon(x=c(barcodes[a]-halfbw,barcodes[a]-halfbw,barcodes[a]+halfbw,barcodes[a]+halfbw,barcodes[a]-halfbw),y=c(yrng[1],yrng[2],yrng[2],yrng[1],yrng[1]), border=border, col=col, ...)
+        polygon(x=c(barcodes[a]-halfbw,barcodes[a]-halfbw,barcodes[a]+halfbw,barcodes[a]+halfbw,barcodes[a]-halfbw),y=c(yrng[1],yrng[2],yrng[2],yrng[1],yrng[1]), border=border, col=col, ...)
     }
 }
 
-#' @export
 
-crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE,...){
-
-    if (!"quickMarks" %in% class(x)){
-        stop("Input must be of class \"quickMarks\"")
-    }
-    if (rescaleY){
-        cra <- reScale(x$CRA)
-        error <- x$Error / (max(x$CRA)-min(x$CRA))
-    } else {
-        cra <- x$CRA
-        error <- x$Error
-    }
-    if (fixXorder){
-        xstart <- x$q68s *-1
-        xend <- x$q68e *-1
-        xmed <- x$qMed *-1
-    } else {
-        xstart <- x$q68s
-        xend <- x$q68e
-        xmed <- x$qMed
-    }
-    for (a in 1:nrow(x)){
-        lines(c(xstart[a],xend[a]), c(cra[a],cra[a]), ...)
-        lines(c(xmed[a],xmed[a]), c(cra[a]-error[a],cra[a]+error[a]), ...)
-        graphics::points(xmed[a],cra[a], pch=pch.pts, cex=cex.pts, ...)
-    }
-}
-
+# 
+# crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE,...){
+# 
+#     if (!"quickMarks" %in% class(x)){
+#         stop("Input must be of class \"quickMarks\"")
+#     }
+#     if (rescaleY){
+#         cra <- reScale(x$CRA)
+#         error <- x$Error / (max(x$CRA)-min(x$CRA))
+#     } else {
+#         cra <- x$CRA
+#         error <- x$Error
+#     }
+#     if (fixXorder){
+#         xstart <- x$q68s *-1
+#         xend <- x$q68e *-1
+#         xmed <- x$qMed *-1
+#     } else {
+#         xstart <- x$q68s
+#         xend <- x$q68e
+#         xmed <- x$qMed
+#     }
+#     for (a in 1:nrow(x)){
+#         lines(c(xstart[a],xend[a]), c(cra[a],cra[a]), ...)
+#         lines(c(xmed[a],xmed[a]), c(cra[a]-error[a],cra[a]+error[a]), ...)
+#         points(xmed[a],cra[a], pch=pch.pts, cex=cex.pts, ...)
+#     }
+# }
+# 
 
 #' @title Plot Summed Probability Distributions 
 #'
@@ -388,6 +402,10 @@ crossHairs <- function(x, pch.pts=19, cex.pts=1, fixXorder=FALSE, rescaleY=FALSE
 #'
 #'
 #' @seealso \code{\link{spd}}
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
@@ -415,32 +433,36 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
     if (xaxt=='n'){ xlabel <- "" }
     if (yaxt=='n'){ ylabel <- "" } else { ylabel <- ylab }
     if (type=="standard"){
-        graphics::par(xaxs="i")
-        graphics::par(yaxs="i")
-        graphics::plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt)
-        graphics::polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
+        par(xaxs="i")
+        par(yaxs="i")
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt)
+        polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
     } else if (type=="simple"){
-        graphics::plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
+        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
     }
-    graphics::box()
+    box()
     if (calendar=="BP" & xaxt!="n"){
 	rr <- range(pretty(plotyears))    
-        graphics::axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        graphics::axis(side=1,at=pretty(plotyears))
+        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+        axis(side=1,at=pretty(plotyears))
     } else if (calendar=="BCAD" & xaxt!="n"){
 	yy <-  plotyears
         rr <- range(pretty(yy))    
         prettyTicks <- seq(rr[1],rr[2],+100)
 	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
-        graphics::axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
         py <- pretty(yy)
 	pyShown <- py
 	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
 	py[which(py>1)] <-  py[which(py>1)]-1
-	graphics::axis(side=1,at=py,labels=pyShown)
+	axis(side=1,at=py,labels=pyShown)
     }
 }
 
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
@@ -478,9 +500,9 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
     }
     if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
     if (is.na(xlim[1])){ xlim <- xrng }
-    graphics::par(mar=mar) #c(bottom, left, top, right)
-    graphics::par(cex.lab=cex.lab)
-    graphics::plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n',axes=F, cex.axis=cex.axis,...)
+    par(mar=mar) #c(bottom, left, top, right)
+    par(cex.lab=cex.lab)
+    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n',axes=F, cex.axis=cex.axis,...)
     
     xticksLab <- xticks
     if (calendar=="BCAD")
@@ -488,14 +510,17 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
       if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
       xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
-    graphics::axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
-    graphics::axis(2)
-    graphics::axis(4, cex.axis=cex.axis)
-    graphics::polygon(xvals,yvals, col=fill.p, border=border.p)
-    graphics::box()
+    axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
+    axis(2)
+    axis(4, cex.axis=cex.axis)
+    polygon(xvals,yvals, col=fill.p, border=border.p)
+    box()
 }
 
-
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 
@@ -527,12 +552,12 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
     }
     if (is.na(xlim[1])){ xlim <- xrng }
     if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
-    graphics::par(mar=mar) #c(bottom, left, top, right)
-    graphics::par(cex.lab=cex.lab)
-    graphics::plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n', cex.axis=cex.axis,...)
-    graphics::axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=cex.axis)
-    graphics::axis(4, cex.axis=cex.axis)
-    graphics::polygon(xvals,yvals, col=fill.p, border=border.p)
+    par(mar=mar) #c(bottom, left, top, right)
+    par(cex.lab=cex.lab)
+    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n', cex.axis=cex.axis,...)
+    axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=cex.axis)
+    axis(4, cex.axis=cex.axis)
+    polygon(xvals,yvals, col=fill.p, border=border.p)
 }
 
 
@@ -557,6 +582,10 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param ... Additional arguments affecting the plot
 #'
 #' @seealso \code{\link{permTest}}; \code{\link{plot.SpdModelTest}};
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
@@ -579,11 +608,11 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
     busts <- which(obs$PrDens<envelope[,1])
     baseline <- rep(NA,nrow(obs))
     if (drawaxes & bbty != "n"){
-        graphics::plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
         #axis(side=1,padj=-1)
-        graphics::axis(side=2,padj=1)
+        axis(side=2,padj=1)
     } else if (bbty != "n"){
-        graphics::plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+        plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     }
     boomPlot <- baseline
     if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
@@ -636,7 +665,7 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
     if (length(booms)>0){
         for (x in 1:length(boomBlocks)){
             if (bbty=="f"){
-                graphics::polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+                polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
             } else if (bbty %in% c("s","b","n")){
             } else {
                 stop("Incorrect bbty argument.")
@@ -646,7 +675,7 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
     if (length(busts)>0){
         for (x in 1:length(bustBlocks)){
             if (bbty=="f"){
-                graphics::polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+                polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
             } else if (bbty %in% c("s","b","n")){
             } else {
                 stop("Incorrect bbty argument.")
@@ -654,8 +683,8 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
         }
     }  
     if (bbty != "n"){
-        graphics::polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=col.env, border=NA)
-        graphics::box()
+        polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=col.env, border=NA)
+        box()
     }
     #if (drawaxes & bbty != "n"){
     #    axis(side=1, at=seq(max(obs[,"Years"]), min(obs[,"Years"]),-100), labels=NA, tck=-0.01)
@@ -663,20 +692,20 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
 
     if (drawaxes & bbty != "n" & calendar=="BP"){
 	rr <- range(pretty(obs[,"Years"]))    
-        graphics::axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        graphics::axis(side=1,at=pretty(obs[,"Years"]))
+        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+        axis(side=1,at=pretty(obs[,"Years"]))
     } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
 	yy <-  obs[,"Years"]
 	rr <- range(pretty(yy))    
         prettyTicks <- seq(rr[1],rr[2],+100)
 	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
-        graphics::axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
 
         py <- pretty(yy)
 	pyShown <- py
 	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
 	py[which(py>1)] <-  py[which(py>1)]-1
-	graphics::axis(side=1,at=py,labels=pyShown)
+	axis(side=1,at=py,labels=pyShown)
     }
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
     class(bbp) <- c("BBPolygons",class(bbp))
@@ -684,8 +713,10 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
 }
 
 
-
-
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 
@@ -697,7 +728,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
     } else {
         boomBlocks <- x$booms
         bustBlocks <- x$busts
-        plotrng <- graphics::par("usr") #c(x1, x2, y1, y2)
+        plotrng <- par("usr") #c(x1, x2, y1, y2)
         width <- (plotrng[4]-plotrng[3]) * height
         if (baseline=="top"){
             realbase <- plotrng[4]-width
@@ -709,28 +740,28 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
         plotymin <- realbase-width
         plotymax <- realbase+width
         if (!is.na(bg)){
-            graphics::polygon(c(plotrng[1], plotrng[1], plotrng[2], plotrng[2], plotrng[1]),c(plotymin, plotymax, plotymax, plotymin, plotymin), col=bg, border=border)
+            polygon(c(plotrng[1], plotrng[1], plotrng[2], plotrng[2], plotrng[1]),c(plotymin, plotymax, plotymax, plotymin, plotymin), col=bg, border=border)
         }
         if (length(boomBlocks)>0){
             for (x in 1:length(boomBlocks)){
                 if (calendar=="BP"){
-                    graphics::polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(realbase+width,length(boomBlocks[[x]][[1]])),rep(realbase-width,length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
+                    polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(realbase+width,length(boomBlocks[[x]][[1]])),rep(realbase-width,length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
                 } else {
-                    graphics::polygon(c((1950-boomBlocks[[x]][[2]]),rev((1950-boomBlocks[[x]][[2]]))),c(rep(realbase+width,length(boomBlocks[[x]][[1]])),rep(realbase-width,length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
+                    polygon(c((1950-boomBlocks[[x]][[2]]),rev((1950-boomBlocks[[x]][[2]]))),c(rep(realbase+width,length(boomBlocks[[x]][[1]])),rep(realbase-width,length(boomBlocks[[x]][[1]]))),col=col.boom, border=border.boom)
                 }
             }
         }
         if (length(bustBlocks)>0){
             for (x in 1:length(bustBlocks)){
                 if (calendar=="BP"){
-                    graphics::polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(realbase+width,length(bustBlocks[[x]][[1]])),rep(realbase-width,length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
+                    polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(realbase+width,length(bustBlocks[[x]][[1]])),rep(realbase-width,length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
                 } else {
-                    graphics::polygon(c((1950-bustBlocks[[x]][[2]]),rev((1950-bustBlocks[[x]][[2]]))),c(rep(realbase+width,length(bustBlocks[[x]][[1]])),rep(realbase-width,length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
+                    polygon(c((1950-bustBlocks[[x]][[2]]),rev((1950-bustBlocks[[x]][[2]]))),c(rep(realbase+width,length(bustBlocks[[x]][[1]])),rep(realbase-width,length(bustBlocks[[x]][[1]]))),col=col.bust, border=border.bust)
                 }
             }
         }
         if(!is.na(border)){
-            graphics::polygon(c(plotrng[1], plotrng[1], plotrng[2], plotrng[2], plotrng[1]),c(plotymin, plotymax, plotymax, plotymin, plotymin), border=border)
+            polygon(c(plotrng[1], plotrng[1], plotrng[2], plotrng[2], plotrng[1]),c(plotymin, plotymax, plotymax, plotymin, plotymin), border=border)
         }
     }
 }
@@ -763,6 +794,11 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' binsense(x=denmarkDates,y=denmark,h=seq(0,200,20),timeRange=c(10000,4000),
 #' sitecol="SiteID",agecol="C14Age",runm=200)
 #' }
+
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
@@ -802,18 +838,18 @@ binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=
 	close(pb)
         print("Done.") 
 	}	
-  if (legend==TRUE){layout(matrix(c(1,1,2,2),2,2),width=c(1,0.2))}
+  if (legend==TRUE){layout(matrix(c(1,1,2,2),2,2),widths=c(1,0.2))}
 
-  graphics::plot(years,res[,1],xlim=xr,ylim=range(res),type="n",xlab=xlab,ylab="normalised SPD",axes=F)
-  graphics::axis(side=2)
-  if (calendar=="BP") {graphics::axis(1)}
+  plot(years,res[,1],xlim=xr,ylim=range(res),type="n",xlab=xlab,ylab="normalised SPD",axes=F)
+  axis(side=2)
+  if (calendar=="BP") {axis(1)}
   if (calendar=="BCAD")
   {
    xticksAt=pretty(years)
    xticksLab=xticksAt
    if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
    if (any(xticksAt>1)){xticksAt[which(xticksAt>1)]=xticksAt[which(xticksAt>1)]-1}
-   graphics::axis(side=1,at=xticksAt,label=xticksLab)
+   axis(side=1,at=xticksAt,labels=xticksLab)
   }  
 
 
@@ -822,7 +858,7 @@ binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=
   minRange=apply(res,1,min)
   maxRange=apply(res,1,max)
 
-  graphics::polygon(c(years,rev(years)),c(minRange,rev(maxRange)),col="darkgrey",border="NA")
+  polygon(c(years,rev(years)),c(minRange,rev(maxRange)),col="darkgrey",border="NA")
 
   for (x in 1:length(h))
    {
@@ -831,21 +867,25 @@ binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=
 
   if (legend==TRUE)
   { 
-  graphics::par(mar=c(6,2,6,2))	  
+  par(mar=c(6,2,6,2))	  
   z=matrix(1:100,nrow=1)
   x=1
   y=seq(h[1],h[length(h)],len=100) # supposing 3 and 2345 are the range of your data
   image(x,y,z,col=cl(100),axes=FALSE,xlab="",ylab="")
-  graphics::axis(2,padj=1,cex.axis=0.7)
+  axis(2,padj=1,cex.axis=0.7)
   mtext(side=2,"h",line=2,las=2,cex=0.7)
   }
-  graphics::box()
+  box()
 if (raw) {
 colnames(res)=coln	
 res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 }
 }
 
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
@@ -864,6 +904,11 @@ lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
     lines(years, dens,...)
 }
 
+
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 spdpolygon <- function(x, calendar="BP", runm=NA,...){
@@ -879,7 +924,7 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
     } else {
         dens <- runMean(x$grid$PrDens, runm, edge="fill")
     }
-    graphics::polygon(x=c(years,rev(years)), y=c(dens,rep(0,length(dens))),...)
+    polygon(x=c(years,rev(years)), y=c(dens,rep(0,length(dens))),...)
 }
 
 #' @title Plot results of the local spatial permutation test of summed probability distributions.
@@ -900,6 +945,10 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 #' The function displays a distribution map of local growth rates (when \code{option="raw"}), q- and p-values (when \code{option="test"}), and the associated legends (when \code{option="rawlegend"} or  \code{option="testlegend"}).
 #'
 #' @seealso \code{\link{SPpermTest}}
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
 #' @export
 
 
@@ -931,7 +980,7 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	classes=cut(x$rocaObs[,index], outbreak,labels=F)
 	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
 	classes=cols[classes]
-	graphics::plot(locations,col=classes,pch=20,cex=baseSize,...)
+	plot(locations,col=classes,pch=20,cex=baseSize,...)
 	}
 
 
@@ -946,19 +995,19 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	 breaksLab[j] = paste(breaks[j-1],"to", breaks[j])
 	 if (j==c(breakLength+1)) {breaksLab[j] = paste(">",breaks[length(breaks)])}
 	}
-	graphics::par(mar=c(2,0,2,0))
-        graphics::plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	graphics::legend("center",legend=breaksLab,col=cols,pch=20,bty="n",cex=legSize)
+	par(mar=c(2,0,2,0))
+        plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
+	legend("center",legend=breaksLab,col=cols,pch=20,bty="n",cex=legSize)
 
         }
 
 
 	if (option=="testlegend")
 	{
-	graphics::par(mar=c(2,0,2,0))
-	graphics::plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	l1 = graphics::legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=legSize,bty="n")
-	graphics::legend(l1$rect$left, y = with(l1$rect, top - h),title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=legSize,bty="n")
+	par(mar=c(2,0,2,0))
+	plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
+	l1 = legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=legSize,bty="n")
+	legend(l1$rect$left, y = with(l1$rect, top - h),title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=legSize,bty="n")
 	}
 
 	if (option=="test")
@@ -968,9 +1017,9 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	minusPoints=locations[which(x$pvalHi[,index]<0.5),]
 
 	# Set Base
-	graphics::plot(locations,col=NA,xlab="",ylab="",axes=FALSE,...)
-	graphics::points(plusPoints,col="darkgrey",pch=20,cex=baseSize)
-	graphics::points(minusPoints,col="darkgrey",pch=20,cex=baseSize)
+	plot(locations,col=NA,xlab="",ylab="",axes=FALSE,...)
+	points(plusPoints,col="darkgrey",pch=20,cex=baseSize)
+	points(minusPoints,col="darkgrey",pch=20,cex=baseSize)
 
 
 	# Set Positive
@@ -979,12 +1028,12 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	if (length(positive.index)>0)
 		{
 		positive=locations[positive.index,]
-		graphics::points(positive,pch=20,col="orange",cex=baseSize)
+		points(positive,pch=20,col="orange",cex=baseSize)
 		qpositive.index=which(x$qvalLo[,index]<=0.05&x$pvalLo[,index]<=0.05) #Originally based on qvalHi
 		if (length(qpositive.index)>0)
 			{
 				qpositive=locations[qpositive.index,]
-				graphics::points(qpositive,pch=20,col="red",cex=baseSize)
+				points(qpositive,pch=20,col="red",cex=baseSize)
 
 			}
 		}
@@ -993,12 +1042,12 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	if (length(negative.index)>0)
 		{
 		negative=locations[negative.index,]
-		graphics::points(negative,pch=20,col="cornflowerblue",cex=baseSize)
+		points(negative,pch=20,col="cornflowerblue",cex=baseSize)
 		qnegative.index=which(x$qvalHi[,index]<=0.05&x$pvalHi[,index]<=0.05) #Originally based on qvalLo
 		if (length(qnegative.index)>0)
 			{
 				qnegative=locations[qnegative.index,]
-				graphics::points(qnegative,pch=20,col="darkblue",cex=baseSize)
+				points(qnegative,pch=20,col="darkblue",cex=baseSize)
 
 			}
 
