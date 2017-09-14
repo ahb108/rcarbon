@@ -4,13 +4,13 @@
 \alias{plot.CalSPD}
 \title{Plot Summed Probability Distributions}
 \usage{
-\method{plot}{CalSPD}(spd, runm = NA, calendar = "BP", type = "standard",
+\method{plot}{CalSPD}(x, runm = NA, calendar = "BP", type = "standard",
   xlim = NA, ylim = NA, ylab = "Summed Probability",
   spdnormalised = FALSE, rescale = FALSE, fill.p = "grey75",
   border.p = NA, xaxt = "s", yaxt = "s", ...)
 }
 \arguments{
-\item{spd}{A \code{CalSPD} class object.}
+\item{x}{A \code{CalSPD} class object.}
 
 \item{runm}{A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA}
 

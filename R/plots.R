@@ -1,6 +1,6 @@
 #' @title Plot calibrated dates
 #' @description Plot calibrated radiocarbon dates.
-#' @param calDates A \code{CalDates} class object containing calibrated radiocarbon dates.
+#' @param x \code{CalDates} class object containing calibrated radiocarbon dates.
 #' @param ind Number indicating the index value of the calibrated radiocarbon date to be displayed. Default is 1.
 #' @param label (optional) Character vector to be shown on the top-right corner of the display window.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
@@ -10,6 +10,7 @@
 #' @param axis4  Logical value indicating whether an axis of probabilities values should be displayed. Default is TRUE. 
 #' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
 #' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).
+#' @param ... Additional arguments affecting the plot. 
 #' @seealso \code{\link{calibrate}}
 #'
 #' @examples
@@ -21,26 +22,26 @@
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
+#' @export  
 
-plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95){
+plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95,...){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
         stop("The plot type you have chosen is not currently an option.")
     }
-    if (length(calDates$calmatrix)>1){
-        grd <- data.frame(calBP=as.numeric(row.names(calDates$calmatrix)),PrDens=calDates$calmatrix[,ind])
+    if (length(x$calmatrix)>1){
+        grd <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,ind])
         grd <- grd[grd$PrDens >0,]
         yearsBP <- grd$calBP
         prob <- grd$PrDens
     } else {
-        yearsBP <- calDates$grids[[ind]]$calBP
-        prob <- calDates$grids[[ind]]$PrDens
+        yearsBP <- x$grids[[ind]]$calBP
+        prob <- x$grids[[ind]]$PrDens
     }
-    cra <- calDates$metadata$CRA[ind]
-    error <- calDates$metadata$Error[ind]
-    calcurve <- calDates$metadata$CalCurve[ind]
+    cra <- x$metadata$CRA[ind]
+    error <- x$metadata$Error[ind]
+    calcurve <- x$metadata$CalCurve[ind]
     calendars <- c("BP","BCAD")
     if (!calendar %in% calendars){
         stop("The calendar you have chosen is not currently an option.")
@@ -71,7 +72,7 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     }
     yrng <- c(min(yvals[yvals>0]),max(yvals[yvals>0])+(max(yvals[yvals>0])*2))
     par(cex.lab=0.75)
-    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75)
+    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75,...)
     
 
     xticksLab <- xticks
@@ -88,7 +89,7 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
     polygon(xvals,yvals, col="grey50", border="grey50")
     } else {
     polygon(xvals,yvals, col="grey82", border="grey82")
-    hdres <- hpdi(calDates,credMass=credMass)[[ind]]
+    hdres <- hpdi(x,credMass=credMass)[[ind]]
     if(calendar=="BCAD"){hdres=1950-hdres}
 	for (i in 1:nrow(hdres))
 	{
@@ -150,7 +151,7 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
 #'
 #' @description The function visualises the observed summed probability distribution of radiocarbon dates along with a simulation envelope for the null model and regions of positive and negative deviation.
 #'
-#' @param test A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.
+#' @param x A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param xlim the x limits of the plot.
 #' @param ylim the y limits of the plot.
@@ -169,11 +170,11 @@ plot.CalDates <- function(calDates, ind=1, label=NA, calendar="BP", type="standa
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
+#' @export 
 
-plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
+plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
-    obs <- test$result[,1:2]
+    obs <- x$result[,1:2]
     if (calendar=="BP"){
         obs$Years <- obs$calBP
         xlabel <- "Years cal BP"
@@ -185,7 +186,7 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     } else {
         stop("Unknown calendar type")
     }    
-    envelope <- test$result[,3:4]
+    envelope <- x$result[,3:4]
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
@@ -205,21 +206,21 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     boomBlocks <- vector("list")
     counter <- 0
     state <- "off"
-    for (x in 1:length(boomPlot)){
-        if (boomPlot[x]>0&state=="off"){
+    for (i in 1:length(boomPlot)){
+        if (boomPlot[i]>0&state=="off"){
             counter <- counter+1
             boomBlocks <- c(boomBlocks,vector("list",1))
             boomBlocks[[counter]] <- vector("list",2)
-            boomBlocks[[counter]][[1]] <- boomPlot[x]
-            boomBlocks[[counter]][[2]] <- obs[x,"Years"]
+            boomBlocks[[counter]][[1]] <- boomPlot[i]
+            boomBlocks[[counter]][[2]] <- obs[i,"Years"]
             state <- "on"
         }
         if (state=="on"){
-            if (boomPlot[x]>0){
-                boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[x])
-                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[x,"Years"])
+            if (boomPlot[i]>0){
+                boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
+                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
             }
-            if (boomPlot[x]==0){
+            if (boomPlot[i]==0){
                 state <- "off"
             }
         }   
@@ -227,29 +228,29 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
     bustBlocks <- vector("list")
     counter <- 0
     state <- "off"
-    for (x in 1:length(bustPlot)){
-        if (bustPlot[x]>0&state=="off"){
+    for (i in 1:length(bustPlot)){
+        if (bustPlot[i]>0&state=="off"){
             counter <- counter+1
             bustBlocks <- c(bustBlocks,vector("list",1))
             bustBlocks[[counter]] <- vector("list",2)
-            bustBlocks[[counter]][[1]] <- bustPlot[x]
-            bustBlocks[[counter]][[2]] <- obs[x,"Years"]
+            bustBlocks[[counter]][[1]] <- bustPlot[i]
+            bustBlocks[[counter]][[2]] <- obs[i,"Years"]
             state <- "on"
         }
         if (state=="on"){
-            if (bustPlot[x]>0){
-                bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[x])
-                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[x,"Years"])
+            if (bustPlot[i]>0){
+                bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
+                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
             }
-            if (bustPlot[x]==0){
+            if (bustPlot[i]==0){
                 state <- "off"
             }
         }   
     }
     if (length(booms)>0){
-        for (x in 1:length(boomBlocks)){
+        for (i in 1:length(boomBlocks)){
             if (bbty=="f"){
-                polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+                polygon(c(boomBlocks[[i]][[2]],rev(boomBlocks[[i]][[2]])),c(rep(+100,length(boomBlocks[[i]][[1]])),rep(-100,length(boomBlocks[[i]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
             } else if (bbty %in% c("s","b","n")){
             } else {
                 stop("Incorrect bbty argument.")
@@ -257,9 +258,9 @@ plot.SpdModelTest <- function(test, calendar="BP", ylim=NA, xlim=NA, col.obs="bl
         }
     }  
     if (length(busts)>0){
-        for (x in 1:length(bustBlocks)){
+        for (i in 1:length(bustBlocks)){
             if (bbty=="f"){
-                polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+                polygon(c(bustBlocks[[i]][[2]],rev(bustBlocks[[i]][[2]])),c(rep(+100,length(bustBlocks[[i]][[1]])),rep(-100,length(bustBlocks[[i]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
             } else if (bbty %in% c("s","b","n")){
             } else {
                 stop("Incorrect bbty argument.")
@@ -384,7 +385,7 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @title Plot Summed Probability Distributions 
 #'
 #' @description Plot Summed Probability Distribution (SPD) of radiocarbon dates 
-#' @param spd A \code{CalSPD} class object.
+#' @param x A \code{CalSPD} class object.
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param type Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart. 
@@ -406,25 +407,25 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
+#' @export 
 
-plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
+plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
 
     types <- c("standard","simple")
     if (!type %in% types){
         stop("The plot type you have chosen is not currently an option.")
     }
-    spdvals <- spd$grid$PrDens
+    spdvals <- x$grid$PrDens
     if (!is.na(runm)){ spdvals <- runMean(spdvals, runm, edge="fill") }
     if (spdnormalised){ spdvals <- spdvals/sum(spdvals) }
     if (rescale){ spdvals <- reScale(spdvals) }
     if (any(is.na(ylim))){ ylim <- c(0,max(spdvals)*1.1) }
     if (calendar=="BP"){
-        plotyears <- spd$grid$calBP
+        plotyears <- x$grid$calBP
         xlabel <- "Years cal BP"
         if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
     } else if (calendar=="BCAD"){
-        plotyears <- 1950-spd$grid$calBP
+        plotyears <- 1950-x$grid$calBP
         xlabel <- "Years BC/AD"
         if (any(is.na(xlim))){ xlim <- c(min(plotyears),max(plotyears)) }
     } else {
@@ -463,7 +464,7 @@ plot.CalSPD <- function(spd, runm=NA, calendar="BP", type="standard", xlim=NA, y
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
+#' @export 
 
 plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
@@ -521,7 +522,7 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
+#' @export 
 
 
 plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
@@ -567,7 +568,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'
 #' @description Vsualise the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
 #'
-#' @param test A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})
+#' @param x A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})
 #' @param focalm Value specifying the name of the focal mark (group) to be plotted. 
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param xlim the x limits of the plot.
@@ -586,11 +587,11 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
+#' @export 
 
-plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
+plot.SpdPermTest <- function(x, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
-    obs <- SpdPermTest$observed[[focalm]]
+    obs <- x$observed[[focalm]]
     if (calendar=="BP"){
         obs$Years <- obs$calBP
         xlabel <- "Years cal BP"
@@ -602,7 +603,7 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
     } else {
         stop("Unknown calendar type")
     }
-    envelope <- SpdPermTest$envelope[[focalm]]
+    envelope <- x$envelope[[focalm]]
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
@@ -621,21 +622,21 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
     boomBlocks <- vector("list")
     counter <- 0
     state <- "off"
-    for (x in 1:length(boomPlot)){
-        if (!is.na(boomPlot[x])&state=="off"){
+    for (i in 1:length(boomPlot)){
+        if (!is.na(boomPlot[i])&state=="off"){
             counter <- counter+1
             boomBlocks <- c(boomBlocks,vector("list",1))
             boomBlocks[[counter]] <- vector("list",2)
-            boomBlocks[[counter]][[1]] <- boomPlot[x]
-            boomBlocks[[counter]][[2]] <- obs[x,"Years"]
+            boomBlocks[[counter]][[1]] <- boomPlot[i]
+            boomBlocks[[counter]][[2]] <- obs[i,"Years"]
             state <- "on"
         }
         if (state=="on"){
-            if (!is.na(boomPlot[x])){
-                boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[x])
-                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[x,"Years"])
+            if (!is.na(boomPlot[i])){
+                boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
+                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
             }
-            if (is.na(boomPlot[x])){
+            if (is.na(boomPlot[i])){
                 state <- "off"
             }
         }    
@@ -643,29 +644,29 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
     bustBlocks <- vector("list")
     counter <- 0
     state <- "off"
-    for (x in 1:length(bustPlot)){
-        if (!is.na(bustPlot[x])&state=="off"){
+    for (i in 1:length(bustPlot)){
+        if (!is.na(bustPlot[i])&state=="off"){
             counter <- counter+1
             bustBlocks <- c(bustBlocks,vector("list",1))
             bustBlocks[[counter]] <- vector("list",2)
-            bustBlocks[[counter]][[1]] <- bustPlot[x]
-            bustBlocks[[counter]][[2]] <- obs[x,"Years"]
+            bustBlocks[[counter]][[1]] <- bustPlot[i]
+            bustBlocks[[counter]][[2]] <- obs[i,"Years"]
             state <- "on"
         }
         if (state=="on"){
-            if (!is.na(bustPlot[x])){
-                bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[x])
-                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[x,"Years"])
+            if (!is.na(bustPlot[i])){
+                bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
+                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
             }
-            if (is.na(bustPlot[x])){
+            if (is.na(bustPlot[i])){
                 state <- "off"
             }
         }    
     }
     if (length(booms)>0){
-        for (x in 1:length(boomBlocks)){
+        for (i in 1:length(boomBlocks)){
             if (bbty=="f"){
-                polygon(c(boomBlocks[[x]][[2]],rev(boomBlocks[[x]][[2]])),c(rep(+100,length(boomBlocks[[x]][[1]])),rep(-100,length(boomBlocks[[x]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+                polygon(c(boomBlocks[[i]][[2]],rev(boomBlocks[[i]][[2]])),c(rep(+100,length(boomBlocks[[i]][[1]])),rep(-100,length(boomBlocks[[i]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
             } else if (bbty %in% c("s","b","n")){
             } else {
                 stop("Incorrect bbty argument.")
@@ -673,9 +674,9 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
         }
     }
     if (length(busts)>0){
-        for (x in 1:length(bustBlocks)){
+        for (i in 1:length(bustBlocks)){
             if (bbty=="f"){
-                polygon(c(bustBlocks[[x]][[2]],rev(bustBlocks[[x]][[2]])),c(rep(+100,length(bustBlocks[[x]][[1]])),rep(-100,length(bustBlocks[[x]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+                polygon(c(bustBlocks[[i]][[2]],rev(bustBlocks[[i]][[2]])),c(rep(+100,length(bustBlocks[[i]][[1]])),rep(-100,length(bustBlocks[[i]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
             } else if (bbty %in% c("s","b","n")){
             } else {
                 stop("Incorrect bbty argument.")
@@ -717,7 +718,6 @@ plot.SpdPermTest <- function(SpdPermTest, focalm="1", calendar="BP", xlim=NA, yl
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
 
 
 bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA, col.boom=rgb(0.7,0,0,0.2), col.bust=rgb(0,0,0.7,0.2), border.boom=NA, border.bust=NA){
@@ -909,7 +909,6 @@ lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
 
 spdpolygon <- function(x, calendar="BP", runm=NA,...){
     if (calendar=="BP"){
@@ -949,7 +948,7 @@ spdpolygon <- function(x, calendar="BP", runm=NA,...){
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export
+#' @export 
 
 
 plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,legSize=1,...)

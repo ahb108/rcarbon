@@ -4,12 +4,12 @@
 \alias{plot.SpdModelTest}
 \title{Plot result of Monte-Carlo simulation of observed veruss modelled SPDs}
 \usage{
-\method{plot}{SpdModelTest}(test, calendar = "BP", ylim = NA, xlim = NA,
+\method{plot}{SpdModelTest}(x, calendar = "BP", ylim = NA, xlim = NA,
   col.obs = "black", lwd.obs = 0.5, xaxs = "i", yaxs = "i",
   bbty = "f", drawaxes = TRUE, ...)
 }
 \arguments{
-\item{test}{A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.}
+\item{x}{A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 

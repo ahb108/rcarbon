@@ -4,12 +4,12 @@
 \alias{plot.CalDates}
 \title{Plot calibrated dates}
 \usage{
-\method{plot}{CalDates}(calDates, ind = 1, label = NA, calendar = "BP",
+\method{plot}{CalDates}(x, ind = 1, label = NA, calendar = "BP",
   type = "standard", xlab = NA, ylab = NA, axis4 = TRUE, HPD = FALSE,
-  credMass = 0.95)
+  credMass = 0.95, ...)
 }
 \arguments{
-\item{calDates}{A \code{CalDates} class object containing calibrated radiocarbon dates.}
+\item{x}{\code{CalDates} class object containing calibrated radiocarbon dates.}
 
 \item{ind}{Number indicating the index value of the calibrated radiocarbon date to be displayed. Default is 1.}
 
@@ -28,6 +28,8 @@
 \item{HPD}{Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.}
 
 \item{credMass}{A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).}
+
+\item{...}{Additional arguments affecting the plot.}
 }
 \description{
 Plot calibrated radiocarbon dates.

@@ -4,12 +4,14 @@
 \alias{plot.SpdPermTest}
 \title{Plot result of mark permutation test of SPDs}
 \usage{
-\method{plot}{SpdPermTest}(SpdPermTest, focalm = "1", calendar = "BP",
-  xlim = NA, ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0, 0.2),
+\method{plot}{SpdPermTest}(x, focalm = "1", calendar = "BP", xlim = NA,
+  ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0, 0.2),
   lwd.obs = 0.5, xaxs = "i", yaxs = "i", bbty = "f", drawaxes = TRUE,
   ...)
 }
 \arguments{
+\item{x}{A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})}
+
 \item{focalm}{Value specifying the name of the focal mark (group) to be plotted.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
@@ -33,8 +35,6 @@
 \item{drawaxes}{A logical value determining whether the axes should be displayed or not. Default is TRUE.}
 
 \item{...}{Additional arguments affecting the plot}
-
-\item{test}{A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})}
 }
 \description{
 Vsualise the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.

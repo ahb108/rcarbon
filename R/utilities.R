@@ -140,7 +140,7 @@ smoothGauss <- function(x, alpha, window=0.1){
 }
 
 #' @import utils
-#' @export
+#' @keywords internal
 
 rangecheck <- function(x, bins, timeRange, datenormalised=FALSE){
     binNames <- unique(bins)

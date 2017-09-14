@@ -417,7 +417,6 @@ as.CalDates <- function(x){
 
 
 
-#' @export
 
 hpdi <- function(x, credMass=0.95){
 
@@ -456,7 +455,7 @@ hpdi <- function(x, credMass=0.95){
 #' @param ... further arguments passed to or from other methods.
 #' @return A \code{data.frame} class object containing the ID of each date, along with the median date and one and two sigma (or a user specified probability) higher posterior density ranges.
 #'
-#' @export
+#' @export 
 summary.CalDates<-function(object,prob=NA,calendar="BP",...) {
 	
 	foo = function(x,i){if(nrow(x)>=i){return(x[i,])}else{return(c(NA,NA))}}
