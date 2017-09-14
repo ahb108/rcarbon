@@ -9,7 +9,7 @@ smoothGauss(x, alpha, window = 0.1)
 \arguments{
 \item{x}{numeric vector of values to smooth.}
 
-\item{alpha}{numeric value controlling the size of the gaussian smoothing window. Proportional to the standard deviation of the Gaussian smoothing kernel where sd=(N–1)/(2.alpha) with N being the length of the input vector.}
+\item{alpha}{numeric value controlling the size of the gaussian smoothing window. Proportional to the standard deviation of the Gaussian smoothing kernel where sd=(N-1)/(2*alpha) with N being the length of the input vector.}
 
 \item{window}{a fraction between 0 and 1 representing the proportion of the input vector to include in the moving window.}
 }

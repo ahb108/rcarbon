@@ -25,8 +25,7 @@
 #' \item{\code{calMatrix}} {A matrix of probability values, one row per calendar year in timeRange and one column per date. By storing all possible years, not just those with non-zero probabilty, this approach takes more memory, but speeds up spd() and is suggested whenever the latter is to be used. NA when the parameter calMatrix is set to FALSE.}  
 #' }
 #'
-#' @references 
-#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249–75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x#'
+#' @references #' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x#'
 #' @examples
 #' x1 <- calibrate(ages=4000, errors=30)
 #' plot(x1)
