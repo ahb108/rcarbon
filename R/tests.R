@@ -38,7 +38,7 @@
 #' ## Example with Younger Dryas period Near East, including site bins
 #' \dontrun{
 #' data(emedyd)
-#' caldates <- calibrate(ages=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
 #' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 #' nsim=5 #toy example
 #' expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,
@@ -105,7 +105,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
         if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
-        tmp <- calibrate(ages=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
+        tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
         simDateMatrix <- tmp$calmatrix
         sim[,s] <- apply(simDateMatrix,1,sum)
         sim[,s] <- (sim[,s]/sum(sim[,s])) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
@@ -384,7 +384,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #'
 #' ## Calibration and binning
 #' bins=binPrep(sites=euroevol2$SiteID,ages=euroevol2$C14Age,h=200)  
-#' calDates=calibrate(ages=euroevol2$C14Age,errors=euroevol2$C14SD,
+#' calDates=calibrate(x=euroevol2$C14Age,errors=euroevol2$C14SD,
 #' timeRange=timeRange,normalised=FALSE)
 #'
 #' ## Main Analysis (over 2 cores; requires doParallel package) 

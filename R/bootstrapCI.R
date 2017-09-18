@@ -81,7 +81,7 @@
 #   {
 #         randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
 #         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
-#         tmp <- calibrate(ages=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
+#         tmp <- calibrate(x=randomDates,errors=randomSDs, resOffsets=0 ,resErrors=0, timeRange=timeRange, calCurves='intcal13', normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
 #         simDateMatrix <- tmp$calmatrix
 #         resmatrix[,b] <- apply(simDateMatrix,1,sum)
 #         resmatrix[,b] <- (resmatrix[,b]/sum(resmatrix[,b])) 

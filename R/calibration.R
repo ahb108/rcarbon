@@ -47,7 +47,7 @@ calibrate <- function (x, ...) {
 #' @rdname calibrate
 #' @export
 
-calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
 
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -55,13 +55,13 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     }	
     	
     # age and error checks
-    if (length(ages) != length(errors)){
+    if (length(x) != length(errors)){
         stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
     }
-    if (!is.na(ids[1]) & (length(ages) != length(ids))){
+    if (!is.na(ids[1]) & (length(x) != length(ids))){
         stop("Ages and errors (and ids/details/offsets if provided) must be the same length.")
     }
-    if (any(is.na(ages))|any(is.na(errors))){
+    if (any(is.na(x))|any(is.na(errors))){
         stop("Ages or errors contain NAs")
     }
     # calCurve checks and set-up
@@ -72,13 +72,13 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
                 stop("The custom calibration curve must have just three numeric columns.")
             } else {
                 colnames(cctmp) <- c("CALBP","C14BP","Error")
-                if (max(cctmp[,2]) < max(ages) | min(cctmp[,2]) > min(ages)){
+                if (max(cctmp[,2]) < max(x) | min(cctmp[,2]) > min(x)){
                     stop("The custom calibration curve does not cover the input age range.")
                 }
                 cclist <- vector(mode="list", length=1)
                 cclist[[1]] <- cctmp
                 names(cclist) <- "custom"
-                calCurves <- rep("custom",length(ages))
+                calCurves <- rep("custom",length(x))
             }
         } else {
             stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
@@ -88,7 +88,7 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
             stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
         } else {
             tmp <- unique(calCurves)
-            if (length(calCurves)==1){ calCurves <- rep(calCurves,length(ages)) }
+            if (length(calCurves)==1){ calCurves <- rep(calCurves,length(x)) }
             cclist <- vector(mode="list", length=length(tmp))
             names(cclist) <- tmp
             for (a in 1:length(tmp)){
@@ -105,26 +105,26 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
     }
     # container and reporting set-up
     reslist <- vector(mode="list", length=2)
-    sublist <- vector(mode="list", length=length(ages))
+    sublist <- vector(mode="list", length=length(x))
     if (calMatrix){
         calmBP <- seq(timeRange[1],timeRange[2],-1)
-        calmat <- matrix(ncol=length(ages), nrow=length(calmBP))
+        calmat <- matrix(ncol=length(x), nrow=length(calmBP))
         rownames(calmat) <- calmBP
         calmat[] <- 0
     }
     if (is.na(ids[1])){
-        ids <- as.character(1:length(ages))
+        ids <- as.character(1:length(x))
     } else {
         ids <- as.character(ids)
     }
-    if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(ages)) }
-    if (length(resErrors)==1){ resErrors <- rep(resErrors,length(ages)) }
+    if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(x)) }
+    if (length(resErrors)==1){ resErrors <- rep(resErrors,length(x)) }
     names(sublist) <- ids
     names(reslist) <- c("metadata","grids")
-    if (length(ages)>1 & verbose){
+    if (length(x)>1 & verbose){
         print("Calibrating radiocarbon ages...")
         flush.console()
-        pb <- txtProgressBar(min=1, max=length(ages), style=3)
+        pb <- txtProgressBar(min=1, max=length(x), style=3)
     }
     # calibration
     if (ncores>1){
@@ -132,10 +132,10 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         cl <- makeCluster(ncores)
         registerDoParallel(cl)
         if (verbose){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
-        sublist <- foreach (b=1:length(ages)) %dopar% {
+        sublist <- foreach (b=1:length(x)) %dopar% {
             calcurve <- cclist[[calCurves[b]]]
             calBP <- seq(max(calcurve),min(calcurve),-1)
-            age <- ages[b] - resOffsets[b]
+            age <- x[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
             mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
             tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
@@ -161,11 +161,11 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         }
     } else {
         # single core
-        for (b in 1:length(ages)){
-            if (length(ages)>1 & verbose){ setTxtProgressBar(pb, b) }
+        for (b in 1:length(x)){
+            if (length(x)>1 & verbose){ setTxtProgressBar(pb, b) }
             calcurve <- cclist[[calCurves[b]]]
             calBP <- seq(max(calcurve),min(calcurve),-1)
-            age <- ages[b] - resOffsets[b]
+            age <- x[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
             mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
             tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
@@ -185,8 +185,8 @@ calibrate.default <- function(ages, errors, ids=NA, dateDetails=NA, calCurves='i
         }
     }
     # clean-up and results
-    if (length(ages)>1 & verbose){ close(pb) }
-    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
+    if (length(x)>1 & verbose){ close(pb) }
+    df <- data.frame(DateID=ids, CRA=x, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df
     if (calMatrix){
         reslist[["grids"]] <- NA
@@ -215,7 +215,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
     options(warn=0)
     colnames(calcurve) <- c("CALBP","C14BP","Error")
     if (type=="full"){
-        caleach <- calibrate(ages=x$CRA, errors=errors, method="standard", normalised=datenormalised, compact=FALSE,...)
+        caleach <- calibrate(x=x$CRA, errors=errors, method="standard", normalised=datenormalised, compact=FALSE,...)
         tmp <- lapply(caleach$grids,`[`,2)
         tmp <- lapply(1:length(tmp),FUN=function(i) tmp[[i]]*x$PrDens[i])
         tmp <- do.call("cbind",tmp)

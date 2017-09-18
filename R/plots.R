@@ -14,7 +14,7 @@
 #' @seealso \code{\link{calibrate}}
 #'
 #' @examples
-#' x <- calibrate(ages=c(3402,3490,4042),errors=c(20,20,30))
+#' x <- calibrate(x=c(3402,3490,4042),errors=c(20,20,30))
 #' plot(x) #display the first date
 #' plot(x,2) #displays the second date
 #' plot(x,3, calendar="BCAD", HPD=TRUE) #display in BC/AD with higher posterior density interval
@@ -317,7 +317,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 #' denmark <- subset(euroevol,Country=="Denmark")
 #'
 #' #Calibrate and Bin
-#' denmarkDates <- calibrate(ages=denmark$C14Age,errors=denmark$C14SD) 
+#' denmarkDates <- calibrate(x=denmark$C14Age,errors=denmark$C14SD) 
 #' denmarkBins <- binPrep(sites=denmark$SiteID,ages=denmark$C14Age,h=200) #200 years bin size
 #'
 #' #Compute median date for each bin
@@ -790,7 +790,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' data(euroevol)
 #' #subset Danish dates
 #' denmark=subset(euroevol,Country=="Denmark")
-#' denmarkDates=calibrate(ages=denmark$C14Age,errors=denmark$C14SD)
+#' denmarkDates=calibrate(x=denmark$C14Age,errors=denmark$C14SD)
 #' binsense(x=denmarkDates,y=denmark,h=seq(0,200,20),timeRange=c(10000,4000),
 #' sitecol="SiteID",agecol="C14Age",runm=200)
 #' }
