@@ -276,7 +276,7 @@ uncalibrate <- function (x, ...) {
    UseMethod("uncalibrate", x)
 }
 
-
+#' @rdname uncalibrate
 #' @export
 
 uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13'){
@@ -299,6 +299,7 @@ uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intc
     return(dates)
 }
 
+#' @rdname uncalibrate
 #' @export
 
 uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE, verbose=TRUE){
