@@ -468,6 +468,11 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param fill.p Fill colour of the polygon depicting the summed probability distribution.
 #' @param border.p Border colour of the polygon depicting the summed probability distribution.
+#' @param xlim Adjust x axis limits.
+#' @param ylim Adjust y axis limits (otherwise sensible default).
+#' @param cex.lab Size of label text.
+#' @param cex.axis Size of axis text.
+#' @param mar Adjust margins around plot.
 #'
 #' @examples
 #' data(euroevol)

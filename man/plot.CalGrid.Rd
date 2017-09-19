@@ -16,6 +16,16 @@ plot.CalGrid(x, calendar = "BP", fill.p = "grey50", border.p = NA,
 \item{fill.p}{Fill colour of the polygon depicting the summed probability distribution.}
 
 \item{border.p}{Border colour of the polygon depicting the summed probability distribution.}
+
+\item{xlim}{Adjust x axis limits.}
+
+\item{ylim}{Adjust y axis limits (otherwise sensible default).}
+
+\item{cex.lab}{Size of label text.}
+
+\item{cex.axis}{Size of axis text.}
+
+\item{mar}{Adjust margins around plot.}
 }
 \description{
 Plot a summed radiocarbon probability distribution.

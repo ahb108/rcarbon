@@ -364,22 +364,6 @@ as.CalGrid <- function(x) {
     return(df)
 }
 
-
-#' @title Convert data to class CalDates. 
-#'
-#' @description Tries to coerce one or more calibrated radiocarbon dates from other formats to an object of class "CalDates" for use by the rcarbon package. Currently only conversion from class "BchronCalibratedDates" in the Bchron package is supported.
-#' 
-#' @param x One or more calibrated radiocarbon dates (currently must be of class "BchronCalibratedDates").
-#'
-#' @return A "CalDates" class object of probabilities per calendar year BP.
-#' @examples
-#' library(Bchron)
-#' onedate <- BchronCalibrate(1300,45,"intcal13")
-#' onedate <- as.CalDates(onedate)
-#' plot(onedate)
-#' @seealso \code{\link{as.CalGrid}}
-#' @export
-
 as.CalDates <- function(x){
     cl <- class(x)
     if (cl!="BchronCalibratedDates"){
