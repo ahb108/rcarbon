@@ -474,7 +474,6 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' mycaldates <- calibrate(euroevol[1:10,"C14Age"], euroevol[1:10,"C14SD"], normalised=FALSE)
 #' myspd <- spd(mycaldates, timeRange=c(8000,2000))
 #' plot(myspd)
-#' @seealso \code{\link{plot.UncalGrid}}
 #' @import stats
 #' @import grDevices
 #' @import graphics
