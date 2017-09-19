@@ -4,9 +4,9 @@
 \alias{plot.CalGrid}
 \title{Plot a summed probability distribution}
 \usage{
-plot.CalGrid(x, calendar = "BP", fill.p = "grey50", border.p = NA,
-  xlim = NA, ylim = NA, cex.lab = 0.75, cex.axis = cex.lab, mar = c(4,
-  4, 1, 3), ...)
+\method{plot}{CalGrid}(x, calendar = "BP", fill.p = "grey50",
+  border.p = NA, xlim = NA, ylim = NA, cex.lab = 0.75,
+  cex.axis = cex.lab, mar = c(4, 4, 1, 3), ...)
 }
 \arguments{
 \item{x}{A "CalGrid" class object of summed probabilities per calendar year BP.}

@@ -350,7 +350,6 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
 #' df <- data.frame(calBP=5000:2000,PrDens=runif(length(5000:2000)))
 #' mycalgrid <- as.CalGrid(df)
 #' plot(mycalgrid)
-#' @seealso \code{\link{as.CalDates}}
 #' @export
 #' 
 as.CalGrid <- function(x) {

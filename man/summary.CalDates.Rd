@@ -4,7 +4,7 @@
 \alias{summary.CalDates}
 \title{Summarise a \code{CalDates} class object}
 \usage{
-summary.CalDates(object, prob = NA, calendar = "BP", ...)
+\method{summary}{CalDates}(object, prob = NA, calendar = "BP", ...)
 }
 \arguments{
 \item{object}{A \code{CalDates} class object.}
