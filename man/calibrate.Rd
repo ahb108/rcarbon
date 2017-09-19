@@ -10,10 +10,12 @@ calibrate(x, ...)
 \method{calibrate}{default}(x, errors, ids = NA, dateDetails = NA,
   calCurves = "intcal13", resOffsets = 0, resErrors = 0,
   timeRange = c(50000, 0), normalised = TRUE, calMatrix = FALSE,
-  eps = 1e-05, ncores = 1, verbose = TRUE)
+  eps = 1e-05, ncores = 1, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{A vector of uncalibrated radiocarbon ages .}
+
+\item{...}{ignored}
 
 \item{errors}{A vector of standard deviations corresponding to each estimated radiocarbon age.}
 

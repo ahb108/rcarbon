@@ -9,13 +9,15 @@
 uncalibrate(x, ...)
 
 \method{uncalibrate}{default}(x, CRAerrors = NA, roundyear = TRUE,
-  calCurves = "intcal13")
+  calCurves = "intcal13", ...)
 
 \method{uncalibrate}{CalGrid}(x, calCurves = "intcal13", eps = 1e-05,
-  compact = TRUE, verbose = TRUE)
+  compact = TRUE, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{Either a vector of uncalibrated radiocarbon ages or an object of class CalGrid.}
+
+\item{...}{ignored}
 
 \item{CRAerrors}{A vector of standard deviations corresponding to each estimated radiocarbon age (ignored if x is a CalGrid object).}
 

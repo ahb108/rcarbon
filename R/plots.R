@@ -473,6 +473,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @param cex.lab Size of label text.
 #' @param cex.axis Size of axis text.
 #' @param mar Adjust margins around plot.
+#' @param ... Additional arguments affecting the plot
 #'
 #' @examples
 #' data(euroevol)

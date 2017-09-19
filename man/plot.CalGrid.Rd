@@ -26,6 +26,8 @@
 \item{cex.axis}{Size of axis text.}
 
 \item{mar}{Adjust margins around plot.}
+
+\item{...}{Additional arguments affecting the plot}
 }
 \description{
 Plot a summed radiocarbon probability distribution.

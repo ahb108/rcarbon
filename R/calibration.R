@@ -15,6 +15,7 @@
 #' @param calMatrix a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}
 #' @param ncores Number of cores/workers used for parallel execution. Default is 1 (>1 requires doParallel package).
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#' @param ... ignored
 #'
 #' @details This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
 #'
@@ -47,7 +48,7 @@ calibrate <- function (x, ...) {
 #' @rdname calibrate
 #' @export
 
-calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE){
+calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
 
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -258,6 +259,8 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #' @param  eps Cut-off value for density calculation (for CalGrid objects only).
 #' @param  compact A logical variable indicating whether only uncalibrated ages with non-zero probabilities should be returned (for CalGrid objects only).
 #' @param  verbose A logical variable indicating whether extra information on progress should be reported (for CalGrid objects only).
+#' @param ... ignored
+
 #' @details This function takes one or more calibrated calendars and looks-up the corresponding uncalibrated age, error of the stated calibration curve at that point. It also provides a randomised estimate of the uncalibrate age based on the curve error (and optionally also a hypothetical measurement error.
 #'
 #' @return A data.frame with specifying the original data, the uncalibrated age without the calibration curve error (ccCRA), the calibration curve error at this point in the curve (ccError), a randomised uncalibrated age (rCRA) given both the stated ccError and any further hypothesised instrumental error provided by the CRAerrors argument (rError). 
@@ -279,7 +282,7 @@ uncalibrate <- function (x, ...) {
 #' @rdname uncalibrate
 #' @export
 
-uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13'){
+uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', ...){
     
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
     calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
@@ -302,7 +305,7 @@ uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intc
 #' @rdname uncalibrate
 #' @export
 
-uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE, verbose=TRUE){
+uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE, verbose=TRUE, ...){
 
     if (verbose){ print("Uncalibrating...") }
     names(x) <- c("calBP","PrDens")
