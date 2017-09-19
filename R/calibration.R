@@ -2,7 +2,7 @@
 #'
 #' @description Function for calibrating one or more radiocarbon dates.
 #'
-#' @param ages A vector of uncalibrated radiocarbon ages .
+#' @param x A vector of uncalibrated radiocarbon ages .
 #' @param errors A vector of standard deviations corresponding to each estimated radiocarbon age.
 #' @param ids An optional vector of IDs for each date.
 #' @param dateDetails An optional vector of details for each date which will be returned in the output metadata. 

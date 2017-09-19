@@ -460,6 +460,21 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
     }
 }
 
+#' @title Plot a summed probability distribution 
+#'
+#' @description Plot a summed radiocarbon probability distribution.
+#' 
+#' @param x A "CalGrid" class object of summed probabilities per calendar year BP.
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param fill.p Fill colour of the polygon depicting the summed probability distribution.
+#' @param border.p Border colour of the polygon depicting the summed probability distribution.
+#'
+#' @examples
+#' data(euroevol)
+#' mycaldates <- calibrate(euroevol[1:10,"C14Age"], euroevol[1:10,"C14SD"], normalised=FALSE)
+#' myspd <- spd(mycaldates, timeRange=c(8000,2000))
+#' plot(myspd)
+#' @seealso \code{\link{plot.UncalGrid}}
 #' @import stats
 #' @import grDevices
 #' @import graphics
@@ -518,12 +533,11 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
     box()
 }
 
+
 #' @import stats
 #' @import grDevices
 #' @import graphics
 #' @import utils
-#' @export 
-
 
 plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 

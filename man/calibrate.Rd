@@ -13,6 +13,8 @@ calibrate(x, ...)
   eps = 1e-05, ncores = 1, verbose = TRUE)
 }
 \arguments{
+\item{x}{A vector of uncalibrated radiocarbon ages .}
+
 \item{errors}{A vector of standard deviations corresponding to each estimated radiocarbon age.}
 
 \item{ids}{An optional vector of IDs for each date.}
@@ -36,8 +38,6 @@ calibrate(x, ...)
 \item{ncores}{Number of cores/workers used for parallel execution. Default is 1 (>1 requires doParallel package).}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
-
-\item{ages}{A vector of uncalibrated radiocarbon ages .}
 }
 \value{
 An object of class CalDates with the following elements:
