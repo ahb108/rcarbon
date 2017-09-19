@@ -2,7 +2,7 @@
 % Please edit documentation in R/calibration.R
 \name{uncalibrate}
 \alias{uncalibrate}
-\title{Uncalibrate (back-calibrate) a radiocarbon date.}
+\title{Uncalibrate (back-calibrate) a calibrated radiocarbon date (or summed probability distribution).}
 \usage{
 uncalibrate(x, ...)
 }

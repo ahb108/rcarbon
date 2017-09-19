@@ -70,7 +70,7 @@ spatialweights=spweights(distSamples,h=100) #using a kernal bandwidth of 100km
 
 ## Calibration and binning
 bins=binPrep(sites=euroevol2$SiteID,ages=euroevol2$C14Age,h=200)  
-calDates=calibrate(ages=euroevol2$C14Age,errors=euroevol2$C14SD,
+calDates=calibrate(x=euroevol2$C14Age,errors=euroevol2$C14SD,
 timeRange=timeRange,normalised=FALSE)
 
 ## Main Analysis (over 2 cores; requires doParallel package) 

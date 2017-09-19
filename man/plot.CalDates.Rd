@@ -4,7 +4,7 @@
 \alias{plot.CalDates}
 \title{Plot calibrated dates}
 \usage{
-\method{plot}{CalDates}(x, ind = 1, label = NA, calendar = "BP",
+plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
   type = "standard", xlab = NA, ylab = NA, axis4 = TRUE, HPD = FALSE,
   credMass = 0.95, ...)
 }
@@ -35,7 +35,7 @@
 Plot calibrated radiocarbon dates.
 }
 \examples{
-x <- calibrate(ages=c(3402,3490,4042),errors=c(20,20,30))
+x <- calibrate(x=c(3402,3490,4042),errors=c(20,20,30))
 plot(x) #display the first date
 plot(x,2) #displays the second date
 plot(x,3, calendar="BCAD", HPD=TRUE) #display in BC/AD with higher posterior density interval

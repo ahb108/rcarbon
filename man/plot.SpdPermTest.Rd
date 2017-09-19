@@ -4,10 +4,9 @@
 \alias{plot.SpdPermTest}
 \title{Plot result of mark permutation test of SPDs}
 \usage{
-\method{plot}{SpdPermTest}(x, focalm = "1", calendar = "BP", xlim = NA,
-  ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0, 0.2),
-  lwd.obs = 0.5, xaxs = "i", yaxs = "i", bbty = "f", drawaxes = TRUE,
-  ...)
+plot.SpdPermTest(x, focalm = "1", calendar = "BP", xlim = NA, ylim = NA,
+  col.obs = "black", col.env = rgb(0, 0, 0, 0.2), lwd.obs = 0.5,
+  xaxs = "i", yaxs = "i", bbty = "f", drawaxes = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})}

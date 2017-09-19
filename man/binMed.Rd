@@ -26,7 +26,7 @@ data(euroevol)
 #Subset Danish Dates
 denmark <- subset(euroevol,Country=="Denmark")
 #Calibrate and Bin
-denmarkDates <- calibrate(ages=denmark$C14Age,errors=denmark$C14SD) 
+denmarkDates <- calibrate(x=denmark$C14Age,errors=denmark$C14SD) 
 denmarkBins <- binPrep(sites=denmark$SiteID,ages=denmark$C14Age,h=200) #200 years bin size
 #Compute median date for each bin
 binMed(x=denmarkDates,bins=denmarkBins)

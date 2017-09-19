@@ -247,7 +247,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
     return(res)
 }
 
-#' @title Uncalibrate (back-calibrate) a radiocarbon date.
+#' @title Uncalibrate (back-calibrate) a calibrated radiocarbon date (or summed probability distribution).
 #'
 #' @description Function for uncalibrating one or more radiocarbon dates.
 #'
@@ -339,8 +339,20 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
     return(res)
 }
 
+#' @title Convert data to class CalGrid. 
+#'
+#' @description Tries to coerce any two-column matrix or data.frame to a calibrated probability distribution (an object of class "CalGrid") for use by the rcarbon package. 
+#' 
+#' @param x A two-column \code{matrix} or \code{data.frame} class object.
+#'
+#' @return A CalGrid class object of probabilities or summed probabilities per calendar year BP.
+#' @examples
+#' df <- data.frame(calBP=5000:2000,PrDens=runif(length(5000:2000)))
+#' mycalgrid <- as.CalGrid(df)
+#' plot(mycalgrid)
+#' @seealso \code{\link{as.CalDates}}
 #' @export
-
+#' 
 as.CalGrid <- function(x) {
     df <- as.data.frame(x)
     if (ncol(x) == 2){
@@ -352,6 +364,20 @@ as.CalGrid <- function(x) {
     return(df)
 }
 
+
+#' @title Convert data to class CalDates. 
+#'
+#' @description Tries to coerce one or more calibrated radiocarbon dates from other formats to an object of class "CalDates" for use by the rcarbon package. Currently only conversion from class "BchronCalibratedDates" in the Bchron package is supported.
+#' 
+#' @param x One or more calibrated radiocarbon dates (currently must be of class "BchronCalibratedDates").
+#'
+#' @return A "CalDates" class object of probabilities per calendar year BP.
+#' @examples
+#' library(Bchron)
+#' onedate <- BchronCalibrate(1300,45,"intcal13")
+#' onedate <- as.CalDates(onedate)
+#' plot(onedate)
+#' @seealso \code{\link{as.CalGrid}}
 #' @export
 
 as.CalDates <- function(x){

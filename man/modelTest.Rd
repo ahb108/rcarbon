@@ -60,7 +60,7 @@ The function implements a modified version of Timpson et al (2014) Monte-Carlo t
 ## Example with Younger Dryas period Near East, including site bins
 \dontrun{
 data(emedyd)
-caldates <- calibrate(ages=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
 bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 nsim=5 #toy example
 expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,
