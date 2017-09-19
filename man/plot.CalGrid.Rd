@@ -26,6 +26,3 @@ mycaldates <- calibrate(euroevol[1:10,"C14Age"], euroevol[1:10,"C14SD"], normali
 myspd <- spd(mycaldates, timeRange=c(8000,2000))
 plot(myspd)
 }
-\seealso{
-\code{\link{plot.UncalGrid}}
-}
