@@ -27,11 +27,11 @@
 #'
 #' @references #' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x#'
 #' @examples
-#' x1 <- calibrate(ages=4000, errors=30)
+#' x1 <- calibrate(x=4000, errors=30)
 #' plot(x1)
 #' summary(x1)
 #' # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
-#' x2 <- calibrate(ages=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
+#' x2 <- calibrate(x=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
 #' plot(x2)
 #' @import stats 
 #' @import utils 

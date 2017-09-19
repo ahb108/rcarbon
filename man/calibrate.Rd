@@ -54,11 +54,11 @@ Function for calibrating one or more radiocarbon dates.
 This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
 }
 \examples{
-x1 <- calibrate(ages=4000, errors=30)
+x1 <- calibrate(x=4000, errors=30)
 plot(x1)
 summary(x1)
 # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
-x2 <- calibrate(ages=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
+x2 <- calibrate(x=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
 plot(x2)
 }
 \references{
