@@ -331,7 +331,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 
 #' @title Spatial Permutation Test of summed probability distributions.
 #'
-#' @description This function carries out local spatial permutation test of the summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al submitted). 
+#' @description This function carries out local spatial permutation test of the summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al 2017). 
 #' 
 #' @param calDates  A \code{CalDates} class object.
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP
@@ -352,7 +352,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @return A \code{spatialTest} class object
 #'
 #' @references
-#' Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates.
+#' Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates. Journal of Archaeological Science, 87, 1-9.
 #' 
 #' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights;
 #'

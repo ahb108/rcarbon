@@ -1,0 +1,12 @@
+citHeader("To cite rcarbon in publications use:")
+citEntry(entry = "Manual",
+    title = "rcarbon: Methods for calibrating and analysing radiocarbon dates",
+    author = personList(as.person("Andrew Bevan"),
+			as.person("Enrico R. Crema")),
+    year = "2017",
+    url = "https://CRAN.R-project.org/package=rcarbon",
+    textVersion =
+    paste("Bevan, A. and Crema, E.R. (2017)",
+    "rcarbon v1.0.0 : Methods for calibrating and analysing radiocarbon dates}",
+    "URL https://CRAN.R-project.org/package=rcarbon") 		
+  )

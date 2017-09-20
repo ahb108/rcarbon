@@ -37,7 +37,7 @@ SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
 A \code{spatialTest} class object
 }
 \description{
-This function carries out local spatial permutation test of the summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al submitted).
+This function carries out local spatial permutation test of the summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al 2017).
 }
 \details{
 The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates weighting the contribution of dates from neighbouring site using a weight scheme provided by the \code{spatialweights} class object. 2) define temporal slices (using \code{breaks} as break values) the compute the total probability mass within each slice; 3) compute the rate of change between as abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of indivual bins or the entire sequence of bins associated with a given location and carry out steps 1--3; 5) repeate step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate to the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.
@@ -99,7 +99,7 @@ plot(res.locations,option="testlegend")
 }
 }
 \references{
-Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates.
+Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates. Journal of Archaeological Science, 87, 1-9.
 }
 \seealso{
 \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights;

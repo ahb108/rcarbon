@@ -1,6 +1,6 @@
 Package: rcarbon
 Title: Calibration and analysis of radiocarbon dates
-Version: 0.0.0.9000
+Version: 1.0.0
 Authors@R: as.person(c(
     "Andrew Bevan <andrew.bevan@gmail.com> [aut, cre]", 
     "Enrico Crema <enrico.crema@gmail.com> [aut]"
