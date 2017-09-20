@@ -7,6 +7,6 @@ citEntry(entry = "Manual",
     url = "https://CRAN.R-project.org/package=rcarbon",
     textVersion =
     paste("Bevan, A. and Crema, E.R. (2017)",
-    "rcarbon v1.0.0 : Methods for calibrating and analysing radiocarbon dates}",
-    "URL https://CRAN.R-project.org/package=rcarbon") 		
+    "rcarbon v1.0.0 : Methods for calibrating and analysing radiocarbon dates",
+    "URL: https://CRAN.R-project.org/package=rcarbon") 		
   )
