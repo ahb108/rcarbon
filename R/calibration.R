@@ -117,6 +117,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
         ids <- as.character(1:length(x))
     } else {
         ids <- as.character(ids)
+        if (any(duplicated(ids))){ stop("The values in the ids argument must be unique or left as defaults.") }
     }
     if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(x)) }
     if (length(resErrors)==1){ resErrors <- rep(resErrors,length(x)) }
