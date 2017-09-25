@@ -147,7 +147,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 
 
 
-#' @title Plot result of Monte-Carlo simulation of observed veruss modelled SPDs
+#' @title Plot result of Monte-Carlo simulation of observed versus modelled SPDs
 #'
 #' @description The function visualises the observed summed probability distribution of radiocarbon dates along with a simulation envelope for the null model and regions of positive and negative deviation.
 #'
@@ -382,9 +382,9 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 # }
 # 
 
-#' @title Plot Summed Probability Distributions 
+#' @title Plot a summed probability distribution
 #'
-#' @description Plot Summed Probability Distribution (SPD) of radiocarbon dates 
+#' @description Plot a summed probability distribution (SPD) of radiocarbon dates 
 #' @param x A \code{CalSPD} class object.
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
@@ -398,18 +398,33 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @param border.p Border colour for the SPD
 #' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
 #' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
+#' @param add Whether or not the new graphic should be added to an existing plot.
 #' @param ... Additional arguments affecting the plot
 #'
 #'
 #'
-#' @seealso \code{\link{spd}}
+#' @seealso \code{\link{spd}};\code{\link{plot.CalGrid}}
+#' #' @examples
+#' \dontrun{
+#' data(emedyd)
+#' levant <- emedyd[emedyd$Region=="1"|emedyd$Region=="2",]
+#' bins <- binPrep(levant$SiteName, levant$CRA, h=50)
+#' x <- calibrate(levant$CRA, levant$Error, normalised=FALSE)
+#' spd.levant <- spd(x, bins=bins, timeRange=c(17000,8000))
+#' spd.northernlevant <- spd(x[levant$Region=="2"], bins=bins[levant$Region=="2"], timeRange=c(17000,8000))
+#' plot(spd.levant, runm=50, xlim=c(16000,9000))
+#' plot(spd.northernlevant, runm=50, add=TRUE, fill.p="black")
+#' legend("topleft", legend=c("All Levant dates","Northern Levant only"), fill=c("grey75","black"), border=NA)
+#' plot(spd.levant, runm=50, xlim=c(16000,9000), type="simple")
+#' plot(spd.northernlevant, runm=50, col="red", type="simple", add=TRUE)
+#'}
 #' @import stats
 #' @import grDevices
 #' @import graphics
 #' @import utils
 #' @export 
 
-plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', ...){
+plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', add=FALSE,...){
 
     types <- c("standard","simple")
     if (!type %in% types){
@@ -436,10 +451,16 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
     if (type=="standard"){
         par(xaxs="i")
         par(yaxs="i")
-        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt)
+        if (!add){
+            plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt)
+        }
         polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
     } else if (type=="simple"){
-        plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
+        if (!add){
+            plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
+        } else {
+            lines(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, ...)
+        }
     }
     box()
     if (calendar=="BP" & xaxt!="n"){
@@ -460,9 +481,10 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
     }
 }
 
-#' @title Plot a summed probability distribution 
+
+#' @title Plot a summed probability distribution (from a CalGrid object)
 #'
-#' @description Plot a summed radiocarbon probability distribution.
+#' @description Plot a summed radiocarbon probability distribution. This is basic function for plotting SPDs that have been constructed manually or by calibrating a summed or otherwise irregular CRA grid. In most instances, it is sensible to be use \code{plot.CalSPD} instead.
 #' 
 #' @param x A "CalGrid" class object of summed probabilities per calendar year BP.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
@@ -473,20 +495,23 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @param cex.lab Size of label text.
 #' @param cex.axis Size of axis text.
 #' @param mar Adjust margins around plot.
+#' @param add Whether or not the new graphic should be added to an existing plot.
 #' @param ... Additional arguments affecting the plot
 #'
+#' @seealso \code{\link{spd}};\code{\link{plot.CalSPD}}
 #' @examples
 #' data(euroevol)
 #' mycaldates <- calibrate(euroevol[1:10,"C14Age"], euroevol[1:10,"C14SD"], normalised=FALSE)
 #' myspd <- spd(mycaldates, timeRange=c(8000,2000))
-#' plot(myspd)
+#' plot(myspd) #ordinary plot using \code{plot.CalSPD}
+#' plot(myspd$grid) #working plot using the internal CalGrid object
 #' @import stats
 #' @import grDevices
 #' @import graphics
 #' @import utils
 #' @export 
 
-plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
+plot.CalGrid <- function(x, runm=NA, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3), add=FALSE,...){
 
     yearsBP <- x$calBP
     prob <- x$PrDens
@@ -512,28 +537,30 @@ plot.CalGrid <- function(x, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA
     yvals <- c(0,prob,0,0)
     if (calendar=="BP"){
         xrng <- c(max(plotyears)+50, min(plotyears)-50)
-        xticks <- 100*(xrng%/%100 + as.logical(xrng%%100))
-        xticks <- seq(xticks[1]-100, xticks[2], -100)
+        xticks <- 200*(xrng%/%100 + as.logical(xrng%%200))
+        xticks <- seq(xticks[1]-200, xticks[2], -200)
     } else {
         xrng <- c(min(plotyears)-50, max(plotyears)+50)
-        xticks <- 100*(xrng%/%100 + as.logical(xrng%%100))
-        xticks <- seq(xticks[1]-100, xticks[2], 100)
+        xticks <- 200*(xrng%/%100 + as.logical(xrng%%200))
+        xticks <- seq(xticks[1]-200, xticks[2], 200)
     }
     if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
     if (is.na(xlim[1])){ xlim <- xrng }
-    par(mar=mar) #c(bottom, left, top, right)
-    par(cex.lab=cex.lab)
-    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n',axes=F, cex.axis=cex.axis,...)
-    
-    xticksLab <- xticks
-    if (calendar=="BCAD")
-    {
-      if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
-      xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
+    if (!add){
+        par(mar=mar) #c(bottom, left, top, right)
+        par(cex.lab=cex.lab)
+        plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n',axes=F, cex.axis=cex.axis,...)
     }
-    axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
-    axis(2)
-    axis(4, cex.axis=cex.axis)
+    xticksLab <- xticks
+    if (calendar=="BCAD"){
+        if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
+        xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
+    }
+    if (!add){
+        axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=cex.axis)
+        axis(2, cex.axis=cex.axis)
+    }
+    if (!is.na(runm)){ yvals <- runMean(yvals, runm, edge="fill") }
     polygon(xvals,yvals, col=fill.p, border=border.p)
     box()
 }
@@ -901,49 +928,7 @@ res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 }
 }
 
-#' @import stats
-#' @import grDevices
-#' @import graphics
-#' @import utils
-#' @export
 
-lines.CalSPD <- function(x, calendar="BP", runm=NA,...){
-    if (calendar=="BP"){
-        years <- x$grid$calBP
-    } else if (calendar=="BCAD"){
-        years <- BPtoBCAD(x$grid$calBP)
-    } else {
-        stop("Calendar must be BP or BCAD.")
-    }
-    if (is.na(runm)){
-        dens <- x$grid$PrDens
-    } else {
-        dens <- runMean(x$grid$PrDens, runm, edge="fill")
-    }
-    lines(years, dens,...)
-}
-
-
-#' @import stats
-#' @import grDevices
-#' @import graphics
-#' @import utils
-
-spdpolygon <- function(x, calendar="BP", runm=NA,...){
-    if (calendar=="BP"){
-        years <- x$grid$calBP
-    } else if (calendar=="BCAD"){
-        years <- BPtoBCAD(x$grid$calBP)
-    } else {
-        stop("Calendar must be BP or BCAD.")
-    }
-    if (is.na(runm)){
-        dens <- x$grid$PrDens
-    } else {
-        dens <- runMean(x$grid$PrDens, runm, edge="fill")
-    }
-    polygon(x=c(years,rev(years)), y=c(dens,rep(0,length(dens))),...)
-}
 
 #' @title Plot results of the local spatial permutation test of summed probability distributions.
 #'
