@@ -17,7 +17,9 @@ reScale <- function(x, type="simple", to=c(0,1), na.rm=TRUE){
         stop("The rescale type you have chosen is not currently an option.")
     }
     if (max(x)-min(x)==0){
-        stop("All the values in x are the same, so cannot be rescaled.")
+        warning("All the values in x are the same, and will just be recentred on 0 if type='normal' or max(to) if type='simple'.")
+        if (type=="normal"){ res <- rep(0,length(x)) } else { res <- rep(max(to), length(x)) }
+        return(res)
     }
     if (na.rm){ x <- na.omit(x) }
     if (type=="normal"){
