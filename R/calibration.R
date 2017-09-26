@@ -203,13 +203,24 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
     if (length(errors)==1){
         errors <- rep(errors,length(x$CRA))
     }
-    calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
-    options(warn=-1)
-    calcurve <- readLines(calCurveFile, encoding="UTF-8")
-    calcurve <- calcurve[!grepl("[#]",calcurve)]
-    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-    options(warn=0)
-    colnames(calcurve) <- c("CALBP","C14BP","Error")
+    if (class(calCurves) %in% c("matrix","data.frame")){
+        calcurve <- as.matrix(calCurves)
+        if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
+            stop("The custom calibration curve must have just three numeric columns.")
+        } else {
+            colnames(calcurve) <- c("CALBP","C14BP","Error")
+        }
+    } else if (class(calCurves)=="character"){
+        calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
+        options(warn=-1)
+        calcurve <- readLines(calCurveFile, encoding="UTF-8")
+        calcurve <- calcurve[!grepl("[#]",calcurve)]
+        calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+        options(warn=0)
+        colnames(calcurve) <- c("CALBP","C14BP","Error")
+    } else {
+        stop("calCurves must be a character vector specifying a known curve or a custom three-column matrix/data.frame (see ?calibrate.default).")
+    }
     if (type=="full"){
         caleach <- calibrate(x=x$CRA, errors=errors, method="standard", normalised=datenormalised, compact=FALSE,...)
         tmp <- lapply(caleach$grids,`[`,2)
