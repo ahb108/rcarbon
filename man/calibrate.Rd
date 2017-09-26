@@ -23,7 +23,7 @@ calibrate(x, ...)
 
 \item{dateDetails}{An optional vector of details for each date which will be returned in the output metadata.}
 
-\item{calCurves}{Either a string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve with three columns (calibrated year BP, uncalibrated age bp, standard deviation).}
+\item{calCurves}{Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.}
 
 \item{resOffsets}{A vector of offset values for any marine reservoir effect (default is no offset).}
 

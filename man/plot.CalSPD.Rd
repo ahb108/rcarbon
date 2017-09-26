@@ -2,12 +2,12 @@
 % Please edit documentation in R/plots.R
 \name{plot.CalSPD}
 \alias{plot.CalSPD}
-\title{Plot Summed Probability Distributions}
+\title{Plot a summed probability distribution}
 \usage{
 \method{plot}{CalSPD}(x, runm = NA, calendar = "BP", type = "standard",
   xlim = NA, ylim = NA, ylab = "Summed Probability",
   spdnormalised = FALSE, rescale = FALSE, fill.p = "grey75",
-  border.p = NA, xaxt = "s", yaxt = "s", ...)
+  border.p = NA, xaxt = "s", yaxt = "s", add = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{CalSPD} class object.}
@@ -36,11 +36,27 @@
 
 \item{yaxt}{Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.}
 
+\item{add}{Whether or not the new graphic should be added to an existing plot.}
+
 \item{...}{Additional arguments affecting the plot}
 }
 \description{
-Plot Summed Probability Distribution (SPD) of radiocarbon dates
+Plot a summed probability distribution (SPD) of radiocarbon dates
 }
 \seealso{
-\code{\link{spd}}
+\code{\link{spd}};\code{\link{plot.CalGrid}}
+#' @examples
+\dontrun{
+data(emedyd)
+levant <- emedyd[emedyd$Region=="1"|emedyd$Region=="2",]
+bins <- binPrep(levant$SiteName, levant$CRA, h=50)
+x <- calibrate(levant$CRA, levant$Error, normalised=FALSE)
+spd.levant <- spd(x, bins=bins, timeRange=c(17000,8000))
+spd.northernlevant <- spd(x[levant$Region=="2"], bins=bins[levant$Region=="2"], timeRange=c(17000,8000))
+plot(spd.levant, runm=50, xlim=c(16000,9000))
+plot(spd.northernlevant, runm=50, add=TRUE, fill.p="black")
+legend("topleft", legend=c("All Levant dates","Northern Levant only"), fill=c("grey75","black"), border=NA)
+plot(spd.levant, runm=50, xlim=c(16000,9000), type="simple")
+plot(spd.northernlevant, runm=50, col="red", type="simple", add=TRUE)
+}
 }

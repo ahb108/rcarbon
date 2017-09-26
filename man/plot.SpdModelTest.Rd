@@ -2,7 +2,7 @@
 % Please edit documentation in R/plots.R
 \name{plot.SpdModelTest}
 \alias{plot.SpdModelTest}
-\title{Plot result of Monte-Carlo simulation of observed veruss modelled SPDs}
+\title{Plot result of Monte-Carlo simulation of observed versus modelled SPDs}
 \usage{
 \method{plot}{SpdModelTest}(x, calendar = "BP", ylim = NA, xlim = NA,
   col.obs = "black", lwd.obs = 0.5, xaxs = "i", yaxs = "i",
