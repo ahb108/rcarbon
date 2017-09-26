@@ -120,7 +120,6 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
         if (calcurvemetadata == "custom" & !class(customCalCurve) %in% c("data.frame","matrix")){
             calcurvecheck <- FALSE
         }
-        cat(calcurvecheck)
         if (calcurvecheck){
             if (calcurvemetadata == "custom"){
                 cc <- as.data.frame(customCalCurve)[,1:3]

@@ -6,7 +6,7 @@
 #' @param errors A vector of standard deviations corresponding to each estimated radiocarbon age.
 #' @param ids An optional vector of IDs for each date.
 #' @param dateDetails An optional vector of details for each date which will be returned in the output metadata. 
-#' @param calCurves Either a string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve with three columns (calibrated year BP, uncalibrated age bp, standard deviation).
+#' @param calCurves Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.
 #' @param resOffsets A vector of offset values for any marine reservoir effect (default is no offset).
 #' @param resErrors A vector of offset value errors for any marine reservoir effect (default is no offset).
 #' @param timeRange Earliest and latest data to calibrate for, in calendar years. Posterior probabilites beyond this range will be excluded (the default is sensible in most cases).
@@ -66,45 +66,39 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
         stop("Ages or errors contain NAs")
     }
     # calCurve checks and set-up
-    if (!all(class(calCurves)=="character")){
-        if (any(class(calCurves) %in% c("matrix","data.frame"))){
-            cctmp <- as.matrix(calCurves)
-            if (ncol(cctmp)!=3 | !all(sapply(cctmp,is.numeric))){
-                stop("The custom calibration curve must have just three numeric columns.")
-            } else {
-                colnames(cctmp) <- c("CALBP","C14BP","Error")
-                if (max(cctmp[,2]) < max(x) | min(cctmp[,2]) > min(x)){
-                    stop("The custom calibration curve does not cover the input age range.")
-                }
-                cclist <- vector(mode="list", length=1)
-                cclist[[1]] <- cctmp
-                names(cclist) <- "custom"
-                calCurves <- rep("custom",length(x))
-            }
+    if (class(calCurves) %in% c("matrix","data.frame")){
+        cctmp <- as.matrix(calCurves)
+        if (ncol(cctmp)!=3 | !all(sapply(cctmp,is.numeric))){
+            stop("The custom calibration curve must have just three numeric columns.")
         } else {
-            stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+            colnames(cctmp) <- c("CALBP","C14BP","Error")
+            if (max(cctmp[,2]) < max(x) | min(cctmp[,2]) > min(x)){
+                stop("The custom calibration curve does not cover the input age range.")
+            }
+            cclist <- vector(mode="list", length=1)
+            cclist[[1]] <- cctmp
+            names(cclist) <- "custom"
+            calCurves <- rep("custom",length(x))
         }
+    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+        stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
     } else {
-        if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
-            stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
-        } else {
-            tmp <- unique(calCurves)
-            if (length(calCurves)==1){ calCurves <- rep(calCurves,length(x)) }
-            cclist <- vector(mode="list", length=length(tmp))
-            names(cclist) <- tmp
-            for (a in 1:length(tmp)){
-                calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", tmp[1],".14c", sep="")
-                options(warn=-1)
-                cctmp <- readLines(calCurveFile, encoding="UTF-8")
-                cctmp <- cctmp[!grepl("[#]",cctmp)]
-                cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-                options(warn=0)
-                colnames(cctmp) <- c("CALBP","C14BP","Error")
-                cclist[[tmp[a]]] <- cctmp
-            }
+        tmp <- unique(calCurves)
+        if (length(calCurves)==1){ calCurves <- rep(calCurves,length(x)) }
+        cclist <- vector(mode="list", length=length(tmp))
+        names(cclist) <- tmp
+        for (a in 1:length(tmp)){
+            calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", tmp[1],".14c", sep="")
+            options(warn=-1)
+            cctmp <- readLines(calCurveFile, encoding="UTF-8")
+            cctmp <- cctmp[!grepl("[#]",cctmp)]
+            cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+            options(warn=0)
+            colnames(cctmp) <- c("CALBP","C14BP","Error")
+            cclist[[tmp[a]]] <- cctmp
         }
     }
-    # container and reporting set-up
+    ## container and reporting set-up
     reslist <- vector(mode="list", length=2)
     sublist <- vector(mode="list", length=length(x))
     if (calMatrix){
@@ -162,7 +156,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             }
         }
     } else {
-        # single core
+        ## single core
         for (b in 1:length(x)){
             if (length(x)>1 & verbose){ setTxtProgressBar(pb, b) }
             calcurve <- cclist[[calCurves[b]]]
@@ -186,7 +180,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             sublist[[ids[b]]] <- res
         }
     }
-    # clean-up and results
+    ## clean-up and results
     if (length(x)>1 & verbose){ close(pb) }
     df <- data.frame(DateID=ids, CRA=x, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df
