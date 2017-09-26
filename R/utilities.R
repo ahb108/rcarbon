@@ -16,6 +16,9 @@ reScale <- function(x, type="simple", to=c(0,1), na.rm=TRUE){
     if (!type %in% types){
         stop("The rescale type you have chosen is not currently an option.")
     }
+    if (max(x)-min(x)==0){
+        stop("All the values in x are the same, so cannot be rescaled.")
+    }
     if (na.rm){ x <- na.omit(x) }
     if (type=="normal"){
         res <- (x-mean(x))/sd(x)
