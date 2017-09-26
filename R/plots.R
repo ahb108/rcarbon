@@ -10,6 +10,7 @@
 #' @param axis4  Logical value indicating whether an axis of probabilities values should be displayed. Default is TRUE. 
 #' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
 #' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).
+#' @param customCalCurve A three column data.frame or matrix that allows you to pass and plot a custom calibration curve if you used one during calibration. You can currently only provide one such custom curve which is used for all dates.
 #' @param ... Additional arguments affecting the plot. 
 #' @seealso \code{\link{calibrate}}
 #'
@@ -24,7 +25,7 @@
 #' @import utils
 #' @export  
 
-plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95,...){
+plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95, customCalCurve=NA,...){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
@@ -41,7 +42,6 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     }
     cra <- x$metadata$CRA[ind]
     error <- x$metadata$Error[ind]
-    calcurve <- x$metadata$CalCurve[ind]
     calendars <- c("BP","BCAD")
     if (!calendar %in% calendars){
         stop("The calendar you have chosen is not currently an option.")
@@ -74,7 +74,6 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     par(cex.lab=0.75)
     plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75,...)
     
-
     xticksLab <- xticks
     if (calendar=="BCAD")
     {
@@ -82,7 +81,6 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
       xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
     axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
-    ## axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=0.75)
     
     if (axis4){ axis(4, cex.axis=0.75) }
     if (!HPD){
@@ -93,12 +91,10 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     if(calendar=="BCAD"){hdres=1950-hdres}
 	for (i in 1:nrow(hdres))
 	{
-	 index=which(xvals%in%hdres[i,1]:hdres[i,2])
+	 index <- which(xvals%in%hdres[i,1]:hdres[i,2])
          polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],0,0), col="grey50", border="grey50")
 	}
     }
-
-
 
     if (type=="standard" | type=="auc"){
         if (type=="auc"){
@@ -119,26 +115,39 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
         } else {
             mtext(side=2, line=3, xlab, cex=0.75)
         }
-        calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calcurve,".14c", sep="")
-        options(warn=-1)
-        cc <- readLines(calCurveFile, encoding="UTF-8")
-        cc <- cc[!grepl("[#]",cc)]
-        cc <- read.csv(textConnection(cc), header=FALSE, stringsAsFactors=FALSE)
-        options(warn=0)
-        names(cc) <- c("BP","CRA","Error","D14C","Sigma")
-        if (calendar=="BCAD"){
-            tmp <- (xrng-1950)*-1
-            cc$RX <- 1950-cc$BP
-        } else {
-            tmp <- xrng
-            cc$RX <- cc$BP
+        calcurvemetadata <- x$metadata$CalCurve[ind]
+        calcurvecheck <- TRUE
+        if (calcurvemetadata == "custom" & !class(customCalCurve) %in% c("data.frame","matrix")){
+            calcurvecheck <- FALSE
         }
-        cc <- cc[cc$BP >= min(tmp) & cc$BP < max(tmp),] 
-        cc$Hi <- cc$CRA + 10
-        cc$Lo <- cc$CRA - 10
-        ccbox <- c((max(yrng)*0.2),(max(yrng)*0.9))
-        polygon(c(cc$RX,rev(cc$RX)),c(cc$Hi,rev(cc$Lo)), col=rgb(255,140,0,120,maxColorValue=255), border=NA)
-        lines(cc$RX,cc$CRA, col=rgb(255,140,0,60,maxColorValue=255))
+        cat(calcurvecheck)
+        if (calcurvecheck){
+            if (calcurvemetadata == "custom"){
+                cc <- as.data.frame(customCalCurve)[,1:3]
+                names(cc) <- c("BP","CRA","Error")
+            } else {
+                calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calcurvemetadata,".14c", sep="")
+                options(warn=-1)
+                cc <- readLines(calCurveFile, encoding="UTF-8")
+                cc <- cc[!grepl("[#]",cc)]
+                cc <- read.csv(textConnection(cc), header=FALSE, stringsAsFactors=FALSE)
+                options(warn=0)
+                names(cc) <- c("BP","CRA","Error","D14C","Sigma")
+            }
+            if (calendar=="BCAD"){
+                tmp <- (xrng-1950)*-1
+                cc$RX <- 1950-cc$BP
+            } else {
+                tmp <- xrng
+                cc$RX <- cc$BP
+            }
+            cc <- cc[cc$BP >= min(tmp) & cc$BP < max(tmp),] 
+            cc$Hi <- cc$CRA + 10
+            cc$Lo <- cc$CRA - 10
+            ccbox <- c((max(yrng)*0.2),(max(yrng)*0.9))
+            polygon(c(cc$RX,rev(cc$RX)),c(cc$Hi,rev(cc$Lo)), col=rgb(255,140,0,120,maxColorValue=255), border=NA)
+            lines(cc$RX,cc$CRA, col=rgb(255,140,0,60,maxColorValue=255))
+        }
     }
     if (!is.na(label)){
         legend("topright", label, bty="n", cex=0.75)
