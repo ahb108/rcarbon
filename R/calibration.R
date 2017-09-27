@@ -261,7 +261,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #' @param x Either a vector of uncalibrated radiocarbon ages or an object of class CalGrid.
 #' @param CRAerrors A vector of standard deviations corresponding to each estimated radiocarbon age (ignored if x is a CalGrid object).
 #' @param roundyear An optional vector of IDs for each date (ignored if x is a CalGrid object).
-#' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13' and only one can currently be specified for all dates). 
+#' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible) or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the 'intcal13' curve and only one curve can currently be specified for all dates. 
 #' @param  eps Cut-off value for density calculation (for CalGrid objects only).
 #' @param  compact A logical variable indicating whether only uncalibrated ages with non-zero probabilities should be returned (for CalGrid objects only).
 #' @param  verbose A logical variable indicating whether extra information on progress should be reported (for CalGrid objects only).
@@ -291,13 +291,28 @@ uncalibrate <- function (x, ...) {
 uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', ...){
     
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
-    calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
-    options(warn=-1)
-    calcurve <- readLines(calCurveFile, encoding="UTF-8")
-    calcurve <- calcurve[!grepl("[#]",calcurve)]
-    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-    options(warn=0)
-    colnames(calcurve) <- c("CALBP","C14BP","Error")
+    ## calCurve checks and set-up
+    if (class(calCurves) %in% c("matrix","data.frame")){
+        calcurve <- as.matrix(calCurves)
+        if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
+            stop("The custom calibration curve must have just three numeric columns.")
+        } else {
+            colnames(calcurve) <- c("CALBP","C14BP","Error")
+            if (max(calcurve[,2]) < max(x) | min(calcurve[,2]) > min(x)){
+                stop("The custom calibration curve does not cover the input age range.")
+            }
+        }
+    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+        stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+    } else {
+        calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
+        options(warn=-1)
+        calcurve <- readLines(calCurveFile, encoding="UTF-8")
+        calcurve <- calcurve[!grepl("[#]",calcurve)]
+        calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+        options(warn=0)
+        colnames(calcurve) <- c("CALBP","C14BP","Error")
+    }
     dates <- data.frame(approx(calcurve, xout=x))
     colnames(dates) <- c("calBP", "ccCRA")
     calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$calBP)$y
@@ -315,13 +330,28 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
 
     if (verbose){ print("Uncalibrating...") }
     names(x) <- c("calBP","PrDens")
-    calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
-    options(warn=-1)
-    calcurve <- readLines(calCurveFile, encoding="UTF-8")
-    calcurve <- calcurve[!grepl("[#]",calcurve)]
-    calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-    options(warn=0)
-    colnames(calcurve) <- c("CALBP","C14BP","Error")
+    ## calCurve checks and set-up
+    if (class(calCurves) %in% c("matrix","data.frame")){
+        calcurve <- as.matrix(calCurves)
+        if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
+            stop("The custom calibration curve must have just three numeric columns.")
+        } else {
+            colnames(calcurve) <- c("CALBP","C14BP","Error")
+            if (max(calcurve[,2]) < max(x) | min(calcurve[,2]) > min(x)){
+                stop("The custom calibration curve does not cover the input age range.")
+            }
+        }
+    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+        stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+    } else {
+        calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
+        options(warn=-1)
+        calcurve <- readLines(calCurveFile, encoding="UTF-8")
+        calcurve <- calcurve[!grepl("[#]",calcurve)]
+        calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+        options(warn=0)
+        colnames(calcurve) <- c("CALBP","C14BP","Error")
+    }
     mycras <- uncalibrate(x$calBP)
     res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=0)
     tmp <- vector(mode="list",length=nrow(mycras))
@@ -348,6 +378,7 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
     if (verbose){ print("Done.") }
     return(res)
 }
+
 
 #' @title Convert data to class CalGrid. 
 #'
