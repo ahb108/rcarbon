@@ -19,7 +19,7 @@
 #' @param fitonly A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE. 
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. Then chosen model is then 'uncalibrated' (see \code{\link{uncalibrate}}) and \emph{n} radiocarbon ages are randomly drawn, with \emph{n} equivalent to the number of dates or number of unique site/phase bins if the latter are supplied by the \code{bin} argument. The simulated dates are then calibrated and an SPD for each simulation. This process is repeated \code{nsim} times to produce a set of simulated expected probabilities densities per each calendar year. The probabilites are then z-transformed, and a 95% critical envelope is computed. Local departures from the model are defined as instances where the observed SPD (which is also z-transformed) is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. 
+#' @details The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The chosen model is then 'uncalibrated' (see \code{\link{uncalibrate}}) and \emph{n} radiocarbon ages are randomly drawn, with \emph{n} equivalent to the number of dates or number of unique site/phase bins if the latter are supplied by the \code{bin} argument. The simulated dates are then calibrated and an SPD for each simulation. This process is repeated \code{nsim} times to produce a set of simulated expected probabilities densities per each calendar year. The probabilites are then z-transformed, and a 95% critical envelope is computed. Local departures from the model are defined as instances where the observed SPD (which is also z-transformed) is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. 
 #'
 #' @return An object of class \code{SpdModelTest} with the following elements
 #' \itemize{
@@ -44,7 +44,7 @@
 #' expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,
 #' timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
 #' plot(expnull, xlim=c(16000,9000))
-#' round(expnull$pval,4)
+#' round(expnull$pval,4) #p-value
 #' }
 #' @import utils
 #' @import stats
@@ -175,7 +175,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 #' dates = calibrate(nld.dnk$C14Age,nld.dnk$C14SD,normalised=FALSE)
 #' res = permTest(dates,marks=as.character(nld.dnk$Country),nsim=1000,
 #' bins=bins,runm=200,timeRange=c(10000,4000))
-#' res$pValueList #extract p-values
+#' round(res$pValueList,4) #extract p-values
 #' par(mfrow=c(2,1))
 #' plot(res,focalm="Netherlands",main="Netherlands")
 #' plot(res,focalm="Denmark",main="Denmark")

@@ -492,7 +492,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 
 #' @title Plot a summed probability distribution (from a CalGrid object)
 #'
-#' @description Plot a summed radiocarbon probability distribution. This is basic function for plotting SPDs that have been constructed manually or by calibrating a summed or otherwise irregular CRA grid. In most instances, it is sensible to be use \code{plot.CalSPD} instead.
+#' @description Plot a summed radiocarbon probability distribution. This is a basic function for plotting SPDs that have been constructed manually or by calibrating a summed or otherwise irregular CRA grid. In most instances, it is sensible to use \code{plot.CalSPD} instead.
 #' 
 #' @param x A "CalGrid" class object of summed probabilities per calendar year BP.
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
