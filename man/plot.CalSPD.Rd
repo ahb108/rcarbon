@@ -43,9 +43,7 @@
 \description{
 Plot a summed probability distribution (SPD) of radiocarbon dates
 }
-\seealso{
-\code{\link{spd}};\code{\link{plot.CalGrid}}
-#' @examples
+\examples{
 \dontrun{
 data(emedyd)
 levant <- emedyd[emedyd$Region=="1"|emedyd$Region=="2",]
@@ -59,4 +57,7 @@ legend("topleft", legend=c("All Levant dates","Northern Levant only"), fill=c("g
 plot(spd.levant, runm=50, xlim=c(16000,9000), type="simple")
 plot(spd.northernlevant, runm=50, col="red", type="simple", add=TRUE)
 }
+}
+\seealso{
+\code{\link{spd}};\code{\link{plot.CalGrid}}
 }

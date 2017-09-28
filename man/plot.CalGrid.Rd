@@ -11,6 +11,8 @@
 \arguments{
 \item{x}{A "CalGrid" class object of summed probabilities per calendar year BP.}
 
+\item{runm}{A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA}
+
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
 \item{fill.p}{Fill colour of the polygon depicting the summed probability distribution.}

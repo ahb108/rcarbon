@@ -412,7 +412,7 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #'
 #'
 #' @seealso \code{\link{spd}};\code{\link{plot.CalGrid}}
-#' #' @examples
+#' @examples
 #' \dontrun{
 #' data(emedyd)
 #' levant <- emedyd[emedyd$Region=="1"|emedyd$Region=="2",]
@@ -495,6 +495,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @description Plot a summed radiocarbon probability distribution. This is basic function for plotting SPDs that have been constructed manually or by calibrating a summed or otherwise irregular CRA grid. In most instances, it is sensible to be use \code{plot.CalSPD} instead.
 #' 
 #' @param x A "CalGrid" class object of summed probabilities per calendar year BP.
+#' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param fill.p Fill colour of the polygon depicting the summed probability distribution.
 #' @param border.p Border colour of the polygon depicting the summed probability distribution.
