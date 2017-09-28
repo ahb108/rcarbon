@@ -4,7 +4,7 @@ citEntry(entry = "Manual",
     author = personList(as.person("Andrew Bevan"),
 			as.person("Enrico R. Crema")),
     year = "2017",
-    url = "https://CRAN.R-project.org/package=rcarbon",
+    url = "https://github.com/ahb108/rcarbon",
     textVersion =
     paste("Bevan, A. and Crema, E.R. (2017)",
     "rcarbon v1.0.0 : Methods for calibrating and analysing radiocarbon dates",
