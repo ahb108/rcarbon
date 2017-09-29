@@ -340,11 +340,11 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @param breaks A vector of break points for defining the temporal slices.
 #' @param spatialweights A \code{spatialweights} class object defining the spatial weights between the locations (cd. \code{\link{spweights}})
 #' @param nsim The total number of simulations. Default is 1000.
-#' @param runm The window size of the moving window average. Must be set to \code{NA} if a the rates of change area calculated from the raw SPDs. 
+#' @param runm The window size of the moving window average. Must be set to \code{NA} if the rates of change are calculated from the raw SPDs. 
 #' @param permute Indicates whether the permutations should be based on the \code{"bins"} or the \code{"locations"}. Default is \code{"locations"}. 
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
-#' @param datenormalised a logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1.Default is FALSE. 
-#' @param verbose a logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#' @param datenormalised A logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1. Default is FALSE. 
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #'
 #' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates, weighting the contribution of dates from neighbouring sites using a weight scheme provided by the \code{spatialweights} class object; 2) define temporal slices (using \code{breaks} as break values), then compute the total probability mass within each slice; 3) compute the rate of change between abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of individual bins or the entire sequence of bins associated with a given location and carry out steps 1 to 3; 5) repeat step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate with the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.    
