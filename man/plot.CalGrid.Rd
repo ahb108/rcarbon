@@ -34,7 +34,7 @@
 \item{...}{Additional arguments affecting the plot}
 }
 \description{
-Plot a summed radiocarbon probability distribution. This is basic function for plotting SPDs that have been constructed manually or by calibrating a summed or otherwise irregular CRA grid. In most instances, it is sensible to be use \code{plot.CalSPD} instead.
+Plot a summed radiocarbon probability distribution. This is a basic function for plotting SPDs that have been constructed manually or by calibrating a summed or otherwise irregular CRA grid. In most instances, it is sensible to use \code{plot.CalSPD} instead.
 }
 \examples{
 data(euroevol)

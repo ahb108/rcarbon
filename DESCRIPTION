@@ -1,11 +1,9 @@
 Package: rcarbon
-Title: Calibration and analysis of radiocarbon dates
+Title: Calibration and Analysis of Radiocarbon Dates
 Version: 1.0.0
-Authors@R: as.person(c(
-    "Andrew Bevan <andrew.bevan@gmail.com> [aut, cre]", 
-    "Enrico Crema <enrico.crema@gmail.com> [aut]"
-  ))
-Description: This package handles the calibration and analysis of radiocarbon, often but not exclusively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists. 
+Author: Andrew Bevan, Enrico Crema
+Maintainer: Andrew Bevan <andrew.bevan@gmail.com>
+Description: Enables the calibration and analysis of radiocarbon dates, often but not exclusively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration, and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists. 
 Depends: R (>= 3.3.1)
 Imports: sp,stats,graphics,grDevices,utils,doParallel,foreach,parallel
 Suggests:

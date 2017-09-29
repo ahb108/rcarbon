@@ -50,10 +50,12 @@ levant <- emedyd[emedyd$Region=="1"|emedyd$Region=="2",]
 bins <- binPrep(levant$SiteName, levant$CRA, h=50)
 x <- calibrate(levant$CRA, levant$Error, normalised=FALSE)
 spd.levant <- spd(x, bins=bins, timeRange=c(17000,8000))
-spd.northernlevant <- spd(x[levant$Region=="2"], bins=bins[levant$Region=="2"], timeRange=c(17000,8000))
+spd.northernlevant <- spd(x[levant$Region=="2"], bins=bins[levant$Region=="2"],
+timeRange=c(17000,8000))
 plot(spd.levant, runm=50, xlim=c(16000,9000))
 plot(spd.northernlevant, runm=50, add=TRUE, fill.p="black")
-legend("topleft", legend=c("All Levant dates","Northern Levant only"), fill=c("grey75","black"), border=NA)
+legend("topleft", legend=c("All Levant dates","Northern Levant only"), 
+fill=c("grey75","black"), border=NA)
 plot(spd.levant, runm=50, xlim=c(16000,9000), type="simple")
 plot(spd.northernlevant, runm=50, col="red", type="simple", add=TRUE)
 }
