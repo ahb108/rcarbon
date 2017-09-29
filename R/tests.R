@@ -331,7 +331,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 
 #' @title Spatial Permutation Test of summed probability distributions.
 #'
-#' @description This function carries out local spatial permutation test of the summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al 2017). 
+#' @description This function carries out local spatial permutation tests of summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al 2017).
 #' 
 #' @param calDates  A \code{CalDates} class object.
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP
@@ -347,7 +347,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @param verbose a logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #'
-#' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates weighting the contribution of dates from neighbouring site using a weight scheme provided by the \code{spatialweights} class object. 2) define temporal slices (using \code{breaks} as break values) the compute the total probability mass within each slice; 3) compute the rate of change between as abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of indivual bins or the entire sequence of bins associated with a given location and carry out steps 1--3; 5) repeate step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate to the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.    
+#' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates, weighting the contribution of dates from neighbouring sites using a weight scheme provided by the \code{spatialweights} class object; 2) define temporal slices (using \code{breaks} as break values), then compute the total probability mass within each slice; 3) compute the rate of change between abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of individual bins or the entire sequence of bins associated with a given location and carry out steps 1 to 3; 5) repeat step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate with the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.    
 #'
 #' @return A \code{spatialTest} class object
 #'
