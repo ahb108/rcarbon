@@ -57,48 +57,48 @@ runMean <- function(x, n, edge="NA"){
     return(res)
 }
 
-# 
-# quickMarks <- function(x, verbose=TRUE){
-# 
-#     if (!"CalDates" %in% class(x)){
-#         stop("Input must be of class \"CalDates\"")
-#     }
-#     df <- as.data.frame(matrix(ncol=8,nrow=nrow(x$metadata)), stringsasFactors=TRUE)
-#     names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
-#     print("Extracting approximate values...")
-#     if (nrow(x$metadata)>1 & verbose){
-#         flush.console()
-#         pb <- txtProgressBar(min=1, max=nrow(x$metadata), style=3)
-#     }
-#     for (a in 1:nrow(x$metadata)){
-#         if (nrow(x$metadata)>1 & verbose){ setTxtProgressBar(pb, a) }
-#         if (length(x$calmatrix)>1){
-#             tmp <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,a])
-#             tmp <- tmp[tmp$PrDens >0,] 
-#         } else {
-#             tmp <- x$grids[[a]]
-#         }
-#         tmp <- tmp[tmp$PrDens>0,]
-#         tmp <- tmp[with(tmp, order(-PrDens)), ]
-#         tmp$Cumul <- cumsum(tmp$PrDens)
-#         tmp$Cumul <- tmp$Cumul/max(tmp$Cumul)
-#         tmp1 <- tmp[tmp$Cumul <= 0.95,]
-#         df[a,"q95s"] <- min(tmp1$calBP)
-#         df[a,"q95e"] <- max(tmp1$calBP)
-#         wdth <- max(tmp1$calBP)-min(tmp1$calBP)
-#         df[a,"q68s"] <- min(tmp1$calBP) + (wdth*0.25)
-#         df[a,"q68e"] <- max(tmp1$calBP) - (wdth*0.25)
-#         df[a,"qMed"] <- round(mean(c(df[a,"q95s"],df[a,"q95e"])),0)
-#         df[a,"DateID"] <- as.character(x$metadata$DateID[a])
-#         df[a,"CRA"] <- x$metadata$CRA[a]
-#         df[a,"Error"] <- x$metadata$Error[a]
-#     }
-#     if (nrow(x$metadata)>1 & verbose){ close(pb) }
-#     class(df) <- append(class(df),"quickMarks")
-#     return(df)
-# }
-# 
-# 
+
+quickMarks <- function(x, verbose=TRUE){
+
+    if (!"CalDates" %in% class(x)){
+        stop("Input must be of class \"CalDates\"")
+    }
+    df <- as.data.frame(matrix(ncol=8,nrow=nrow(x$metadata)), stringsasFactors=TRUE)
+    names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
+    print("Extracting approximate values...")
+    if (nrow(x$metadata)>1 & verbose){
+        flush.console()
+        pb <- txtProgressBar(min=1, max=nrow(x$metadata), style=3)
+    }
+    for (a in 1:nrow(x$metadata)){
+        if (nrow(x$metadata)>1 & verbose){ setTxtProgressBar(pb, a) }
+        if (length(x$calmatrix)>1){
+            tmp <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,a])
+            tmp <- tmp[tmp$PrDens >0,] 
+        } else {
+            tmp <- x$grids[[a]]
+        }
+        tmp <- tmp[tmp$PrDens>0,]
+        tmp <- tmp[with(tmp, order(-PrDens)), ]
+        tmp$Cumul <- cumsum(tmp$PrDens)
+        tmp$Cumul <- tmp$Cumul/max(tmp$Cumul)
+        tmp1 <- tmp[tmp$Cumul <= 0.95,]
+        df[a,"q95s"] <- min(tmp1$calBP)
+        df[a,"q95e"] <- max(tmp1$calBP)
+        wdth <- max(tmp1$calBP)-min(tmp1$calBP)
+        df[a,"q68s"] <- min(tmp1$calBP) + (wdth*0.25)
+        df[a,"q68e"] <- max(tmp1$calBP) - (wdth*0.25)
+        df[a,"qMed"] <- round(mean(c(df[a,"q95s"],df[a,"q95e"])),0)
+        df[a,"DateID"] <- as.character(x$metadata$DateID[a])
+        df[a,"CRA"] <- x$metadata$CRA[a]
+        df[a,"Error"] <- x$metadata$Error[a]
+    }
+    if (nrow(x$metadata)>1 & verbose){ close(pb) }
+    class(df) <- append(class(df),"quickMarks")
+    return(df)
+}
+
+
 
 #' Smooth a numeric vector using a Gaussian window
 #' 
@@ -368,60 +368,60 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
 }
 
 
-# gaussW <- function(x, bw){
-#     exp(-(x^2)/(2*(bw^2)))
-# }
-# 
-# 
-# 
-# rybcolourmap <- function(range, ...) {
-#   col <- rybcolours(range, ...)
-#   z <- colourmap(col, range=range)
-#   return(z)
-# }
+gaussW <- function(x, bw){
+    exp(-(x^2)/(2*(bw^2)))
+}
 
-# rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
-#   stopifnot(is.numeric(range) && length(range)==2)
-#   stopifnot(all(is.finite(range)))
-#   yr <- colorRampPalette(c("yellow","orangered","darkred"), space="rgb")
-#   cb <- colorRampPalette(c("blue","cyan","yellow"), space="rgb")
-#   depths <- range[1]
-#   peaks <- range[2]
-#   dv <- diff(range)/(ncolours - 1)
-#   epsilon <- nbeach * dv/2
-#   lowtide <- max(sealevel - epsilon, depths)
-#   hightide <-  min(sealevel + epsilon, peaks)
-#   countbetween <- function(a, b, delta) { max(0, round((b-a)/delta)) }
-#   nsea <- countbetween(depths, lowtide, dv)
-#   nbeach <- countbetween(lowtide,  hightide, dv)
-#   nland <- countbetween(hightide,  peaks, dv)
-#   colours <- character(0)
-#   if(nsea > 0)  colours <- cb(nsea) # cyan/blue
-#   if(nbeach > 0)  colours <- c(colours,rep("yellow",nbeach)) # yellow
-#   if(nland > 0)  colours <- c(colours, yr(nland)) # darkred/yellow
-#   return(colours)
-# }
-# 
-# spJitter <- function(pts, xamount, yamount=xamount){
-#     proj <- NA
-#     if (!is.na(proj4string(pts)) | proj4string(pts)!="NA"){
-#         proj <- proj4string(pts)
-#     }
-#     if (class(pts) == "SpatialPointsDataFrame"){
-#         df <- cbind(coordinates(pts),pts@data)
-#         df[,1] <- jitter(df[,1],amount=xamount)
-#         df[,2] <- jitter(df[,2],amount=yamount)
-#         coordinates(df) <- df[,1:2]
-#         proj4string(df) <- proj
-#     } else if (class(pts) == "SpatialPoints"){
-#         df <- coordinates(pts)
-#         df[,1] <- jitter(df[,1],amount=xamount)
-#         df[,2] <- jitter(df[,2],amount=yamount)
-#         df <- SpatialPoints(df, proj4string=CRS(proj))
-#     } else {
-#         stop("Only works for SpatialPoints* at present.")
-#     }
-#     return(df)
-# }
-# 
+
+
+rybcolourmap <- function(range, ...) {
+  col <- rybcolours(range, ...)
+  z <- colourmap(col, range=range)
+  return(z)
+}
+
+rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
+  stopifnot(is.numeric(range) && length(range)==2)
+  stopifnot(all(is.finite(range)))
+  yr <- colorRampPalette(c("yellow","orangered","darkred"), space="rgb")
+  cb <- colorRampPalette(c("blue","cyan","yellow"), space="rgb")
+  depths <- range[1]
+  peaks <- range[2]
+  dv <- diff(range)/(ncolours - 1)
+  epsilon <- nbeach * dv/2
+  lowtide <- max(sealevel - epsilon, depths)
+  hightide <-  min(sealevel + epsilon, peaks)
+  countbetween <- function(a, b, delta) { max(0, round((b-a)/delta)) }
+  nsea <- countbetween(depths, lowtide, dv)
+  nbeach <- countbetween(lowtide,  hightide, dv)
+  nland <- countbetween(hightide,  peaks, dv)
+  colours <- character(0)
+  if(nsea > 0)  colours <- cb(nsea) # cyan/blue
+  if(nbeach > 0)  colours <- c(colours,rep("yellow",nbeach)) # yellow
+  if(nland > 0)  colours <- c(colours, yr(nland)) # darkred/yellow
+  return(colours)
+}
+
+spJitter <- function(pts, xamount, yamount=xamount){
+    proj <- NA
+    if (!is.na(proj4string(pts)) | proj4string(pts)!="NA"){
+        proj <- proj4string(pts)
+    }
+    if (class(pts) == "SpatialPointsDataFrame"){
+        df <- cbind(coordinates(pts),pts@data)
+        df[,1] <- jitter(df[,1],amount=xamount)
+        df[,2] <- jitter(df[,2],amount=yamount)
+        coordinates(df) <- df[,1:2]
+        proj4string(df) <- proj
+    } else if (class(pts) == "SpatialPoints"){
+        df <- coordinates(pts)
+        df[,1] <- jitter(df[,1],amount=xamount)
+        df[,2] <- jitter(df[,2],amount=yamount)
+        df <- SpatialPoints(df, proj4string=CRS(proj))
+    } else {
+        stop("Only works for SpatialPoints* at present.")
+    }
+    return(df)
+}
+
 
