@@ -58,45 +58,45 @@ runMean <- function(x, n, edge="NA"){
 }
 
 
-quickMarks <- function(x, verbose=TRUE){
+## quickMarks <- function(x, verbose=TRUE){
 
-    if (!"CalDates" %in% class(x)){
-        stop("Input must be of class \"CalDates\"")
-    }
-    df <- as.data.frame(matrix(ncol=8,nrow=nrow(x$metadata)), stringsasFactors=TRUE)
-    names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
-    print("Extracting approximate values...")
-    if (nrow(x$metadata)>1 & verbose){
-        flush.console()
-        pb <- txtProgressBar(min=1, max=nrow(x$metadata), style=3)
-    }
-    for (a in 1:nrow(x$metadata)){
-        if (nrow(x$metadata)>1 & verbose){ setTxtProgressBar(pb, a) }
-        if (length(x$calmatrix)>1){
-            tmp <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,a])
-            tmp <- tmp[tmp$PrDens >0,] 
-        } else {
-            tmp <- x$grids[[a]]
-        }
-        tmp <- tmp[tmp$PrDens>0,]
-        tmp <- tmp[with(tmp, order(-PrDens)), ]
-        tmp$Cumul <- cumsum(tmp$PrDens)
-        tmp$Cumul <- tmp$Cumul/max(tmp$Cumul)
-        tmp1 <- tmp[tmp$Cumul <= 0.95,]
-        df[a,"q95s"] <- min(tmp1$calBP)
-        df[a,"q95e"] <- max(tmp1$calBP)
-        wdth <- max(tmp1$calBP)-min(tmp1$calBP)
-        df[a,"q68s"] <- min(tmp1$calBP) + (wdth*0.25)
-        df[a,"q68e"] <- max(tmp1$calBP) - (wdth*0.25)
-        df[a,"qMed"] <- round(mean(c(df[a,"q95s"],df[a,"q95e"])),0)
-        df[a,"DateID"] <- as.character(x$metadata$DateID[a])
-        df[a,"CRA"] <- x$metadata$CRA[a]
-        df[a,"Error"] <- x$metadata$Error[a]
-    }
-    if (nrow(x$metadata)>1 & verbose){ close(pb) }
-    class(df) <- append(class(df),"quickMarks")
-    return(df)
-}
+##     if (!"CalDates" %in% class(x)){
+##         stop("Input must be of class \"CalDates\"")
+##     }
+##     df <- as.data.frame(matrix(ncol=8,nrow=nrow(x$metadata)), stringsasFactors=TRUE)
+##     names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
+##     print("Extracting approximate values...")
+##     if (nrow(x$metadata)>1 & verbose){
+##         flush.console()
+##         pb <- txtProgressBar(min=1, max=nrow(x$metadata), style=3)
+##     }
+##     for (a in 1:nrow(x$metadata)){
+##         if (nrow(x$metadata)>1 & verbose){ setTxtProgressBar(pb, a) }
+##         if (length(x$calmatrix)>1){
+##             tmp <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,a])
+##             tmp <- tmp[tmp$PrDens >0,] 
+##         } else {
+##             tmp <- x$grids[[a]]
+##         }
+##         tmp <- tmp[tmp$PrDens>0,]
+##         tmp <- tmp[with(tmp, order(-PrDens)), ]
+##         tmp$Cumul <- cumsum(tmp$PrDens)
+##         tmp$Cumul <- tmp$Cumul/max(tmp$Cumul)
+##         tmp1 <- tmp[tmp$Cumul <= 0.95,]
+##         df[a,"q95s"] <- min(tmp1$calBP)
+##         df[a,"q95e"] <- max(tmp1$calBP)
+##         wdth <- max(tmp1$calBP)-min(tmp1$calBP)
+##         df[a,"q68s"] <- min(tmp1$calBP) + (wdth*0.25)
+##         df[a,"q68e"] <- max(tmp1$calBP) - (wdth*0.25)
+##         df[a,"qMed"] <- round(mean(c(df[a,"q95s"],df[a,"q95e"])),0)
+##         df[a,"DateID"] <- as.character(x$metadata$DateID[a])
+##         df[a,"CRA"] <- x$metadata$CRA[a]
+##         df[a,"Error"] <- x$metadata$Error[a]
+##     }
+##     if (nrow(x$metadata)>1 & verbose){ close(pb) }
+##     class(df) <- append(class(df),"quickMarks")
+##     return(df)
+## }
 
 
 
