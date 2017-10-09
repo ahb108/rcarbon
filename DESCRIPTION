@@ -3,8 +3,7 @@ Title: Calibration and Analysis of Radiocarbon Dates
 Version: 1.0.0
 Author: Andrew Bevan, Enrico Crema
 Maintainer: Andrew Bevan <andrew.bevan@gmail.com>, Enrico Crema <enrico.crema@gmail.com>
-Description: Enables the calibration and analysis of radiocarbon dates, often but not exclusively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration, and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists, including: Monte-Carlo simulation test (Timpson et al 2014 <doi:10.1016/j.jas.2014.08.011>), random mark permutation test (Crema et al 2016 <doi:10.1371/journal.pone.0154809>) and spatial permutation tests (Crema, Bevan, and Shennan 2017 <doi:10.1016/j.jas.2017.09.007>).
-
+Description: Enables the calibration and analysis of radiocarbon dates, often but not exclusively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration, and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists. 
 Depends: R (>= 3.3.1)
 Imports: sp,stats,graphics,grDevices,utils,doParallel,foreach,parallel
 Suggests:
