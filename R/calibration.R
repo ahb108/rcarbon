@@ -567,7 +567,7 @@ medCal <- function(x)
 {
 	ndates=nrow(x$metadata)
 	meddates=numeric()
-	if (is.na(x$calmatrix))
+	if (is.na(x$calmatrix[1]))
 	{
 		for (i in 1:ndates)
 		{
