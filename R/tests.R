@@ -105,7 +105,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     }
     cragrid <- uncalibrate(as.CalGrid(predgrid), calCurves=calCurves, compact=FALSE, verbose=FALSE)
     cragrid <- cragrid[cragrid$CRA <= max(x$metadata$CRA) & cragrid$CRA >= min(x$metadata$CRA),]
-    sim <- foreach (s = 1:nsim, .combine='rbind', .packages='rcarbon') %dopar% {   #### FS CHANGE
+    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {   #### FS CHANGE
         if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
