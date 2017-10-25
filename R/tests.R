@@ -60,7 +60,8 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 	ncores=1
     } else {  ### FS ADDITION
       require(foreach)
-      cl <- makeCluster(ncores)
+      cl <- parallel::makeCluster(ncores)
+      doParallel::registerDoParallel(cl)
     }
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
