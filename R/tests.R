@@ -54,11 +54,14 @@
 #' @export
 
 modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
-
+    
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
-    }	
+    } else {
+      cl <- parallel::makeCluster(ncores)
+      doParallel::registerDoParallel(cl)
+    }
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
         samplesize <- nrow(x$metadata)
@@ -101,18 +104,19 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     }
     cragrid <- uncalibrate(as.CalGrid(predgrid), calCurves=calCurves, compact=FALSE, verbose=FALSE)
     cragrid <- cragrid[cragrid$CRA <= max(x$metadata$CRA) & cragrid$CRA >= min(x$metadata$CRA),]
-    for (s in 1:nsim){
+    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
         if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
-        tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=ncores, verbose=FALSE, calMatrix=TRUE)
+        tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE)
         simDateMatrix <- tmp$calmatrix
-        sim[,s] <- apply(simDateMatrix,1,sum)
-        sim[,s] <- (sim[,s]/sum(sim[,s])) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
-        if (spdnormalised){ sim[,s] <- (sim[,s]/sum(sim[,s])) }
+        aux <- apply(simDateMatrix,1,sum)
+        aux <- (aux/sum(aux)) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
+        if (spdnormalised){ aux <- (aux/sum(aux)) }
         if (!is.na(runm)){
-            sim[,s] <- runMean(sim[,s], runm, edge="fill")
+            aux <- runMean(aux, runm, edge="fill")
         }
+	aux
     }
     if (verbose){ close(pb) }
     ## Envelope, z-scores, global p-value
