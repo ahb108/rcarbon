@@ -60,3 +60,35 @@
 #' plot(spd.northernlevant)
 #'}
 "emedyd"
+
+#' @title Radiocarbon dates from Britain and Ireland
+#' @description Archaeological radiocarbon dates (n=30,516) and site coordinates from a datset spanning Brtain and Ireland.  
+
+#' @format A data.frame with the following variables:
+#' \describe{
+#' \item{\code{DateID}}{ID of each radiocarbon date}
+#' \item{\code{LabID}}{Laboratory code of each radiocarbon date}
+#' \item{\code{CRA}}{Conventional radiocarbon age in 14C years BP}
+#' \item{\code{Error}}{Radiocarbon age error}
+#' \item{\code{Material}}{Material of the dated sample}
+#' #' \item{\code{Species}}{Species of the dated sample if known}
+#' \item{\code{SiteID}}{ID of the site from which the sample has been recovered}
+#' #' \item{\code{SiteName}}{Name of the site from which the sample has been recovered}
+#' \item{\code{Latitude}}{Latitude of the sampling site in decimal degrees}
+#' \item{\code{Longitude}}{Longitude of the sampling site in decimal degrees}
+#' \item{\code{Region}}{Region of Britain or Ireland where the sampling site is located}
+#'}
+#' @source Bevan, A. 2017. Radiocarbon Dataset and Analysis from Bevan, A., Colledge, S., Fuller, D., Fyfe, R., Shennan, S. and C. Stevens 2017. Holocene fluctuations in human population demonstrate repeated links to food production and climate, PNAS (http://discovery.ucl.ac.uk/10025178/(
+#' @references
+#' Bevan, A. 2017. Radiocarbon Dataset and Analysis from Bevan, A., Colledge, S., Fuller, D., Fyfe, R., Shennan, S. and C. Stevens 2017. Holocene fluctuations in human population demonstrate repeated links to food production and climate, PNAS.
+#'
+#' @examples
+#' \dontrun{
+#' data(gbie)
+#' Ireland <- subset(gbie, Region=="Ireland")
+#' bins <- binPrep(Ireland$SiteID, Ireland$CRA, h=100)
+#' x <- calibrate(Ireland$CRA, Ireland$Error)
+#' spd.ireland <- spd(x, bins=bins, runm=50, timeRange=c(8000,4000))
+#' plot(spd.ireland)
+#'}
+"gbie"
