@@ -58,8 +58,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
-    } else {  ### FS ADDITION
-      require(foreach)
+    } else {
       cl <- parallel::makeCluster(ncores)
       doParallel::registerDoParallel(cl)
     }
@@ -105,19 +104,19 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     }
     cragrid <- uncalibrate(as.CalGrid(predgrid), calCurves=calCurves, compact=FALSE, verbose=FALSE)
     cragrid <- cragrid[cragrid$CRA <= max(x$metadata$CRA) & cragrid$CRA >= min(x$metadata$CRA),]
-    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {   #### FS CHANGE
+    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
         if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
         tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE)
         simDateMatrix <- tmp$calmatrix
-        aux <- apply(simDateMatrix,1,sum)  #### FS CHANGE
-        aux <- (aux/sum(aux)) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])  #### FS CHANGE
-        if (spdnormalised){ aux <- (aux/sum(aux)) }  #### FS CHANGE
+        aux <- apply(simDateMatrix,1,sum)
+        aux <- (aux/sum(aux)) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
+        if (spdnormalised){ aux <- (aux/sum(aux)) }
         if (!is.na(runm)){
-            aux <- runMean(aux, runm, edge="fill")  #### FS CHANGE
+            aux <- runMean(aux, runm, edge="fill")
         }
-	aux  #### FS ADDITION
+	aux
     }
     if (verbose){ close(pb) }
     ## Envelope, z-scores, global p-value
