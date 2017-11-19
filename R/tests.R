@@ -747,3 +747,101 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 }
 
 
+
+#' @title Point to point test of SPD 
+#'
+#' @description Test for signficance in the  difference in SPD values between two points in time. 
+#'
+#' @param x result of modelTest with raw=TRUE.
+#' @param p1 calendar year (in BP) of start point.
+#' @param p2 calendar year (in BP) of end point.
+#' @param interactive if set to TRUE enables an interactive selection of p1 and p2 from a graphical display of the SPD. Disabled when \code{p1} and \code{p2} are defined.
+#'
+#' @details The function compare observed differences in the SPD between two points in time and againsts a distribution of simulated values under the null hypothesis obtained from the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot).   
+#'
+#'
+#' @return A list with the BP dates for the two points and the  p-value obtained from a two-sided test.
+#'
+#' @references 
+#'  Edinborough, K., Porcic, M., Martindale, A., Brown, T.J., Supernant, K., Ames, K.M., (2017). Radiocarbon test for demographic events in written and oral history. PNAS 201713012. doi:10.1073/pnas.1713012114
+#' @examples
+#' ## Example with Younger Dryas period Near East, including site bins
+#' \dontrun{
+#' data(emedyd)
+#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+#' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
+#' nsim=10 #toy example
+#' expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,
+#' timeRange=c(16000,9000), model="exponential", datenormalised=FALSE, raw=TRUE)
+#' p2pTest(x=expnull,p1=13000,p2=12500) #non-interactive mode
+#' p2pTest(x=expnull) #interactive mode
+#' }
+#' @import utils
+#' @import stats
+#' @export
+
+
+p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE)
+{
+
+if (is.na(x$sim[1]))
+{
+ stop("x should be an SpdModelTest class object produced using the modelTest() with raw=TRUE")
+}
+
+ if (!is.na(p1)&!is.na(p2))
+         {
+	 if (p2>p1){stop("the end point should be more recent than the start point")}
+	 interactive=FALSE
+	 }
+ if (interactive)
+ {
+    plot(x)	
+    print("select start point")
+    p1=round(locator(n=1)$x[1])
+    index1=match(p1,x$result$calBP)
+    p1.y = x$result[index1,2]
+    points(p1,p1.y,pch=20)
+
+    print("select end point")
+    p2=round(locator(n=1)$x[1])
+    if (p2>p1)
+    {
+	print("the end point should be more recent than the start point")
+    	while(p2>p1)
+	{
+         print("select end point")
+         p2=round(locator(n=1)$x[1])
+	}
+    }	    
+    index2=match(p2,x$result$calBP)
+    p2.y = x$result[index2,2]
+    points(p2,p2.y,pch=20)
+    lines(x$result$calBP[index1:index2],x$result$PrDens[index1:index2],lwd=2)
+ }
+
+if (!interactive)
+{
+    index1=match(p1,x$result$calBP)
+    p1.y = x$result[index1,2]
+    index2=match(p2,x$result$calBP)
+    p2.y = x$result[index2,2]
+}
+
+ if (!p1%in%x$result$calBP | !p2%in%x$result$calBP)
+ {
+	stop("p1 and p2 should be within the temporal range of the spd")
+ }
+ 
+ obs.diff = p1.y-p2.y
+ sim.diff = x$sim[index1,]-x$sim[index2,] 
+ nsim = ncol(x$sim) 
+ lo = sum(obs.diff < sim.diff)
+ hi = sum(obs.diff > sim.diff)
+ eq = sum(obs.diff == sim.diff)
+ pvalHi=(lo+eq+1)/c(nsim+1)
+ pvalLo=(hi+eq+1)/c(nsim+1)
+ pval=ifelse(pvalHi<pvalLo,pvalHi,pvalLo)*2
+ 
+ return(list(p1=p1,p2=p2,pval=pval))	
+}
