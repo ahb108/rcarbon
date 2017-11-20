@@ -18,7 +18,7 @@ spd(x, timeRange, bins = NA, datenormalised = FALSE,
 
 \item{spdnormalised}{A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity.}
 
-\item{runm}{A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied.Default is NA}
+\item{runm}{A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
