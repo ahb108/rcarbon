@@ -198,7 +198,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
-    baseline <- rep(0,nrow(obs))
+    baseline <- rep(NA,nrow(obs))
     if (drawaxes & bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     } else if (bbty != "n"){
