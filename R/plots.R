@@ -208,14 +208,14 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 	box()
     axis(side=2)}
     boomPlot <- baseline
-    boomPlot[booms] <- obs[booms,2]
+ 	if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
     bustPlot <- baseline
-    bustPlot[busts] <- obs[busts,2]
+    if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }           
     boomBlocks <- vector("list")
     counter <- 0
     state <- "off"
     for (i in 1:length(boomPlot)){
-        if (boomPlot[i]>0&state=="off"){
+        if (!is.na(boomPlot[i])&state=="off"){
             counter <- counter+1
             boomBlocks <- c(boomBlocks,vector("list",1))
             boomBlocks[[counter]] <- vector("list",2)
@@ -224,11 +224,11 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
             state <- "on"
         }
         if (state=="on"){
-            if (boomPlot[i]>0){
+            if (!is.na(boomPlot[i])){
                 boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
                 boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
             }
-            if (boomPlot[i]==0){
+            if (is.na(boomPlot[i])){
                 state <- "off"
             }
         }   
@@ -237,7 +237,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
     counter <- 0
     state <- "off"
     for (i in 1:length(bustPlot)){
-        if (bustPlot[i]>0&state=="off"){
+        if (!is.na(bustPlot[i])&state=="off"){
             counter <- counter+1
             bustBlocks <- c(bustBlocks,vector("list",1))
             bustBlocks[[counter]] <- vector("list",2)
@@ -246,11 +246,11 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
             state <- "on"
         }
         if (state=="on"){
-            if (bustPlot[i]>0){
+            if (!is.na(bustPlot[i])){
                 bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
                 bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
             }
-            if (bustPlot[i]==0){
+            if (is.na(bustPlot[i])){
                 state <- "off"
             }
         }   
