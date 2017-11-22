@@ -1,3 +1,6 @@
+ if(getRversion() >= "2.15.1")  utils::globalVariables(c("s"))
+
+
 
 #' @title Monte-Carlo simulation test for SPDs 
 #'
