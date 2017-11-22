@@ -16,13 +16,13 @@ p2pTest(x, p1 = NA, p2 = NA, interactive = TRUE)
 \item{interactive}{if set to TRUE enables an interactive selection of p1 and p2 from a graphical display of the SPD. Disabled when \code{p1} and \code{p2} are defined.}
 }
 \value{
-A list with the BP dates for the two points and the  p-value obtained from a two-sided test.
+A list with: the BP dates for the two points and the p-value obtained from a two-sided test.
 }
 \description{
-Test for signficance in the  difference in SPD values between two points in time.
+Test for evaluating the difference in the summed probability values associated with two points in time.
 }
 \details{
-The function compare observed differences in the SPD between two points in time and againsts a distribution of simulated values under the null hypothesis obtained from the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot).
+The function compares observed differences in the summed probability values associated with two points in time againsts a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot).
 }
 \examples{
 ## Example with Younger Dryas period Near East, including site bins

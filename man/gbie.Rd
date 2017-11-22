@@ -19,7 +19,7 @@
 \item{\code{Region}}{Region of Britain or Ireland where the sampling site is located}
 }}
 \source{
-Bevan, A. 2017. Radiocarbon Dataset and Analysis from Bevan, A., Colledge, S., Fuller, D., Fyfe, R., Shennan, S. and C. Stevens 2017. Holocene fluctuations in human population demonstrate repeated links to food production and climate, PNAS (http://discovery.ucl.ac.uk/10025178/(
+Bevan, A. 2017. Radiocarbon Dataset and Analysis from Bevan, A., Colledge, S., Fuller, D., Fyfe, R., Shennan, S. and C. Stevens 2017. Holocene fluctuations in human population demonstrate repeated links to food production and climate, PNAS (http://discovery.ucl.ac.uk/10025178/)
 }
 \usage{
 gbie
@@ -38,6 +38,6 @@ plot(spd.ireland)
 }
 }
 \references{
-Bevan, A. 2017. Radiocarbon Dataset and Analysis from Bevan, A., Colledge, S., Fuller, D., Fyfe, R., Shennan, S. and C. Stevens 2017. Holocene fluctuations in human population demonstrate repeated links to food production and climate, PNAS.
+Bevan, A. 2017. Radiocarbon Dataset and Analysis from Bevan, A., Colledge, S., Fuller, D., Fyfe, R., Shennan, S. and C. Stevens 2017. Holocene fluctuations in human population demonstrate repeated links to food production and climate, PNAS. doi: 10.1073/pnas.1709190114
 }
 \keyword{datasets}

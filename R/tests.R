@@ -750,17 +750,17 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
 #' @title Point to point test of SPD 
 #'
-#' @description Test for signficance in the  difference in SPD values between two points in time. 
+#' @description Test for evaluating the difference in the summed probability values associated with two points in time.
 #'
 #' @param x result of modelTest with raw=TRUE.
 #' @param p1 calendar year (in BP) of start point.
 #' @param p2 calendar year (in BP) of end point.
 #' @param interactive if set to TRUE enables an interactive selection of p1 and p2 from a graphical display of the SPD. Disabled when \code{p1} and \code{p2} are defined.
 #'
-#' @details The function compare observed differences in the SPD between two points in time and againsts a distribution of simulated values under the null hypothesis obtained from the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot).   
+#' @details The function compares observed differences in the summed probability values associated with two points in time againsts a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot).   
 #'
 #'
-#' @return A list with the BP dates for the two points and the  p-value obtained from a two-sided test.
+#' @return A list with: the BP dates for the two points and the p-value obtained from a two-sided test.
 #'
 #' @references 
 #'  Edinborough, K., Porcic, M., Martindale, A., Brown, T.J., Supernant, K., Ames, K.M., (2017). Radiocarbon test for demographic events in written and oral history. PNAS 201713012. doi:10.1073/pnas.1713012114
