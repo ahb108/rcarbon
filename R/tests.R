@@ -107,8 +107,27 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     }
     cragrid <- uncalibrate(as.CalGrid(predgrid), calCurves=calCurves, compact=FALSE, verbose=FALSE)
     cragrid <- cragrid[cragrid$CRA <= max(x$metadata$CRA) & cragrid$CRA >= min(x$metadata$CRA),]
-    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
-        if (verbose){ setTxtProgressBar(pb, s) }
+
+    if (ncores==1)
+    {
+    for (s in 1:nsim){ 
+	if (verbose){ setTxtProgressBar(pb, s) } 
+        randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
+        randomSDs <- sample(size=length(randomDates), errors, replace=TRUE) 
+        tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+        simDateMatrix <- tmp$calmatrix 
+	sim[,s] <- apply(simDateMatrix,1,sum) 
+        sim[,s] <- (sim[,s]/sum(sim[,s])) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]]) 
+        if (spdnormalised){ sim[,s] <- (sim[,s]/sum(sim[,s])) } 
+        if (!is.na(runm)){ sim[,s] <- runMean(sim[,s], runm, edge="fill") }	
+    	}
+    }	    
+
+    if (ncores>1)
+    {	     
+	print("Progress bar disabled for multi-core processing")
+    	sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
+        # if (verbose){ setTxtProgressBar(pb, s) }
         randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
         tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE)
@@ -120,7 +139,10 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
             aux <- runMean(aux, runm, edge="fill")
         }
 	aux
-    }
+   	 }
+    	stopCluster(cl)
+     }
+
     if (verbose){ close(pb) }
     ## Envelope, z-scores, global p-value
     lo <- apply(sim,1,quantile,prob=0.025)
