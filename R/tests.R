@@ -64,6 +64,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     } else {
       cl <- parallel::makeCluster(ncores)
       doParallel::registerDoParallel(cl)
+      on.exit(stopCluster(cl))	
     }
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
@@ -140,7 +141,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
         }
 	aux
    	 }
-    	stopCluster(cl)
+    	#stopCluster(cl)
      }
 
     if (verbose){ close(pb) }
