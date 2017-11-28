@@ -1,4 +1,4 @@
-[![cran version](http://www.r-pkg.org/badges/version/rcarbon)](https://cran.rstudio.com/web/packages/rcarbon) 
+[![cran version](http://www.r-pkg.org/badges/version/rcarbon)](https://CRAN.R-project.org/package=rcarbon) 
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/rcarbon?)](https://github.com/metacran/cranlogs.app)
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/rcarbon?color=82b4e8)](https://github.com/metacran/cranlogs.app)
 # rcarbon
