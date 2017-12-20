@@ -783,7 +783,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @param p2 calendar year (in BP) of end point.
 #' @param interactive if set to TRUE enables an interactive selection of p1 and p2 from a graphical display of the SPD. Disabled when \code{p1} and \code{p2} are defined.
 #'
-#' @details The function compares observed differences in the summed probability values associated with two points in time againsts a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot).   
+#' @details The function compares observed differences in the summed probability values associated with two points in time againsts a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}.   
 #'
 #'
 #' @return A list with: the BP dates for the two points and the p-value obtained from a two-sided test.
@@ -812,7 +812,7 @@ p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE)
 
 if (is.na(x$sim[1]))
 {
- stop("x should be an SpdModelTest class object produced using the modelTest() with raw=TRUE")
+ stop("x should be an SpdModelTest class object produced using modelTest() with raw=TRUE")
 }
 
  if (!is.na(p1)&!is.na(p2))
