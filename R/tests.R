@@ -19,7 +19,9 @@
 #' @param datenormalised If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity for both observed and simulated data. 
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
-#' @param fitonly A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE. 
+#' @param fitonly A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE.
+#' @param a Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the dat. Default is 0.
+#' @param b Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the dat. Default is 0. 
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #' @details The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The chosen model is then 'uncalibrated' (see \code{\link{uncalibrate}}) and \emph{n} radiocarbon ages are randomly drawn, with \emph{n} equivalent to the number of dates or number of unique site/phase bins if the latter are supplied by the \code{bin} argument. The simulated dates are then calibrated and an SPD for each simulation. This process is repeated \code{nsim} times to produce a set of simulated expected probabilities densities per each calendar year. The probabilites are then z-transformed, and a 95\% critical envelope is computed. Local departures from the model are defined as instances where the observed SPD (which is also z-transformed) is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. 
@@ -56,7 +58,7 @@
 #' @import doParallel
 #' @export
 
-modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
     
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -85,7 +87,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     time <- seq(timeRange[1],timeRange[2],-1)
     fit <- NA
     if (model=="exponential"){
-        fit <- nls(y ~ exp(a + b * x), data=data.frame(x=time, y=finalSPD), start=list(a=0, b=0))
+        fit <- nls(y ~ exp(a + b * x), data=data.frame(x=time, y=finalSPD), start=list(a=a, b=b))
         est <- predict(fit, list(x=time))
         predgrid <- data.frame(calBP=time, PrDens=est)
     } else if (model=="uniform"){
