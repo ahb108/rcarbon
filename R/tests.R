@@ -452,7 +452,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @export
  
 
-SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA, verbose=TRUE,permute="locations",ncores=1,datenormalised=FALSE)
+SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA, verbose=TRUE,permute="locations",ncores=1,datenormalised=FALSE,raw=FALSE)
 {
 
 ###################################
@@ -767,8 +767,9 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
 
     metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""),weights.h=spatialweights$h,weights.kernel=spatialweights$kernel)
-   
-    reslist=list(metadata=metadata,rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,locations=locations)
+  
+    if(!raw){rocaSim=NA} 
+    reslist=list(metadata=metadata,rocaSim=rocaSim,rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,locations=locations)
     
     class(reslist) <- append(class(reslist),"spatialTest")
     return(reslist)
