@@ -495,7 +495,11 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 	stop("Range of breaks values must much match the temporal range defined by timeRange")
     }
    
-
+    if (ncores>1&raw==TRUE)
+    {
+	warnings("raw==TRUE available only for ncores=1")
+    	raw=FALSE
+    }
 #############################
 #### Create binnedMatrix ####
 #############################
@@ -658,14 +662,13 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 	    hi=rocaObs>rocaSim
 	    eq=rocaObs==rocaSim
 
-          return(list(hi,lo,eq,rocaSim))
+          return(list(hi,lo,eq))
 	  }
         stopCluster(cl)
 
         lo=resultHiLoEq[[1]]
 	hi=resultHiLoEq[[2]]
 	eq=resultHiLoEq[[3]]
-	rocaSim=resultHiLoEq[[4]]
     
 	} else {
 
