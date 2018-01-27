@@ -678,7 +678,11 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
     print("Permutation test...")
     flush.console()
-
+    
+    if(raw)
+    {
+	rocaSimAll = array(NA,dim=c(nsim,nrow(spatialweights$w),nBreaks-1))
+    }
     pb <- txtProgressBar(min = 1, max = nsim, style=3)
 
         for (s in 1:nsim)
@@ -741,7 +745,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 	    hi=hi+(rocaObs>rocaSim)
 	    lo=lo+(rocaObs<rocaSim)
 	    eq=eq+(rocaObs==rocaSim)
-	    
+	    rocaSimAll[s,,]=rocaSim
         }
     close(pb)
     }
@@ -772,8 +776,8 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 
     metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""),weights.h=spatialweights$h,weights.kernel=spatialweights$kernel)
   
-    if(raw==FALSE){rocaSim=NA} 
-    reslist=list(metadata=metadata,rocaSim=rocaSim,rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,locations=locations)
+    if(raw==FALSE){rocaSimAll=NA} 
+    reslist=list(metadata=metadata,rocaSim=rocaSimAll,rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,locations=locations)
     
     class(reslist) <- append(class(reslist),"spatialTest")
     return(reslist)
