@@ -53,7 +53,7 @@ An object of class CalDates with the following elements:
 Function for calibrating one or more radiocarbon dates.
 }
 \details{
-This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
+This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space, see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
 }
 \examples{
 x1 <- calibrate(x=4000, errors=30)
@@ -65,4 +65,5 @@ plot(x2)
 }
 \references{
 #' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x#'
+Parnell, A. 2017. \emph{Bchron: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate Estimation, and Non-Parametric Phase Modelling}, R package: https://CRAN.R-project.org/package=Bchron #'
 }

@@ -4,7 +4,7 @@
 \alias{plot.CalGrid}
 \title{Plot a summed probability distribution (from a CalGrid object)}
 \usage{
-\method{plot}{CalGrid}(x, runm = NA, calendar = "BP", fill.p = "grey50",
+plot.CalGrid(x, runm = NA, calendar = "BP", fill.p = "grey50",
   border.p = NA, xlim = NA, ylim = NA, cex.lab = 0.75,
   cex.axis = cex.lab, mar = c(4, 4, 1, 3), add = FALSE, ...)
 }

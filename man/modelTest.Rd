@@ -7,7 +7,8 @@
 modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
   raw = FALSE, model = c("exponential", "explog", "custom"),
   predgrid = NA, calCurves = "intcal13", datenormalised = FALSE,
-  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, verbose = TRUE)
+  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, a = 0, b = 0,
+  verbose = TRUE)
 }
 \arguments{
 \item{x}{A vector of radiocarbon ages}
@@ -37,6 +38,10 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 \item{ncores}{Number of cores used for for parallel execution. Default is 1.}
 
 \item{fitonly}{A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE.}
+
+\item{a}{Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the dat. Default is 0.}
+
+\item{b}{Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the dat. Default is 0.}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }

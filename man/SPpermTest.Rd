@@ -6,7 +6,7 @@
 \usage{
 SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
   nsim = 1000, runm = NA, verbose = TRUE, permute = "locations",
-  ncores = 1, datenormalised = FALSE)
+  ncores = 1, datenormalised = FALSE, raw = FALSE)
 }
 \arguments{
 \item{calDates}{A \code{CalDates} class object.}

@@ -22,7 +22,7 @@ A list with: the BP dates for the two points and the p-value obtained from a two
 Test for evaluating the difference in the summed probability values associated with two points in time.
 }
 \details{
-The function compares observed differences in the summed probability values associated with two points in time againsts a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot).
+The function compares observed differences in the summed probability values associated with two points in time againsts a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}.
 }
 \examples{
 ## Example with Younger Dryas period Near East, including site bins
