@@ -5,8 +5,8 @@
 \title{Spatial Permutation Test of summed probability distributions.}
 \usage{
 SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
-  nsim = 1000, runm = NA, verbose = TRUE, permute = "locations",
-  ncores = 1, datenormalised = FALSE, raw = FALSE)
+  nsim = 1000, runm = NA, permute = "locations", ncores = 1,
+  datenormalised = FALSE, verbose = TRUE, raw = FALSE)
 }
 \arguments{
 \item{calDates}{A \code{CalDates} class object.}
@@ -19,19 +19,21 @@ SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
 
 \item{breaks}{A vector of break points for defining the temporal slices.}
 
-\item{spatialweights}{A \code{spatialweights} class object defining the spatial weights between the locations (cd. \code{\link{spweights}})}
+\item{spatialweights}{A \code{spatialweights} class object defining the spatial weights between the locations (cf. \code{\link{spweights}})}
 
 \item{nsim}{The total number of simulations. Default is 1000.}
 
 \item{runm}{The window size of the moving window average. Must be set to \code{NA} if the rates of change are calculated from the raw SPDs.}
-
-\item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 
 \item{permute}{Indicates whether the permutations should be based on the \code{"bins"} or the \code{"locations"}. Default is \code{"locations"}.}
 
 \item{ncores}{Number of cores used for for parallel execution. Default is 1.}
 
 \item{datenormalised}{A logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1. Default is FALSE.}
+
+\item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
+
+\item{raw}{A logical variable indicating whether permuted sets of geometric growth rates for each location should be returned. Default is FALSE.}
 }
 \value{
 A \code{spatialTest} class object
@@ -102,5 +104,5 @@ plot(res.locations,option="testlegend")
 Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates. Journal of Archaeological Science, 87, 1-9.
 }
 \seealso{
-\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights;
+\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights; \code{\link{spd2gg}} for computing geometric growth rates.
 }

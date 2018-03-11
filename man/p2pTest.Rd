@@ -7,7 +7,7 @@
 p2pTest(x, p1 = NA, p2 = NA, interactive = TRUE)
 }
 \arguments{
-\item{x}{result of modelTest with raw=TRUE.}
+\item{x}{result of \code{\link{modelTest}} with raw=TRUE.}
 
 \item{p1}{calendar year (in BP) of start point.}
 
@@ -22,7 +22,7 @@ A list with: the BP dates for the two points and the p-value obtained from a two
 Test for evaluating the difference in the summed probability values associated with two points in time.
 }
 \details{
-The function compares observed differences in the summed probability values associated with two points in time againsts a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}.
+The function compares observed differences in the summed probability values associated with two points in time against a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or interactively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}.
 }
 \examples{
 ## Example with Younger Dryas period Near East, including site bins
@@ -39,4 +39,7 @@ p2pTest(x=expnull) #interactive mode
 }
 \references{
 Edinborough, K., Porcic, M., Martindale, A., Brown, T.J., Supernant, K., Ames, K.M., (2017). Radiocarbon test for demographic events in written and oral history. PNAS 201713012. doi:10.1073/pnas.1713012114
+}
+\seealso{
+\code{\link{modelTest}}.
 }

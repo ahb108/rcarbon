@@ -14,23 +14,23 @@
 #' @param timeRange  A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param raw A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.
 #' @param model A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}. 
-#' @param predgrid A data.frame containing calendar years (column \code{calBP} and associated summed probabilties (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.
+#' @param predgrid A data.frame containing calendar years (column \code{calBP} and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.
 #' @param calCurves A vector of calibration curves (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13')
 #' @param datenormalised If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity for both observed and simulated data. 
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
 #' @param fitonly A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE.
-#' @param a Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the dat. Default is 0.
-#' @param b Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the dat. Default is 0. 
+#' @param a Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the date. Default is 0.
+#' @param b Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the date. Default is 0. 
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The chosen model is then 'uncalibrated' (see \code{\link{uncalibrate}}) and \emph{n} radiocarbon ages are randomly drawn, with \emph{n} equivalent to the number of dates or number of unique site/phase bins if the latter are supplied by the \code{bin} argument. The simulated dates are then calibrated and an SPD for each simulation. This process is repeated \code{nsim} times to produce a set of simulated expected probabilities densities per each calendar year. The probabilites are then z-transformed, and a 95\% critical envelope is computed. Local departures from the model are defined as instances where the observed SPD (which is also z-transformed) is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. 
+#' @details The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The chosen model is then 'uncalibrated' (see \code{\link{uncalibrate}}) and \emph{n} radiocarbon ages are randomly drawn, with \emph{n} equivalent to the number of dates or number of unique site/phase bins if the latter are supplied by the \code{bin} argument. The simulated dates are then calibrated and an SPD for each simulation. This process is repeated \code{nsim} times to produce a set of simulated expected probabilities densities per each calendar year. The probabilities are then z-transformed, and a 95\% critical envelope is computed. Local departures from the model are defined as instances where the observed SPD (which is also z-transformed) is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. 
 #'
 #' @return An object of class \code{SpdModelTest} with the following elements
 #' \itemize{
 #' \item{\code{result}} {A four column data.frame containing the observed probability density (column \emph{PrDens}) and the lower and the upper values of the simulation envelope (columns \emph{lo} and \emph{hi}) for each calendar year column \emph{calBP}}
 #' \item{\code{sim}} {A matrix containing the simulation results. Available only when \code{raw} is set to TRUE} 
-#' \item{\code{pval}} {A numeric vector containing the p-value of the global signficance test.}  
+#' \item{\code{pval}} {A numeric vector containing the p-value of the global significance test.}  
 #' \item{\code{fit}} {A data.frame containing the probability densities of the fitted model for each calendar year within the time range of analysis}  
 #' \item{\code{fitobject}} {Fitted model. Not available when \code{model} is \code{'custom'}}  
 #' }
@@ -173,7 +173,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 
 #' @title  Random mark permutation test for SPDs
 #'
-#' @description Global and local signficance test for comparing shapes of multiple SPDs using random permutations. 
+#' @description Global and local significance test for comparing shapes of multiple SPDs using random permutations. 
 #'
 #' @param x A \code{CalDates} class object containing the calibrated radiocarbon dates.
 #' @param marks A numerical or character vector containing the marks associated to each radiocarbon date.
@@ -186,7 +186,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 #' @param raw A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation evnelope is computed. Local signficance departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global significance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data. 
+#' @details The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation envelope is computed. Local significant departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global significance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data. 
 #'
 #' @return An object of class \code{SpdPermTest} with the following elements
 #' \itemize{
@@ -370,12 +370,13 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @param bins A vector indicating which bin each radiocarbon date is assigned to. Must have the same length as the number of radiocarbon dates. Can be created using the  \code{\link{binPrep}}) function. Bin names should follow the format "x_y", where x refers to a unique location (e.g. a site) and y is a integer value (e.g. "S023_1", "S023_2","S034_1", etc.).  
 #' @param locations A \code{SpatialPoints} or a \code{SpatialPointsDataFrame} class object. Rownames of each point should much the first part of the bin names supplied (e.g. "S023","S034") 
 #' @param breaks A vector of break points for defining the temporal slices.
-#' @param spatialweights A \code{spatialweights} class object defining the spatial weights between the locations (cd. \code{\link{spweights}})
+#' @param spatialweights A \code{spatialweights} class object defining the spatial weights between the locations (cf. \code{\link{spweights}})
 #' @param nsim The total number of simulations. Default is 1000.
 #' @param runm The window size of the moving window average. Must be set to \code{NA} if the rates of change are calculated from the raw SPDs. 
 #' @param permute Indicates whether the permutations should be based on the \code{"bins"} or the \code{"locations"}. Default is \code{"locations"}. 
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
 #' @param datenormalised A logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1. Default is FALSE. 
+#' @param raw A logical variable indicating whether permuted sets of geometric growth rates for each location should be returned. Default is FALSE. 
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #'
@@ -386,7 +387,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @references
 #' Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates. Journal of Archaeological Science, 87, 1-9.
 #' 
-#' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights;
+#' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights; \code{\link{spd2gg}} for computing geometric growth rates.
 #'
 #' @examples
 #' ## Reproduce Crema et al 2017 ##
@@ -452,7 +453,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @export
  
 
-SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA, verbose=TRUE,permute="locations",ncores=1,datenormalised=FALSE,raw=FALSE)
+SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 
 ###################################
@@ -789,12 +790,12 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #'
 #' @description Test for evaluating the difference in the summed probability values associated with two points in time.
 #'
-#' @param x result of modelTest with raw=TRUE.
+#' @param x result of \code{\link{modelTest}} with raw=TRUE.
 #' @param p1 calendar year (in BP) of start point.
 #' @param p2 calendar year (in BP) of end point.
 #' @param interactive if set to TRUE enables an interactive selection of p1 and p2 from a graphical display of the SPD. Disabled when \code{p1} and \code{p2} are defined.
 #'
-#' @details The function compares observed differences in the summed probability values associated with two points in time againsts a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or iteractively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}.   
+#' @details The function compares observed differences in the summed probability values associated with two points in time against a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or interactively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}.   
 #'
 #'
 #' @return A list with: the BP dates for the two points and the p-value obtained from a two-sided test.

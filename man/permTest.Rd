@@ -38,10 +38,10 @@ An object of class \code{SpdPermTest} with the following elements
 }
 }
 \description{
-Global and local signficance test for comparing shapes of multiple SPDs using random permutations.
+Global and local significance test for comparing shapes of multiple SPDs using random permutations.
 }
 \details{
-The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation evnelope is computed. Local signficance departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global signicance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data.
+The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation envelope is computed. Local significant departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global significance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data.
 }
 \examples{
 ## compare demographic trajectories in Netherlands and Denmark  

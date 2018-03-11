@@ -2,7 +2,7 @@
 % Please edit documentation in R/plots.R
 \name{binsense}
 \alias{binsense}
-\title{Bin sensitivity analysis}
+\title{Bin sensitivity Plot}
 \usage{
 binsense(x, y, h, timeRange, calendar = "BP", sitecol, agecol, raw = F,
   verbose = T, legend = T, ...)
@@ -44,5 +44,5 @@ sitecol="SiteID",agecol="C14Age",runm=200)
 }
 }
 \seealso{
-\code{\link{binPrep}};\code{\link{spd}};
+\code{\link{binPrep}}; \code{\link{spd}}
 }

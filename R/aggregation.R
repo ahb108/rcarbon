@@ -4,7 +4,7 @@
 #' known to be from the same phase of same archaeological site (for use with \code{\link{spd}}). Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in a given site phase will impede comparison between sites or phases. 
 #' 
 #' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases
-#' @param ages a vector uncalibrated conventional radiocarbon ages
+#' @param ages a vector of uncalibrated conventional radiocarbon ages
 #' @param h a single numeric value passed to \code{\link{hclust}} control degree of grouping of similar ages in a phase site.
 #'
 #' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with spd()

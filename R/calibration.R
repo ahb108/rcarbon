@@ -9,7 +9,7 @@
 #' @param calCurves Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.
 #' @param resOffsets A vector of offset values for any marine reservoir effect (default is no offset).
 #' @param resErrors A vector of offset value errors for any marine reservoir effect (default is no offset).
-#' @param timeRange Earliest and latest data to calibrate for, in calendar years. Posterior probabilites beyond this range will be excluded (the default is sensible in most cases).
+#' @param timeRange Earliest and latest data to calibrate for, in calendar years. Posterior probabilities beyond this range will be excluded (the default is sensible in most cases).
 #' @param normalised A logical variable indicating whether the calibration should be normalised or not. Default is TRUE.
 #' @param eps Cut-off value for density calculation. Default is 1e-5.
 #' @param calMatrix a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}
@@ -23,7 +23,7 @@
 #' \itemize{
 #' \item{\code{metadata}} {A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.}
 #' \item{\code{grids}} {A list of calGrid class objects, containing the posterior probabilities for each calendar year. The most memory-efficient way to store calibrated dates, as only years with non-zero probability are stored, but aggregation methods such as \code{spd()} may then take longer to extract and combine multiple dates. NA when the parameter calMatrix is set to TRUE.} 
-#' \item{\code{calMatrix}} {A matrix of probability values, one row per calendar year in timeRange and one column per date. By storing all possible years, not just those with non-zero probabilty, this approach takes more memory, but speeds up spd() and is suggested whenever the latter is to be used. NA when the parameter calMatrix is set to FALSE.}  
+#' \item{\code{calMatrix}} {A matrix of probability values, one row per calendar year in timeRange and one column per date. By storing all possible years, not just those with non-zero probability, this approach takes more memory, but speeds up spd() and is suggested whenever the latter is to be used. NA when the parameter calMatrix is set to FALSE.}  
 #' }
 #'
 #' @references 

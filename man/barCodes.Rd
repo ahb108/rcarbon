@@ -54,5 +54,5 @@ barCodes(BPtoBCAD(bm),yrng=c(0,0.01))
 }
 }
 \seealso{
-\code{\link{medCal}}, \code{\link{binMed}},
+\code{\link{medCal}}; \code{\link{binMed}}
 }

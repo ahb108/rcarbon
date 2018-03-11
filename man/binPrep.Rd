@@ -9,7 +9,7 @@ binPrep(sites, ages, h)
 \arguments{
 \item{sites}{a vector of character strings (or number to coerce to character) of all sites or site phases}
 
-\item{ages}{a vector uncalibrated conventional radiocarbon ages}
+\item{ages}{a vector of uncalibrated conventional radiocarbon ages}
 
 \item{h}{a single numeric value passed to \code{\link{hclust}} control degree of grouping of similar ages in a phase site.}
 }
