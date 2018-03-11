@@ -4,7 +4,7 @@
 
 #' @title Monte-Carlo simulation test for SPDs 
 #'
-#' @description Comparison of an observed summed radiocarbon date distribution (aka SPD) with simulated outcomes from a theoretical model
+#' @description Comparison of an observed summed radiocarbon date distribution (aka SPD) with simulated outcomes from a theoretical model.
 #'
 #' @param x A vector of radiocarbon ages 
 #' @param errors A vector of errors corresponding to each radiocarbon age
@@ -32,7 +32,7 @@
 #' \item{\code{sim}} {A matrix containing the simulation results. Available only when \code{raw} is set to TRUE} 
 #' \item{\code{pval}} {A numeric vector containing the p-value of the global signficance test.}  
 #' \item{\code{fit}} {A data.frame containing the probability densities of the fitted model for each calendar year within the time range of analysis}  
-#' \item{\code{coefficients}} {Coefficients of the fitted model. Available only when \code{model} is \code{'exponential'} or \code{'explog'}}  
+#' \item{\code{fitobject}} {Fitted model. Not available when \code{model} is \code{'custom'}}  
 #' }
 #'
 #' @references 
@@ -58,7 +58,7 @@
 #' @import doParallel
 #' @export
 
-modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","explog","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","uniform","linear","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
     
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -186,7 +186,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 #' @param raw A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation evnelope is computed. Local signficance departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global signicance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data. 
+#' @details The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation evnelope is computed. Local signficance departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global significance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data. 
 #'
 #' @return An object of class \code{SpdPermTest} with the following elements
 #' \itemize{
@@ -813,6 +813,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' p2pTest(x=expnull,p1=13000,p2=12500) #non-interactive mode
 #' p2pTest(x=expnull) #interactive mode
 #' }
+#' @seealso \code{\link{modelTest}}.
 #' @import utils
 #' @import stats
 #' @export

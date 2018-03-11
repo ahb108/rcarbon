@@ -42,7 +42,7 @@ binPrep <- function(sites, ages, h){
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link{binPrep}}) function, and sensitivity to its parameter choice can be explored with the \code{\link{binsense}}) function.
+#' @details The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link{binPrep}}, whilst the sensitivity to parameter choice can be explored with the \code{\link{binsense}} function.
 #'
 #' @return An object of class \code{CalSPD} with the following elements
 #' \itemize{
@@ -53,7 +53,7 @@ binPrep <- function(sites, ages, h){
 #' @references 
 #' Timpson, A., et al, (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52: 549-557. DOI:10.1016/j.jas.2014.08.011
 #'
-#' @seealso \code{\link{calibrate}}) for calibrating rardiocabon dates; \code{\link{binPrep}} for preparing bins.
+#' @seealso \code{\link{calibrate}} for calibrating rardiocabon dates; \code{\link{binPrep}} for preparing bins.
 #' @import utils
 #' @export
 

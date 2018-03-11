@@ -12,6 +12,7 @@
 #' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).
 #' @param customCalCurve A three column data.frame or matrix that allows you to pass and plot a custom calibration curve if you used one during calibration. You can currently only provide one such custom curve which is used for all dates.
 #' @param ... Additional arguments affecting the plot. 
+#'
 #' @seealso \code{\link{calibrate}}
 #'
 #' @examples
@@ -171,7 +172,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param drawaxes A logical value determining whether the axes should be displayed or not. Default is TRUE.
 #' @param ... Additional arguments affecting the plot
 
-#' @details The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observbed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of signficance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot. 
+#' @details The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of signficance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot. 
 
 #' @seealso \code{\link{modelTest}}
 #' @import stats
@@ -311,7 +312,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 #' @param ... Additional arguments affecting the plot
 #'
 #' 
-#' @seealso \code{\link{medCal}}, \code{\link{binMed}},
+#' @seealso \code{\link{medCal}}; \code{\link{binMed}}
 #' @import stats
 #' @import grDevices
 #' @import graphics
@@ -404,14 +405,14 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @param rescale  A logical variable indicating whether the SPD should be rescaled to range 0 to 1.
 #' @param fill.p Fill colour for the SPD
 #' @param border.p Border colour for the SPD
-#' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
-#' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
+#' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
+#' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
 #' @param add Whether or not the new graphic should be added to an existing plot.
 #' @param ... Additional arguments affecting the plot
 #'
 #'
 #'
-#' @seealso \code{\link{spd}};\code{\link{plot.CalGrid}}
+#' @seealso \code{\link{spd}}; \code{\link{plot.CalGrid}}
 #' @examples
 #' \dontrun{
 #' data(emedyd)
@@ -509,7 +510,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @param add Whether or not the new graphic should be added to an existing plot.
 #' @param ... Additional arguments affecting the plot
 #'
-#' @seealso \code{\link{spd}};\code{\link{plot.CalSPD}}
+#' @seealso \code{\link{spd}}; \code{\link{plot.CalSPD}}
 #' @examples
 #' data(euroevol)
 #' mycaldates <- calibrate(euroevol[1:10,"C14Age"], euroevol[1:10,"C14SD"], normalised=FALSE)
@@ -824,7 +825,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 }
 
 
-#' @title Bin sensitivity analysis
+#' @title Bin sensitivity Plot
 #' 
 #' @description Visually explores how choosing different values for \code{h} in the \code{\link{binPrep}} function affects the shape of the SPD.
 #' 
@@ -840,8 +841,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' @param legend A logical variable indicating whether the legend should be displayed. Default is TRUE
 #' @param ... Additional arguments to be passed to the \code{\link{spd}} function. 
 #' 
-#' @seealso 
-#' \code{\link{binPrep}};\code{\link{spd}};
+#' @seealso \code{\link{binPrep}}; \code{\link{spd}}
 #' @examples
 #' \dontrun{
 #' data(euroevol)
@@ -1070,4 +1070,36 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 
 }
 
+
+
+#' @title Plot \code{spdGG} class objects 
+#' @description Plot calibrated geometric growth rates.
+#' @param x \code{spdGG} class object containing geometric growth rates.
+#' @param ... Additional arguments affecting the plot. 
+#'
+#' @seealso \code{\link{spd2gg}}
+#'
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
+#' @export  
+
+plot.spdGG<- function(x,...)
+{
+	breaks=x$breaks
+	obs=x$sumblock
+	res=x$geomg
+	par(mar=c(4,4,4,4))
+	nn = paste(breaks[-length(breaks)],breaks[-1],sep="-")
+	barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,...)
+	par(new=T)
+	xx = 1:c(length(nn)-1)
+	plot(0,0,xlim=c(0,length(nn)),ylim=range(res),axes=FALSE,xlab="",ylab="",type="n")
+	lines(xx,res,lwd=2,col="darkgreen")
+	points(xx,res,pch=20,col="darkgreen")
+	axis(4,col="darkgreen", col.axis="darkgreen")
+	mtext(side=4,"geometric growth rate",col="darkgreen",line=2)
+	abline(h=0,lty=2,col="blue")
+}
 
