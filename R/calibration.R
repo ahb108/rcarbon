@@ -6,7 +6,7 @@
 #' @param errors A vector of standard deviations corresponding to each estimated radiocarbon age.
 #' @param ids An optional vector of IDs for each date.
 #' @param dateDetails An optional vector of details for each date which will be returned in the output metadata. 
-#' @param calCurves Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.
+#' @param calCurves Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal13','intcal13nhpine16','shcal13',"shcal13shkauri16', and 'marine13' are possible; default is 'intcal13') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.
 #' @param resOffsets A vector of offset values for any marine reservoir effect (default is no offset).
 #' @param resErrors A vector of offset value errors for any marine reservoir effect (default is no offset).
 #' @param timeRange Earliest and latest data to calibrate for, in calendar years. Posterior probabilities beyond this range will be excluded (the default is sensible in most cases).
@@ -263,7 +263,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #' @param x Either a vector of uncalibrated radiocarbon ages or an object of class CalGrid.
 #' @param CRAerrors A vector of standard deviations corresponding to each estimated radiocarbon age (ignored if x is a CalGrid object).
 #' @param roundyear An optional vector of IDs for each date (ignored if x is a CalGrid object).
-#' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible) or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the 'intcal13' curve and only one curve can currently be specified for all dates. 
+#' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13','intcal13nhpine16','shcal13',"shcal13shkauri16', and 'marine13' are possible) or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the 'intcal13' curve and only one curve can currently be specified for all dates. 
 #' @param  eps Cut-off value for density calculation (for CalGrid objects only).
 #' @param  compact A logical variable indicating whether only uncalibrated ages with non-zero probabilities should be returned (for CalGrid objects only).
 #' @param  verbose A logical variable indicating whether extra information on progress should be reported (for CalGrid objects only).
