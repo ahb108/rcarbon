@@ -27,8 +27,8 @@
 #' }
 #'
 #' @references 
-#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x
-#' Parnell, A. 2017. \emph{Bchron: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate Estimation, and Non-Parametric Phase Modelling}, R package: https://CRAN.R-project.org/package=Bchron
+#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x \cr
+#' Parnell, A. 2017. Bchron: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate Estimation, and Non-Parametric Phase Modelling, R package: https://CRAN.R-project.org/package=Bchron
 #' @examples
 #' x1 <- calibrate(x=4000, errors=30)
 #' plot(x1)
