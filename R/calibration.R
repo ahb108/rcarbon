@@ -17,7 +17,7 @@
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... ignored
 #'
-#' @details This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space, see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
+#' @details This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space, see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time. The function was modified from the \code{BchronCalibrate} function in the \code{Bchron} package developed by A.Parnell (see references below).
 #'
 #' @return An object of class CalDates with the following elements:
 #' \itemize{
@@ -27,8 +27,8 @@
 #' }
 #'
 #' @references 
-#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x#'
-#' Parnell, A. 2017. \emph{Bchron: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate Estimation, and Non-Parametric Phase Modelling}, R package: https://CRAN.R-project.org/package=Bchron #'
+#' Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x
+#' Parnell, A. 2017. \emph{Bchron: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate Estimation, and Non-Parametric Phase Modelling}, R package: https://CRAN.R-project.org/package=Bchron
 #' @examples
 #' x1 <- calibrate(x=4000, errors=30)
 #' plot(x1)
