@@ -6,7 +6,7 @@
 #'
 #' @description Comparison of an observed summed radiocarbon date distribution (aka SPD) with simulated outcomes from a theoretical model.
 #'
-#' @param x A vector of radiocarbon ages 
+#' @param x A \code{CalDates} object containing calibrated radiocarbon ages 
 #' @param errors A vector of errors corresponding to each radiocarbon age
 #' @param nsim Number of simulations
 #' @param bins A vector indicating which bin each radiocarbon date is assigned to.
