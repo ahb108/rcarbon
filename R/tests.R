@@ -160,7 +160,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     booms2 <- which(finalSPD> hi)
     observedStatistic <- sum(c(zLo[busts] - Zscore_empirical[busts]),c(Zscore_empirical[booms]-zHi[booms]))
     expectedstatistic <- abs(apply(Zsim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=zLo)) + apply(Zsim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=zHi)
-    pvalue <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic])+1)/c(length(expectedstatistic)+1)
+    pvalue <- c(length(expectedstatistic[expectedstatistic > observedStatistic])+1)/c(nsim+1)
     # Results
     result <- data.frame(calBP=observed$grid$calBP,PrDens=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){ sim <- NA }
