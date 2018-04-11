@@ -15,6 +15,11 @@
 #' @export
 binPrep <- function(sites, ages, h){
     
+    if(any(grepl("_", sites)))
+    {
+        stop("sites should not contain elements with underscores")	
+    }
+    
     clusters <- rep(NA,length(sites))
     
     for  (x in 1:length(unique(sites))){
