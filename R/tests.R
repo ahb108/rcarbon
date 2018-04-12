@@ -794,6 +794,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @param p1 calendar year (in BP) of start point.
 #' @param p2 calendar year (in BP) of end point.
 #' @param interactive if set to TRUE enables an interactive selection of p1 and p2 from a graphical display of the SPD. Disabled when \code{p1} and \code{p2} are defined.
+#' @param plot if set to TRUE the function plots the location of p1 and p2 on the SPD. Default is FALSE.
 #'
 #' @details The function compares observed differences in the summed probability values associated with two points in time against a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or interactively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}.   
 #'
@@ -820,7 +821,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @export
 
 
-p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE)
+p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE,plot=FALSE)
 {
 
 if (is.na(x$sim[1]))
@@ -865,6 +866,13 @@ if (!interactive)
     p1.y = x$result[index1,2]
     index2=match(p2,x$result$calBP)
     p2.y = x$result[index2,2]
+    if (plot)
+    {	    
+    plot(x)	    
+    points(p1,p1.y,pch=20)    
+    points(p2,p2.y,pch=20)
+    lines(x$result$calBP[index1:index2],x$result$PrDens[index1:index2],lwd=2)
+    }
 }
 
  if (!p1%in%x$result$calBP | !p2%in%x$result$calBP)
