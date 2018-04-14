@@ -966,7 +966,7 @@ res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 #' @export 
 
 
-plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,legSize=1,...)
+plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,legSize=1,legend=FALSE,location="bottomright",...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{
@@ -995,10 +995,7 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
 	classes=cols[classes]
 	plot(locations,col=classes,pch=20,cex=baseSize,...)
-	}
-
-
-	if (option=="rawlegend")
+	if (legend)
 	{
 	breaks=round(seq(breakRange[1],breakRange[2],length.out=breakLength),rd)
 	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
@@ -1009,20 +1006,10 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	 breaksLab[j] = paste(breaks[j-1],"to", breaks[j])
 	 if (j==c(breakLength+1)) {breaksLab[j] = paste(">",breaks[length(breaks)])}
 	}
-	par(mar=c(2,0,2,0))
-        plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	legend("center",legend=breaksLab,col=cols,pch=20,bty="n",cex=legSize)
-
-        }
-
-
-	if (option=="testlegend")
-	{
-	par(mar=c(2,0,2,0))
-	plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	l1 = legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=legSize,bty="n")
-	legend(l1$rect$left, y = with(l1$rect, top - h),title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=legSize,bty="n")
+	legend(location,legend=breaksLab,col=cols,pch=20,bg="white",cex=legSize)
 	}
+	}
+
 
 	if (option=="test")
 	{
@@ -1066,6 +1053,14 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 			}
 
 		}
+
+
+	if (legend)
+	{
+	legend(location,legend=c("positive deviation (p<0.05)","positive deviation (q<0.05)","negative deviation (p<0.05)","negative deviation (q<0.05)"),
+	       pch=20, col=c("orange","red","cornflowerblue","darkblue"),bg="white",cex=legSize)
+	}
+
 	}
 
 }
