@@ -394,7 +394,7 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
 spd2gg <- function(spd,breaks)
 {
 	require(rcarbon)	
-	if (unique(round(abs(diff(breaks))))!=1)
+	if (length(unique(round(abs(diff(breaks)))))!=1)
 	{
 		stop("Unequal break intervals is not supported")
 	}
