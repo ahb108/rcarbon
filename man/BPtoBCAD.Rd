@@ -13,7 +13,7 @@ BPtoBCAD(x)
 A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
 }
 \description{
-Converts calibrated BP dates to BC/AD dates, omitting 'year 0'
+Converts calibrated BP dates to BC/AD dates, omitting `year 0'
 }
 \examples{
 BPtoBCAD(4200)

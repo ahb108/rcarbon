@@ -32,9 +32,9 @@
 
 \item{border.p}{Border colour for the SPD}
 
-\item{xaxt}{Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.}
+\item{xaxt}{Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).}
 
-\item{yaxt}{Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.}
+\item{yaxt}{Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).}
 
 \item{add}{Whether or not the new graphic should be added to an existing plot.}
 
@@ -61,5 +61,5 @@ plot(spd.northernlevant, runm=50, col="red", type="simple", add=TRUE)
 }
 }
 \seealso{
-\code{\link{spd}};\code{\link{plot.CalGrid}}
+\code{\link{spd}}; \code{\link{plot.CalGrid}}
 }

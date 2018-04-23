@@ -48,7 +48,7 @@
 #'}
 #' @source Palmisano, A., Bevan, A. and S. Shennan 2017. Data and code for demographic trends in the paper "Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean", UCL Discovery Archive 1570274. doi:10.14324/000.ds.1570274.
 #' @references
-#' Roberts, N., Woodbridge, J., Bevan, A., Palmisano, A., Shennan, S. and E. Asouti 2017. under review. Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean.
+#' Roberts, N., Woodbridge, J., Bevan, A., Palmisano, A., Shennan, S. and E. Asouti 2017. Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean. Quaternary Science Reviews, doi:10.1016/j.quascirev.2017.09.011.
 #' 
 #' @examples
 #' \dontrun{
@@ -60,3 +60,4 @@
 #' plot(spd.northernlevant)
 #'}
 "emedyd"
+

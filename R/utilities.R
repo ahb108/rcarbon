@@ -191,7 +191,7 @@ rangecheck <- function(x, bins, timeRange, datenormalised=FALSE){
 }
 
 #' @title Convert BP dates to BC/AD format 
-#' @description Converts calibrated BP dates to BC/AD dates, omitting 'year 0' 
+#' @description Converts calibrated BP dates to BC/AD dates, omitting `year 0' 
 #' @param x A numerical vector (currently no checks that these numbers are in a sensible range). 
 #' @return A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
 #' @examples
@@ -227,7 +227,7 @@ BCADtoBP <- function(x){
 #' @description Function for generating a vector of median calibrated dates for each each bin.
 #' 
 #' @param x A \code{CalDates} class object.
-#' @param bins vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}
+#' @param bins vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #' @return A vector of median dates in cal BP
@@ -366,6 +366,60 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
     class(res) <- append(class(res),"spatialweights")
     return(res)   
 }
+
+#' @title Compute geometric growth rates from SPDs
+#'
+#' @description Function for computing the geometric growth rates between abutting user-defined time-blocks.
+#'
+#' @param spd Summed Probability Distribution obtained using the \code{\link{spd}} function. 
+#' @param breaks A vector giving the breakpoints between the time-blocks.
+#'
+#' @details The function computes the growth rate between abutting phases as \eqn{(X_{t}/X_{t+1})^{(1/d)}-1}, where \eqn{X_{t}} is the summed probability of radiocarbon dates in the block \eqn{t}, and \eqn{d} is the duration of the time-blocks. 
+#'
+#' @return An object of class \code{spdGG} containing the total summed probability for each time-block and the geometric growth rate between abutting blocks.
+#'
+#' @examples
+#' \dontrun{
+#' data(emedyd)
+#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+#' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
+#' emdyd.spd <- spd(caldates,bins,timeRange=c(16000,9000))
+#' emdyd.gg <- spd2gg(emedyd.spd,breaks=seq(16000,9000,-1000))
+#' plot(emedyd.gg)
+#' }
+
+#' @import stats
+#' @export
+
+spd2gg <- function(spd,breaks)
+{
+	require(rcarbon)	
+	if (length(unique(round(abs(diff(breaks)))))!=1)
+	{
+		stop("Unequal break intervals is not supported")
+	}
+	nBreaks = length(breaks)-1
+	timeRange = eval(parse(text=spd$metadata[2]))
+	timeSequence = timeRange[1]:timeRange[2]
+	obs=numeric(length=nBreaks)    
+	for (x in 1:nBreaks)
+	{
+		index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
+		obs[x]=sum(spd$grid[index,2])
+	}
+
+	res=numeric(length=nBreaks-1)
+	for (i in 1:(nBreaks-1))
+	{
+		d=abs(breaks[i+1]-breaks[i]) 	
+		res[i]=(obs[i+1]/obs[i])^(1/d)-1
+	}
+	res=list(sumblock=obs,geomg=res,breaks=breaks)
+	class(res) <- append(class(res),"spdGG")
+	return(res)   
+}
+
+
 
 # 
 # gaussW <- function(x, bw){

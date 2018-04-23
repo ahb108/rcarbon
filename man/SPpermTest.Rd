@@ -5,8 +5,8 @@
 \title{Spatial Permutation Test of summed probability distributions.}
 \usage{
 SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
-  nsim = 1000, runm = NA, verbose = TRUE, permute = "locations",
-  ncores = 1, datenormalised = FALSE)
+  nsim = 1000, runm = NA, permute = "locations", ncores = 1,
+  datenormalised = FALSE, verbose = TRUE, raw = FALSE)
 }
 \arguments{
 \item{calDates}{A \code{CalDates} class object.}
@@ -19,28 +19,30 @@ SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
 
 \item{breaks}{A vector of break points for defining the temporal slices.}
 
-\item{spatialweights}{A \code{spatialweights} class object defining the spatial weights between the locations (cd. \code{\link{spweights}})}
+\item{spatialweights}{A \code{spatialweights} class object defining the spatial weights between the locations (cf. \code{\link{spweights}})}
 
 \item{nsim}{The total number of simulations. Default is 1000.}
 
-\item{runm}{The window size of the moving window average. Must be set to \code{NA} if a the rates of change area calculated from the raw SPDs.}
-
-\item{verbose}{a logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
+\item{runm}{The window size of the moving window average. Must be set to \code{NA} if the rates of change are calculated from the raw SPDs.}
 
 \item{permute}{Indicates whether the permutations should be based on the \code{"bins"} or the \code{"locations"}. Default is \code{"locations"}.}
 
 \item{ncores}{Number of cores used for for parallel execution. Default is 1.}
 
-\item{datenormalised}{a logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1.Default is FALSE.}
+\item{datenormalised}{A logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1. Default is FALSE.}
+
+\item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
+
+\item{raw}{A logical variable indicating whether permuted sets of geometric growth rates for each location should be returned. Default is FALSE.}
 }
 \value{
 A \code{spatialTest} class object
 }
 \description{
-This function carries out local spatial permutation test of the summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al 2017).
+This function carries out local spatial permutation tests of summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al 2017).
 }
 \details{
-The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates weighting the contribution of dates from neighbouring site using a weight scheme provided by the \code{spatialweights} class object. 2) define temporal slices (using \code{breaks} as break values) the compute the total probability mass within each slice; 3) compute the rate of change between as abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of indivual bins or the entire sequence of bins associated with a given location and carry out steps 1--3; 5) repeate step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate to the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.
+The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates, weighting the contribution of dates from neighbouring sites using a weight scheme provided by the \code{spatialweights} class object; 2) define temporal slices (using \code{breaks} as break values), then compute the total probability mass within each slice; 3) compute the rate of change between abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of individual bins or the entire sequence of bins associated with a given location and carry out steps 1 to 3; 5) repeat step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate with the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.
 }
 \examples{
 ## Reproduce Crema et al 2017 ##
@@ -102,5 +104,5 @@ plot(res.locations,option="testlegend")
 Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates. Journal of Archaeological Science, 87, 1-9.
 }
 \seealso{
-\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights;
+\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights; \code{\link{spd2gg}} for computing geometric growth rates.
 }

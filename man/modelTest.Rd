@@ -5,9 +5,10 @@
 \title{Monte-Carlo simulation test for SPDs}
 \usage{
 modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
-  raw = FALSE, model = c("exponential", "explog", "custom"),
+  raw = FALSE, model = c("exponential", "uniform", "linear", "custom"),
   predgrid = NA, calCurves = "intcal13", datenormalised = FALSE,
-  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, verbose = TRUE)
+  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, a = 0, b = 0,
+  verbose = TRUE)
 }
 \arguments{
 \item{x}{A vector of radiocarbon ages}
@@ -26,7 +27,7 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 
 \item{model}{A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}.}
 
-\item{predgrid}{A data.frame containing calendar years (column \code{calBP} and associated summed probabilties (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.}
+\item{predgrid}{A data.frame containing calendar years (column \code{calBP} and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.}
 
 \item{calCurves}{A vector of calibration curves (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13')}
 
@@ -38,6 +39,10 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 
 \item{fitonly}{A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE.}
 
+\item{a}{Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the date. Default is 0.}
+
+\item{b}{Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the date. Default is 0.}
+
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
 \value{
@@ -45,16 +50,16 @@ An object of class \code{SpdModelTest} with the following elements
 \itemize{
 \item{\code{result}} {A four column data.frame containing the observed probability density (column \emph{PrDens}) and the lower and the upper values of the simulation envelope (columns \emph{lo} and \emph{hi}) for each calendar year column \emph{calBP}}
 \item{\code{sim}} {A matrix containing the simulation results. Available only when \code{raw} is set to TRUE} 
-\item{\code{pval}} {A numeric vector containing the p-value of the global signficance test.}  
+\item{\code{pval}} {A numeric vector containing the p-value of the global significance test.}  
 \item{\code{fit}} {A data.frame containing the probability densities of the fitted model for each calendar year within the time range of analysis}  
-\item{\code{coefficients}} {Coefficients of the fitted model. Available only when \code{model} is \code{'exponential'} or \code{'explog'}}  
+\item{\code{fitobject}} {Fitted model. Not available when \code{model} is \code{'custom'}}  
 }
 }
 \description{
-Comparison of an observed summed radiocarbon date distribution (aka SPD) with simulated outcomes from a theoretical model
+Comparison of an observed summed radiocarbon date distribution (aka SPD) with simulated outcomes from a theoretical model.
 }
 \details{
-The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The chosen model is then 'uncalibrated' (see \code{\link{uncalibrate}}) and \emph{n} radiocarbon ages are randomly drawn, with \emph{n} equivalent to the number of dates or number of unique site/phase bins if the latter are supplied by the \code{bin} argument. The simulated dates are then calibrated and an SPD for each simulation. This process is repeated \code{nsim} times to produce a set of simulated expected probabilities densities per each calendar year. The probabilites are then z-transformed, and a 95\% critical envelope is computed. Local departures from the model are defined as instances where the observed SPD (which is also z-transformed) is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope.
+The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The chosen model is then 'uncalibrated' (see \code{\link{uncalibrate}}) and \emph{n} radiocarbon ages are randomly drawn, with \emph{n} equivalent to the number of dates or number of unique site/phase bins if the latter are supplied by the \code{bin} argument. The simulated dates are then calibrated and an SPD for each simulation. This process is repeated \code{nsim} times to produce a set of simulated expected probabilities densities per each calendar year. The probabilities are then z-transformed, and a 95\% critical envelope is computed. Local departures from the model are defined as instances where the observed SPD (which is also z-transformed) is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope.
 }
 \examples{
 ## Example with Younger Dryas period Near East, including site bins

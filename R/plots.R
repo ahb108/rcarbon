@@ -12,6 +12,7 @@
 #' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).
 #' @param customCalCurve A three column data.frame or matrix that allows you to pass and plot a custom calibration curve if you used one during calibration. You can currently only provide one such custom curve which is used for all dates.
 #' @param ... Additional arguments affecting the plot. 
+#'
 #' @seealso \code{\link{calibrate}}
 #'
 #' @examples
@@ -171,7 +172,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param drawaxes A logical value determining whether the axes should be displayed or not. Default is TRUE.
 #' @param ... Additional arguments affecting the plot
 
-#' @details The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observbed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of signficance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot. 
+#' @details The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of signficance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot. 
 
 #' @seealso \code{\link{modelTest}}
 #' @import stats
@@ -198,7 +199,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
     if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs$PrDens)*1.1) }
     booms <- which(obs$PrDens>envelope[,2])
     busts <- which(obs$PrDens<envelope[,1])
-    baseline <- rep(0,nrow(obs))
+    baseline <- rep(NA,nrow(obs))
     if (drawaxes & bbty != "n"){
         plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
     } else if (bbty != "n"){
@@ -208,14 +209,14 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 	box()
     axis(side=2)}
     boomPlot <- baseline
-    boomPlot[booms] <- obs[booms,2]
+ 	if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
     bustPlot <- baseline
-    bustPlot[busts] <- obs[busts,2]
+    if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }           
     boomBlocks <- vector("list")
     counter <- 0
     state <- "off"
     for (i in 1:length(boomPlot)){
-        if (boomPlot[i]>0&state=="off"){
+        if (!is.na(boomPlot[i])&state=="off"){
             counter <- counter+1
             boomBlocks <- c(boomBlocks,vector("list",1))
             boomBlocks[[counter]] <- vector("list",2)
@@ -224,11 +225,11 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
             state <- "on"
         }
         if (state=="on"){
-            if (boomPlot[i]>0){
+            if (!is.na(boomPlot[i])){
                 boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
                 boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
             }
-            if (boomPlot[i]==0){
+            if (is.na(boomPlot[i])){
                 state <- "off"
             }
         }   
@@ -237,7 +238,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
     counter <- 0
     state <- "off"
     for (i in 1:length(bustPlot)){
-        if (bustPlot[i]>0&state=="off"){
+        if (!is.na(bustPlot[i])&state=="off"){
             counter <- counter+1
             bustBlocks <- c(bustBlocks,vector("list",1))
             bustBlocks[[counter]] <- vector("list",2)
@@ -246,11 +247,11 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
             state <- "on"
         }
         if (state=="on"){
-            if (bustPlot[i]>0){
+            if (!is.na(bustPlot[i])){
                 bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
                 bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
             }
-            if (bustPlot[i]==0){
+            if (is.na(bustPlot[i])){
                 state <- "off"
             }
         }   
@@ -311,7 +312,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 #' @param ... Additional arguments affecting the plot
 #'
 #' 
-#' @seealso \code{\link{medCal}}, \code{\link{binMed}},
+#' @seealso \code{\link{medCal}}; \code{\link{binMed}}
 #' @import stats
 #' @import grDevices
 #' @import graphics
@@ -404,14 +405,14 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @param rescale  A logical variable indicating whether the SPD should be rescaled to range 0 to 1.
 #' @param fill.p Fill colour for the SPD
 #' @param border.p Border colour for the SPD
-#' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
-#' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}.
+#' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
+#' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
 #' @param add Whether or not the new graphic should be added to an existing plot.
 #' @param ... Additional arguments affecting the plot
 #'
 #'
 #'
-#' @seealso \code{\link{spd}};\code{\link{plot.CalGrid}}
+#' @seealso \code{\link{spd}}; \code{\link{plot.CalGrid}}
 #' @examples
 #' \dontrun{
 #' data(emedyd)
@@ -509,7 +510,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @param add Whether or not the new graphic should be added to an existing plot.
 #' @param ... Additional arguments affecting the plot
 #'
-#' @seealso \code{\link{spd}};\code{\link{plot.CalSPD}}
+#' @seealso \code{\link{spd}}; \code{\link{plot.CalSPD}}
 #' @examples
 #' data(euroevol)
 #' mycaldates <- calibrate(euroevol[1:10,"C14Age"], euroevol[1:10,"C14SD"], normalised=FALSE)
@@ -824,7 +825,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 }
 
 
-#' @title Bin sensitivity analysis
+#' @title Bin sensitivity Plot
 #' 
 #' @description Visually explores how choosing different values for \code{h} in the \code{\link{binPrep}} function affects the shape of the SPD.
 #' 
@@ -840,8 +841,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' @param legend A logical variable indicating whether the legend should be displayed. Default is TRUE
 #' @param ... Additional arguments to be passed to the \code{\link{spd}} function. 
 #' 
-#' @seealso 
-#' \code{\link{binPrep}};\code{\link{spd}};
+#' @seealso \code{\link{binPrep}}; \code{\link{spd}}
 #' @examples
 #' \dontrun{
 #' data(euroevol)
@@ -966,7 +966,7 @@ res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 #' @export 
 
 
-plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,legSize=1,...)
+plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,legSize=1,legend=FALSE,location="bottomright",...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{
@@ -995,10 +995,7 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
 	classes=cols[classes]
 	plot(locations,col=classes,pch=20,cex=baseSize,...)
-	}
-
-
-	if (option=="rawlegend")
+	if (legend)
 	{
 	breaks=round(seq(breakRange[1],breakRange[2],length.out=breakLength),rd)
 	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
@@ -1009,20 +1006,10 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	 breaksLab[j] = paste(breaks[j-1],"to", breaks[j])
 	 if (j==c(breakLength+1)) {breaksLab[j] = paste(">",breaks[length(breaks)])}
 	}
-	par(mar=c(2,0,2,0))
-        plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	legend("center",legend=breaksLab,col=cols,pch=20,bty="n",cex=legSize)
-
-        }
-
-
-	if (option=="testlegend")
-	{
-	par(mar=c(2,0,2,0))
-	plot(0,0,type="n",axes=F,xlab="",ylab="",ylim=c(0,1),xlim=c(0,1))
-	l1 = legend("top",title="Negative Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("cornflowerblue","darkblue"),bg="white",cex=legSize,bty="n")
-	legend(l1$rect$left, y = with(l1$rect, top - h),title="Positive Deviation",legend=c("p<0.05","q<0.05"),pch=20,col=c("orange","red"),bg="white",cex=legSize,bty="n")
+	legend(location,legend=breaksLab,col=cols,pch=20,bg="white",cex=legSize)
 	}
+	}
+
 
 	if (option=="test")
 	{
@@ -1066,8 +1053,48 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 			}
 
 		}
+
+
+	if (legend)
+	{
+	legend(location,legend=c("positive deviation (p<0.05)","positive deviation (q<0.05)","negative deviation (p<0.05)","negative deviation (q<0.05)"),
+	       pch=20, col=c("orange","red","cornflowerblue","darkblue"),bg="white",cex=legSize)
+	}
+
 	}
 
 }
 
+
+
+#' @title Plot \code{spdGG} class objects 
+#' @description Plot calibrated geometric growth rates.
+#' @param x \code{spdGG} class object containing geometric growth rates.
+#' @param ... Additional arguments affecting the plot. 
+#'
+#' @seealso \code{\link{spd2gg}}
+#'
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
+#' @export  
+
+plot.spdGG<- function(x,...)
+{
+	breaks=x$breaks
+	obs=x$sumblock
+	res=x$geomg
+	par(mar=c(4,4,4,4))
+	nn = paste(breaks[-length(breaks)],breaks[-1],sep="-")
+	barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,...)
+	par(new=T)
+	xx = 1:c(length(nn)-1)
+	plot(0,0,xlim=c(0,length(nn)),ylim=range(res),axes=FALSE,xlab="",ylab="",type="n")
+	lines(xx,res,lwd=2,col="darkgreen")
+	points(xx,res,pch=20,col="darkgreen")
+	axis(4,col="darkgreen", col.axis="darkgreen")
+	mtext(side=4,"geometric growth rate",col="darkgreen",line=2)
+	abline(h=0,lty=2,col="blue")
+}
 

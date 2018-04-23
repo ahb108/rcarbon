@@ -4,7 +4,7 @@
 #' known to be from the same phase of same archaeological site (for use with \code{\link{spd}}). Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in a given site phase will impede comparison between sites or phases. 
 #' 
 #' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases
-#' @param ages a vector uncalibrated conventional radiocarbon ages
+#' @param ages a vector of uncalibrated conventional radiocarbon ages
 #' @param h a single numeric value passed to \code{\link{hclust}} control degree of grouping of similar ages in a phase site.
 #'
 #' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with spd()
@@ -14,6 +14,11 @@
 #' @import utils
 #' @export
 binPrep <- function(sites, ages, h){
+    
+    if(any(grepl("_", sites)))
+    {
+        stop("sites should not contain elements with underscores")	
+    }
     
     clusters <- rep(NA,length(sites))
     
@@ -42,7 +47,7 @@ binPrep <- function(sites, ages, h){
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link{binPrep}}) function, and sensitivity to its parameter choice can be explored with the \code{\link{binsense}}) function.
+#' @details The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link{binPrep}}, whilst the sensitivity to parameter choice can be explored with the \code{\link{binsense}} function.
 #'
 #' @return An object of class \code{CalSPD} with the following elements
 #' \itemize{
@@ -53,7 +58,7 @@ binPrep <- function(sites, ages, h){
 #' @references 
 #' Timpson, A., et al, (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52: 549-557. DOI:10.1016/j.jas.2014.08.011
 #'
-#' @seealso \code{\link{calibrate}}) for calibrating rardiocabon dates; \code{\link{binPrep}} for preparing bins.
+#' @seealso \code{\link{calibrate}} for calibrating rardiocabon dates; \code{\link{binPrep}} for preparing bins.
 #' @import utils
 #' @export
 
