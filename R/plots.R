@@ -1027,7 +1027,7 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 	if (option=="test")
 	{
 	nBreaks=ncol(x$rocaObs)
-	plusPoints=locations[which(x$pvalHi[,index]>0.5),]
+	plusPoints=locations[which(x$pvalHi[,index]>=0.5),]
 	minusPoints=locations[which(x$pvalHi[,index]<0.5),]
 
 	# Set Base
@@ -1037,13 +1037,13 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 
 
 	# Set Positive
-	positive.index=which(x$pvalLo[,index]<=0.05)
+	positive.index=which(x$pvalHi[,index]<=0.05)
 
 	if (length(positive.index)>0)
 		{
 		positive=locations[positive.index,]
 		points(positive,pch=20,col="orange",cex=baseSize)
-		qpositive.index=which(x$qvalLo[,index]<=0.05&x$pvalLo[,index]<=0.05) #Originally based on qvalHi
+		qpositive.index=which(x$qvalHi[,index]<=0.05&x$pvalHi[,index]<=0.05) #Originally based on qvalHi
 		if (length(qpositive.index)>0)
 			{
 				qpositive=locations[qpositive.index,]
@@ -1051,13 +1051,13 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 
 			}
 		}
-	negative.index=which(x$pvalHi[,index]<=0.05)
+	negative.index=which(x$pvalLo[,index]<=0.05)
 
 	if (length(negative.index)>0)
 		{
 		negative=locations[negative.index,]
 		points(negative,pch=20,col="cornflowerblue",cex=baseSize)
-		qnegative.index=which(x$qvalHi[,index]<=0.05&x$pvalHi[,index]<=0.05) #Originally based on qvalLo
+		qnegative.index=which(x$qvalLo[,index]<=0.05&x$pvalLo[,index]<=0.05) #Originally based on qvalLo
 		if (length(qnegative.index)>0)
 			{
 				qnegative=locations[qnegative.index,]
