@@ -673,8 +673,8 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 	  }
         stopCluster(cl)
 
-        lo=resultHiLoEq[[1]]
-	hi=resultHiLoEq[[2]]
+    hi=resultHiLoEq[[1]]
+	lo=resultHiLoEq[[2]]
 	eq=resultHiLoEq[[3]]
     
 	} else {
