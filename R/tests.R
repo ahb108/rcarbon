@@ -495,6 +495,12 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
     {
 	stop("Range of breaks values must much match the temporal range defined by timeRange")
     }
+
+    if (length(unique(abs(diff(breaks))))!=1)
+    {
+	stop("Unequal break intervals is not supported")
+    }
+
    
     if (ncores>1&raw==TRUE)
     {

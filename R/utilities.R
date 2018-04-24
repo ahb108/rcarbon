@@ -394,6 +394,10 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
 spd2gg <- function(spd,breaks)
 {
 	require(rcarbon)	
+	if (length(unique(round(abs(diff(breaks)))))!=1)
+	{
+		stop("Unequal break intervals is not supported")
+	}
 	nBreaks = length(breaks)-1
 	timeRange = eval(parse(text=spd$metadata[2]))
 	timeSequence = timeRange[1]:timeRange[2]
