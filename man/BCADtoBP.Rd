@@ -13,7 +13,7 @@ BCADtoBP(x)
 A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
 }
 \description{
-Converts BC/AD dates to BP fromat while handling the absence of 'year 0'
+Converts BC/AD dates to BP format while handling the absence of 'year 0'
 }
 \examples{
 BCADtoBP(-1268)

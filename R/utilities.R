@@ -35,7 +35,7 @@ reScale <- function(x, type="simple", to=c(0,1), na.rm=TRUE){
 #' @title Calculate a running mean from a numeric vector. 
 #' @description Calculate a running mean from a numeric vector.  
 #' @param x numeric vector to smooth.
-#' @param n the size of the window in whicih to smooth.
+#' @param n the size of the window in which to smooth.
 #' @param edge How to treat edge cases where a full window is unavailable. Current options are 'NA' to fill with NAs or 'fill' to fill with original values 
 #' @return A numeric vector of smoothed values.
 #' @examples
@@ -206,7 +206,7 @@ BPtoBCAD <- function(x){
 }
 
 #' @title Convert BC/AD dates to BP format
-#' @description Converts BC/AD dates to BP fromat while handling the absence of 'year 0' 
+#' @description Converts BC/AD dates to BP format while handling the absence of 'year 0' 
 #' @param x A numerical vector (currently no checks that these numbers are in a sensible range).
 #' @return A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
 #' @examples

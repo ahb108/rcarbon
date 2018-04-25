@@ -23,7 +23,7 @@ calibrate(x, ...)
 
 \item{dateDetails}{An optional vector of details for each date which will be returned in the output metadata.}
 
-\item{calCurves}{Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible; default is 'intcal13') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.}
+\item{calCurves}{Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13' and 'normal'(i.e. no calibration) are possible; default is 'intcal13') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.}
 
 \item{resOffsets}{A vector of offset values for any marine reservoir effect (default is no offset).}
 
@@ -53,7 +53,7 @@ An object of class CalDates with the following elements:
 Function for calibrating one or more radiocarbon dates.
 }
 \details{
-This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space, see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time.
+This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space, see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time. The function was modified from the \code{BchronCalibrate} function in the \code{Bchron} package developed by A.Parnell (see references below).
 }
 \examples{
 x1 <- calibrate(x=4000, errors=30)
@@ -64,6 +64,6 @@ x2 <- calibrate(x=4000, errors=30, calCurves='marine13', resOffsets=300, resErro
 plot(x2)
 }
 \references{
-Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x#'
-Parnell, A. 2017. \emph{Bchron: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate Estimation, and Non-Parametric Phase Modelling}, R package: https://CRAN.R-project.org/package=Bchron #'
+Bronk Ramsey, C. 2008. Radiocarbon dating: revolutions in understanding, \emph{Archaeometry} 50.2: 249-75. DOI: https://doi.org/10.1111/j.1475-4754.2008.00394.x \cr
+Parnell, A. 2017. Bchron: Radiocarbon Dating, Age-Depth Modelling, Relative Sea Level Rate Estimation, and Non-Parametric Phase Modelling, R package: https://CRAN.R-project.org/package=Bchron
 }

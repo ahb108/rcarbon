@@ -5,14 +5,15 @@
 \title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
 \method{plot}{spatialTest}(x, index = 1, option, breakRange = NA,
-  breakLength = 7, rd = 5, baseSize = 0.5, legSize = 1, ...)
+  breakLength = 7, rd = 5, baseSize = 0.5, legend = FALSE,
+  legSize = 1, location = "bottomright", ...)
 }
 \arguments{
 \item{x}{A \code{spatialTest} class object}
 
 \item{index}{A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}. Default is 1.}
 
-\item{option}{Indicates what to display. Must be one of "\code{raw}","\code{test}","\code{rawlegend}", and "\code{testlegend}".}
+\item{option}{Indicates what to display. Either "\code{raw}" (the local growth rate) or "\code{test}" (the test results, i.e. q and p values).}
 
 \item{breakRange}{A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend. If set to NA its computed from data range (default).}
 
@@ -22,7 +23,11 @@
 
 \item{baseSize}{Numerical value giving the amount by which points should be magnified relative to the default settings in R. Default is 0.5}
 
-\item{legSize}{Numerical value giving the amount by which points should be magnified relative to the default settings in R for the Legend plot (i.e. when \code{option=rawlegend} or \code{option=rawlegend}. Default is 1.}
+\item{legend}{Logical values specifying whether the legend should be displayed or not. Default is FALSE.}
+
+\item{legSize}{Numerical value giving the amount by which points should be magnified relative to the default settings in R for the Legend. Default is 1.}
+
+\item{location}{A single keyword from the list "bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright", "right" and "center" to specify the location of the Legend. Default is "bottomright".}
 
 \item{...}{Graphical parameters to be passed to methods.}
 }

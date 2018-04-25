@@ -12,8 +12,8 @@ The \pkg{rcarbon} package handles the calibration and analysis of radiocarbon, o
 Core functions in the \pkg{rcarbon} package can be grouped as follows:
 \describe{
   \item{\strong{Calibration Functions}}{\code{\link{calibrate}} and \code{\link{uncalibrate}} enable the calibration and back-calibration for a variety of curves.}
-  \item{\strong{Aggregation Functions}}{\code{\link{spd}} generates a summed probability distributioni (SPD) of radiocarbon dates; \code{\link{binPrep}} can be used to define clusters of radiocarbon dates associated with the same context/phase}
-    \item{\strong{Statistical Test Functions}}{\code{\link{modelTest}} compares the observed SPD against a variety of theorethical models (most typically an exponential curve) using the Monte-Carlo approach; \code{\link{p2pTest}} compares observed differences in SPD between two user-specified points in time against differences expected from a theorethical model; \code{\link{permTest}} compares two or more SPDs and test for the null hypothesis that all sets are derived from the same population; \code{\link{SPpermTest}} identifies, for defined intervals, locations with significantly higher/lower growth rate in the SPD  compared to the panregional trend in the data}
+  \item{\strong{Aggregation Functions}}{\code{\link{spd}} generates a summed probability distribution (SPD) of radiocarbon dates; \code{\link{binPrep}} can be used to define clusters of radiocarbon dates associated with the same context/phase}
+    \item{\strong{Statistical Test Functions}}{\code{\link{modelTest}} compares the observed SPD against a variety of theorethical models (most typically an exponential curve) using the Monte-Carlo approach; \code{\link{p2pTest}} compares observed differences in SPD between two user-specified points in time against differences expected from a theorethical model; \code{\link{permTest}} compares two or more SPDs and test for the null hypothesis that all sets are derived from the same population; \code{\link{SPpermTest}} identifies, for defined intervals, locations with significantly higher/lower growth rate in the SPD  compared to the pan-regional trend in the data}
 }
 }
 \note{

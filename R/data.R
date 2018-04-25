@@ -30,8 +30,8 @@
 #'}
 "euroevol"
 
-#' @title Radiocarbon dates for the Eastern Mediterranan around the Younger Dryas
-#' @description Radiocarbon dates (n=1915) and site coordinates (n=201) from a paper considering the relationship between human activity in the eastern Mediterranean/Middle East and early Holocene climate change, inlcuding the Younger Dryas.   
+#' @title Radiocarbon dates for the Eastern Mediterranean around the Younger Dryas
+#' @description Radiocarbon dates (n=1915) and site coordinates (n=201) from a paper considering the relationship between human activity in the eastern Mediterranean/Middle East and early Holocene climate change, including the Younger Dryas.   
 
 #' @format A data.frame with the following variables:
 #' \describe{
@@ -44,7 +44,7 @@
 #' \item{\code{Country}}{Country where the sampling site is located}
 #' \item{\code{Longitude}}{Longitude of the sampling site in decimal degrees}
 #' \item{\code{Latitude}}{Latitude of the sampling site in decimal degrees}
-#' \item{\code{Region}}{One of three anlaytical regions (1=southern Levant, 2=Northern Levant, 3= South-central Anatolia}
+#' \item{\code{Region}}{One of three analytical regions (1=southern Levant, 2=Northern Levant, 3= South-central Anatolia}
 #'}
 #' @source Palmisano, A., Bevan, A. and S. Shennan 2017. Data and code for demographic trends in the paper "Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean", UCL Discovery Archive 1570274. doi:10.14324/000.ds.1570274.
 #' @references

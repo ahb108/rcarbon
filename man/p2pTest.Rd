@@ -4,7 +4,7 @@
 \alias{p2pTest}
 \title{Point to point test of SPD}
 \usage{
-p2pTest(x, p1 = NA, p2 = NA, interactive = TRUE)
+p2pTest(x, p1 = NA, p2 = NA, interactive = TRUE, plot = FALSE)
 }
 \arguments{
 \item{x}{result of \code{\link{modelTest}} with raw=TRUE.}
@@ -14,6 +14,8 @@ p2pTest(x, p1 = NA, p2 = NA, interactive = TRUE)
 \item{p2}{calendar year (in BP) of end point.}
 
 \item{interactive}{if set to TRUE enables an interactive selection of p1 and p2 from a graphical display of the SPD. Disabled when \code{p1} and \code{p2} are defined.}
+
+\item{plot}{if set to TRUE the function plots the location of p1 and p2 on the SPD. Default is FALSE.}
 }
 \value{
 A list with: the BP dates for the two points and the p-value obtained from a two-sided test.
@@ -22,7 +24,7 @@ A list with: the BP dates for the two points and the p-value obtained from a two
 Test for evaluating the difference in the summed probability values associated with two points in time.
 }
 \details{
-The function compares observed differences in the summed probability values associated with two points in time against a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or interactively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}.
+The function compares observed differences in the summed probability values associated with two points in time against a distribution of expected values under the null hypothesis defined with the \code{\link{modelTest}} function. The two points can be specified manually (assigning BP dates to the arguments \code{p1} and \code{p2}) or interactively (clicking on a SPD plot). Note that \code{\link{modelTest}} should be executed setting the argument \code{raw} to \code{TRUE} (default is \code{FALSE}).
 }
 \examples{
 ## Example with Younger Dryas period Near East, including site bins

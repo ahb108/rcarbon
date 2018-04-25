@@ -23,7 +23,7 @@ uncalibrate(x, ...)
 
 \item{roundyear}{An optional vector of IDs for each date (ignored if x is a CalGrid object).}
 
-\item{calCurves}{A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13', 'shcal13' and 'marine13' are possible) or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the 'intcal13' curve and only one curve can currently be specified for all dates.}
+\item{calCurves}{A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13','intcal13nhpine16','shcal13',"shcal13shkauri16', and 'marine13' are possible) or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the 'intcal13' curve and only one curve can currently be specified for all dates.}
 
 \item{eps}{Cut-off value for density calculation (for CalGrid objects only).}
 

@@ -37,7 +37,7 @@
 \item{...}{Additional arguments affecting the plot}
 }
 \description{
-Vsualise the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
+Visualises the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
 }
 \seealso{
 \code{\link{permTest}}; \code{\link{plot.SpdModelTest}};

@@ -9,7 +9,7 @@ runMean(x, n, edge = "NA")
 \arguments{
 \item{x}{numeric vector to smooth.}
 
-\item{n}{the size of the window in whicih to smooth.}
+\item{n}{the size of the window in which to smooth.}
 
 \item{edge}{How to treat edge cases where a full window is unavailable. Current options are 'NA' to fill with NAs or 'fill' to fill with original values}
 }
