@@ -504,7 +504,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
    
     if (ncores>1&raw==TRUE)
     {
-	warnings("raw==TRUE available only for ncores=1")
+	warning("raw==TRUE available only for ncores=1")
     	raw=FALSE
     }
 #############################
