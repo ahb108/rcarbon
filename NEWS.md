@@ -1,4 +1,14 @@
 
+# Version 1.1.1 (ongoing)
+* Added normally-distributed (non-14C) age in `calibrate()`.
+* Fixed a bug in `SPpermTest()` generating opposite results (positive deviations were recorded as negative deviations) when `ncores` was larger than 1.  
+* Fixed a minor bug in the implementation of the [North el al 2002] formula
+* The plot function for the results in `SPpermTest()` now allows in image legends
+* NEW function: `spd2gg()` to convert SPD curves into geometric growth rates for given temporal blocks and an associated plot function. 
+* Minor updates in the documentation.
+* Additional warning messages in several functions.  
+
+
 # Version 1.1.0 (12 March 2018)
 * Improved performance of `modelTest()` function when running with multiple cores.
 * NEW function: `p2pTest()` for comparing point to point differences in SPD (as in [Edinborough et al 2017](http://dx.doi.org/10.1073/pnas.1713012114)
