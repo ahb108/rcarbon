@@ -5,8 +5,8 @@
 \title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
 \method{plot}{spatialTest}(x, index = 1, option, breakRange = NA,
-  breakLength = 7, rd = 5, baseSize = 0.5, legend = FALSE,
-  legSize = 1, location = "bottomright", ...)
+  breakLength = 7, rd = 5, baseSize = 0.5, plim = 0.05, qlim = 0.05,
+  legend = FALSE, legSize = 1, location = "bottomright", ...)
 }
 \arguments{
 \item{x}{A \code{spatialTest} class object}
@@ -22,6 +22,10 @@
 \item{rd}{Number of decimal places of the growth rate to be displayed in the Legend}
 
 \item{baseSize}{Numerical value giving the amount by which points should be magnified relative to the default settings in R. Default is 0.5}
+
+\item{plim}{Threshold value for the p-values. Default is 0.05.}
+
+\item{qlim}{Threshold value for the q-values. Default is 0.05.}
 
 \item{legend}{Logical values specifying whether the legend should be displayed or not. Default is FALSE.}
 
