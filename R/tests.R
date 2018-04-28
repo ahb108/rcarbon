@@ -14,6 +14,7 @@
 #' @param timeRange  A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param raw A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.
 #' @param model A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}. 
+#' @param method Method for the creation of random dates from the fitted model. Either \code{'grid'} or \code{'doublerandom'}. Default is \{'grid'}. See below for details. 
 #' @param predgrid A data.frame containing calendar years (column \code{calBP} and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.
 #' @param calCurves A vector of calibration curves (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13')
 #' @param datenormalised If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.
@@ -60,7 +61,7 @@
 #' @import doParallel
 #' @export
 
-modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","uniform","linear","custom"), predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","uniform","linear","custom"),method=c("grid"),predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
     
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -70,6 +71,11 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
       doParallel::registerDoParallel(cl)
       on.exit(stopCluster(cl))	
     }
+    if (!any(method%in%c("grid","doublerandom")))
+    {
+	stop("The 'method' argument must be either 'grid' or 'doublerandom'")
+    }	    
+
     if (verbose){ print("Aggregating observed dates...") }
     if (is.na(bins[1])){
         samplesize <- nrow(x$metadata)
@@ -110,14 +116,28 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
         res <- list(result=NA, sim=NA, pval=NA, osbSPD=observed, fit=predgrid, fitobject=fit)
         return(res)
     }
+    
+    if (method=="grid")
+    {
     cragrid <- uncalibrate(as.CalGrid(predgrid), calCurves=calCurves, compact=FALSE, verbose=FALSE)
     cragrid <- cragrid[cragrid$CRA <= max(x$metadata$CRA) & cragrid$CRA >= min(x$metadata$CRA),]
+    }
+
 
     if (ncores==1)
     {
     for (s in 1:nsim){ 
 	if (verbose){ setTxtProgressBar(pb, s) } 
-        randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
+            
+    if (method=="grid")
+    {
+    randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
+    }
+    if (method=="doublerandom")
+    {
+    randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
+    }
+
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE) 
         tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
         simDateMatrix <- tmp$calmatrix 
@@ -133,7 +153,15 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 	print("Progress bar disabled for multi-core processing")
     	sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
         # if (verbose){ setTxtProgressBar(pb, s) }
-        randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens)
+    if (method=="grid")
+    {
+    randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
+    }
+    if (method=="doublerandom")
+    {
+    randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
+    }
+
         randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
         tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE)
         simDateMatrix <- tmp$calmatrix
