@@ -47,7 +47,7 @@ Notice that the development version can be unstable, so for general use we recom
 
 # Calibrating $^{14}$C Dates
 
-Single or multiple radiocarbon dates can be calibrated using the `calibrate()` function, which uses the probability density approach (Stuiver and Reimar 1993, Van Der Plicht 1993, Bronk Ramsey 2008) implemented in most calibration software (e.g. [OxCal](https://c14.arch.ox.ac.uk/oxcal.html)) as well as in other R packages (especially [Bchron](https://cran.r-project.org/web/packages/Bchron/index.html), which also provides age-depth modelling for environmental cores with radiocarbon dates and experimental options for aggregating dates via Gaussian mixtures). 
+Single or multiple radiocarbon dates can be calibrated using the `calibrate()` function, which uses the probability density approach (Stuiver and Reimar 1993, Van Der Plicht 1993, Bronk Ramsey 2008) implemented in most calibration software (e.g. [OxCal](https://c14.arch.ox.ac.uk/oxcal.html)) as well as in other R packages (especially [Bchron](https://CRAN.R-project.org/package=Bchron), which also provides age-depth modelling for environmental cores with radiocarbon dates and experimental options for aggregating dates via Gaussian mixtures). 
 
 The example below calibrates a sample with a $^{14}$C Age of 4200 BP and an error of 30 years using the *intcal13* calibration curve:
 
