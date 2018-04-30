@@ -90,7 +90,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
         cclist <- vector(mode="list", length=length(tmp))
         names(cclist) <- tmp
         for (a in 1:length(tmp)){
-            calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", tmp[1],".14c", sep="")
+            calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", tmp[a],".14c", sep="")
             options(warn=-1)
             cctmp <- readLines(calCurveFile, encoding="UTF-8")
             cctmp <- cctmp[!grepl("[#]",cctmp)]
