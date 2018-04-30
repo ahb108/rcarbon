@@ -1,6 +1,7 @@
 
 # Version 1.1.2 (ongoing)
 * Fixed a bug for calibration of multiple dates with different curves in `calibrate()`
+* Minor corrections (e.g. typos) in the help documentation.
 
 # Version 1.1.1 (28 April 2017)
 * Added a Vignette.
