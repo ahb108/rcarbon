@@ -304,7 +304,7 @@ uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intc
                 stop("The custom calibration curve does not cover the input age range.")
             }
         }
-    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","normal","intcal13nhpine16","shcal13shkauri16"))){
+    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
         stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
     } else {
         calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
@@ -343,7 +343,7 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
                 stop("The custom calibration curve does not cover the input age range.")
             }
         }
-    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","normal","intcal13nhpine16","shcal13shkauri16"))){
+    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
         stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
     } else {
         calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
