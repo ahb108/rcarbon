@@ -354,7 +354,7 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
         options(warn=0)
         colnames(calcurve) <- c("CALBP","C14BP","Error")
     }
-    mycras <- uncalibrate(x$calBP)
+    mycras <- uncalibrate(x$calBP,calCurves=calCurves)
     res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=0)
     tmp <- vector(mode="list",length=nrow(mycras))
     basetmp <- vector(mode="list",length=nrow(mycras))
