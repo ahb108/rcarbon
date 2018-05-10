@@ -383,8 +383,8 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
 #' data(emedyd)
 #' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
 #' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
-#' emdyd.spd <- spd(caldates,bins,timeRange=c(16000,9000))
-#' emdyd.gg <- spd2gg(emedyd.spd,breaks=seq(16000,9000,-1000))
+#' emedyd.spd <- spd(caldates,bins,timeRange=c(16000,9000))
+#' emedyd.gg <- spd2gg(emedyd.spd,breaks=seq(16000,9000,-1000))
 #' plot(emedyd.gg)
 #' }
 
