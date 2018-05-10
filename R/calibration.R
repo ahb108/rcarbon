@@ -300,7 +300,7 @@ uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intc
             stop("The custom calibration curve must have just three numeric columns.")
         } else {
             colnames(calcurve) <- c("CALBP","C14BP","Error")
-            if (max(calcurve[,2]) < max(x) | min(calcurve[,2]) > min(x)){
+            if (max(calcurve[,1]) < max(x) | min(calcurve[,1]) > min(x)){
                 stop("The custom calibration curve does not cover the input age range.")
             }
         }
@@ -339,7 +339,7 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
             stop("The custom calibration curve must have just three numeric columns.")
         } else {
             colnames(calcurve) <- c("CALBP","C14BP","Error")
-            if (max(calcurve[,2]) < max(x) | min(calcurve[,2]) > min(x)){
+            if (max(calcurve[,1]) < max(x$calBP) | min(calcurve[,1]) > min(x$calBP)){
                 stop("The custom calibration curve does not cover the input age range.")
             }
         }
