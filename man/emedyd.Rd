@@ -37,6 +37,6 @@ plot(spd.northernlevant)
 }
 }
 \references{
-Roberts, N., Woodbridge, J., Bevan, A., Palmisano, A., Shennan, S. and E. Asouti 2017. Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean. Quaternary Science Reviews, doi:10.1016/j.quascirev.2017.09.011.
+Roberts, N., Woodbridge, J., Bevan, A., Palmisano, A., Shennan, S. and E. Asouti 2017. Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean. Quaternary Science Reviews, 184, 47-67. doi:10.1016/j.quascirev.2017.09.011.
 }
 \keyword{datasets}

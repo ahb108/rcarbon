@@ -1,6 +1,8 @@
 
 # Version 1.1.2 (ongoing)
-* Fixed a bug for calibration of multiple dates with different curves in `calibrate()`
+* Bug Fix in `calibrate()`: calibration of multiple dates with different calibration curves was based on the calibration curve of the first sample.
+* Bug Fix in  `modelTest()`: back-calibration routine was ignoring  user-supplied calibration curve and was solely using "intcal13". 
+* UPDATE: `modelTest()` now allows for two distinct procedures for generating random dates from fitted models.
 * Minor corrections (e.g. typos) in the help documentation.
 
 # Version 1.1.1 (28 April 2018)

@@ -6,9 +6,9 @@
 \usage{
 modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
   raw = FALSE, model = c("exponential", "uniform", "linear", "custom"),
-  predgrid = NA, calCurves = "intcal13", datenormalised = FALSE,
-  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, a = 0, b = 0,
-  verbose = TRUE)
+  method = c("uncalsample"), predgrid = NA, calCurves = "intcal13",
+  datenormalised = FALSE, spdnormalised = FALSE, ncores = 1,
+  fitonly = FALSE, a = 0, b = 0, verbose = TRUE)
 }
 \arguments{
 \item{x}{A \code{CalDates} object containing calibrated radiocarbon ages}
@@ -27,9 +27,11 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 
 \item{model}{A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}.}
 
-\item{predgrid}{A data.frame containing calendar years (column \code{calBP} and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.}
+\item{method}{Method for the creation of random dates from the fitted model. Either \code{'uncalsample'} or \code{'calsample'}. Default is \code{'uncalsample'}. See below for details.}
 
-\item{calCurves}{A vector of calibration curves (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13')}
+\item{predgrid}{A data.frame containing calendar years (column \code{calBP}) and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.}
+
+\item{calCurves}{Calibration curve (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13'). The function currently does not support samples using different calibration curves.}
 
 \item{datenormalised}{If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.}
 
@@ -59,7 +61,7 @@ An object of class \code{SpdModelTest} with the following elements
 Comparison of an observed summed radiocarbon date distribution (aka SPD) with simulated outcomes from a theoretical model.
 }
 \details{
-The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The current implementation of this function uncalibrates the entire fitted distribution and then applies a baseline assumption based on a uniform model. It then samples a new set of new uncalibrated dates, before calibrating them and summing. Other published approaches tend to sample from the fitted calibrated distribution so the resulting envelope is likely to differ slightly, particularly at steep portions of the calibration curve. This process is repeated \code{nsim} times to produce a set of simulated expected probabilities densities per each calendar year. The probabilities are then z-transformed, and a 95\% critical envelope is computed. Local departures from the model are defined as instances where the observed SPD (which is also z-transformed) is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope.
+The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The function generates \code{nsim} theorethical SPDs from the fitted model via Monte-Carlo simulation, this is then used to define a 95\% critical envelope for each calendar year. The observed SPD is then compared against the simulation envelope; local departures from the model are defined as instances where the observed SPD is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. The theoretical SPDs can be generated using two different sampling approaches defined by the parameter \code{method}. If \code{method} is set to \code{"uncalsample"} each date is is drawn after the fitted model is backcalibrated as a whole and adjusted for a baseline expectation; if is set to  \code{"calsample"} samples are drawn from the fitted model in calendar year then individually back calibrated and recalibrated. For each simulation, both approaches produces \eqn{n} samples, with \eqn{n} equal to the number of bins or number of dates (when bins are not defined).
 }
 \note{
 Windows users might receive a memory allocation error with larger time span of analysis (defined by the parameter \code{timeRange}). This can be avoided by increasing the memory limit with the \code{\link{memory.limit}} function.
@@ -78,5 +80,5 @@ round(expnull$pval,4) #p-value
 }
 }
 \references{
-Timpson, A., Colledge, S., Crema, E., Edinborough, K., Kerig, T., Manning, K., Thomas, M.G., Shennan, S., (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52, 549-557. doi:10.1016/j.jas.2014.08.011
+Timpson, A., Colledge, S., Crema, E., Edinborough, K., Kerig, T., Manning, K., Thomas, M.G., Shennan, S., (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science, 52, 549-557. doi:10.1016/j.jas.2014.08.011
 }
