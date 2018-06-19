@@ -52,6 +52,7 @@
 #' timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
 #' plot(expnull, xlim=c(16000,9000))
 #' round(expnull$pval,4) #p-value
+#' summary(expnull)
 #' }
 #' @import utils
 #' @import stats
@@ -198,7 +199,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     # Results
     result <- data.frame(calBP=observed$grid$calBP,PrDens=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){ sim <- NA }
-    res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, fitobject=fit)
+    res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, fitobject=fit,nbins=length(bins),n=nrow(caldates$metadata),nsim=nsim)
     class(res) <- "SpdModelTest"
     if (verbose){ print("Done.") }
     return(res)
@@ -242,6 +243,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 #' res = permTest(dates,marks=as.character(nld.dnk$Country),nsim=1000,
 #' bins=bins,runm=200,timeRange=c(10000,4000))
 #' round(res$pValueList,4) #extract p-values
+#' summary(res)
 #' par(mfrow=c(2,1))
 #' plot(res,focalm="Netherlands",main="Netherlands")
 #' plot(res,focalm="Denmark",main="Denmark")
@@ -382,11 +384,24 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
         observedStatistic <- sum(abs(lower[indexLow]))+sum(higher[indexHi])
         pValueList[[a]] <- 1
         if (observedStatistic>0){    
-            pValueList[[a]] <- 1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic])+1)/c(length(expectedstatistic)+1)
+            pValueList[[a]] <-c(length(expectedstatistic[expectedstatistic > observedStatistic])+1)/c(nsim+1)
+#	1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic])+1)/c(length(expectedstatistic)+1)
+
         }
         names(pValueList) <- unique(GroupList)
     }        
     res <- list(observed=observedSPD, envelope=simulatedCIlist, pValueList=pValueList)
+    
+    metadata=vector("list",length=length(unique(GroupList)))
+    names(metadata) = unique(GroupList)
+	for (k in 1:length(unique(GroupList)))
+	{
+	        i=unique(GroupList)[k]
+		tmp = c(sum(marks%in%i),length(unique(bins[which(marks%in%i)])))
+		metadata[[k]]=tmp
+	}
+    res$nsim = nsim
+    res$metadata = metadata    
     if (raw){ res$raw <- simulatedSPD }
     class(res) <- "SpdPermTest"
     if (verbose){ print("Done.") }
@@ -490,338 +505,338 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 
-###################################
-#### Load Dependency Libraries ####
-###################################
-    if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
-	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
-	ncores=1
-    }	
+	###################################
+	#### Load Dependency Libraries ####
+	###################################
+	if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
+		warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
+		ncores=1
+	}	
 
-##################################
-#### Initial warning messages ####
-##################################
+	##################################
+	#### Initial warning messages ####
+	##################################
 
-     if (!"CalDates" %in% class(calDates)){
-        stop("calDates must be an object of class 'calDates'.")
-    }
-    if (length(bins)>1){
-         if (any(is.na(bins))){
-            stop("Cannot have NA values in bins.")
-        }
-        if (length(bins)!=length(calDates$grid)){
-            stop("bins (if provided) must be the same length as x.")
-        }
-         } else {
-        bins <- rep("0_0",length(calDates$grid))
-    }
-
-   if (!("SpatialPoints" %in% class(locations)[1]|"SpatialPointsDataFrame" %in% class(locations)[1])){
-        stop("locations must be an object of class 'SpatialPoints' or 'SpatialPointsDataFrame'.")
-    }
-
-   locations.id=row.names(locations@coords)
-    if (is.null(locations.id))
-    {
-        stop("locations must have rownames")
-    }
-    if (!all(range(timeRange)==range(breaks)))
-    {
-	stop("Range of breaks values must much match the temporal range defined by timeRange")
-    }
-
-    if (length(unique(abs(diff(breaks))))!=1)
-    {
-	stop("Unequal break intervals is not supported")
-    }
-
-   
-    if (ncores>1&raw==TRUE)
-    {
-	warning("raw==TRUE available only for ncores=1")
-    	raw=FALSE
-    }
-#############################
-#### Create binnedMatrix ####
-#############################
-
-    binNames <- unique(bins)
-    calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
-    binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
-
-
-    if (verbose & length(binNames)>1){
-        print("Binning by site/phase...")
-        flush.console()
-        pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
-    }
-    for (b in 1:length(binNames)){
-        if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
-        index <- which(bins==binNames[b])
-        slist <- calDates$grid[index]
-        slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
-        slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
-        slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
-        tmp <- lapply(slist,`[`,2)
-        if (datenormalised){
-            tmp <- lapply(tmp,FUN=function(x) x/sum(x))
-        }
-        if (length(binNames)>1){
-            spd.tmp <- Reduce("+", tmp) / length(index)
-        } else {
-            spd.tmp <- Reduce("+", tmp)
-        }
-	binnedMatrix[,b] <- spd.tmp[,1]
-    }
-    if (verbose & length(binNames)>1){ close(pb) }
-
-
-################################
-### Observed Data Subroutine ###
-################################ 
-
-
-## Aggregate by Locations ##
-    origins=unlist(lapply(strsplit(binNames,"_"),function(x){x[[1]]}))
-
-    if (!all(origins%in%locations.id))
-     {
-        stop("Missing bins or locations")
-     }
-
-    resMatrix=matrix(NA,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
-    
-    for (x in 1:length(unique(locations.id))) 
-        {
-            index=which(origins==unique(locations.id)[x])
-            if(length(index)>1)
-                {resMatrix[x,]=apply(binnedMatrix[,index],1,sum)}
-            if(length(index)==1)
-                {resMatrix[x,]=binnedMatrix[,index]}
-        }
-
- ## Aggregate by break s##
-
-    nBreaks=length(breaks)-1
-    obsMatrix=matrix(NA,nrow=length(unique(locations.id)),ncol=nBreaks)
-    timeSequence=timeRange[1]:timeRange[2]
-    
-    for (x in 1:nBreaks)
-        {
-            index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
-            obsMatrix[,x]=apply(resMatrix[,index],1,sum)
-        }
-
-## Apply SpatialWeights ##
-
-    obsGridVal=t(spatialweights$w)%*%obsMatrix
-
-## Compute Rate of Change #3
-
-    rocaObs=t(apply(obsGridVal,1,function(x,d){
-		   L=length(x)
-		   res=numeric(length=L-1)
-		   for (i in 1:c(L-1))
-			{
-			res[i]=(x[i+1]/x[i])^(1/d)-1
-			}
-		   return(res)},
-		   d=abs(breaks[2]-breaks[1])))
-
-##############################
-### Permutation Subroutine ###
-############################## 
-
-    if (ncores>1)
-   	 {
-          cl <- makeCluster(ncores)
-          registerDoParallel(cl)
-          print(paste("Running permutation test in parallel on ",getDoParWorkers()," workers...",sep=""))
-	  sumcombine<-function(a,b)
-		{
-		list(a[[1]]+b[[1]],a[[2]]+b[[2]],a[[3]]+b[[3]])
+	if (!"CalDates" %in% class(calDates)){
+		stop("calDates must be an object of class 'calDates'.")
+	}
+	if (length(bins)>1){
+		if (any(is.na(bins))){
+			stop("Cannot have NA values in bins.")
 		}
-	  resultHiLoEq<-foreach (x=1:nsim,.combine= sumcombine) %dopar% {
+		if (length(bins)!=length(calDates$grid)){
+			stop("bins (if provided) must be the same length as x.")
+		}
+	} else {
+		bins <- rep("0_0",length(calDates$grid))
+	}
 
-            simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
-            
-	    ## Aggregate by Site ## 
+	if (!("SpatialPoints" %in% class(locations)[1]|"SpatialPointsDataFrame" %in% class(locations)[1])){
+		stop("locations must be an object of class 'SpatialPoints' or 'SpatialPointsDataFrame'.")
+	}
 
-            simResMatrix=matrix(0,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
+	locations.id=row.names(locations@coords)
+	if (is.null(locations.id))
+	{
+		stop("locations must have rownames")
+	}
+	if (!all(range(timeRange)==range(breaks)))
+	{
+		stop("Range of breaks values must much match the temporal range defined by timeRange")
+	}
 
-            ## Randomly assigne bins to locations.id ##
-           
-	    if (permute=="bins")
-	    {    
-	    simOrigins=sample(origins)
-            for (x in 1:length(unique(locations.id)))
-                {                    
-                    index=which(simOrigins==unique(locations.id)[x])
-                    if(length(index)>1)
-                        {simResMatrix[x,]=apply(binnedMatrix[,index],1,sum)}
-                    if(length(index)==1)
-                        {simResMatrix[x,]=binnedMatrix[,index]}
-                }
-            
-
-            ## Aggregate by breaks ##
-	    
-            aggMatrix=matrix(NA,nrow=length(unique(locations.id)),ncol=nBreaks)
-            
-            for (x in 1:nBreaks)
-                {
-                    index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
-                    aggMatrix[,x]=apply(simResMatrix[,index],1,sum)
-                }
-		       
-
-           ## Apply Weights ##
-
-           simGridVal=t(spatialweights$w)%*%aggMatrix
-	    }
-	    if (permute=="locations")
-	    {
-	     simMatrix=obsMatrix[sample(nrow(obsMatrix)),]	
-             simGridVal=t(spatialweights$w)%*%simMatrix
-		
-	    }
+	if (length(unique(abs(diff(breaks))))!=1)
+	{
+		stop("Unequal break intervals is not supported")
+	}
 
 
-           ## Compute Rate of Change ##
+	if (ncores>1&raw==TRUE)
+	{
+		warning("raw==TRUE available only for ncores=1")
+		raw=FALSE
+	}
+	#############################
+	#### Create binnedMatrix ####
+	#############################
 
-           rocaSim=t(apply(simGridVal,1,function(x,d){
-		   L=length(x)
-		   res=numeric(length=L-1)
-		   for (i in 1:c(L-1))
-			{
-			res[i]=(x[i+1]/x[i])^(1/d)-1
+	binNames <- unique(bins)
+	calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
+	binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
+
+
+	if (verbose & length(binNames)>1){
+		print("Binning by site/phase...")
+		flush.console()
+		pb <- txtProgressBar(min=1, max=length(binNames), style=3, title="Binning by site/phase...")
+	}
+	for (b in 1:length(binNames)){
+		if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
+		index <- which(bins==binNames[b])
+		slist <- calDates$grid[index]
+		slist <- lapply(slist,FUN=function(x) merge(calyears,x, all.x=TRUE)) 
+		slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
+		slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
+		tmp <- lapply(slist,`[`,2)
+		if (datenormalised){
+			tmp <- lapply(tmp,FUN=function(x) x/sum(x))
+		}
+		if (length(binNames)>1){
+			spd.tmp <- Reduce("+", tmp) / length(index)
+		} else {
+			spd.tmp <- Reduce("+", tmp)
+		}
+		binnedMatrix[,b] <- spd.tmp[,1]
+	}
+	if (verbose & length(binNames)>1){ close(pb) }
+
+
+	################################
+	### Observed Data Subroutine ###
+	################################ 
+
+
+	## Aggregate by Locations ##
+	origins=unlist(lapply(strsplit(binNames,"_"),function(x){x[[1]]}))
+
+	if (!all(origins%in%locations.id))
+	{
+		stop("Missing bins or locations")
+	}
+
+	resMatrix=matrix(NA,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
+
+	for (x in 1:length(unique(locations.id))) 
+	{
+		index=which(origins==unique(locations.id)[x])
+		if(length(index)>1)
+			{resMatrix[x,]=apply(binnedMatrix[,index],1,sum)}
+		if(length(index)==1)
+			{resMatrix[x,]=binnedMatrix[,index]}
+	}
+
+	## Aggregate by break s##
+
+	nBreaks=length(breaks)-1
+	obsMatrix=matrix(NA,nrow=length(unique(locations.id)),ncol=nBreaks)
+	timeSequence=timeRange[1]:timeRange[2]
+
+	for (x in 1:nBreaks)
+	{
+		index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
+		obsMatrix[,x]=apply(resMatrix[,index],1,sum)
+	}
+
+	## Apply SpatialWeights ##
+
+	obsGridVal=t(spatialweights$w)%*%obsMatrix
+
+	## Compute Rate of Change #3
+
+	rocaObs=t(apply(obsGridVal,1,function(x,d){
+				L=length(x)
+				res=numeric(length=L-1)
+				for (i in 1:c(L-1))
+				{
+					res[i]=(x[i+1]/x[i])^(1/d)-1
+				}
+				return(res)},
+				d=abs(breaks[2]-breaks[1])))
+
+	##############################
+	### Permutation Subroutine ###
+	############################## 
+
+	if (ncores>1)
+	{
+		cl <- makeCluster(ncores)
+		registerDoParallel(cl)
+		print(paste("Running permutation test in parallel on ",getDoParWorkers()," workers...",sep=""))
+		sumcombine<-function(a,b)
+		{
+			list(a[[1]]+b[[1]],a[[2]]+b[[2]],a[[3]]+b[[3]])
+		}
+		resultHiLoEq<-foreach (x=1:nsim,.combine= sumcombine) %dopar% {
+
+			simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
+
+			## Aggregate by Site ## 
+
+			simResMatrix=matrix(0,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
+
+			## Randomly assigne bins to locations.id ##
+
+			if (permute=="bins")
+			{    
+				simOrigins=sample(origins)
+				for (x in 1:length(unique(locations.id)))
+				{                    
+					index=which(simOrigins==unique(locations.id)[x])
+					if(length(index)>1)
+						{simResMatrix[x,]=apply(binnedMatrix[,index],1,sum)}
+					if(length(index)==1)
+						{simResMatrix[x,]=binnedMatrix[,index]}
+				}
+
+
+				## Aggregate by breaks ##
+
+				aggMatrix=matrix(NA,nrow=length(unique(locations.id)),ncol=nBreaks)
+
+				for (x in 1:nBreaks)
+				{
+					index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
+					aggMatrix[,x]=apply(simResMatrix[,index],1,sum)
+				}
+
+
+				## Apply Weights ##
+
+				simGridVal=t(spatialweights$w)%*%aggMatrix
 			}
-		   return(res)},
-		   d=abs(breaks[2]-breaks[1])))
+			if (permute=="locations")
+			{
+				simMatrix=obsMatrix[sample(nrow(obsMatrix)),]	
+				simGridVal=t(spatialweights$w)%*%simMatrix
 
-	    lo=rocaObs<rocaSim	    
-	    hi=rocaObs>rocaSim
-	    eq=rocaObs==rocaSim
+			}
 
-          return(list(hi,lo,eq))
-	  }
-        stopCluster(cl)
 
-    hi=resultHiLoEq[[1]]
-	lo=resultHiLoEq[[2]]
-	eq=resultHiLoEq[[3]]
-    
+			## Compute Rate of Change ##
+
+			rocaSim=t(apply(simGridVal,1,function(x,d){
+						L=length(x)
+						res=numeric(length=L-1)
+						for (i in 1:c(L-1))
+						{
+							res[i]=(x[i+1]/x[i])^(1/d)-1
+						}
+						return(res)},
+						d=abs(breaks[2]-breaks[1])))
+
+			lo=rocaObs<rocaSim	    
+			hi=rocaObs>rocaSim
+			eq=rocaObs==rocaSim
+
+			return(list(hi,lo,eq))
+		}
+		stopCluster(cl)
+
+		hi=resultHiLoEq[[1]]
+		lo=resultHiLoEq[[2]]
+		eq=resultHiLoEq[[3]]
+
 	} else {
 
-    hi=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
-    lo=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
-    eq=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
+		hi=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
+		lo=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
+		eq=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
 
-    print("Permutation test...")
-    flush.console()
-    
-    if(raw)
-    {
-	rocaSimAll = array(NA,dim=c(nsim,nrow(spatialweights$w),nBreaks-1))
-    }
-    pb <- txtProgressBar(min = 1, max = nsim, style=3)
+		print("Permutation test...")
+		flush.console()
 
-        for (s in 1:nsim)
-        {
-            setTxtProgressBar(pb, s)
-	    simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
-            ## Aggregate by Site ## 
-            simResMatrix=matrix(0,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
+		if(raw)
+		{
+			rocaSimAll = array(NA,dim=c(nsim,nrow(spatialweights$w),nBreaks-1))
+		}
+		pb <- txtProgressBar(min = 1, max = nsim, style=3)
 
-            ## Randomly assign bins to locations
-            if (permute=="bins")
-	    {
-	    simOrigins=sample(origins)
-            
+		for (s in 1:nsim)
+		{
+			setTxtProgressBar(pb, s)
+			simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
+			## Aggregate by Site ## 
+			simResMatrix=matrix(0,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
 
-
-
-            for (x in 1:length(unique(locations.id)))
-                {                    
-                    index=which(simOrigins==unique(locations.id)[x])
-                    if(length(index)>1)
-                        {simResMatrix[x,]=apply(binnedMatrix[,index],1,sum)}
-                    if(length(index)==1)
-                        {simResMatrix[x,]=binnedMatrix[,index]}
-                }
-            
-
-            ##Aggregate by breaks##
-            aggMatrix=matrix(NA,nrow=length(unique(locations.id)),ncol=nBreaks)
-            
-            for (x in 1:nBreaks)
-                {
-                    index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
-                    aggMatrix[,x]=apply(simResMatrix[,index],1,sum)
-                }
-		       
-
-           ##Apply Weights 
-           simGridVal=t(spatialweights$w)%*%aggMatrix
-	    }
-           if (permute=="locations")
-           {
-	     simMatrix=obsMatrix[sample(nrow(obsMatrix)),]	
-             simGridVal=t(spatialweights$w)%*%simMatrix
-	   }
-
-
-
-           ##Compute Rate of Change
-           rocaSim=t(apply(simGridVal,1,function(x,d){
-		   L=length(x)
-		   res=numeric(length=L-1)
-		   for (i in 1:c(L-1))
+			## Randomly assign bins to locations
+			if (permute=="bins")
 			{
-			res[i]=(x[i+1]/x[i])^(1/d)-1
+				simOrigins=sample(origins)
+
+
+
+
+				for (x in 1:length(unique(locations.id)))
+				{                    
+					index=which(simOrigins==unique(locations.id)[x])
+					if(length(index)>1)
+						{simResMatrix[x,]=apply(binnedMatrix[,index],1,sum)}
+					if(length(index)==1)
+						{simResMatrix[x,]=binnedMatrix[,index]}
+				}
+
+
+				##Aggregate by breaks##
+				aggMatrix=matrix(NA,nrow=length(unique(locations.id)),ncol=nBreaks)
+
+				for (x in 1:nBreaks)
+				{
+					index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
+					aggMatrix[,x]=apply(simResMatrix[,index],1,sum)
+				}
+
+
+				##Apply Weights 
+				simGridVal=t(spatialweights$w)%*%aggMatrix
 			}
-		   return(res)},
-		   d=abs(breaks[2]-breaks[1])))
-
-	    hi=hi+(rocaObs>rocaSim)
-	    lo=lo+(rocaObs<rocaSim)
-	    eq=eq+(rocaObs==rocaSim)
-	    rocaSimAll[s,,]=rocaSim
-        }
-    close(pb)
-    }
-
-
-############################
-### Compute Significance ###
-############################ 
-    
-    pvalHi=(lo+eq+1)/c(nsim+1)
-    pvalLo=(hi+eq+1)/c(nsim+1)
-    pval=pvalHi
-    pval[which(pvalHi>pvalLo)]=pvalLo[which(pvalHi>pvalLo)]
-    pval=pval*2
-    if (max(pval)>1)
-    {
-    	 pval[which(pval>1)]=1
-    }
-
-    ## Compute False Discovery Rate ##
-    
-    qvalHi=apply(pvalHi,2,function(x){return(p.adjust(x,method="fdr"))})
-    qvalLo=apply(pvalLo,2,function(x){return(p.adjust(x,method="fdr"))})
-    qval=apply(pval,2,function(x){return(p.adjust(x,method="fdr"))})
+			if (permute=="locations")
+			{
+				simMatrix=obsMatrix[sample(nrow(obsMatrix)),]	
+				simGridVal=t(spatialweights$w)%*%simMatrix
+			}
 
 
 
+			##Compute Rate of Change
+			rocaSim=t(apply(simGridVal,1,function(x,d){
+						L=length(x)
+						res=numeric(length=L-1)
+						for (i in 1:c(L-1))
+						{
+							res[i]=(x[i+1]/x[i])^(1/d)-1
+						}
+						return(res)},
+						d=abs(breaks[2]-breaks[1])))
 
-    metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""),weights.h=spatialweights$h,weights.kernel=spatialweights$kernel)
-  
-    if(raw==FALSE){rocaSimAll=NA} 
-    reslist=list(metadata=metadata,rocaSim=rocaSimAll,rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,locations=locations)
-    
-    class(reslist) <- append(class(reslist),"spatialTest")
-    return(reslist)
+			hi=hi+(rocaObs>rocaSim)
+			lo=lo+(rocaObs<rocaSim)
+			eq=eq+(rocaObs==rocaSim)
+			rocaSimAll[s,,]=rocaSim
+		}
+		close(pb)
+	}
+
+
+	############################
+	### Compute Significance ###
+	############################ 
+
+	pvalHi=(lo+eq+1)/c(nsim+1)
+	pvalLo=(hi+eq+1)/c(nsim+1)
+	pval=pvalHi
+	pval[which(pvalHi>pvalLo)]=pvalLo[which(pvalHi>pvalLo)]
+	pval=pval*2
+	if (max(pval)>1)
+	{
+		pval[which(pval>1)]=1
+	}
+
+	## Compute False Discovery Rate ##
+
+	qvalHi=apply(pvalHi,2,function(x){return(p.adjust(x,method="fdr"))})
+	qvalLo=apply(pvalLo,2,function(x){return(p.adjust(x,method="fdr"))})
+	qval=apply(pval,2,function(x){return(p.adjust(x,method="fdr"))})
+
+
+
+
+	metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""),weights.h=spatialweights$h,weights.kernel=spatialweights$kernel)
+
+	if(raw==FALSE){rocaSimAll=NA} 
+	reslist=list(metadata=metadata,rocaSim=rocaSimAll,rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,locations=locations)
+
+	class(reslist) <- append(class(reslist),"spatialTest")
+	return(reslist)
 }
 
 
@@ -864,71 +879,298 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE,plot=FALSE)
 {
 
-if (is.na(x$sim[1]))
-{
- stop("x should be an SpdModelTest class object produced using modelTest() with raw=TRUE")
-}
-
- if (!is.na(p1)&!is.na(p2))
-         {
-	 if (p2>p1){stop("the end point should be more recent than the start point")}
-	 interactive=FALSE
-	 }
- if (interactive)
- {
-    plot(x)	
-    print("select start point")
-    p1=round(locator(n=1)$x[1])
-    index1=match(p1,x$result$calBP)
-    p1.y = x$result[index1,2]
-    points(p1,p1.y,pch=20)
-
-    print("select end point")
-    p2=round(locator(n=1)$x[1])
-    if (p2>p1)
-    {
-	print("the end point should be more recent than the start point")
-    	while(p2>p1)
+	if (is.na(x$sim[1]))
 	{
-         print("select end point")
-         p2=round(locator(n=1)$x[1])
+		stop("x should be an SpdModelTest class object produced using modelTest() with raw=TRUE")
 	}
-    }	    
-    index2=match(p2,x$result$calBP)
-    p2.y = x$result[index2,2]
-    points(p2,p2.y,pch=20)
-    lines(x$result$calBP[index1:index2],x$result$PrDens[index1:index2],lwd=2)
- }
 
-if (!interactive)
-{
-    index1=match(p1,x$result$calBP)
-    p1.y = x$result[index1,2]
-    index2=match(p2,x$result$calBP)
-    p2.y = x$result[index2,2]
-    if (plot)
-    {	    
-    plot(x)	    
-    points(p1,p1.y,pch=20)    
-    points(p2,p2.y,pch=20)
-    lines(x$result$calBP[index1:index2],x$result$PrDens[index1:index2],lwd=2)
-    }
+	if (!is.na(p1)&!is.na(p2))
+	{
+		if (p2>p1){stop("the end point should be more recent than the start point")}
+		interactive=FALSE
+	}
+	if (interactive)
+	{
+		plot(x)	
+		print("select start point")
+		p1=round(locator(n=1)$x[1])
+		index1=match(p1,x$result$calBP)
+		p1.y = x$result[index1,2]
+		points(p1,p1.y,pch=20)
+
+		print("select end point")
+		p2=round(locator(n=1)$x[1])
+		if (p2>p1)
+		{
+			print("the end point should be more recent than the start point")
+			while(p2>p1)
+			{
+				print("select end point")
+				p2=round(locator(n=1)$x[1])
+			}
+		}	    
+		index2=match(p2,x$result$calBP)
+		p2.y = x$result[index2,2]
+		points(p2,p2.y,pch=20)
+		lines(x$result$calBP[index1:index2],x$result$PrDens[index1:index2],lwd=2)
+	}
+
+	if (!interactive)
+	{
+		index1=match(p1,x$result$calBP)
+		p1.y = x$result[index1,2]
+		index2=match(p2,x$result$calBP)
+		p2.y = x$result[index2,2]
+		if (plot)
+		{	    
+			plot(x)	    
+			points(p1,p1.y,pch=20)    
+			points(p2,p2.y,pch=20)
+			lines(x$result$calBP[index1:index2],x$result$PrDens[index1:index2],lwd=2)
+		}
+	}
+
+	if (!p1%in%x$result$calBP | !p2%in%x$result$calBP)
+	{
+		stop("p1 and p2 should be within the temporal range of the spd")
+	}
+
+	obs.diff = p1.y-p2.y
+	sim.diff = x$sim[index1,]-x$sim[index2,] 
+	nsim = ncol(x$sim) 
+	lo = sum(obs.diff < sim.diff)
+	hi = sum(obs.diff > sim.diff)
+	eq = sum(obs.diff == sim.diff)
+	pvalHi=(lo+eq+1)/c(nsim+1)
+	pvalLo=(hi+eq+1)/c(nsim+1)
+	pval=ifelse(pvalHi<pvalLo,pvalHi,pvalLo)*2
+
+	return(list(p1=p1,p2=p2,pval=pval))	
 }
 
- if (!p1%in%x$result$calBP | !p2%in%x$result$calBP)
- {
-	stop("p1 and p2 should be within the temporal range of the spd")
- }
- 
- obs.diff = p1.y-p2.y
- sim.diff = x$sim[index1,]-x$sim[index2,] 
- nsim = ncol(x$sim) 
- lo = sum(obs.diff < sim.diff)
- hi = sum(obs.diff > sim.diff)
- eq = sum(obs.diff == sim.diff)
- pvalHi=(lo+eq+1)/c(nsim+1)
- pvalLo=(hi+eq+1)/c(nsim+1)
- pval=ifelse(pvalHi<pvalLo,pvalHi,pvalLo)*2
- 
- return(list(p1=p1,p2=p2,pval=pval))	
+
+
+
+#' @title Summarise a \code{SpdModelTest} class object
+#'
+#' @description \code{summary} method for class "\code{SpdModelTest}" 
+#'
+#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope.
+#' @seealso \code{\link{modelTest}}.
+#' @import utils
+#' @import stats
+#' @export
+
+summary.SpdModelTest<-function(x,...) {
+
+	cat("'modelTest()' function summary:\n")
+	cat("\n") 
+	cat(paste("Number of radiocarbon dates: ",x$n,"\n",sep=""))
+	cat(paste("Number of bins: ",x$nbins,"\n",sep=""))
+	cat("\n")
+	cat(paste("Statistical Significance computed using ",x$nsim," simulations. \n",sep=""))
+	cat(paste("Global p-value: ",round(x$pval,5),".\n",sep=""))
+	cat("\n")
+
+
+	obs <- x$result[,1:2]
+	envelope <- x$result[,3:4]
+	booms <- which(obs$PrDens>envelope[,2])
+	busts <- which(obs$PrDens<envelope[,1])
+
+
+	if (length(booms)>0)
+	{
+		cat(paste("Signficant positive locals deviations at:\n"))
+		i=1
+		while (i < length(obs$calBP))
+		{	
+			if(obs$PrDens[i]>envelope[i,2])
+			{
+				ss=obs$calBP[i]
+				while(obs$PrDens[i]>envelope[i,2])
+				{
+					ee=obs$calBP[i]
+					i=i+1
+					if (i>length(obs$calBP))
+					{
+						i = length(obs$calBP)
+						ee=obs$calBP[i]
+						break()
+					}
+				}
+				if (ss!=ee)	
+					cat(paste(ss,"~",ee," BP \n",sep=""))
+				if (ss==ee)	
+					cat(paste(ss," BP \n",sep=""))
+			}
+			i = i+1
+
+		}
+	}
+
+
+	if (length(booms)==0)
+	{
+		cat(paste("No signficant positive locals deviations"))
+	}
+
+	cat("\n")
+
+	if (length(busts)>0)
+	{
+		cat(paste("Signficant negative locals deviations at:\n"))
+
+
+		i=1
+		while (i < length(obs$calBP))
+		{	
+			if(obs$PrDens[i]<envelope[i,1])
+			{
+				ss=obs$calBP[i]
+				while(obs$PrDens[i]<envelope[i,1])
+				{
+					ee=obs$calBP[i]
+					i=i+1
+					if (i>length(obs$calBP))
+					{
+						i = length(obs$calBP)
+						ee=obs$calBP[i]
+						break()
+					}
+				}
+				if (ss!=ee)	
+					cat(paste(ss,"~",ee," BP \n",sep=""))
+				if (ss==ee)	
+					cat(paste(ss," BP \n",sep=""))
+			}
+			i = i+1
+
+		}
+	}
+
+
+	if (length(busts)==0)
+	{
+		cat(paste("No signficant positive locals deviations"))
+	}
+
+
 }
+
+
+#' @title Summarise a \code{SpdPermTest} class object
+#'
+#' @description \code{summary} method for class "\code{SpdPermTest}" 
+#'
+#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
+#' @seealso  \code{\link{permTest}}.
+#' @import utils
+#' @import stats
+#' @export
+
+summary.SpdPermTest<-function(x,...) {
+
+	cat("'permTest()' function summary:\n")
+	cat("\n") 
+	cat(paste("Number of sets: ",length(x$observed),"\n",sep=""))
+	cat(paste("Statistical Significance computed using ",x$nsim," simulations. \n",sep=""))
+	cat("\n")
+	
+	for (i in 1:length(x$observed))
+	{
+
+		cat(paste("--- ",names(x$observed)[i]," ---\n",sep=""))
+		cat(paste("Number of radiocarbon dates:",x$metadata[[i]][1],"\n",sep=""))
+		cat(paste("Number of bins:",x$metadata[[i]][2],"\n",sep=""))
+		cat("\n")
+		cat(paste("Global p-value: ",round(x$pValueList[i],5),"\n",sep=""))
+		cat("\n")
+
+		obs <- x$observed[[i]]
+		envelope <-x$envelope[[i]]
+		booms <- which(obs$PrDens>envelope[,2])
+		busts <- which(obs$PrDens<envelope[,1])
+
+		if (length(booms)>0)
+		{
+			cat(paste("Signficant positive locals deviations at:\n"))
+			i=1
+			while (i < length(obs$calBP))
+			{	
+				if(obs$PrDens[i]>envelope[i,2])
+				{
+					ss=obs$calBP[i]
+					while(obs$PrDens[i]>envelope[i,2])
+					{
+						ee=obs$calBP[i]
+						i=i+1
+						if (i>length(obs$calBP))
+						{
+							i = length(obs$calBP)
+							ee=obs$calBP[i]
+							break()
+						}
+					}
+					if (ss!=ee)	
+						cat(paste(ss,"~",ee," BP \n",sep=""))
+					if (ss==ee)	
+						cat(paste(ss," BP \n",sep=""))
+				}
+				i = i+1
+
+			}
+		}
+
+
+		if (length(booms)==0)
+		{
+			cat(paste("No signficant positive locals deviations"))
+		}
+
+		cat("\n")
+
+		if (length(busts)>0)
+		{
+			cat(paste("Signficant negative locals deviations at:\n"))
+
+
+			i=1
+			while (i < length(obs$calBP))
+			{	
+				if(obs$PrDens[i]<envelope[i,1])
+				{
+					ss=obs$calBP[i]
+					while(obs$PrDens[i]<envelope[i,1])
+					{
+						ee=obs$calBP[i]
+						i=i+1
+						if (i>length(obs$calBP))
+						{
+							i = length(obs$calBP)
+							ee=obs$calBP[i]
+							break()
+						}
+					}
+					if (ss!=ee)	
+						cat(paste(ss,"~",ee," BP \n",sep=""))
+					if (ss==ee)	
+						cat(paste(ss," BP \n",sep=""))
+				}
+				i = i+1
+
+			}
+		}
+
+
+		if (length(busts)==0)
+		{
+			cat(paste("No signficant positive locals deviations"))
+		}
+
+		cat("\n")
+	}
+}
+
+
+

@@ -77,6 +77,7 @@ expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=5
 timeRange=c(16000,9000), model="exponential", datenormalised=FALSE)
 plot(expnull, xlim=c(16000,9000))
 round(expnull$pval,4) #p-value
+summary(expnull)
 }
 }
 \references{

@@ -155,7 +155,13 @@ plot(expnull)
 expnull$pval #global p-value
 ```
 
-The grey shaded region represents a critical envelope encompassing the middle 95% of the simulated SPDs, with red and blue regions highlighting portions of the SPD where positive and negative deviations are detected. 
+The grey shaded region represents a critical envelope encompassing the middle 95% of the simulated SPDs, with red and blue regions highlighting portions of the SPD where positive and negative deviations are detected. Further details can be extracted using the `summary()` function:
+
+```{r}
+summary(expnull)
+```
+
+
 
 ### Testing against custom growth models
 
@@ -206,6 +212,7 @@ data(emedyd) # load data
 cal.emedyd = calibrate(emedyd$CRA,emedyd$Error,ncores=3,normalised=FALSE)
 bins.emedyd = binPrep(ages = emedyd$CRA,sites = emedyd$SiteName,h=50)
 perm.emedyd=permTest(x=cal.emedyd,marks=emedyd$Region,timeRange=c(16000,9000),bins=bins.emedyd,nsim=100,runm=50)
+summary(perm.emedyd)
 par(mfrow=c(3,1))
 plot(perm.emedyd,focalm = 1,main="Southern Levant")
 plot(perm.emedyd,focalm = 2,main="Northern Levant/Upper Mesopotamia")

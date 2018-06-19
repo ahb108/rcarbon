@@ -53,6 +53,7 @@ dates = calibrate(nld.dnk$C14Age,nld.dnk$C14SD,normalised=FALSE)
 res = permTest(dates,marks=as.character(nld.dnk$Country),nsim=1000,
 bins=bins,runm=200,timeRange=c(10000,4000))
 round(res$pValueList,4) #extract p-values
+summary(res)
 par(mfrow=c(2,1))
 plot(res,focalm="Netherlands",main="Netherlands")
 plot(res,focalm="Denmark",main="Denmark")
