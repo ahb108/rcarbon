@@ -981,7 +981,7 @@ summary.SpdModelTest<-function(x,...) {
 
 	if (length(booms)>0)
 	{
-		cat(paste("Signficant positive locals deviations at:\n"))
+		cat(paste("Signficant positive local deviations at:\n"))
 		i=1
 		while (i < length(obs$calBP))
 		{	
@@ -1012,14 +1012,14 @@ summary.SpdModelTest<-function(x,...) {
 
 	if (length(booms)==0)
 	{
-		cat(paste("No signficant positive locals deviations"))
+		cat(paste("No signficant positive local deviations"))
 	}
 
 	cat("\n")
 
 	if (length(busts)>0)
 	{
-		cat(paste("Signficant negative locals deviations at:\n"))
+		cat(paste("Signficant negative local deviations at:\n"))
 
 
 		i=1
@@ -1052,7 +1052,7 @@ summary.SpdModelTest<-function(x,...) {
 
 	if (length(busts)==0)
 	{
-		cat(paste("No signficant positive locals deviations"))
+		cat(paste("No signficant positive local deviations"))
 	}
 
 
@@ -1094,7 +1094,7 @@ summary.SpdPermTest<-function(x,...) {
 
 		if (length(booms)>0)
 		{
-			cat(paste("Signficant positive locals deviations at:\n"))
+			cat(paste("Signficant positive local deviations at:\n"))
 			i=1
 			while (i < length(obs$calBP))
 			{	
@@ -1125,14 +1125,14 @@ summary.SpdPermTest<-function(x,...) {
 
 		if (length(booms)==0)
 		{
-			cat(paste("No signficant positive locals deviations"))
+			cat(paste("No signficant positive local deviations"))
 		}
 
 		cat("\n")
 
 		if (length(busts)>0)
 		{
-			cat(paste("Signficant negative locals deviations at:\n"))
+			cat(paste("Signficant negative local deviations at:\n"))
 
 
 			i=1
@@ -1165,7 +1165,7 @@ summary.SpdPermTest<-function(x,...) {
 
 		if (length(busts)==0)
 		{
-			cat(paste("No signficant positive locals deviations"))
+			cat(paste("No signficant positive local deviations"))
 		}
 
 		cat("\n")
