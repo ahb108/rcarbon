@@ -199,7 +199,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     # Results
     result <- data.frame(calBP=observed$grid$calBP,PrDens=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){ sim <- NA }
-    res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, fitobject=fit,nbins=length(bins),n=nrow(caldates$metadata),nsim=nsim)
+    res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, fitobject=fit,nbins=length(bins),n=nrow(x$metadata),nsim=nsim)
     class(res) <- "SpdModelTest"
     if (verbose){ print("Done.") }
     return(res)
