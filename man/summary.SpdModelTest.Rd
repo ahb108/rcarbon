@@ -4,7 +4,12 @@
 \alias{summary.SpdModelTest}
 \title{Summarise a \code{SpdModelTest} class object}
 \usage{
-\method{summary}{SpdModelTest}(x, ...)
+\method{summary}{SpdModelTest}(object, ...)
+}
+\arguments{
+\item{object}{A \code{SpdModelTest} class object produced using the \code{link{modelTest}} function.}
+
+\item{...}{Ignored}
 }
 \description{
 \code{summary} method for class "\code{SpdModelTest}"

@@ -955,26 +955,29 @@ p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE,plot=FALSE)
 #'
 #' @description \code{summary} method for class "\code{SpdModelTest}" 
 #'
+#' @param object A \code{SpdModelTest} class object produced using the \code{link{modelTest}} function.
+#' @param ... Ignored
+#'
 #' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope.
 #' @seealso \code{\link{modelTest}}.
 #' @import utils
 #' @import stats
 #' @export
 
-summary.SpdModelTest<-function(x,...) {
+summary.SpdModelTest<-function(object,...) {
 
 	cat("'modelTest()' function summary:\n")
 	cat("\n") 
-	cat(paste("Number of radiocarbon dates: ",x$n,"\n",sep=""))
-	cat(paste("Number of bins: ",x$nbins,"\n",sep=""))
+	cat(paste("Number of radiocarbon dates: ",object$n,"\n",sep=""))
+	cat(paste("Number of bins: ",object$nbins,"\n",sep=""))
 	cat("\n")
-	cat(paste("Statistical Significance computed using ",x$nsim," simulations. \n",sep=""))
-	cat(paste("Global p-value: ",round(x$pval,5),".\n",sep=""))
+	cat(paste("Statistical Significance computed using ",object$nsim," simulations. \n",sep=""))
+	cat(paste("Global p-value: ",round(object$pval,5),".\n",sep=""))
 	cat("\n")
 
 
-	obs <- x$result[,1:2]
-	envelope <- x$result[,3:4]
+	obs <- object$result[,1:2]
+	envelope <- object$result[,3:4]
 	booms <- which(obs$PrDens>envelope[,2])
 	busts <- which(obs$PrDens<envelope[,1])
 
@@ -1063,32 +1066,35 @@ summary.SpdModelTest<-function(x,...) {
 #'
 #' @description \code{summary} method for class "\code{SpdPermTest}" 
 #'
+#' @param object A \code{SpdPermTest} class object produced using the \code{link{permTest}} function.
+#' @param ... Ignored
+#'
 #' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
 #' @seealso  \code{\link{permTest}}.
 #' @import utils
 #' @import stats
 #' @export
 
-summary.SpdPermTest<-function(x,...) {
+summary.SpdPermTest<-function(object,...) {
 
 	cat("'permTest()' function summary:\n")
 	cat("\n") 
-	cat(paste("Number of sets: ",length(x$observed),"\n",sep=""))
-	cat(paste("Statistical Significance computed using ",x$nsim," simulations. \n",sep=""))
+	cat(paste("Number of sets: ",length(object$observed),"\n",sep=""))
+	cat(paste("Statistical Significance computed using ",object$nsim," simulations. \n",sep=""))
 	cat("\n")
 	
-	for (i in 1:length(x$observed))
+	for (i in 1:length(object$observed))
 	{
 
-		cat(paste("--- ",names(x$observed)[i]," ---\n",sep=""))
-		cat(paste("Number of radiocarbon dates:",x$metadata[[i]][1],"\n",sep=""))
-		cat(paste("Number of bins:",x$metadata[[i]][2],"\n",sep=""))
+		cat(paste("--- ",names(object$observed)[i]," ---\n",sep=""))
+		cat(paste("Number of radiocarbon dates:",object$metadata[[i]][1],"\n",sep=""))
+		cat(paste("Number of bins:",object$metadata[[i]][2],"\n",sep=""))
 		cat("\n")
-		cat(paste("Global p-value: ",round(x$pValueList[i],5),"\n",sep=""))
+		cat(paste("Global p-value: ",round(object$pValueList[i],5),"\n",sep=""))
 		cat("\n")
 
-		obs <- x$observed[[i]]
-		envelope <-x$envelope[[i]]
+		obs <- object$observed[[i]]
+		envelope <-object$envelope[[i]]
 		booms <- which(obs$PrDens>envelope[,2])
 		busts <- which(obs$PrDens<envelope[,1])
 
