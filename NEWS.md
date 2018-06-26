@@ -1,4 +1,8 @@
 
+# Version 1.1.3 (26 June 2018)
+* Bug fix in `permTest()`: p-values calculation algorithm was yielding p-values of 0.
+* NEW: `summary()` functions for the outputs of `permTest()` and `modelTest()`.
+
 # Version 1.1.2 (22 May 2018)
 * Bug Fix in `calibrate()`: calibration of multiple dates with different calibration curves was based on the calibration curve of the first sample.
 * Bug Fix in  `modelTest()`: back-calibration routine was ignoring  user-supplied calibration curve and was solely using "intcal13". 
