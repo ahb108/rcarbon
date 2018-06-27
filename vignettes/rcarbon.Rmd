@@ -116,7 +116,7 @@ The selection of appropriate cut-off values have not been discussed in the liter
 
 
 ```{r,results="hide",fig.height=5,fig.width=5}
-binsense(x=DK.caldates,y=DK,h=seq(0,500,100),timeRange=c(8000,4000),sitecol='SiteID',agecol='C14Age') 
+binsense(x=DK.caldates,y=DK$SiteID,h=seq(0,500,100),timeRange=c(8000,4000)) 
 ```
 
 ```{r,include=FALSE}

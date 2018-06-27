@@ -4,23 +4,19 @@
 \alias{binsense}
 \title{Bin sensitivity Plot}
 \usage{
-binsense(x, y, h, timeRange, calendar = "BP", sitecol, agecol, raw = F,
-  verbose = T, legend = T, ...)
+binsense(x, y, h, timeRange, calendar = "BP", raw = F, verbose = T,
+  legend = T, ...)
 }
 \arguments{
 \item{x}{A \code{CalDates} class object containing calibrated radiocarbon dates.}
 
-\item{y}{A data.frame containing the radiocarbon ages and the site ID for each date.}
+\item{y}{A vector containing the locations ID (e.g. site ID) of each calibrated date to be used for the binning process.}
 
 \item{h}{A vector of numbers containing values for the \code{h} parameter to be used in the \code{\link{binPrep}} function.}
 
 \item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
-
-\item{sitecol}{Column name in \code{y} where Site IDs are stored.}
-
-\item{agecol}{Column name in \code{y} where radiocarbon ages are stored.}
 
 \item{raw}{A logical variable indicating whether all  SPDs should be returned or not. Default is FALSE.}
 
@@ -39,8 +35,7 @@ data(euroevol)
 #subset Danish dates
 denmark=subset(euroevol,Country=="Denmark")
 denmarkDates=calibrate(x=denmark$C14Age,errors=denmark$C14SD)
-binsense(x=denmarkDates,y=denmark,h=seq(0,200,20),timeRange=c(10000,4000),
-sitecol="SiteID",agecol="C14Age",runm=200)
+binsense(x=denmarkDates,y=denmark$SiteID,h=seq(0,200,20),timeRange=c(10000,4000),runm=200)
 }
 }
 \seealso{

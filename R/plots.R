@@ -830,12 +830,10 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' @description Visually explores how choosing different values for \code{h} in the \code{\link{binPrep}} function affects the shape of the SPD.
 #' 
 #' @param x A \code{CalDates} class object containing calibrated radiocarbon dates.
-#' @param y A data.frame containing the radiocarbon ages and the site ID for each date.
+#' @param y A vector containing the locations ID (e.g. site ID) of each calibrated date to be used for the binning process. 
 #' @param h A vector of numbers containing values for the \code{h} parameter to be used in the \code{\link{binPrep}} function. 
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
-#' @param sitecol Column name in \code{y} where Site IDs are stored.
-#' @param agecol Column name in \code{y} where radiocarbon ages are stored.
 #' @param raw A logical variable indicating whether all  SPDs should be returned or not. Default is FALSE.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param legend A logical variable indicating whether the legend should be displayed. Default is TRUE
@@ -848,8 +846,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' #subset Danish dates
 #' denmark=subset(euroevol,Country=="Denmark")
 #' denmarkDates=calibrate(x=denmark$C14Age,errors=denmark$C14SD)
-#' binsense(x=denmarkDates,y=denmark,h=seq(0,200,20),timeRange=c(10000,4000),
-#' sitecol="SiteID",agecol="C14Age",runm=200)
+#' binsense(x=denmarkDates,y=denmark$SiteID,h=seq(0,200,20),timeRange=c(10000,4000),runm=200)
 #' }
 
 #' @import stats
@@ -858,7 +855,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' @import utils
 #' @export
 
-binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=T,legend=T,...)
+binsense <- function(x,y,h,timeRange,calendar="BP",raw=F,verbose=T,legend=T,...)
 {
   if (!calendar %in% c("BP","BCAD")){ stop("Unknown calendar type") }
   	
@@ -874,6 +871,8 @@ binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=
   }
 
   res <- matrix(NA,nrow=length(years),ncol=length(h))
+  craAges <- x$metadata$CRA
+
 
   if (verbose)
 	 {
@@ -884,7 +883,7 @@ binsense <- function(x,y,h,timeRange,calendar="BP",sitecol,agecol,raw=F,verbose=
   for (b in 1:length(h))
     {
     if (verbose){setTxtProgressBar(pb, b)}	    
-    bins <- binPrep(sites=y[,sitecol],ages=y[,agecol],h=h[b])
+    bins <- binPrep(sites=y,ages=craAges,h=h[b])
     spdtmp <- spd(x,bins= bins,timeRange=timeRange,spdnormalised=T,verbose=F,...)
     res[,b] <- spdtmp$grid$PrDens
     coln[b] <- paste("h.",h[b],sep="")
