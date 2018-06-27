@@ -872,6 +872,11 @@ binsense <- function(x,y,h,timeRange,calendar="BP",raw=F,verbose=T,legend=T,...)
 
   res <- matrix(NA,nrow=length(years),ncol=length(h))
   craAges <- x$metadata$CRA
+  
+  if (length(craAges)!=length(y))
+  {
+    stop("x and y have different lengths (each calibrated date in x should have a matching location in y)")
+  }
 
 
   if (verbose)
