@@ -801,7 +801,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 			hi=hi+(rocaObs>rocaSim)
 			lo=lo+(rocaObs<rocaSim)
 			eq=eq+(rocaObs==rocaSim)
-			rocaSimAll[s,,]=rocaSim
+			if(raw){rocaSimAll[s,,]=rocaSim}
 		}
 		close(pb)
 	}
