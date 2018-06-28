@@ -4,10 +4,12 @@
 \alias{plot.spdGG}
 \title{Plot \code{spdGG} class objects}
 \usage{
-\method{plot}{spdGG}(x, ...)
+\method{plot}{spdGG}(x, calendar = "BP", ...)
 }
 \arguments{
 \item{x}{\code{spdGG} class object containing geometric growth rates.}
+
+\item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
 \item{...}{Additional arguments affecting the plot.}
 }

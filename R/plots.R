@@ -1,4 +1,5 @@
 #' @title Plot calibrated dates
+#'
 #' @description Plot calibrated radiocarbon dates.
 #' @param x \code{CalDates} class object containing calibrated radiocarbon dates.
 #' @param ind Number indicating the index value of the calibrated radiocarbon date to be displayed. Default is 1.
@@ -1077,6 +1078,7 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #'
 #' @description Plot calibrated geometric growth rates.
 #' @param x \code{spdGG} class object containing geometric growth rates.
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param ... Additional arguments affecting the plot. 
 #'
 #' @seealso \code{\link{spd2gg}}
@@ -1087,14 +1089,21 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #' @import utils
 #' @export  
 
-plot.spdGG<- function(x,...)
+plot.spdGG<- function(x,calendar="BP",...)
 {
 	breaks=x$breaks
 	obs=x$sumblock
 	res=x$geomg
 	par(mar=c(4,4,4,4))
-	nn = paste(breaks[-length(breaks)],breaks[-1],sep="-")
-	barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,...)
+	nn = paste(breaks[-length(breaks)],breaks[-1],sep=" to ")
+	xxlab="Years cal BP"
+	if (calendar=="BCAD")
+	{
+		bcad.breaks=BPtoBCAD(breaks)
+		nn = paste(bcad.breaks[-length(bcad.breaks)],bcad.breaks[-1],sep="-")
+		xxlab="Years BC/AD"
+	}
+	barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,xlab=xxlab,...)
 	par(new=T)
 	xx = 1:c(length(nn)-1)
 	plot(0,0,xlim=c(0,length(nn)),ylim=range(res),axes=FALSE,xlab="",ylab="",type="n")
