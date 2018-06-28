@@ -5,10 +5,10 @@
 \title{Monte-Carlo simulation test for SPDs}
 \usage{
 modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
-  raw = FALSE, model = c("exponential", "uniform", "linear", "custom"),
-  method = c("uncalsample"), predgrid = NA, calCurves = "intcal13",
-  datenormalised = FALSE, spdnormalised = FALSE, ncores = 1,
-  fitonly = FALSE, a = 0, b = 0, verbose = TRUE)
+  raw = FALSE, model = c("exponential"), method = c("uncalsample"),
+  predgrid = NA, calCurves = "intcal13", datenormalised = FALSE,
+  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, a = 0, b = 0,
+  verbose = TRUE)
 }
 \arguments{
 \item{x}{A \code{CalDates} object containing calibrated radiocarbon ages}
@@ -25,7 +25,7 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 
 \item{raw}{A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.}
 
-\item{model}{A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}.}
+\item{model}{A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}. Default is \code{'exponential'}.}
 
 \item{method}{Method for the creation of random dates from the fitted model. Either \code{'uncalsample'} or \code{'calsample'}. Default is \code{'uncalsample'}. See below for details.}
 

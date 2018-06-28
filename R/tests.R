@@ -13,7 +13,7 @@
 #' @param runm A number indicating the window size of the moving average to smooth both observed and simulated SPDs. If set to \code{NA} no moving average is applied.Default is \code{NA}. 
 #' @param timeRange  A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param raw A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.
-#' @param model A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}. 
+#' @param model A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}. Default is \code{'exponential'}. 
 #' @param method Method for the creation of random dates from the fitted model. Either \code{'uncalsample'} or \code{'calsample'}. Default is \code{'uncalsample'}. See below for details. 
 #' @param predgrid A data.frame containing calendar years (column \code{calBP}) and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.
 #' @param calCurves Calibration curve (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13'). The function currently does not support samples using different calibration curves.
@@ -61,7 +61,7 @@
 #' @import doParallel
 #' @export
 
-modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential","uniform","linear","custom"),method=c("uncalsample"),predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
     
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
