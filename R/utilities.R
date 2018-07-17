@@ -420,6 +420,19 @@ spd2gg <- function(spd,breaks)
 }
 
 
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
+
+curveSamples <- function(bins,calCurves,nsim)
+{
+	x = table(bins,calCurves)
+	x = prop.table(x,1)
+        x = replicate(nsim,table(factor(apply(x,1,function(x,y){sample(x=y,size=1,prob=x)},y=colnames(x)),levels=unique(calCurves))))
+	return(t(x))
+}
+
 
 # 
 # gaussW <- function(x, bw){
