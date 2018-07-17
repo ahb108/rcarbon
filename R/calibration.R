@@ -467,7 +467,12 @@ as.CalDates <- function(x){
 }
 
 
+#' @export
 
+length.CalDates <- function(x,...)
+{
+ return(nrow(x$metadata))
+}
 
 hpdi <- function(x, credMass=0.95){
 
