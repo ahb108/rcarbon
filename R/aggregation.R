@@ -4,11 +4,12 @@
 #' known to be from the same phase of same archaeological site (for use with \code{\link{spd}}). Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in a given site phase will impede comparison between sites or phases. 
 #' 
 #' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases
-#' @param ages a vector of uncalibrated conventional radiocarbon ages
+#' @param ages a vector of uncalibrated conventional radiocarbon ages or a \code{CalDates} class object obtained using the \code{\link{calibrate}} function.
 #' @param h a single numeric value passed to \code{\link{hclust}} control degree of grouping of similar ages in a phase site.
 #'
-#' @return A vector of character strings of length(ages) that identifying intra-site or intra-phase grouping, for use with spd()
+#' @details If \code{ages} is a \code{CalDates} class object, median dates are used for the clustering.
 #'
+#' @return A vector of character strings with the same length of the object supplied for the argument \code{ages} identifying intra-site or intra-phase grouping, for use with \code{\link{spd}}
 #' @seealso \code{\link{spd}} for generating SPD; \code{\link{binsense}} for sensitivity analysis pertaining the choice of the parameter \code{h}.
 #' @import stats
 #' @import utils
@@ -22,6 +23,11 @@ binPrep <- function(sites, ages, h){
     
     clusters <- rep(NA,length(sites))
     
+    if (any(class(ages)%in%"CalDates"))
+    {
+	    ages = medCal(ages)
+    }
+
     for  (x in 1:length(unique(sites))){
         index <- which(sites==unique(sites)[x])
         if (length(index)>1){
