@@ -4,8 +4,8 @@
 \alias{binsense}
 \title{Bin sensitivity Plot}
 \usage{
-binsense(x, y, h, timeRange, calendar = "BP", raw = F, verbose = T,
-  legend = T, ...)
+binsense(x, y, h, timeRange, calendar = "BP", clustering = "CRA", raw = F,
+  verbose = T, legend = T, ...)
 }
 \arguments{
 \item{x}{A \code{CalDates} class object containing calibrated radiocarbon dates.}
@@ -17,6 +17,8 @@ binsense(x, y, h, timeRange, calendar = "BP", raw = F, verbose = T,
 \item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
+
+\item{clustering}{Either \code{'CRA'} or \code{'calibrated'}. Indicate whether the binning should be carried usinig the  14C age or using the median calibrated date. Default is \code{'CRA'}.}
 
 \item{raw}{A logical variable indicating whether all  SPDs should be returned or not. Default is FALSE.}
 
