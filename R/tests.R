@@ -16,7 +16,6 @@
 #' @param model A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}. Default is \code{'exponential'}. 
 #' @param method Method for the creation of random dates from the fitted model. Either \code{'uncalsample'} or \code{'calsample'}. Default is \code{'uncalsample'}. See below for details. 
 #' @param predgrid A data.frame containing calendar years (column \code{calBP}) and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.
-#' @param calCurves Calibration curve (one between 'intcal13','shcal13' and 'marine13'; default is 'intcal13'). The function currently does not support samples using different calibration curves.
 #' @param datenormalised If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity for both observed and simulated data. 
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
@@ -25,7 +24,7 @@
 #' @param b Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the date. Default is 0. 
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The function generates \code{nsim} theorethical SPDs from the fitted model via Monte-Carlo simulation, this is then used to define a 95\% critical envelope for each calendar year. The observed SPD is then compared against the simulation envelope; local departures from the model are defined as instances where the observed SPD is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. The theoretical SPDs can be generated using two different sampling approaches defined by the parameter \code{method}. If \code{method} is set to \code{'uncalsample'} each date is is drawn after the fitted model is backcalibrated as a whole and adjusted for a baseline expectation; if it is set to  \code{'calsample'} samples are drawn from the fitted model in calendar year then individually back calibrated and recalibrated. For each simulation, both approaches produces \eqn{n} samples, with \eqn{n} equal to the number of bins or number of dates (when bins are not defined).     
+#' @details The function implements a modified version of Timpson et al (2014) Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The function generates \code{nsim} theorethical SPDs from the fitted model via Monte-Carlo simulation, this is then used to define a 95\% critical envelope for each calendar year. The observed SPD is then compared against the simulation envelope; local departures from the model are defined as instances where the observed SPD is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. The theoretical SPDs can be generated using two different sampling approaches defined by the parameter \code{method}. If \code{method} is set to \code{'uncalsample'} each date is is drawn after the fitted model is backcalibrated as a whole and adjusted for a baseline expectation; if it is set to  \code{'calsample'} samples are drawn from the fitted model in calendar year then individually back calibrated and recalibrated. For each simulation, both approaches produces \eqn{n} samples, with \eqn{n} equal to the number of bins or number of dates (when bins are not defined). If more than one type of calibration curve is associated with the observed dates, at each Monte-Carlo iteration, the function randomly assigns each bin to one of the calibration curves with probability based on the proportion of dates within the bin associated to the specific curves. For example, if a bin is composed of four dates and three are calibrated with 'intcal13' the probability of that particular bin being assigned to 'intcal13' is 0.75.  
 #' @note Windows users might receive a memory allocation error with larger time span of analysis (defined by the parameter \code{timeRange}). This can be avoided by increasing the memory limit with the \code{\link{memory.limit}} function.
 #' @return An object of class \code{SpdModelTest} with the following elements
 #' \itemize{
@@ -61,7 +60,7 @@
 #' @import doParallel
 #' @export
 
-modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, calCurves='intcal13', datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
     
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -76,20 +75,31 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 	stop("The 'method' argument must be either 'uncalsample' or 'calsample'")
     }
 
-    if (length(unique(calCurves))>1)
-    {
-	stop("Multiple calibration curves are not currently supported")
-    }	    
+
+    calCurves = x$metadata$CalCurve
+    unique.calCurves = as.character(sort(unique(calCurves)))
+    ncc = length(unique.calCurves) #count number of unique calibration curves
 
     if (verbose){ print("Aggregating observed dates...") }
+
+    #Generate matrix of sample sizes for each curve
     if (is.na(bins[1])){
-        samplesize <- nrow(x$metadata)
+        samplesize <- t(matrix(table(calCurves),nrow=ncc,ncol=nsim))
+        colnames(samplesize) = names(table(calCurves))
     } else {
-        samplesize <- length(unique(bins))
+        samplesize <- curveSamples(bins=bins,calCurves=calCurves,nsim=nsim)
+        if (ncc==1) {
+          samplesize = matrix(samplesize,ncol=1,nrow=length(samplesize))
+          colnames(samplesize) = names(table(calCurves))
+        }
     }
+    if (ncc>1) {samplesize=samplesize[,unique.calCurves]}
+    
+
     observed <- spd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
     finalSPD <- observed$grid$PrDens
     if (fitonly == TRUE) {nsim <- 1}
+    
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
     if (verbose & !fitonly){
@@ -124,27 +134,51 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     
     if (method=="uncalsample")
     {
-    cragrid <- uncalibrate(as.CalGrid(predgrid), calCurves=calCurves, compact=FALSE, verbose=FALSE)
-    cragrid <- cragrid[cragrid$CRA <= max(x$metadata$CRA) & cragrid$CRA >= min(x$metadata$CRA),]
+	    cragrids = vector("list",length=ncc)
+	    for (i in 1:ncc)
+	    {		
+		    tmp.grid <- uncalibrate(as.CalGrid(predgrid), calCurves=unique.calCurves[i], compact=FALSE, verbose=FALSE)
+		    cragrids[[i]] <- tmp.grid[tmp.grid$CRA <= max(x$metadata$CRA) & tmp.grid$CRA >= min(x$metadata$CRA),]
+	    }
     }
-
 
     if (ncores==1)
     {
     for (s in 1:nsim){ 
 	if (verbose){ setTxtProgressBar(pb, s) } 
-            
+
     if (method=="uncalsample")
     {
-    randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
-    }
-    if (method=="calsample")
-    {
-    randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
+	    randomDates <- vector("list",length=ncc)
+	    ccurve.tmp <- numeric()
+	    for (i in 1:ncc)
+	    {
+		    randomDates[[i]] = sample(cragrids[[i]]$CRA,replace=TRUE,size=samplesize[s,i],prob=cragrids[[i]]$PrDens)
+		    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
+	    }
+
+# 	    randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
     }
 
-        randomSDs <- sample(size=length(randomDates), errors, replace=TRUE) 
-        tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+
+    if (method=="calsample")
+    {
+	    randomDates <- vector("list",length=ncc)
+	    ccurve.tmp <- numeric()
+
+	    for (i in 1:ncc)
+	    {
+		    randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),calCurves=unique.calCurves[i])$ccCRA   
+		    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
+	    }
+# 	    randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
+    }
+
+        randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
+        tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+
+#         tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+
         simDateMatrix <- tmp$calmatrix 
 	sim[,s] <- apply(simDateMatrix,1,sum) 
         sim[,s] <- (sim[,s]/sum(sim[,s])) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]]) 
@@ -153,33 +187,62 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     	}
     }	    
 
-    if (ncores>1)
-    {	     
-	print("Progress bar disabled for multi-core processing")
-    	sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
-        # if (verbose){ setTxtProgressBar(pb, s) }
-    if (method=="uncalsample")
-    {
-    randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
-    }
-    if (method=="calsample")
-    {
-    randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
-    }
 
-        randomSDs <- sample(size=length(randomDates), errors, replace=TRUE)
-        tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE)
-        simDateMatrix <- tmp$calmatrix
-        aux <- apply(simDateMatrix,1,sum)
-        aux <- (aux/sum(aux)) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
-        if (spdnormalised){ aux <- (aux/sum(aux)) }
-        if (!is.na(runm)){
-            aux <- runMean(aux, runm, edge="fill")
-        }
-	aux
-   	 }
-    	#stopCluster(cl)
-     }
+
+# From this point onwards
+
+if (ncores>1)
+{	     
+	print("Progress bar disabled for multi-core processing")
+	sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
+
+		if (method=="uncalsample")
+		{
+			randomDates <- vector("list",length=ncc)
+			ccurve.tmp <- numeric()
+			for (i in 1:ncc)
+			{
+				randomDates[[i]] = sample(cragrids[[i]]$CRA,replace=TRUE,size=samplesize[s,i],prob=cragrids[[i]]$PrDens)
+				ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
+			}
+		}
+
+
+		if (method=="calsample")
+		{
+			randomDates <- vector("list",length=ncc)
+			ccurve.tmp <- numeric()
+
+			for (i in 1:ncc)
+			{
+				randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),calCurves=unique.calCurves[i])$ccCRA   
+				ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
+			}
+		}
+
+# 		if (method=="uncalsample")
+# 		{
+# 			randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
+# 		}
+# 		if (method=="calsample")
+# 		{
+# 			randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
+# 		}
+
+		randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE)
+		tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+# 		tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE)
+		simDateMatrix <- tmp$calmatrix
+		aux <- apply(simDateMatrix,1,sum)
+		aux <- (aux/sum(aux)) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
+		if (spdnormalised){ aux <- (aux/sum(aux)) }
+		if (!is.na(runm)){
+			aux <- runMean(aux, runm, edge="fill")
+		}
+		aux
+	}
+	#stopCluster(cl)
+}
 
     if (verbose){ close(pb) }
     ## Envelope, z-scores, global p-value
