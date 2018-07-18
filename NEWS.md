@@ -1,8 +1,10 @@
 
 # Under Development
-* Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`
-* UPDATE: `binsense()` requires a smaller number of required arguments
-* UPDATE: `plot()` function for geometric growth rates now allows for BC/AD calendar display
+* Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
+* UPDATE: `binsense()` requires a smaller number of non-optional arguments and allows for binning based on median calibrated dates.
+* UPDATE: `plot()` function for geometric growth rates now allows for BC/AD calendar display.
+* UPDATE: `binPrep()` can now group dates based on median calibrated dates.
+* UPDATE: `modelTest()`can now test SPD generated from multiple calibration curves 
 
 # Version 1.1.3 (26 June 2018)
 * Bug fix in `permTest()`: p-values calculation algorithm was yielding p-values of 0.
