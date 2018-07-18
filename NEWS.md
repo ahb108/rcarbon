@@ -1,5 +1,5 @@
 
-# Under Development
+# Development Version
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
 * UPDATE: `binsense()` requires a smaller number of non-optional arguments and allows for binning based on median calibrated dates.
 * UPDATE: `plot()` function for geometric growth rates now allows for BC/AD calendar display.
