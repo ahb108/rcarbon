@@ -594,3 +594,45 @@ medCal <- function(x)
 	}
 return(meddates)
 }
+
+
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
+
+mixCurves <- function(calCurve,p,resOffsets,resErrors)
+{
+
+            terrestrialFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurve,".14c", sep="")
+            marineFile <- paste(system.file("extdata", package="rcarbon"), "/","marine13.14c", sep="")
+            options(warn=-1)
+            terrestrial <- readLines(terrestrialFile, encoding="UTF-8")
+            marine<- readLines(marineFile, encoding="UTF-8")
+
+            terrestrial <- terrestrial[!grepl("[#]",terrestrial)]
+            marine <- marine[!grepl("[#]",marine)]
+            
+	    terrestrial <- as.matrix(read.csv(textConnection(terrestrial), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	    marine <- as.matrix(read.csv(textConnection(marine), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	    
+            options(warn=0)
+            colnames(marine) <- c("CALBP","C14BP","Error")
+            colnames(terrestrial) <- c("CALBP","C14BP","Error")
+
+ 	    marine.mu <- approx(marine[, 1], marine[, 2], terrestrial[, 1], rule = 2)$y + resOffsets
+	    marine.error <- approx(marine[, 1], marine[, 3], terrestrial[, 1], rule = 2)$y
+ 	    marine.error <- sqrt(marine.error^2 + resErrors^2)
+ 	    mu <- p * terrestrial[, 2] + (1 - p) * marine.mu
+ 	    error <- p * terrestrial[, 3] + (1 - p) * marine.error
+	    res = cbind(terrestrial[,1],mu,error)
+	    colnames(res) = c("CALBP","C14BP","Error")
+
+	    return(res)
+
+}
+
+
+
+
+
