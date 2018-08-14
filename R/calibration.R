@@ -595,13 +595,28 @@ medCal <- function(x)
 return(meddates)
 }
 
+#' @title Creates mixed terrestrial/marine calibration curves.
+#'
+#' @description Function for generating a vector median calibrated dates from a \code{CalDates} class object.
+#' 
+#' @param calCurve Name of the terrestrial curve, either 'intcal13' or 'shcal13'. Default is 'intcal13'.
+#' @param p Proportion of terrestrial contribution. Deafult is 1.
+#' @param resOffsets Offset value for the marine reservoir effect. Default is 0.
+#' @param resErrors Error of the marine reservoir effect offset. Default is 0.
+#' @return A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link{calibrate}} function.
+#' @details The function is based on the \code{mix.calibrationcurves} function of the \code{clam} package. 
+#' @references 
+#' Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autorgressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
+#' Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
+#'
+#' @examples
+#' myCurve <- mixCurves('intcal13',p=0.7,resOffsets=300,resErrors=20)
+#' x <- calibrate(4000,30,calCurves=myCurve)
+#' @seealso \code{\link{calibrate}}
+#' @export
 
-#' @import stats
-#' @import grDevices
-#' @import graphics
-#' @import utils
 
-mixCurves <- function(calCurve,p,resOffsets,resErrors)
+mixCurves <- function(calCurve='intcal13',p=1,resOffsets=0,resErrors=0)
 {
 
             terrestrialFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurve,".14c", sep="")
