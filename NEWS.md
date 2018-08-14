@@ -4,7 +4,9 @@
 * UPDATE: `binsense()` requires a smaller number of non-optional arguments and allows for binning based on median calibrated dates.
 * UPDATE: `plot()` function for geometric growth rates now allows for BC/AD calendar display.
 * UPDATE: `binPrep()` can now group dates based on median calibrated dates.
-* UPDATE: `modelTest()`can now test SPD generated from multiple calibration curves 
+* UPDATE: `modelTest()`can now test SPD generated from multiple calibration curves.
+* NEW: `mixCurves()` function generates mixed terrestrial/marine calibration curves.
+
 
 # Version 1.1.3 (26 June 2018)
 * Bug fix in `permTest()`: p-values calculation algorithm was yielding p-values of 0.
