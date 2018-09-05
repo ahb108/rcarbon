@@ -1,6 +1,7 @@
 
 # Development Version
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
+* Bug fix in `summary()` for the output of `modelTest()`: The number of bins reported was incorrect.
 * UPDATE: `binsense()` requires a smaller number of non-optional arguments and allows for binning based on median calibrated dates.
 * UPDATE: `plot()` function for geometric growth rates now allows for BC/AD calendar display.
 * UPDATE: `binPrep()` can now group dates based on median calibrated dates.
