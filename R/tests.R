@@ -94,7 +94,10 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
         }
     }
     if (ncc>1) {samplesize=samplesize[,unique.calCurves]}
+
     
+    # Create artificial bins in case bins are not supplied 
+    if (is.na(bins[1])){ bins <- as.character(1:nrow(x$metadata)) }
 
     observed <- spd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
     finalSPD <- observed$grid$PrDens
@@ -262,7 +265,7 @@ if (ncores>1)
     # Results
     result <- data.frame(calBP=observed$grid$calBP,PrDens=finalSPD,lo=lo,hi=hi)
     if(raw==FALSE){ sim <- NA }
-    res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, fitobject=fit,nbins=length(bins),n=nrow(x$metadata),nsim=nsim)
+    res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, fitobject=fit,nbins=length(unique(bins)),n=nrow(x$metadata),nsim=nsim)
     class(res) <- "SpdModelTest"
     if (verbose){ print("Done.") }
     return(res)
