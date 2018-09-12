@@ -290,7 +290,7 @@ uncalibrate <- function (x, ...) {
 #' @rdname uncalibrate
 #' @export
 
-uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intcal13', ...){
+uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves='intcal13', ...){
     
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
     ## calCurve checks and set-up
