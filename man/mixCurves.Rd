@@ -4,7 +4,8 @@
 \alias{mixCurves}
 \title{Creates mixed terrestrial/marine calibration curves.}
 \usage{
-mixCurves(calCurve = "intcal13", p = 1, resOffsets = 0, resErrors = 0)
+mixCurves(calCurve = "intcal13", p = 1, resOffsets = 0,
+  resErrors = 0)
 }
 \arguments{
 \item{calCurve}{Name of the terrestrial curve, either 'intcal13' or 'shcal13'. Default is 'intcal13'.}

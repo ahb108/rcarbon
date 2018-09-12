@@ -5,8 +5,8 @@
 \title{Plot calibrated dates}
 \usage{
 \method{plot}{CalDates}(x, ind = 1, label = NA, calendar = "BP",
-  type = "standard", xlab = NA, ylab = NA, axis4 = TRUE, HPD = FALSE,
-  credMass = 0.95, customCalCurve = NA, ...)
+  type = "standard", xlab = NA, ylab = NA, axis4 = TRUE,
+  HPD = FALSE, credMass = 0.95, customCalCurve = NA, ...)
 }
 \arguments{
 \item{x}{\code{CalDates} class object containing calibrated radiocarbon dates.}

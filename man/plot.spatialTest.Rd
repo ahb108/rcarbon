@@ -5,8 +5,9 @@
 \title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
 \method{plot}{spatialTest}(x, index = 1, option, breakRange = NA,
-  breakLength = 7, rd = 5, baseSize = 0.5, plim = 0.05, qlim = 0.05,
-  legend = FALSE, legSize = 1, location = "bottomright", ...)
+  breakLength = 7, rd = 5, baseSize = 0.5, plim = 0.05,
+  qlim = 0.05, legend = FALSE, legSize = 1,
+  location = "bottomright", ...)
 }
 \arguments{
 \item{x}{A \code{spatialTest} class object}
