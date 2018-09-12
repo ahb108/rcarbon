@@ -58,9 +58,13 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
         if (is.na(xlab)){ xlabel <- "Years cal BP" } else { xlabel <- xlab } 
     } else if (calendar=="BCAD"){
-        plotyears <- 1950-yearsBP
+        plotyears <- BPtoBCAD(yearsBP)
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
-        if (is.na(xlab)){ xlabel <- "Years BC/AD" } else { xlabel <- xlab }       
+        if (is.na(xlab)){ 
+		xlabel <- "Years BC/AD"
+		if (all(range(plotyears)<0)) {xlabel <- "Years BC"}
+		if (all(range(plotyears)>0)) {xlabel <- "Years AD"}
+	} else { xlabel <- xlab }       
     } else {
         stop("Unknown calendar type")
     }
@@ -82,7 +86,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
       if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
       xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
-    axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=0.75)
+    axis(1, at=xticks, labels=abs(xticksLab), las=2, cex.axis=0.75)
     
     if (axis4){ axis(4, cex.axis=0.75) }
     if (!HPD){
@@ -190,8 +194,11 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
         xlabel <- "Years cal BP"
         if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
     } else if (calendar=="BCAD"){
-        obs$Years <- 1950-obs$calBP
+        obs$Years <- BPtoBCAD(obs$calBP)
         xlabel <- "Years BC/AD"
+	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
+	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
+
         if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
     } else {
         stop("Unknown calendar type")
@@ -281,7 +288,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
     if (drawaxes & bbty != "n" & calendar=="BP"){
 	rr <- range(pretty(obs[,"Years"]))    
         axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        axis(side=1,at=pretty(obs[,"Years"]))
+        axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
     } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
 	yy <-  obs[,"Years"]
        
@@ -294,7 +301,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 	pyShown <- py
 	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
 	py[which(py>1)] <-  py[which(py>1)]-1
-	axis(side=1,at=py,labels=pyShown)
+	axis(side=1,at=py,labels=abs(pyShown))
     }
 
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
@@ -452,8 +459,10 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
         xlabel <- "Years cal BP"
         if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
     } else if (calendar=="BCAD"){
-        plotyears <- 1950-x$grid$calBP
+        plotyears <- BPtoBCAD(x$grid$calBP)
         xlabel <- "Years BC/AD"
+	if (all(range(plotyears)<0)){xlabel <- "Years BC"}
+	if (all(range(plotyears)>0)){xlabel <- "Years AD"}
         if (any(is.na(xlim))){ xlim <- c(min(plotyears),max(plotyears)) }
     } else {
         stop("Unknown calendar type")
@@ -478,7 +487,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
     if (calendar=="BP" & xaxt!="n"){
 	rr <- range(pretty(plotyears))    
         axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        axis(side=1,at=pretty(plotyears))
+        axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)))
     } else if (calendar=="BCAD" & xaxt!="n"){
 	yy <-  plotyears
         rr <- range(pretty(yy))    
@@ -489,7 +498,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 	pyShown <- py
 	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
 	py[which(py>1)] <-  py[which(py>1)]-1
-	axis(side=1,at=py,labels=pyShown)
+	axis(side=1,at=py,labels=abs(pyShown))
     }
 }
 
@@ -541,9 +550,11 @@ plot.CalGrid <- function(x, runm=NA, calendar="BP", fill.p="grey50", border.p=NA
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
         xlabel <- "Years cal BP"
     } else if (calendar=="BCAD"){
-        plotyears <- 1950-yearsBP
+        plotyears <- BPtoBCAD(yearsBP)
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
         xlabel <- "Years BC/AD"
+	if (all(range(plotyears)<0)){xlabel<-"Years BC"}
+	if (all(range(plotyears)>0)){xlabel<-"Years AD"}
     } else {
         stop("Unknown calendar type")
     }
@@ -570,7 +581,7 @@ plot.CalGrid <- function(x, runm=NA, calendar="BP", fill.p="grey50", border.p=NA
         xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
     if (!add){
-        axis(1, at=xticks, labels=xticksLab, las=2, cex.axis=cex.axis)
+        axis(1, at=xticks, labels=abs(xticksLab), las=2, cex.axis=cex.axis)
         axis(2, cex.axis=cex.axis)
     }
     if (!is.na(runm)){ yvals <- runMean(yvals, runm, edge="fill") }
@@ -656,8 +667,10 @@ plot.SpdPermTest <- function(x, focalm="1", calendar="BP", xlim=NA, ylim=NA, col
         xlabel <- "Years cal BP"
         if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
     } else if (calendar=="BCAD"){
-        obs$Years <- 1950-obs$calBP
+        obs$Years <- BPtoBCAD(obs$calBP)
         xlabel <- "Years BC/AD"
+	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
+	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
         if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
     } else {
         stop("Unknown calendar type")
@@ -753,7 +766,7 @@ plot.SpdPermTest <- function(x, focalm="1", calendar="BP", xlim=NA, ylim=NA, col
     if (drawaxes & bbty != "n" & calendar=="BP"){
 	rr <- range(pretty(obs[,"Years"]))    
         axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        axis(side=1,at=pretty(obs[,"Years"]))
+        axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
     } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
 	yy <-  obs[,"Years"]
 	rr <- range(pretty(yy))    
@@ -765,7 +778,7 @@ plot.SpdPermTest <- function(x, focalm="1", calendar="BP", xlim=NA, ylim=NA, col
 	pyShown <- py
 	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
 	py[which(py>1)] <-  py[which(py>1)]-1
-	axis(side=1,at=py,labels=pyShown)
+	axis(side=1,at=py,labels=abs(pyShown))
     }
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
     class(bbp) <- c("BBPolygons",class(bbp))
@@ -862,14 +875,16 @@ binsense <- function(x,y,h,timeRange,calendar="BP",binning='CRA',raw=F,verbose=T
   if (!calendar %in% c("BP","BCAD")){ stop("Unknown calendar type") }
   if (!binning %in% c("CRA","calibrated")) {stop("binning should be either 'CRA' or 'calibrated'")} 	
   years <- timeRange[1]:timeRange[2]
-  xlab <- "Years BP"
+  xlab <- "Years cal BP"
   coln <- numeric(length=length(h))
   xr <- timeRange
   if (calendar=="BCAD")
   {
-   years <- 1950 - years
+   years <- BPtoBCAD(years)
    xlab <- "Years BC/AD"
    xr <- range(years)
+   if (all(xr<0)){xlab <- "Years BC"}
+   if (all(xr>0)){xlab <- "Years AD"}
   }
 
   res <- matrix(NA,nrow=length(years),ncol=length(h))
@@ -913,7 +928,7 @@ binsense <- function(x,y,h,timeRange,calendar="BP",binning='CRA',raw=F,verbose=T
    xticksLab=xticksAt
    if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
    if (any(xticksAt>1)){xticksAt[which(xticksAt>1)]=xticksAt[which(xticksAt>1)]-1}
-   axis(side=1,at=xticksAt,labels=xticksLab)
+   axis(side=1,at=xticksAt,labels=abs(xticksLab))
   }  
 
 
