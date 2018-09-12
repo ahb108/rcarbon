@@ -150,6 +150,8 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     for (s in 1:nsim){ 
 	if (verbose){ setTxtProgressBar(pb, s) } 
 
+        randomSDs <- sample(size=samplesize[s,i], errors, replace=TRUE) 
+
     if (method=="uncalsample")
     {
 	    randomDates <- vector("list",length=ncc)
@@ -171,13 +173,12 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 
 	    for (i in 1:ncc)
 	    {
-		    randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),calCurves=unique.calCurves[i])$ccCRA   
+		    randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),randomSDs,calCurves=unique.calCurves[i])$rCRA   
 		    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
 	    }
 # 	    randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
     }
 
-        randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
         tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
 
 #         tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
@@ -199,6 +200,8 @@ if (ncores>1)
 	print("Progress bar disabled for multi-core processing")
 	sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
 
+		randomSDs <- sample(size=samplesize[s,i], errors, replace=TRUE)
+
 		if (method=="uncalsample")
 		{
 			randomDates <- vector("list",length=ncc)
@@ -218,7 +221,7 @@ if (ncores>1)
 
 			for (i in 1:ncc)
 			{
-				randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),calCurves=unique.calCurves[i])$ccCRA   
+				randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),randomSD,calCurves=unique.calCurves[i])$rCRA   
 				ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
 			}
 		}
@@ -232,7 +235,6 @@ if (ncores>1)
 # 			randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
 # 		}
 
-		randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE)
 		tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
 # 		tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE)
 		simDateMatrix <- tmp$calmatrix
