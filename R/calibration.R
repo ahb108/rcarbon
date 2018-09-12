@@ -319,7 +319,8 @@ uncalibrate.default <- function(x, CRAerrors=NA, roundyear=TRUE, calCurves='intc
     colnames(dates) <- c("calBP", "ccCRA")
     calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$calBP)$y
     dates$ccError <- calcurve.error
-    dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=dates$ccError)
+#     dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=dates$ccError)
+    dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=sqrt(dates$ccError^2+CRAerrors^2))
     dates$rError <- CRAerrors
     if (roundyear){ dates$rCRA <- round(dates$rCRA) }
     return(dates)
