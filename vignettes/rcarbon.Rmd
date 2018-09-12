@@ -27,6 +27,7 @@ library(rcarbon)
 ```{r, include = FALSE}
 devtools::load_all()
 ```
+
 # Introduction
 
 A seminal paper by John Rick some 30 years ago (1987) first introduced the idea of using the frequency of archaeological radiocarbon dates through time as a proxy for highs and lows in human population dynamics. The increased availability of large collection of archaeological (especially anthropogenic) radiocarbon dates have dramatically pushed this research agenda forward in recent years. New case studies from across the globe are regularly being published, stimulating the development of new techniques to tackle specific methodological and interpretative issues.
@@ -79,6 +80,18 @@ x <- calibrate(4000,30,calCurves='marine13',resOffsets=340,resErrors=20)
 plot(x,HPD=TRUE,calendar="BCAD") #using BC/AD instead of BP
 ```
 
+Users can also supply their own custom calibration curves. The example below uses  a mixed marine/terrestrial curve generated using the `mixCurves()` function:
+
+```{r,results='hide',fig.width=5,fig.height=5}
+#generate 70% terrestrial and 30% marine curve
+myCurve <- mixCurves('intcal13',p=0.7,resOffsets=340,resErrors=20) 
+plot(calibrate(4000,30,calCurves=myCurve))
+
+```
+
+
+
+
 ### Normalisation
 
 By default, calibrated probabilities are normalised so the total probability is equal to one, in step with most other radiocarbon calibration software. However, Weninger et al (2015) argue that when dates are aggregated by summation, this normalisation process can generate artificial spikes in the resulting summed probability distributions (SPDs) coinciding with steeper portions of the calibration curve. By specifying `normalised=FALSE` in `calibrate()` it is possible to obtain non-normalised calibrations. Using normalised or non-normalised calibrations does not have an impact on the shape of individual calibrated probability distribution, but does influence the shape of SPDs, so we suggest that at minimum a case study should explore whether its results differ much when normalised versus unnormalised dates are used. 
@@ -99,10 +112,12 @@ plot(DK.spd,runm=200,add=TRUE,type="simple",col="indianred",lwd=2,lty=2) #using 
 
 ## Binning
 
-SPDs can be potentially biased if there is strong inter-site variability in sample size, for example where one well-resourced research project has sampled one particular site for an unusual number of dates. This might generate misleading peaks in the SPD and to mitigate this effect it is possible to create artificial *bins*, a local SPD based on samples associated with a particular site and close in time that is divided by the number of dates in the bin or to the average SPD (in case of non-normalised calibration). Dates are assigned to the same or different bins based on their proximity to one another in (uncalibrated) time using hierarchical clustering with a user-defined cut-off value (using the `hclust()` function and the argument `h`) and this binning is implemented by the `binPrep()` function. The example below illustrates an example using a cut-off value of 100 years:
+SPDs can be potentially biased if there is strong inter-site variability in sample size, for example where one well-resourced research project has sampled one particular site for an unusual number of dates. This might generate misleading peaks in the SPD and to mitigate this effect it is possible to create artificial *bins*, a local SPD based on samples associated with a particular site and close in time that is divided by the number of dates in the bin or to the average SPD (in case of non-normalised calibration). Dates are assigned to the same or different bins based on their proximity to one another in (either $^{14}$C in time or median calibrated date) using hierarchical clustering with a user-defined cut-off value (using the `hclust()` function and the argument `h`) and this binning is implemented by the `binPrep()` function. The code below illustrates an example using a cut-off value of 100 years:
+
 
 ```{r}
 DK.bins = binPrep(sites=DK$SiteID,ages=DK$C14Age,h=100)
+# DK.bins = binPrep(sites=DK$SiteID,ages=DK.caldates,h=100) #using median calibrated date
 ```
 
 The resulting object can then be used as an argument for the `spd()` function:
