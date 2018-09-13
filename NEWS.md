@@ -3,13 +3,13 @@
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
 * Bug fix in `summary()` for the output of `modelTest()`: The number of bins reported was incorrect.
 * UPDATE: `binsense()` requires a smaller number of non-optional arguments and allows for binning based on median calibrated dates.
-* UPDATE: `plot()` function for geometric growth rates now allows for BC/AD calendar display.
+* UPDATE: `plot()` function for geometric growth rates now allows for BC/AD calendar display.  
 * UPDATE: `binPrep()` can now group dates based on median calibrated dates.
 * UPDATE: `modelTest()`can now tests SPD generated from multiple calibration curves.
 * UPDATE: modelTest() now uses randomised  back-calibration for the 'calsample' method.
 * UPDATE: uncalibrate() random back-calibration now utilises both the user supplied lab error and the error of the calibration curve.
 * NEW: `mixCurves()` function generates mixed terrestrial/marine calibration curves.
-
+* Further minor updates in plot labels, help documentation, and vignette.
 
 # Version 1.1.3 (26 June 2018)
 * Bug fix in `permTest()`: p-values calculation algorithm was yielding p-values of 0.
