@@ -1117,8 +1117,11 @@ plot.spdGG<- function(x,calendar="BP",...)
 	if (calendar=="BCAD")
 	{
 		bcad.breaks=BPtoBCAD(breaks)
-		nn = paste(bcad.breaks[-length(bcad.breaks)],bcad.breaks[-1],sep="-")
+		nn = paste(abs(bcad.breaks[-length(bcad.breaks)]),abs(bcad.breaks[-1]),sep="-")
 		xxlab="Years BC/AD"
+		if (all(range(bcad.breaks)<0)){xxlab="Years BC"}
+		if (all(range(bcad.breaks)>0)){xxlab="Years AD"}
+
 	}
 	barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,xlab=xxlab,...)
 	par(new=T)
