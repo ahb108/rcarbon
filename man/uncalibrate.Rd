@@ -8,7 +8,7 @@
 \usage{
 uncalibrate(x, ...)
 
-\method{uncalibrate}{default}(x, CRAerrors = NA, roundyear = TRUE,
+\method{uncalibrate}{default}(x, CRAerrors = 0, roundyear = TRUE,
   calCurves = "intcal13", ...)
 
 \method{uncalibrate}{CalGrid}(x, calCurves = "intcal13", eps = 1e-05,

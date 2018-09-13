@@ -221,22 +221,12 @@ if (ncores>1)
 
 			for (i in 1:ncc)
 			{
-				randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),randomSD,calCurves=unique.calCurves[i])$rCRA   
+				randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),randomSDs,calCurves=unique.calCurves[i])$rCRA   
 				ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
 			}
 		}
 
-# 		if (method=="uncalsample")
-# 		{
-# 			randomDates <- sample(cragrid$CRA, replace=TRUE, size=samplesize, prob=cragrid$PrDens) 
-# 		}
-# 		if (method=="calsample")
-# 		{
-# 			randomDates <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize,prob=predgrid$PrDens))$ccCRA   
-# 		}
-
 		tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
-# 		tmp <- calibrate(x=randomDates,errors=randomSDs, timeRange=timeRange, calCurves=calCurves, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE)
 		simDateMatrix <- tmp$calmatrix
 		aux <- apply(simDateMatrix,1,sum)
 		aux <- (aux/sum(aux)) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
@@ -246,7 +236,6 @@ if (ncores>1)
 		}
 		aux
 	}
-	#stopCluster(cl)
 }
 
     if (verbose){ close(pb) }
