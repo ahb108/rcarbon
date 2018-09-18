@@ -6,8 +6,8 @@
 * UPDATE: `plot()` function for geometric growth rates now allows for BC/AD calendar display.  
 * UPDATE: `binPrep()` can now group dates based on median calibrated dates.
 * UPDATE: `modelTest()`can now test SPD generated from multiple calibration curves.
-* UPDATE: modelTest() now uses randomised  back-calibration for the 'calsample' method.
-* UPDATE: uncalibrate() random back-calibration now utilises both the user supplied lab error and the error of the calibration curve.
+* UPDATE: `modelTest()` now uses randomised  back-calibration for the 'calsample' method.
+* UPDATE: `uncalibrate()`'s random back-calibration now utilises both the user supplied lab error and the error of the calibration curve.
 * NEW: `mixCurves()` function generates mixed terrestrial/marine calibration curves.
 * Further minor updates in plot labels, help documentation, and vignette.
 
