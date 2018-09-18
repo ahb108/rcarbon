@@ -16,7 +16,7 @@
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
-\item{xlim}{the x limits of the plot.}
+\item{xlim}{the x limits of the plot (in cal BP)}
 
 \item{ylim}{the y limits of the plot.}
 

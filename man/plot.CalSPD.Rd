@@ -19,7 +19,7 @@
 
 \item{type}{Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart.}
 
-\item{xlim}{the x limits of the plot.}
+\item{xlim}{the x limits of the plot (in cal BP)}
 
 \item{ylim}{the y limits of the plot.}
 

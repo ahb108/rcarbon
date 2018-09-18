@@ -15,7 +15,7 @@
 
 \item{ylim}{the y limits of the plot.}
 
-\item{xlim}{the x limits of the plot.}
+\item{xlim}{the x limits of the plot (in cal BP).}
 
 \item{col.obs}{Line colour for the observed SPD}
 

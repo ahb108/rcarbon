@@ -167,7 +167,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #'
 #' @param x A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
-#' @param xlim the x limits of the plot.
+#' @param xlim the x limits of the plot (in cal BP).
 #' @param ylim the y limits of the plot.
 #' @param col.obs Line colour for the observed SPD
 #' @param lwd.obs Line width for the observed SPD
@@ -195,11 +195,10 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
         if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
     } else if (calendar=="BCAD"){
         obs$Years <- BPtoBCAD(obs$calBP)
-        xlabel <- "Years BC/AD"
+	if (all(!is.na(xlim))){xlim <- BPtoBCAD(xlim)}    
 	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
 	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
-
-        if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
+        if (any(is.na(xlim))){xlim <- c(min(obs$Years),max(obs$Years)) }
     } else {
         stop("Unknown calendar type")
     }    
@@ -406,7 +405,7 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param type Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart. 
-#' @param xlim the x limits of the plot.
+#' @param xlim the x limits of the plot (in cal BP)
 #' @param ylim the y limits of the plot.
 #' @param ylab (optional) Label for the y axis. If unspecified the default setting will be applied ("Summed Probability") 
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity. 
@@ -459,6 +458,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
         xlabel <- "Years cal BP"
         if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
     } else if (calendar=="BCAD"){
+	if (all(!is.na(xlim))){xlim <- BPtoBCAD(xlim)}    
         plotyears <- BPtoBCAD(x$grid$calBP)
         xlabel <- "Years BC/AD"
 	if (all(range(plotyears)<0)){xlabel <- "Years BC"}
@@ -512,7 +512,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param fill.p Fill colour of the polygon depicting the summed probability distribution.
 #' @param border.p Border colour of the polygon depicting the summed probability distribution.
-#' @param xlim Adjust x axis limits.
+#' @param xlim Adjust x axis limits (in cal BP).
 #' @param ylim Adjust y axis limits (otherwise sensible default).
 #' @param cex.lab Size of label text.
 #' @param cex.axis Size of axis text.
@@ -551,6 +551,7 @@ plot.CalGrid <- function(x, runm=NA, calendar="BP", fill.p="grey50", border.p=NA
         xlabel <- "Years cal BP"
     } else if (calendar=="BCAD"){
         plotyears <- BPtoBCAD(yearsBP)
+	if (all(!is.na(xlim))){xlim <- BPtoBCAD(xlim)}    
         xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
         xlabel <- "Years BC/AD"
 	if (all(range(plotyears)<0)){xlabel<-"Years BC"}
@@ -641,7 +642,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param x A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})
 #' @param focalm Value specifying the name of the focal mark (group) to be plotted. 
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
-#' @param xlim the x limits of the plot.
+#' @param xlim the x limits of the plot (in cal BP)
 #' @param ylim the y limits of the plot.
 #' @param col.obs Line colour for the observed SPD
 #' @param col.env Colour for the simulation envelope
@@ -668,7 +669,7 @@ plot.SpdPermTest <- function(x, focalm="1", calendar="BP", xlim=NA, ylim=NA, col
         if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
     } else if (calendar=="BCAD"){
         obs$Years <- BPtoBCAD(obs$calBP)
-        xlabel <- "Years BC/AD"
+	if (all(!is.na(xlim))){xlim <- BPtoBCAD(xlim)}    
 	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
 	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
         if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }

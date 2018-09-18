@@ -20,7 +20,7 @@
 
 \item{border.p}{Border colour of the polygon depicting the summed probability distribution.}
 
-\item{xlim}{Adjust x axis limits.}
+\item{xlim}{Adjust x axis limits (in cal BP).}
 
 \item{ylim}{Adjust y axis limits (otherwise sensible default).}
 
