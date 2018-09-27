@@ -20,7 +20,7 @@
 
 \item{border.p}{Border colour of the polygon depicting the summed probability distribution.}
 
-\item{xlim}{Adjust x axis limits (in cal BP).}
+\item{xlim}{the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).}
 
 \item{ylim}{Adjust y axis limits (otherwise sensible default).}
 
