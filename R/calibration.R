@@ -357,7 +357,7 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
         options(warn=-1)
         calcurve <- readLines(calCurveFile, encoding="UTF-8")
         calcurve <- calcurve[!grepl("[#]",calcurve)]
-	calcuve.con <- textConnection(calcurve)
+	calcurve.con <- textConnection(calcurve)
         calcurve <- as.matrix(read.csv(calcurve.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
 	close(calcurve.con)
         options(warn=0)
