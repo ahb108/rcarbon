@@ -110,6 +110,16 @@ plot(DK.spd)
 plot(DK.spd,runm=200,add=TRUE,type="simple",col="indianred",lwd=2,lty=2) #using a rolling average of 200 years for smoothing
 ```
 
+It is also possible to limit the display of the SPD to a particular window of time and/or use a 'BC/AD' timescale:
+
+```{r,fig.height=5,fig.width=5}
+# show SPD between 6000 and 4000 BC
+plot(DK.spd,calendar='BCAD',xlim=c(-6000,-4000)) 
+# show SPD between 7000 and 5000 BP
+# plot(DK.spd,calendar='BP',xlim=c(7000,5000)) 
+```
+
+
 ## Binning
 
 SPDs can be potentially biased if there is strong inter-site variability in sample size, for example where one well-resourced research project has sampled one particular site for an unusual number of dates. This might generate misleading peaks in the SPD and to mitigate this effect it is possible to create artificial *bins*, a local SPD based on samples associated with a particular site and close in time that is divided by the number of dates in the bin or to the average SPD (in case of non-normalised calibration). Dates are assigned to the same or different bins based on their proximity to one another in (either $^{14}$C in time or median calibrated date) using hierarchical clustering with a user-defined cut-off value (using the `hclust()` function and the argument `h`) and this binning is implemented by the `binPrep()` function. The code below illustrates an example using a cut-off value of 100 years:
