@@ -135,7 +135,9 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
                 options(warn=-1)
                 cc <- readLines(calCurveFile, encoding="UTF-8")
                 cc <- cc[!grepl("[#]",cc)]
-                cc <- read.csv(textConnection(cc), header=FALSE, stringsAsFactors=FALSE)
+		cc.con <- textConnection(cc)
+                cc <- read.csv(cc.con, header=FALSE, stringsAsFactors=FALSE)
+		close(cc.con)
                 options(warn=0)
                 names(cc) <- c("BP","CRA","Error","D14C","Sigma")
             }

@@ -94,7 +94,9 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             options(warn=-1)
             cctmp <- readLines(calCurveFile, encoding="UTF-8")
             cctmp <- cctmp[!grepl("[#]",cctmp)]
-            cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	    cctmp.con <- textConnection(cctmp)
+            cctmp <- as.matrix(read.csv(cctmp.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	    close(cctmp.con)
             options(warn=0)
             colnames(cctmp) <- c("CALBP","C14BP","Error")
             cclist[[tmp[a]]] <- cctmp
@@ -217,7 +219,9 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
         options(warn=-1)
         calcurve <- readLines(calCurveFile, encoding="UTF-8")
         calcurve <- calcurve[!grepl("[#]",calcurve)]
-        calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	calcurve.con <- textConnection(calcurve)
+        calcurve <- as.matrix(read.csv(calcurve.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	close(calcurve.con)
         options(warn=0)
         colnames(calcurve) <- c("CALBP","C14BP","Error")
     } else {
@@ -311,7 +315,9 @@ uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves='intca
         options(warn=-1)
         calcurve <- readLines(calCurveFile, encoding="UTF-8")
         calcurve <- calcurve[!grepl("[#]",calcurve)]
-        calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	calcurve.con <- textConnection(calcurve)
+        calcurve <- as.matrix(read.csv(calcurve.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	close(calcurve.con)
         options(warn=0)
         colnames(calcurve) <- c("CALBP","C14BP","Error")
     }
@@ -351,7 +357,9 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
         options(warn=-1)
         calcurve <- readLines(calCurveFile, encoding="UTF-8")
         calcurve <- calcurve[!grepl("[#]",calcurve)]
-        calcurve <- as.matrix(read.csv(textConnection(calcurve), header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	calcuve.con <- textConnection(calcurve)
+        calcurve <- as.matrix(read.csv(calcurve.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	close(calcurve.con)
         options(warn=0)
         colnames(calcurve) <- c("CALBP","C14BP","Error")
     }
@@ -431,7 +439,9 @@ as.CalDates <- function(x){
         options(warn=-1)
         cctmp <- readLines(calCurveFile, encoding="UTF-8")
         cctmp <- cctmp[!grepl("[#]",cctmp)]
-        cctmp <- as.matrix(read.csv(textConnection(cctmp), header=FALSE, stringsAsFactors=FALSE))[,1]
+	cctmp.con <- textConnection(cctmp)
+        cctmp <- as.matrix(read.csv(cctmp.con, header=FALSE, stringsAsFactors=FALSE))[,1]
+	close(cctmp.con)
         options(warn=0)
         calBP <- seq(max(cctmp),min(cctmp),-1)
 	rownames(res) <- match(res[,1],calBP)
@@ -628,10 +638,12 @@ mixCurves <- function(calCurve='intcal13',p=1,resOffsets=0,resErrors=0)
 
             terrestrial <- terrestrial[!grepl("[#]",terrestrial)]
             marine <- marine[!grepl("[#]",marine)]
-            
-	    terrestrial <- as.matrix(read.csv(textConnection(terrestrial), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-	    marine <- as.matrix(read.csv(textConnection(marine), header=FALSE, stringsAsFactors=FALSE))[,1:3]
-	    
+            terrestrial.con <- textConnection(terrestrial) 
+	    marine.con <- textConnection(marine)
+	    terrestrial <- as.matrix(read.csv(terrestrial.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	    marine <- as.matrix(read.csv(marine.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
+	    close(terrestrial.con)
+	    close(marine.con)
             options(warn=0)
             colnames(marine) <- c("CALBP","C14BP","Error")
             colnames(terrestrial) <- c("CALBP","C14BP","Error")
