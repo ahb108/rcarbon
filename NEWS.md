@@ -1,4 +1,8 @@
 
+# Development GitHub Version (ongoing)
+* UPDATE in `modelTest()`: Added an error message and a note in the help documentation warning users to not use calibration curves not supported by `uncalibrate()`.
+
+
 # Version 1.2.0 (1 October 2018)
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
 * Bug fix in `summary()` for the output of `modelTest()`: The number of bins reported was incorrect.
