@@ -7,14 +7,14 @@
 binPrep(sites, ages, h)
 }
 \arguments{
-\item{sites}{a vector of character strings (or number to coerce to character) of all sites or site phases}
+\item{sites}{a vector of character strings (or number to coerce to character) of all sites or site phases. If character strings are used these should not contain underscores (see also below)}
 
 \item{ages}{a vector of uncalibrated conventional radiocarbon ages or a \code{CalDates} class object obtained using the \code{\link{calibrate}} function.}
 
 \item{h}{a single numeric value passed to \code{\link{hclust}} control degree of grouping of similar ages in a phase site.}
 }
 \value{
-A vector of character strings with the same length of the object supplied for the argument \code{ages} identifying intra-site or intra-phase grouping, for use with \code{\link{spd}}
+A vector of character strings with the same length of the object supplied for the argument \code{ages} identifying intra-site or intra-phase grouping, for use with \code{\link{spd}}.The character strings effectively provide a "name" for each "phase" within a "site", using sequential integers after an underscore. For example if a site named "S001" had four dates grouped into two bins with two dates each, the resulting vector would be "S001_1", "S001_1", "S001_2", and "S001_2".
 }
 \description{
 Prepare a set of bins for controlling the aggregation of radiocarbon dates
