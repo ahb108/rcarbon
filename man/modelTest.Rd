@@ -5,9 +5,10 @@
 \title{Monte-Carlo simulation test for SPDs}
 \usage{
 modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
-  raw = FALSE, model = c("exponential"), method = c("uncalsample"),
-  predgrid = NA, datenormalised = FALSE, spdnormalised = FALSE,
-  ncores = 1, fitonly = FALSE, a = 0, b = 0, verbose = TRUE)
+  gridclip = TRUE, raw = FALSE, model = c("exponential"),
+  method = c("uncalsample"), predgrid = NA, datenormalised = FALSE,
+  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, a = 0,
+  b = 0, verbose = TRUE)
 }
 \arguments{
 \item{x}{A \code{CalDates} object containing calibrated radiocarbon ages}
@@ -20,7 +21,9 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 
 \item{runm}{A number indicating the window size of the moving average to smooth both observed and simulated SPDs. If set to \code{NA} no moving average is applied.Default is \code{NA}.}
 
-\item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP.}
+\item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP. The fitting process is applied considering the SPD within the interval defined by this parameter. If no values are supplied the earliest and latest median calibrated dates of the observed data will be used.}
+
+\item{gridclip}{Whether the sampling of random dates is constrained to the observed range (TRUE) or not (FALSE). Default is TRUE.}
 
 \item{raw}{A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.}
 

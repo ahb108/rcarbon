@@ -11,7 +11,8 @@
 #' @param nsim Number of simulations
 #' @param bins A vector indicating which bin each radiocarbon date is assigned to.
 #' @param runm A number indicating the window size of the moving average to smooth both observed and simulated SPDs. If set to \code{NA} no moving average is applied.Default is \code{NA}. 
-#' @param timeRange  A vector of length 2 indicating the start and end date of the analysis in cal BP.
+#' @param timeRange  A vector of length 2 indicating the start and end date of the analysis in cal BP. The fitting process is applied considering the SPD within the interval defined by this parameter. If no values are supplied the earliest and latest median calibrated dates of the observed data will be used.
+#' @param gridclip Whether the sampling of random dates is constrained to the observed range (TRUE) or not (FALSE). Default is TRUE.
 #' @param raw A logical variable indicating whether all permuted SPDs should be returned or not. Default is FALSE.
 #' @param model A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}. Default is \code{'exponential'}. 
 #' @param method Method for the creation of random dates from the fitted model. Either \code{'uncalsample'} or \code{'calsample'}. Default is \code{'uncalsample'}. See below for details. 
@@ -65,7 +66,7 @@
 #' @import doParallel
 #' @export
 
-modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=TRUE, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
     
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -78,6 +79,13 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
     if (!any(method%in%c("uncalsample","calsample")))
     {
 	stop("The 'method' argument must be either 'uncalsample' or 'calsample'")
+    }
+
+    ccrange = c(max(medCal(x)),min(medCal(x)))
+
+    if (is.na(timeRange))
+    {
+	    timeRange=ccrange
     }
 
     calCurves = x$metadata$CalCurve
@@ -150,7 +158,11 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 	    for (i in 1:ncc)
 	    {		
 		    tmp.grid <- uncalibrate(as.CalGrid(predgrid), calCurves=unique.calCurves[i], compact=FALSE, verbose=FALSE)
-		    cragrids[[i]] <- tmp.grid[tmp.grid$CRA <= max(x$metadata$CRA) & tmp.grid$CRA >= min(x$metadata$CRA),]
+		    cragrids[[i]] <- tmp.grid
+		    if (gridclip==TRUE)
+		    {
+			    cragrids[[i]] <- tmp.grid[tmp.grid$CRA <= max(x$metadata$CRA) & tmp.grid$CRA >= min(x$metadata$CRA),]
+		    }
 	    }
     }
 
@@ -164,12 +176,12 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 	    randomDates <- vector("list",length=ncc)
 	    ccurve.tmp <- numeric()
 	    for (i in 1:ncc)
-	    {
+	    {       
 		    randomDates[[i]] = sample(cragrids[[i]]$CRA,replace=TRUE,size=samplesize[s,i],prob=cragrids[[i]]$PrDens)
 		    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
 	    }
 
-        randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
+	    randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
     }
 
 
@@ -180,8 +192,15 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 	    randomSDs <- numeric()	
 	    for (i in 1:ncc)
 	    {
+		    sampleWindow=predgrid
+		    if (gridclip==TRUE)
+		    {
+			    sampleWindow=subset(sampleWindow,calBP<=ccrange[1]&calBP>=ccrange[2])
+		    }
 		    randomSDs.tmp=sample(size=samplesize[s,i],errors,replace=TRUE)
-		    randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),randomSDs.tmp,calCurves=unique.calCurves[i])$rCRA   
+		    randomDates[[i]] <- uncalibrate(sample(sampleWindow$calBP,replace=TRUE,size=samplesize[s,i],prob=sampleWindow$PrDens),randomSDs.tmp,calCurves=unique.calCurves[i])$rCRA   
+			   
+
 		    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
 		    randomSDs = c(randomSDs,randomSDs.tmp)
 	    }
@@ -207,14 +226,14 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 		    {
 			    randomDates <- vector("list",length=ncc)
 			    ccurve.tmp <- numeric()
+
 			    for (i in 1:ncc)
-			    {
+			    {       
 				    randomDates[[i]] = sample(cragrids[[i]]$CRA,replace=TRUE,size=samplesize[s,i],prob=cragrids[[i]]$PrDens)
 				    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
 			    }
-        randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
+			    randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
 		    }
-
 
 		    if (method=="calsample")
 		    {
@@ -222,16 +241,23 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, raw=FALSE
 			    ccurve.tmp <- numeric()
 			    randomSDs <- numeric()	
 
-			    for (i in 1:ncc)
-			    {
-
-				    randomSDs.tmp=sample(size=samplesize[s,i],errors,replace=TRUE)
-				    randomDates[[i]] <- uncalibrate(sample(predgrid$calBP,replace=TRUE,size=samplesize[s,i],prob=predgrid$PrDens),randomSDs.tmp,calCurves=unique.calCurves[i])$rCRA   
-				    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
-				    randomSDs = c(randomSDs,randomSDs.tmp)
-			    }
 		    }
-	    
+
+	    for (i in 1:ncc)
+	    {
+		    sampleWindow=predgrid
+		    if (gridclip==TRUE)
+		    {
+			    sampleWindow=subset(sampleWindow,calBP<=ccrange[1]&calBP>=ccrange[2])
+		    }
+		    
+		    randomSDs.tmp=sample(size=samplesize[s,i],errors,replace=TRUE)
+		    randomDates[[i]] <- uncalibrate(sample(sampleWindow$calBP,replace=TRUE,size=samplesize[s,i],prob=sampleWindow$PrDens),randomSDs.tmp,calCurves=unique.calCurves[i])$rCRA   
+			   
+		    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
+		    randomSDs = c(randomSDs,randomSDs.tmp)
+	    }
+
 	    tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
 	    
 	    simDateMatrix <- tmp$calmatrix
