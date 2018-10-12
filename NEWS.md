@@ -1,7 +1,9 @@
 
 # Development GitHub Version (ongoing)
-* UPDATE in `modelTest()`: Added an error message and a note in the help documentation warning users to not use calibration curves not supported by `uncalibrate()`.
-
+* UPDATE in `modelTest()`:
+  * Added an error message and a note in the help documentation warning users to not use calibration curves not supported by `uncalibrate()`.
+  * NEW argument `gridclip` to add range constrain in the simulation envelope
+  * UPDATE `timeRange` can now be left undefined, in which case the range of median calibrated observed dates is used. 
 
 # Version 1.2.0 (1 October 2018)
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
