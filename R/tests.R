@@ -577,12 +577,10 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' par(mfrow=c(2,2))  
 #' par(mar=c(0.1,0.1,0,0.5))
 #' plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
-#' plot(res.locations,index=4,add=TRUE,option="raw",breakRange=c(-0.005,0.005)) 
-#' plot(res.locations,option="rawlegend",breakRange=c(-0.005,0.005),rd=3)
+#' plot(res.locations,index=4,add=TRUE,legend=TRUE,option="raw",breakRange=c(-0.005,0.005)) 
 #' par(mar=c(0.1,0.1,0,0.5))
 #' plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange) 
-#' plot(res.locations,index=4,add=TRUE,option="test")  
-#' plot(res.locations,option="testlegend")
+#' plot(res.locations,index=4,add=TRUE,legend=TRUE,option="test")  
 #' }
 #' @import utils
 #' @import stats
