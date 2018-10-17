@@ -1,0 +1,315 @@
+0.603/14
+0.23/16.1
+0.250/13.25
+0.28/12.1
+0.998/18.15
+0.230/16.1
+(0.998/18.15) / (0.230/16.1)
+(0.603/14) / (0.250/13.25)
+(0.380/8) / (0.280/12.1)
+quit("no")
+library(rcarbon)
+plot(calibrate(2020,70), calendar="BCAD")
+plot(calibrate(2070,70), calendar="BCAD")
+quit("no")
+library(rcarbon)
+plot(calibrate(5130,80), calendar="BCAD")
+quit("no")
+library(rcarbon)
+plot(calibrate(4390,60))
+plot(calibrate(4390,60), calendar="BCAD")
+plot(calibrate(4520,60), calendar="BCAD")
+quit("no")
+library(rcarbon)
+plot(calibrate(6605,45), calendar="BCAD")
+plot(calibrate(6640,95), calendar="BCAD")
+plot(calibrate(6200,95), calendar="BCAD")
+plot(calibrate(6501,37), calendar="BCAD")
+plot(calibrate(6200,95), calendar="BCAD")
+quit("no")
+library(devtools)#
+install_github("ahb108/rcarbon")#
+library(rcarbon)
+plot(calibrate(4500,34))
+?calibrate
+citation("rcarbon")
+?modelTest
+quit("no")
+library(spatstat)
+?owin()
+w <- owin(xrange=c(0,1000), yrange=c(0,1000)
+)
+plot(w)
+?image
+?as.im
+wim <- as.im(w, eps=1000)
+plot(wim)
+wim
+wim <- as.im(w, nx=1000, ny=1000)
+plot(wim)
+wim
+?as.im
+wim <- as.im(w, dimxy=1000)
+wim
+plot(w,axes=T)
+?as.im
+wim <- as.im(w, eps=1)
+wim
+?dist
+?distmap
+A <- ppp(0,1000,w)
+plot(A)
+A <- ppp(0,1000,w)#
+B <- ppp(0,0,w)#
+C <- ppp(1000,1000,w)#
+D <- ppp(1000,0,w)
+plot(D)
+dA <- distmap(A,wim)
+?distmap
+dA <- distmap(A,1)
+plot(dA)
+dA
+?distmap
+?rpoiss
+?rpois
+?rmh
+sA1 <- rpoiss(1000, f=dA)
+sA1 <- rmpoint(1000, f=dA)
+sA1 <- rmpoint(1000, f=dA, types="A")
+plot(sA1)
+?rpoint
+sA1 <- rpoint(1000, f=dA)
+plot(sA1)
+dA <- 1 / distmap(A,wim)
+dA <- 1 / distmap(A,1)
+plot(dA)
+?im.calc
+?imcalc
+?im
+?im.eval
+dA <- distmap(A,1)#
+idA <- eval.im(1/dA)
+plot(idA)
+dA
+plot(dA)
+flot(dA)
+float(dA)
+idA <- eval.im(1000/dA)
+plot(idA)
+?eval.im
+idA <- eval.im(dA+1000)
+plot(idA)
+idA <- eval.im(dA*4)
+plot(idA)
+idA <- eval.im(1/(dA+1))
+plot(idA)
+idA <- eval.im(1000000/(dA+1))
+plot(idA)
+idA <- 1000000/(dA+1)
+plot(idA)
+hist(idA)
+as.array(dA)
+1/as.array(dA)
+plot(as.im(1/as.array(dA)))
+plot(as.im((1/as.array(dA))))
+idA <- eval.im(1.0/dA)
+plot(idA)
+idA <- 1 / dA
+plot(idA)
+idA
+max(idA)
+max(dA)
+min(dA)
+1/min(dA)
+idA <- 1 / (dA+1)
+min(idA)
+max(idA)
+idA <- max(dA)-dA
+plot(idA)
+idA <- max(dA)-dA#
+idB <- max(dB)-dB#
+idC <- max(dC)-dC#
+idD <- max(dD)-dD
+dA <- distmap(A,1)#
+dB <- distmap(B,1)#
+dC <- distmap(C,1)#
+dD <- distmap(D,1)#
+idA <- max(dA)-dA#
+idB <- max(dB)-dB#
+idC <- max(dC)-dC#
+idD <- max(dD)-dD
+sA1 <- rpoint(1000, f=idA)
+plot(sA1)
+sA1 <- rpoint(1000, f=idA)
+plot(sA1)
+sA1
+sA1 <- as.ppp(sA1,w)
+plot(sA1)
+sA1
+Window(sA1) <- w
+plot(sA1)
+sA1
+sA1 <- rpoint(1000, f=idA)#
+Window(sA1) <- w#
+sB1 <- rpoint(1000, f=idB)#
+Window(sB1) <- w#
+sC1 <- rpoint(1000, f=idC)#
+Window(sC1) <- w#
+sD1 <- rpoint(1000, f=idD)#
+Window(sD1) <- w
+plot(sD1)
+Adens <- density(sA1, eps=1)
+plot(Ades)
+plot(Adens)
+Adens
+?density
+Adens <- density(sA1, eps=1, give.Rkern=TRUE)
+Adens
+?density
+bw(Adens)
+Adens$bw
+Adens@bw
+Adens <- density(sA1, eps=1)
+Adens$bw
+Adens <- density(sA1, give.Rkern=TRUE)
+Adens
+summary(Adens)
+Adens <- density(sA1, eps=1, sigma=25)
+plot(Adens)
+Adens <- density(sA1, eps=1, sigma=100)
+plot(Adens)
+Adens <- density(sA1, eps=1, sigma=100)#
+Bdens <- density(sB1, eps=1, sigma=100)#
+Cdens <- density(sC1, eps=1, sigma=100)#
+Ddens <- density(sD1, eps=1, sigma=100)
+plot(Ddens)
+sAll <- superimpose(sA1,sB1,sC1,sD1)
+plot(sAll)
+alldens <- density(sAll, eps=1, sigma=100)
+plot(alldens)
+Aprop <- Adens / alldens
+plot(Aprop)
+Aprop <- Adens / alldens#
+Bprop <- Bdens / alldens#
+Cprop <- Cdens / alldens#
+Dprop <- Ddens / alldens
+plot(Dprop)
+library(raster)
+library(randomForest)
+library(cluster)
+install.packages("randomForest")
+library(randomForest)
+r <- raster(Aprop)
+plot(r)
+allims <- stack(raster(Aprop),raster(Bprop),raster(Cprop),raster(Dprop))
+plot(allims)
+v <- getValues(allims)#
+i <- which(!is.na(v))#
+v <- na.omit(v)
+?kmeans
+E <- kmeans(v, 4, iter.max=100, nstart=10)
+allclassed <- raster(allims)#
+allclassed[i] <- E$cluster#
+plot(allclassed)
+sum(Adens)
+plot(dA)
+b100_200 <- dA >100 & dA <=200
+plot(b100_200)
+b1000_200_A <- Adens * b100_200
+plot(b1000_200_A)
+b1000_200_A <- Adens / b100_200
+plot(b1000_200_A)
+sum(b1000_200_A)
+sum(b1000_200_A, na.omit=TRUE)
+as.vector(b1000_200_A,)
+as.array(b1000_200_A,)
+as.numeric(b1000_200_A,)
+as.numeric(b1000_200_A)
+## Summary of point density#
+ptDensRaster <- function(pts, r, cellVals=NULL, cellQuants=NULL, areaRescale=1){#
+  #Simple summary of possible correlation between points and a raster dataset#
+  if ((is.null(cellVals)&is.null(cellQuants))|(!is.null(cellVals)&!is.null(cellQuants))){#
+    stop("Need to define only one of either cellVals or cellQuants")#
+  }#
+  cellarea <- xres(r) * yres(r) #Assumes projected raster#
+  pts$vals <- extract(r,pts)#
+  if (!is.null(cellQuants)){#
+    brk<- data.frame(quantile(r, probs = seq(0, 1, cellQuants)))[,1]#
+    h <- hist(r, breaks=brk, plot = FALSE)#
+    binned <- data.frame(MidBin=length(brk)-1)#
+    for (i in 1:length(brk)-1){#
+      binned[i,] <- (brk[i] + brk[i + 1]) / 2#
+    }#
+    binned$Cells <- h$counts#
+    binned$Area <- binned$Cells * cellarea * areaRescale#
+    binned$PointCount <- hist(pts$vals, brk, plot = FALSE)$counts#
+  } else {#
+    x<-as.matrix(na.omit(getValues(r)))#
+    binned <- data.frame(table(x))#
+    binned[,1] <- cellVals#
+    names(binned)<-c("MidBin","Cells")#
+    binned$Area <- binned$Cells * cellarea * areaRescale#
+    ptvals <- data.frame(table(pts$vals))#
+    ptvals[,1] <- cellVals#
+    names(ptvals) <- c("MidBin", "PointCount")#
+    binned <- merge(binned,ptvals,by="MidBin", all=TRUE)#
+    binned[is.na(binned$PointCount),4] <- 0#
+  }#
+  binned$Intensity <- binned$PointCount / binned$Area#
+  return(binned)#
+}
+brk <- data.frame(quantile(raster(dA), probs=seq(0, 1, 0.05)))[,1]
+brk
+bin <- ptDensRaster(dA, bdistr, cellBreaks=brk)
+bin <- ptDensRaster(dA, cellBreaks=brk)
+bin <- ptDensRaster(dA, brk)
+bin <- ptDensRaster(dA)
+bin <- ptDensRaster(dA, cellVals=brk)
+bin <- ptDensRaster(dA, r=100, cellVals=brk)
+bin <- ptDensRaster(dA, r=100)
+Asp <- as(sA1,"SpatialPoints")
+plot(Asp)
+extract(as(sA1,"SpatialPoints"))
+?extract
+extract(dA,as(sA1,"SpatialPoints"))
+extract(dA,as(sA1,"SpatialPointsDataFrame"))
+?extract
+extract(raster(dA),as(sA1,"SpatialPointsDataFrame"))
+extract(raster(dA),as(sA1,"SpatialPoints"))
+Adists <- extract(raster(dA),as(sA1,"SpatialPoints"))
+hist(Adists)
+quit("no")
+library(rcarbon)
+plot(calibrate(2190,40), calendar="BCAD")
+plot(calibrate(2410,40), calendar="BCAD")
+19/146
+quit("no")
+chisq()
+?chi.sq
+library(MASS)
+x <- matrix(c(12, 5, 7, 7), ncol = 2)
+x
+chisq.test(8,4)
+chisq.test(c(8,4))
+chisq.test(c(10,0))
+quit("no")
+library(rcarbon)
+plot(calibrate,3912,30),calendar="BCAD")
+plot(calibrate(3912,30),calendar="BCAD")
+quit("no")
+library(rcarbon)
+plot(calibrate(2110,70), calendar="BCAD")
+quit("no")
+library(rcarbon)
+citation(rcarbon)
+citation("rcarbon")
+quit("no")
+setwd("/Users/abevan/Projects/github/rcarbon")
+document()
+library(roxygen)
+library(roxygen2)
+document()
+library(devtools)
+document()
+cd ~/Projects/github/rcarbon/
+quit("no")

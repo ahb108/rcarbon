@@ -4,7 +4,7 @@
 \alias{plot.spdGG}
 \title{Plot \code{spdGG} class objects}
 \usage{
-\method{plot}{spdGG}(x, calendar = "BP", ...)
+plot.spdGG(x, calendar = "BP", ...)
 }
 \arguments{
 \item{x}{\code{spdGG} class object containing geometric growth rates.}

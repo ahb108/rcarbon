@@ -415,45 +415,103 @@ as.CalGrid <- function(x) {
     return(df)
 }
 
+#' @title Convert to a CalDates object 
+#' @description Convert other calibrated date formats to an rcarbon CalDates object. 
+#' @param x One or more calibrated dated to convert (currently only BchronCalibratedDates and oxcAARCalibratedDatesList obects are supported)
+#' @return A CalDates object
+#' @examples
+#' **## Not run:** 
+#' library(Bchron)
+#' library(oxcAAR)
+#' quickSetupOxcal()
+#' dates <- data.frame(CRA=c(3200,2100,1900), Error=c(35,40,50))
+#' bcaldates <- BchronCalibrate(ages=dates$CRA, ageSds=dates$Error, calCurves=rep("intcal13", nrow(dates)))
+#' rcaldates <- rcarbon::calibrate(dates$CRA, dates$Error, calCurves=rep("intcal13"))
+#' ocaldates <- oxcalCalibrate(c(3200,2100,1900),c(35,40,50),c("a","b","c"))
+#' ## Convert to rcarbon format
+#' caldates.b <- as.CalDates(bcaldates)
+#' caldates.o <- as.CalDates(ocaldates)
+#' ## Comparison plot
+#' plot(rcaldates$grids[[2]]$calBP,rcaldates$grids[[2]]$PrDens, type="l", col="green", xlim=c(2300,1900))
+#' lines(caldates.b$grids[[2]]$calBP,caldates.b$grids[[2]]$PrDens, col="red")
+#' lines(caldates.o$grids[[2]]$calBP,caldates.o$grids[[2]]$PrDens, col="blue")
+#' legend("topright", legend=c("rcarbon","Bchron","OxCal"), col=c("green","red","blue"), lwd=2)
+#' ## End(**Not run**)
+#' @export
+#' 
 as.CalDates <- function(x){
-    cl <- class(x)
-    if (cl!="BchronCalibratedDates"){
-	    stop("x must be of class BchronCalibratedDates")
+    if (!any(class(x)%in%c("BchronCalibratedDates","oxcAARCalibratedDatesList"))){
+        stop("Currently, x must be of class BchronCalibratedDates or oxcAARCalibratedDatesList")
     }
-    methods <- "Bchron"
-    reslist <- vector(mode="list", length=2)
-    sublist <- vector(mode="list", length=length(x))
-    ids <- as.character(1:length(x))
-    names(sublist) <- ids
-    names(reslist) <- c("metadata","grids")
-    ages <- unlist(lapply(x,function(x){return(x[[1]])}))
-    errors <-  unlist(lapply(x,function(x){return(x[[2]])}))
-    calCurves <- as.character(unlist(lapply(x,function(x){return(x[[3]])})))
-
-    for (i in 1:length(x))
-    {
-	tmp <- x[[i]]
-	res <- data.frame(calBP=rev(tmp$ageGrid),PrDens=rev(tmp$densities))
-        class(res) <- append(class(res),"calGrid")        
-	calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves[i],".14c", sep="")
-        options(warn=-1)
-        cctmp <- readLines(calCurveFile, encoding="UTF-8")
-        cctmp <- cctmp[!grepl("[#]",cctmp)]
-	cctmp.con <- textConnection(cctmp)
-        cctmp <- as.matrix(read.csv(cctmp.con, header=FALSE, stringsAsFactors=FALSE))[,1]
-	close(cctmp.con)
-        options(warn=0)
-        calBP <- seq(max(cctmp),min(cctmp),-1)
-	rownames(res) <- match(res[,1],calBP)
-	sublist[[ids[i]]] <- res
-    }	    
-	 
-    df <- data.frame(DateID=ids, CRA=ages, Error=errors, Details=NA, CalCurve=calCurves,ResOffsets=NA, ResErrors=NA, StartBP=NA, EndBP=NA, CalMethod="Bchron", Normalised=TRUE, CalEPS=NA, stringsAsFactors=FALSE)
-    reslist[["metadata"]] <- df
-    reslist[["grids"]] <- sublist
-    class(reslist) <- c("CalDates",class(reslist))
-    return(reslist)
+    if (any(class(x)=="BchronCalibratedDates")){	    
+        methods <- "Bchron"
+        reslist <- vector(mode="list", length=2)
+        sublist <- vector(mode="list", length=length(x))
+        names(sublist) <- names(x)
+        names(reslist) <- c("metadata","grids")
+        ## metadata
+        df <- as.data.frame(matrix(ncol=11, nrow=length(x)), stringsAFactors=FALSE)
+        names(df) <- c("DateID","CRA","Error","Details","CalCurve","ResOffsets","ResErrors","StartBP","EndBP","Normalised","CalEPS")
+        df$DateID <- names(x)
+        df$CRA <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "ages")))
+        df$Error <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "ageSds")))
+        df$CalCurve <- as.character(unlist(lapply(X=x, FUN=`[[`, "calCurves")))
+        df$ResOffsets <- NA
+        df$ResErrors <- NA
+        df$StartBP <- NA
+        df$EndBP <- NA
+        df$Normalised <- TRUE
+        reslist[["metadata"]] <- df
+        ## grids
+        for (i in 1:length(x)){
+            tmp <- x[[i]]
+            res <- data.frame(calBP=rev(tmp$ageGrid),PrDens=rev(tmp$densities))
+            class(res) <- append(class(res),"calGrid")        
+            sublist[[i]] <- res
+        }
+        reslist[["grids"]] <- sublist
+        reslist[["calmatrix"]] <- NA
+        class(reslist) <- c("CalDates",class(reslist))
+        return(reslist)
+    }
+    if (any(class(x)=="oxcAARCalibratedDatesList")){
+        reslist <- vector(mode="list", length=2)
+        sublist <- vector(mode="list", length=length(x))
+        names(sublist) <- names(x)
+        names(reslist) <- c("metadata","grids")
+        ## metadata
+        df <- as.data.frame(matrix(ncol=11, nrow=length(x)), stringsAFactors=FALSE)
+        names(df) <- c("DateID","CRA","Error","Details","CalCurve","ResOffsets","ResErrors","StartBP","EndBP","Normalised","CalEPS")
+        df$DateID <- names(x)
+        df$CRA <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "bp")))
+        df$Error <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "std")))
+        df$CalCurve=lapply(lapply(lapply(lapply(lapply(x,FUN=`[[`,"cal_curve"),FUN=`[[`,"name"),strsplit," "),unlist),FUN=`[[`,2)
+        df$CalCurve=tolower(df$CalCurve)
+        df$ResOffsets <- NA
+        df$ResErrors <- NA
+        df$StartBP <- NA
+        df$EndBP <- NA
+        df$Normalised <- TRUE
+        df$CalEPS <- 0
+        reslist[["metadata"]] <- df
+        ## grids
+        for (i in 1:length(x)){
+            tmp <- x[[i]]$raw_probabilities  
+            rr <- range(tmp$dates)
+            res <- 	approx(x=tmp$dates,y=tmp$probabilities,xout=ceiling(rr[1]):floor(rr[2]))
+            res$x <- abs(res$x-1950)
+            res <- data.frame(calBP=res$x,PrDens=res$y)
+            res$PrDens <- res$PrDens/sum(res$PrDens)
+            class(res) <- append(class(res),"calGrid")        
+            sublist[[i]] <- res
+        }
+        reslist[["grids"]] <- sublist
+        reslist[["calmatrix"]] <- NA
+        class(reslist) <- c("CalDates",class(reslist))
+        return(reslist)
+    }       
 }
+
 
 #' @export
 

@@ -4,7 +4,7 @@
 \alias{summary.SpdPermTest}
 \title{Summarise a \code{SpdPermTest} class object}
 \usage{
-\method{summary}{SpdPermTest}(object, ...)
+summary.SpdPermTest(object, ...)
 }
 \arguments{
 \item{object}{A \code{SpdPermTest} class object produced using the \code{link{permTest}} function.}
