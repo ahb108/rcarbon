@@ -49,7 +49,6 @@ binPrep <- function(sites, ages, h){
 #' @param x A \code{CalDates} class object containing the calibrated radiocarbon dates.
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param bins A vector containing the bin names associated with each radiocarbon date. If set to NA, binning is not carried out. 
-#' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE. 
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity. 
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
@@ -69,7 +68,7 @@ binPrep <- function(sites, ages, h){
 #' @import utils
 #' @export
 
-spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE){
+spd <- function(x, timeRange, bins=NA, spdnormalised=FALSE, runm=NA, verbose=TRUE){
     
     defcall <- as.list(args(spd))
     defcall <- defcall[-length(defcall)]
@@ -123,9 +122,6 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
                 stop("The time range of the calibrated dataset must be at least as large as the spd time range.")
             } else {
                 tmp <- x$calmatrix[,index, drop=FALSE]
-                if (datenormalised){
-                    tmp <- apply(tmp,2,FUN=function(x) x/sum(x))
-                }
                 spdtmp <- rowSums(tmp)
                 if (length(binNames)>1){
                     spdtmp <- spdtmp / length(index)
@@ -138,13 +134,6 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
             slist <- rapply(slist, f=function(x) ifelse(is.na(x),0,x), how="replace")
             slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
             tmp <- lapply(slist,`[`,2)
-            if (datenormalised){   
-                outofTR <- lapply(tmp,sum)==0 # date out of range
-                tmpc <- tmp[!outofTR]
-                if (length(tmpc)>0){
-                    tmp <- lapply(tmpc,FUN=function(x) x/sum(x))
-                }
-            }
             if (length(binNames)>1){
                 spdtmp <- Reduce("+", tmp) / length(index)
             } else {
