@@ -17,7 +17,8 @@
 #' @param model A vector indicating the model to be fitted. Currently the acceptable options are \code{'uniform'}, \code{'linear'}, \code{'exponential'} and \code{'custom'}. Default is \code{'exponential'}. 
 #' @param method Method for the creation of random dates from the fitted model. Either \code{'uncalsample'} or \code{'calsample'}. Default is \code{'uncalsample'}. See below for details. 
 #' @param predgrid A data.frame containing calendar years (column \code{calBP}) and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.
-#' @param datenormalised If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.
+#' @param normalised Whether the simulated dates should be normalised or not. Default based on whether x is normalised or not.  
+#' @param datenormalised Argument kept for backward compatibility with previous versions.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity for both observed and simulated data. 
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
 #' @param fitonly A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE.
@@ -66,7 +67,7 @@
 #' @import doParallel
 #' @export
 
-modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=TRUE, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, datenormalised=FALSE, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, verbose=TRUE){
+modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=TRUE, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, normalised=NA,datenormalised=NA, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, edgeSize=500,verbose=TRUE){
     
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -88,6 +89,40 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
 	    timeRange=ccrange
     }
 
+    if (is.na(normalised))
+    {
+	    normalised=FALSE    
+	    if(x$metadata$Normalised[1]==TRUE)
+	    {
+		    normalised=TRUE
+	    }
+    }
+
+    if (!is.na(datenormalised))
+    {
+	    if (datenormalised!=normalised)
+	    {
+		    warning("'datenormalised' is not equal to 'normalised'. The datenormalised setting will be used for the normalisation setting of the calibration of simulated dates")
+		    normalised=datenormalised
+	    }
+	    if (datenormalised!=x$metadata$Normalised[1])
+	    {
+		    if (x$metadata$Normalised[1])
+		    {
+			    warning("Input dates are normalised but datenormalised is set to FALSE. The datenormalised setting will be ignored")
+			    normalised=datenormalised
+		    }
+		    if (!x$metadata$Normalised[1])
+		    {
+
+			    warning("Input dates are not normalised but datenormalised is set to TRUE. The datenormalised setting will be ignored")
+			    normalised=datenormalised
+		    }
+	    }
+    }
+
+
+
     calCurves = x$metadata$CalCurve
 	if (!all(calCurves%in%c('intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13')))
 	{
@@ -96,6 +131,9 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
 
     unique.calCurves = as.character(sort(unique(calCurves)))
     ncc = length(unique.calCurves) #count number of unique calibration curves
+
+
+    if (fitonly == TRUE) {nsim <- 1}
 
     if (verbose){ print("Aggregating observed dates...") }
 
@@ -118,7 +156,6 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
 
     observed <- spd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
     finalSPD <- observed$grid$PrDens
-    if (fitonly == TRUE) {nsim <- 1}
     
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
@@ -151,20 +188,34 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
         res <- list(result=NA, sim=NA, pval=NA, osbSPD=observed, fit=predgrid, fitobject=fit)
         return(res)
     }
-    
-    if (method=="uncalsample")
+
+
+ # Add Edges with PrDens=0   
+    if (edgeSize>0)
     {
-	    cragrids = vector("list",length=ncc)
-	    for (i in 1:ncc)
-	    {		
-		    tmp.grid <- uncalibrate(as.CalGrid(predgrid), calCurves=unique.calCurves[i], compact=FALSE, verbose=FALSE)
-		    cragrids[[i]] <- tmp.grid
-		    if (gridclip==TRUE)
-		    {
-			    cragrids[[i]] <- tmp.grid[tmp.grid$CRA <= max(x$metadata$CRA) & tmp.grid$CRA >= min(x$metadata$CRA),]
-		    }
+	predgrid = rbind.data.frame(data.frame(calBP=(max(predgrid$calBP)+edgeSize):c(predgrid$calBP[1]+1),PrDens=0),predgrid)
+    	predgrid = rbind.data.frame(predgrid,data.frame(calBP=min(predgrid$calBP):(min(predgrid$calBP)-edgeSize),PrDens=0))
+    }
+
+#  predgrid$PrDens = predgrid$PrDens/sum(predgrid$PrDens)
+
+# Prepare Sampling Grid(s)
+    cragrids = vector("list",length=ncc)
+    for (i in 1:ncc)
+    {		
+	    tmp.grid <- uncalibrate(as.CalGrid(predgrid), calCurves=unique.calCurves[i], compact=FALSE, verbose=FALSE)
+	    cragrids[[i]] <- tmp.grid
+
+	    # Cllipping the uncalibrated grid
+	    if (gridclip==TRUE)
+	    {
+		    cragrids[[i]] <- tmp.grid[tmp.grid$CRA <= max(x$metadata$CRA) & tmp.grid$CRA >= min(x$metadata$CRA),]
 	    }
     }
+
+
+# Actual Method
+
 
     if (ncores==1)
     {
@@ -189,25 +240,17 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
     {
 	    randomDates <- vector("list",length=ncc)
 	    ccurve.tmp <- numeric()
-	    randomSDs <- numeric()	
 	    for (i in 1:ncc)
-	    {
-		    sampleWindow=predgrid
-		    if (gridclip==TRUE)
-		    {
-			    sampleWindow=subset(sampleWindow,calBP<=ccrange[1]&calBP>=ccrange[2])
-		    }
-		    randomSDs.tmp=sample(size=samplesize[s,i],errors,replace=TRUE)
-		    randomDates[[i]] <- uncalibrate(sample(sampleWindow$calBP,replace=TRUE,size=samplesize[s,i],prob=sampleWindow$PrDens),randomSDs.tmp,calCurves=unique.calCurves[i])$rCRA   
-			   
-
+	    {       
+		    randomDates[[i]] = sample(cragrids[[i]]$CRA,replace=TRUE,size=samplesize[s,i],prob=cragrids[[i]]$Raw)
 		    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
-		    randomSDs = c(randomSDs,randomSDs.tmp)
 	    }
+
+	    randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
     }
 
 
-        tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+        tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=normalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
 
         simDateMatrix <- tmp$calmatrix 
 	sim[,s] <- apply(simDateMatrix,1,sum) 
@@ -221,53 +264,42 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
     {	     
 	    print("Progress bar disabled for multi-core processing")
 	    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
+		    
+		    randomDates <- vector("list",length=ncc)
+		    ccurve.tmp <- numeric()
 
 		    if (method=="uncalsample")
 		    {
-			    randomDates <- vector("list",length=ncc)
-			    ccurve.tmp <- numeric()
-
 			    for (i in 1:ncc)
 			    {       
 				    randomDates[[i]] = sample(cragrids[[i]]$CRA,replace=TRUE,size=samplesize[s,i],prob=cragrids[[i]]$PrDens)
 				    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
 			    }
-			    randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
 		    }
+
 
 		    if (method=="calsample")
 		    {
-			    randomDates <- vector("list",length=ncc)
-			    ccurve.tmp <- numeric()
-			    randomSDs <- numeric()	
-
+			    for (i in 1:ncc)
+			    {       
+				    randomDates[[i]] = sample(cragrids[[i]]$CRA,replace=TRUE,size=samplesize[s,i],prob=cragrids[[i]]$Raw)
+				    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
+			    }
 		    }
 
-	    for (i in 1:ncc)
-	    {
-		    sampleWindow=predgrid
-		    if (gridclip==TRUE)
-		    {
-			    sampleWindow=subset(sampleWindow,calBP<=ccrange[1]&calBP>=ccrange[2])
-		    }
-		    
-		    randomSDs.tmp=sample(size=samplesize[s,i],errors,replace=TRUE)
-		    randomDates[[i]] <- uncalibrate(sample(sampleWindow$calBP,replace=TRUE,size=samplesize[s,i],prob=sampleWindow$PrDens),randomSDs.tmp,calCurves=unique.calCurves[i])$rCRA   
-			   
-		    ccurve.tmp = c(ccurve.tmp,rep(unique.calCurves[i],samplesize[s,i]))
-		    randomSDs = c(randomSDs,randomSDs.tmp)
-	    }
+		    randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
 
-	    tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=datenormalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
-	    
-	    simDateMatrix <- tmp$calmatrix
-	    aux <- apply(simDateMatrix,1,sum)
-	    aux <- (aux/sum(aux)) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
-	    if (spdnormalised){ aux <- (aux/sum(aux)) }
-	    if (!is.na(runm)){
-		    aux <- runMean(aux, runm, edge="fill")
-	    }
-	    aux
+
+		    tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=normalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+
+		    simDateMatrix <- tmp$calmatrix
+		    aux <- apply(simDateMatrix,1,sum)
+		    aux <- (aux/sum(aux)) * sum(predgrid$PrDens[predgrid$calBP <= timeRange[1] & predgrid$calBP >= timeRange[2]])
+		    if (spdnormalised){ aux <- (aux/sum(aux)) }
+		    if (!is.na(runm)){
+			    aux <- runMean(aux, runm, edge="fill")
+		    }
+		    aux
 	    }
     }
 
@@ -295,7 +327,6 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
     if (verbose){ print("Done.") }
     return(res)
 }
-
 
 #' @title  Random mark permutation test for SPDs
 #'
