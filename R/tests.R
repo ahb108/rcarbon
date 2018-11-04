@@ -154,7 +154,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
     # Create artificial bins in case bins are not supplied 
     if (is.na(bins[1])){ bins <- as.character(1:nrow(x$metadata)) }
 
-    observed <- spd(x=x, bins=bins, timeRange=timeRange, datenormalised=datenormalised, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
+    observed <- spd(x=x, bins=bins, timeRange=timeRange, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
     finalSPD <- observed$grid$PrDens
     
     ## Simulation
