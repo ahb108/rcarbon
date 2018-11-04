@@ -83,7 +83,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
 
     ccrange = c(max(medCal(x)),min(medCal(x)))
 
-    if (is.na(timeRange))
+    if (anyNA(timeRange))
     {
 	    timeRange=ccrange
     }
