@@ -20,6 +20,7 @@
 #' @param normalised Whether the simulated dates should be normalised or not. Default based on whether x is normalised or not.  
 #' @param datenormalised Argument kept for backward compatibility with previous versions.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity for both observed and simulated data. 
+#' @param edgeSize Controls edge effect by expanding the fitted model beyond the range defined by \code{timeRange}.
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
 #' @param fitonly A logical variable. If set to TRUE, only the the model fitting is executed and returned. Default is FALSE.
 #' @param a Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the date. Default is 0.
@@ -98,6 +99,11 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
 	    }
     }
 
+    if (normalised!=x$metadata$Normalised[1])
+    {
+	warning("The normalisation setting of x and normalised are different")
+    }
+
     if (!is.na(datenormalised))
     {
 	    if (datenormalised!=normalised)
@@ -154,28 +160,36 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
     # Create artificial bins in case bins are not supplied 
     if (is.na(bins[1])){ bins <- as.character(1:nrow(x$metadata)) }
 
-    observed <- spd(x=x, bins=bins, timeRange=timeRange, runm=runm, spdnormalised=spdnormalised, verbose=FALSE)
+    observed <- spd(x=x, bins=bins, timeRange=timeRange, runm=runm, spdnormalised=spdnormalised, verbose=FALSE, edgeSize=edgeSize)
     finalSPD <- observed$grid$PrDens
     
     ## Simulation
     sim <- matrix(NA,nrow=length(finalSPD),ncol=nsim)
     if (verbose & !fitonly){
-        print("Monte-Carlo test...")
-    flush.console()
-        pb <- txtProgressBar(min=1, max=nsim, style=3)
+	    print("Monte-Carlo test...")
+	    flush.console()
+	    pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
-    time <- seq(timeRange[1],timeRange[2],-1)
+    fit.time <- seq(timeRange[1],timeRange[2],-1)
+    pred.time <- fit.time
+    if (gridclip) 
+    {
+	    st = max(ccrange[1],timeRange[1])+edgeSize
+	    en = min(ccrange[2],timeRange[2])-edgeSize
+	    pred.time <- seq(st,en,-1)
+    }	
+
     fit <- NA
     if (model=="exponential"){
-        fit <- nls(y ~ exp(a + b * x), data=data.frame(x=time, y=finalSPD), start=list(a=a, b=b))
-        est <- predict(fit, list(x=time))
-        predgrid <- data.frame(calBP=time, PrDens=est)
+        fit <- nls(y ~ exp(a + b * x), data=data.frame(x=fit.time, y=finalSPD), start=list(a=a, b=b))
+        est <- predict(fit, list(x=pred.time))
+        predgrid <- data.frame(calBP=pred.time, PrDens=est)
     } else if (model=="uniform"){
-        predgrid <- data.frame(calBP=time, PrDens=mean(finalSPD))
+        predgrid <- data.frame(calBP=pred.time, PrDens=mean(finalSPD))
     } else if (model=="linear"){
-        fit <- lm(y ~ x, data=data.frame(x=time, y=finalSPD))
-        est <- predict(fit, list(x=time))
-        predgrid <- data.frame(calBP=time, PrDens=est)
+        fit <- lm(y ~ x, data=data.frame(x=fit.time, y=finalSPD))
+        est <- predict(fit, list(x=pred.time))
+        predgrid <- data.frame(calBP=pred.time, PrDens=est)
     } else if (model=="custom"){
         if (length(predgrid)!=2){
             stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
@@ -190,11 +204,16 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
     }
 
 
- # Add Edges with PrDens=0   
+ # Add Extra Edges with PrDens=0   
     if (edgeSize>0)
     {
 	predgrid = rbind.data.frame(data.frame(calBP=(max(predgrid$calBP)+edgeSize):c(predgrid$calBP[1]+1),PrDens=0),predgrid)
     	predgrid = rbind.data.frame(predgrid,data.frame(calBP=min(predgrid$calBP):(min(predgrid$calBP)-edgeSize),PrDens=0))
+	if (any(predgrid$calBP<=0|predgrid$calBP>=50000))
+	    {
+		    warning("edgeSize reduced")
+		    predgrid = subset(predgrid, calBP<=50000&calBP>=0)
+	    }
     }
 
 #  predgrid$PrDens = predgrid$PrDens/sum(predgrid$PrDens)
@@ -207,7 +226,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
 	    cragrids[[i]] <- tmp.grid
 
 	    # Cllipping the uncalibrated grid
-	    if (gridclip==TRUE)
+	    if (gridclip)
 	    {
 		    cragrids[[i]] <- tmp.grid[tmp.grid$CRA <= max(x$metadata$CRA) & tmp.grid$CRA >= min(x$metadata$CRA),]
 	    }
@@ -321,6 +340,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
     pvalue <- c(length(expectedstatistic[expectedstatistic > observedStatistic])+1)/c(nsim+1)
     # Results
     result <- data.frame(calBP=observed$grid$calBP,PrDens=finalSPD,lo=lo,hi=hi)
+    predgrid <- subset(predgrid,calBP<=timeRange[1]&calBP>=timeRange[2])
     if(raw==FALSE){ sim <- NA }
     res <- list(result=result, sim=sim, pval=pvalue, fit=predgrid, fitobject=fit,nbins=length(unique(bins)),n=nrow(x$metadata),nsim=nsim)
     class(res) <- "SpdModelTest"
