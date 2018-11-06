@@ -106,6 +106,10 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
 	    ccrange=range(medCal(x))
 	    ccrange[2]=ccrange[2]+edgeSize
 	    ccrange[1]=ccrange[1]-edgeSize
+	    if (ccanrge[1]<0|ccrange[2]>50000)
+	    {
+		stop("timeRange beyond calibration curve. Ensure that timeRange[1]+edgeSize is smaller than 50000 and timeRange[2]-edgeSize is larger than 0")
+	    }
 	    timeRange[1]=ccrange[2]
 	    timeRange[2]=ccrange[1]
     }	
