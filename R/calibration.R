@@ -148,6 +148,10 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             }
             res <- data.frame(calBP=calBP,PrDens=dens)
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+	    if (anyNA(res$PrDens))
+	    {
+		    stop("One or more dates are outside the calibration range")
+	    }
             res <- res[res$PrDens > 0,]
             class(res) <- append(class(res),"calGrid")
             return(res)
@@ -178,6 +182,10 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             }
             res <- data.frame(calBP=calBP,PrDens=dens)
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+	    if (anyNA(res$PrDens))
+	    {
+		    stop("One or more dates are outside the calibration range")
+	    }
             if (calMatrix){ calmat[,b] <- res$PrDens }
             res <- res[res$PrDens > 0,]
             class(res) <- append(class(res),"calGrid")
