@@ -70,6 +70,7 @@
 
 modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=TRUE, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, normalised=NA,datenormalised=NA, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, edgeSize=500,verbose=TRUE){
     
+    if (fitonly == TRUE) {nsim <- 1}
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
@@ -139,7 +140,6 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
     ncc = length(unique.calCurves) #count number of unique calibration curves
 
 
-    if (fitonly == TRUE) {nsim <- 1}
 
     if (verbose){ print("Aggregating observed dates...") }
 
