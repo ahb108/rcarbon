@@ -198,9 +198,10 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
         stop("Specified model not one of current choices.")
     }
     if (fitonly){
-        print("Done (SPD and fitted model only).")
-        res <- list(result=NA, sim=NA, pval=NA, osbSPD=observed, fit=predgrid, fitobject=fit)
-        return(res)
+	    print("Done (SPD and fitted model only).")
+	    predgrid <- subset(predgrid,calBP<=timeRange[1]&calBP>=timeRange[2])
+	    res <- list(result=NA, sim=NA, pval=NA, osbSPD=observed, fit=predgrid, fitobject=fit)
+	    return(res)
     }
 
 
