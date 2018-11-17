@@ -176,6 +176,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
 #' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
 #' @param bbty Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details below.
+#' @param bbtyRet Whether details on the intervals of positive and negative deviations are returned. Default is TRUE.
 #' @param drawaxes A logical value determining whether the axes should be displayed or not. Default is TRUE.
 #' @param ... Additional arguments affecting the plot
 
@@ -188,7 +189,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @import utils
 #' @export 
 
-plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
+plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", bbtyRet=TRUE, drawaxes=TRUE, ...){
 
     obs <- x$result[,1:2]
     if (calendar=="BP"){
@@ -306,7 +307,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
     class(bbp) <- c("BBPolygons",class(bbp))
-    if (bbty %in% c("n","b")){ return(bbp) }
+    if (bbty %in% c("n","b") & bbtyRet = TRUE){ return(bbp) }
 }
 
 #' @title Plot the median values of calibrated radiocarbon dates or bins 
