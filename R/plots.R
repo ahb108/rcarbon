@@ -307,7 +307,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 
     bbp <- list(booms=boomBlocks, busts=bustBlocks)
     class(bbp) <- c("BBPolygons",class(bbp))
-    if (bbty %in% c("n","b") & bbtyRet = TRUE){ return(bbp) }
+    if ((bbty %in% c("n","b")) & bbtyRet){ return(bbp) }
 }
 
 #' @title Plot the median values of calibrated radiocarbon dates or bins 
