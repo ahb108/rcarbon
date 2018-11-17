@@ -31,6 +31,7 @@
 #' @note
 #'\itemize{
 #'\item {Windows users might receive a memory allocation error with larger time span of analysis (defined by the parameter \code{timeRange}). This can be avoided by increasing the memory limit with the \code{\link{memory.limit}} function.}
+#'\item {Users experiencing a \code{Error: cannot allocate vector of size ...} error message can increase the memory size using the \code{Sys.setenv()}, for example: \code{Sys.setenv("R_MAX_VSIZE" = 16e9)}.} 
 #'\item {The function currently supports only dates calibrated with 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16', and 'marine13'.}
 #'}
 #' 
