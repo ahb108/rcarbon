@@ -197,6 +197,7 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
         xlabel <- "Years cal BP"
         if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
     } else if (calendar=="BCAD"){
+	xlabel <- 'Years BC/AD'    
         obs$Years <- BPtoBCAD(obs$calBP)
 	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
 	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
@@ -669,6 +670,7 @@ plot.SpdPermTest <- function(x, focalm="1", calendar="BP", xlim=NA, ylim=NA, col
         if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
     } else if (calendar=="BCAD"){
         obs$Years <- BPtoBCAD(obs$calBP)
+        xlabel <- "Years BC/AD"
 	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
 	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
         if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
