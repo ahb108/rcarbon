@@ -6,9 +6,9 @@
 \usage{
 modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
   gridclip = TRUE, raw = FALSE, model = c("exponential"),
-  method = c("uncalsample"), predgrid = NA, datenormalised = FALSE,
-  spdnormalised = FALSE, ncores = 1, fitonly = FALSE, a = 0,
-  b = 0, verbose = TRUE)
+  method = c("uncalsample"), predgrid = NA, normalised = NA,
+  datenormalised = NA, spdnormalised = FALSE, ncores = 1,
+  fitonly = FALSE, a = 0, b = 0, edgeSize = 500, verbose = TRUE)
 }
 \arguments{
 \item{x}{A \code{CalDates} object containing calibrated radiocarbon ages}
@@ -33,7 +33,9 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 
 \item{predgrid}{A data.frame containing calendar years (column \code{calBP}) and associated summed probabilities (column \code{PrDens}). Required when \code{model} is set to \code{'custom'}.}
 
-\item{datenormalised}{If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.}
+\item{normalised}{Whether the simulated dates should be normalised or not. Default based on whether x is normalised or not.}
+
+\item{datenormalised}{Argument kept for backward compatibility with previous versions.}
 
 \item{spdnormalised}{A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity for both observed and simulated data.}
 
@@ -44,6 +46,8 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 \item{a}{Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the date. Default is 0.}
 
 \item{b}{Starter value for the exponential fit with the \code{\link{nls}} function using the formula \code{y ~ exp(a + b * x)} where \code{y} is the summed probability and \code{x} is the date. Default is 0.}
+
+\item{edgeSize}{Controls edge effect by expanding the fitted model beyond the range defined by \code{timeRange}.}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
@@ -66,6 +70,7 @@ The function implements a Monte-Carlo test for comparing a theoretical or fitted
 \note{
 \itemize{
 \item {Windows users might receive a memory allocation error with larger time span of analysis (defined by the parameter \code{timeRange}). This can be avoided by increasing the memory limit with the \code{\link{memory.limit}} function.}
+\item {Users experiencing a \code{Error: cannot allocate vector of size ...} error message can increase the memory size using the \code{Sys.setenv()}, for example: \code{Sys.setenv("R_MAX_VSIZE" = 16e9)}.} 
 \item {The function currently supports only dates calibrated with 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16', and 'marine13'.}
 }
 }

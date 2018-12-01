@@ -68,7 +68,7 @@ binPrep <- function(sites, ages, h){
 #'thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, bins=foursites$SiteID, size=10, method="splitsample", thresh=0.6, seed=123)
 #'tdates1 <- foursites[thinInds,]
 #'tdates1
-#' @seealso \code{\link{binPrep}}}
+#' @seealso \code{\link{binPrep}}
 #' @export
 #'
 thinDates <- function(ages, errors, bins, size, errorcap=NA, thresh=0.5, method="random", seed=NA){
