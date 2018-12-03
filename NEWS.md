@@ -8,8 +8,11 @@
   * UPDATE: improved performance of `calsample` and `uncalsample` methods (update in `uncalibrate()`) `
   * Bug fix: users no longer need to specify `nsim` when `fitonly` is set to TRUE.
 * UPDATE in `spd()`: aggregation matrix now spans beyond `timeRange` to avoid edge effects.
-* Bug fix: fixed dislay error in some `plot()` functions when calendar is set to `BC/AD'
+* UPDATE in `calibrate`: the new agrument `F14C` enables calibratio in F14C space.
 * NEW: `thinDates()` function to randomly select a maximum number of dates per site, bin or phase.
+* NEW: `as.CalDates()` function converts dates in `BchronCalibratedDates` class ([Bchron](https://cran.r-project.org/web/packages/Bchron/index.html)) and `oxcAARCalibratedDatesList`class ([oxAAR](https://cran.r-project.org/web/packages/oxcAAR/index.html)) into CalDates` class (rcarbon).
+* Bug fix: fixed dislay error in some `plot()` functions when calendar is set to `BC/AD'
+
 
 # Version 1.2.0 (1 October 2018)
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
