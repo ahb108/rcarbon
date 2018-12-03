@@ -42,6 +42,74 @@ binPrep <- function(sites, ages, h){
     return(clusters)
 }
 
+#' @title Sampling function to select a maximum number of dates per site, bin or phase.
+#'
+#' @description Function to select a subset of uncalibrated radiocarbon dates up to a maximum sample size per site, bin or phase.
+#' 
+#' @param ages A vector of uncalibrated radiocarbon ages
+#' @param errors A vector of uncalibrated radiocarbon errors (same length as ages)
+#' @param bins A vector of labels corresponding to site names, ids, bins or phases (same length as ages)
+#' @param size A single integer specifying the maximum number of desired dates for each label stated bin.
+#' @param errorcap A single integer specifying the maximum allowable error (applied only in cases where a bin has more than the maximum number of allowable dates).
+#' @param thresh A single numeric value between 0 and 1 specifying the approximate proportion (after rounding) of the resulting sample that will be chosen according to lowest date errors. At the extremes, O produces a simple random sample whereas 1 selectes the sample dates with the lowest errors. Ignored if method="random".
+#' @param method The method to be applied where "random" simple selects a random sample, whereas "splitsample", picks some proportion (see thresh) of the sample to minimise errors, and randomly samples the rest. At present, these are the only two options.
+#' @param seed Allows setting of a random seed to ensure reproducibility.
+#'
+#' @return A numeric vector of the row indices corresponding to those of the input data.
+#' @examples
+#'data(euroevol)
+#'foursites <- euroevol[euroevol$SiteID %in% c("S2072","S4380","S6139","S9222"),]
+#'table(as.character(foursites$SiteID))
+#'## Thin so each site has 10 dates each max, with random selection
+#'thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, bins=foursites$SiteID, size=10, method="random", seed=123)
+#'tdates <- foursites[thinInds,]
+#'tdates
+#'## Same but choose the first 60% (i.e. 6 dates) from the lowest errors and then fill in the rest randomly.
+#'thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, bins=foursites$SiteID, size=10, method="splitsample", thresh=0.6, seed=123)
+#'tdates1 <- foursites[thinInds,]
+#'tdates1
+#' @seealso \code{\link{binPrep}}
+#' @export
+#'
+thinDates <- function(ages, errors, bins, size, errorcap=NA, thresh=0.5, method="random", seed=NA){
+    if (length(size)!=1){ stop("The size argument must be a single integer.") }
+    if (thresh < 0 |  thresh > 1){ stop("The thresh argument must be between 0 and 1.") }
+    df <- data.frame(ages=ages, errors=errors, bins=bins, RN=1:length(ages))
+    allbins <- unique(as.character(bins))
+    sitelist <- vector(mode="list", length=length(allbins))
+    for (a in 1:length(allbins)){
+        df1 <- df[df$bins==allbins[a],]
+        if (nrow(df1)<=size){
+            sitelist[[a]] <- df1$RN
+        } else {
+            if (method=="random"){
+                if (!is.na(errorcap)){ df1 <- df1[df1$errors <= errorcap,] }
+                if (!is.na(seed) & is.numeric(seed)){ set.seed(seed) }
+                sitelist[[a]] <- sample(df1$RN,size)
+            } else if (method=="splitsample"){
+                if (!is.na(errorcap)){ df1 <- df1[df1$errors <= errorcap,] }
+                rnks <- rank(df1$errors)
+                check <- min(rnks[rnks>(size*thresh)])
+                myinds <- which(rnks<=check)
+                if (!is.na(seed) & is.numeric(seed)){ set.seed(seed) }
+                res <- sample(df1$RN[myinds],size*thresh)
+                if (length(res)<size){
+                    inds <- df1$RN
+                    if (!is.na(seed) & is.numeric(seed)){ set.seed(seed) }
+                    therest <- sample(inds[!inds %in% res],size*(1-thresh))
+                    sitelist[[a]] <- c(res,therest)
+                } else {
+                    sitelist[[a]] <- res
+                }
+            } else {
+                stop("The method argument must currently be one of random or splitsample")
+            }
+        }
+    }
+    allres <- sort(unlist(sitelist))
+    return(allres)
+}
+
 #' @title Summed probability distributions (SPD) of radiocarbon dates.  
 #'
 #' @description The function generates Summed probability distributions (SPD) of radiocarbon dates, with optional binning routine for controlling inter-site or inter-phase variation in sampling intensity.
@@ -69,7 +137,7 @@ binPrep <- function(sites, ages, h){
 #' @import utils
 #' @export
 
-spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE){
+spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE, edgeSize=500){
     
     defcall <- as.list(args(spd))
     defcall <- defcall[-length(defcall)]
@@ -99,6 +167,20 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
         bins <- rep("0_0",nrow(x$metadata))
     }
     binNames <- unique(bins)
+
+    if(datenormalised)
+    {
+	    true.timeRange=timeRange
+	    ccrange=range(medCal(x))
+	    ccrange[2]=ccrange[2]+edgeSize
+	    ccrange[1]=ccrange[1]-edgeSize
+	    if (ccrange[1]<0|ccrange[2]>50000)
+	    {
+		stop("timeRange beyond calibration curve. Ensure that timeRange[1]+edgeSize is smaller than 50000 and timeRange[2]-edgeSize is larger than 0")
+	    }
+	    timeRange[1]=ccrange[2]
+	    timeRange[2]=ccrange[1]
+    }	
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     if (verbose){
@@ -154,15 +236,23 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
         }
     }
     if (verbose & length(binNames)>1){ close(pb) }
+
     finalSPD <- apply(binnedMatrix,1,sum)
+
+    if (datenormalised)
+    {
+	    timeRange=true.timeRange
+    }	    
+
+    
     if (!is.na(runm)){
         finalSPD <- runMean(finalSPD, runm, edge="fill")
     }
     res <- data.frame(calBP=calyears$calBP, PrDens=finalSPD)
+    res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
     if (spdnormalised){
         res$PrDens <- res$PrDens/sum(res$PrDens, na.rm=TRUE)
     }
-    res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
     class(res) <- c("CalGrid", class(res))
     reslist <- vector("list",length=2)
     names(reslist) <- c("metadata","grid")

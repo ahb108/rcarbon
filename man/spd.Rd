@@ -5,7 +5,7 @@
 \title{Summed probability distributions (SPD) of radiocarbon dates.}
 \usage{
 spd(x, timeRange, bins = NA, datenormalised = FALSE,
-  spdnormalised = FALSE, runm = NA, verbose = TRUE)
+  spdnormalised = FALSE, runm = NA, verbose = TRUE, edgeSize = 500)
 }
 \arguments{
 \item{x}{A \code{CalDates} class object containing the calibrated radiocarbon dates.}

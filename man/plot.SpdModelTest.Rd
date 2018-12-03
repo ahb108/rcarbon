@@ -6,7 +6,7 @@
 \usage{
 plot.SpdModelTest(x, calendar = "BP", ylim = NA, xlim = NA,
   col.obs = "black", lwd.obs = 0.5, xaxs = "i", yaxs = "i",
-  bbty = "f", drawaxes = TRUE, ...)
+  bbty = "f", bbtyRet = TRUE, drawaxes = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.}
@@ -26,6 +26,8 @@ plot.SpdModelTest(x, calendar = "BP", ylim = NA, xlim = NA,
 \item{yaxs}{The style of y-axis interval calculation (see \code{\link{par}})}
 
 \item{bbty}{Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details below.}
+
+\item{bbtyRet}{Whether details on the intervals of positive and negative deviations are returned. Default is TRUE.}
 
 \item{drawaxes}{A logical value determining whether the axes should be displayed or not. Default is TRUE.}
 

@@ -148,6 +148,10 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             }
             res <- data.frame(calBP=calBP,PrDens=dens)
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+	    if (anyNA(res$PrDens))
+	    {
+		    stop("One or more dates are outside the calibration range")
+	    }
             res <- res[res$PrDens > 0,]
             class(res) <- append(class(res),"calGrid")
             return(res)
@@ -178,6 +182,10 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             }
             res <- data.frame(calBP=calBP,PrDens=dens)
             res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+	    if (anyNA(res$PrDens))
+	    {
+		    stop("One or more dates are outside the calibration range")
+	    }
             if (calMatrix){ calmat[,b] <- res$PrDens }
             res <- res[res$PrDens > 0,]
             class(res) <- append(class(res),"calGrid")
@@ -365,26 +373,21 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
     }
     mycras <- uncalibrate(x$calBP,calCurves=calCurves)
     res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=0)
-    tmp <- vector(mode="list",length=nrow(mycras))
-    basetmp <- vector(mode="list",length=nrow(mycras))
-    if (length(tmp)>1 & verbose){
-        flush.console()
-        pb <- txtProgressBar(min=1, max=length(tmp), style=3)
-    }
-    for (a in 1:length(tmp)){
-        basetmp[[a]] <- dnorm(res$CRA, mean=mycras$ccCRA[a], sd=mycras$ccError[a])
-        tmp[[a]] <- basetmp[[a]] * x$PrDens[a]
-        if (verbose){ setTxtProgressBar(pb, a) }
-    }
-    if (verbose){ close(pb) }
-    unscGauss <- do.call("cbind",tmp)
-    res$Raw <- rowSums(unscGauss)
-    res$Raw[res$Raw < eps] <- 0
-    base <- do.call("cbind",basetmp)
-    res$Base <- rowSums(base)
+    
+    h = x$PrDens/sum(x$PrDens)
+    mu = mycras$ccCRA
+    s = mycras$ccError
+    k = res$CRA
+
+    res$Raw=unlist(sapply(k,function(x,mu,s,h){return(sum(dnorm(x,mu,s)*h))},h=h,mu=mu,s=s))
+    res$Base=unlist(sapply(k,function(x,mu,s){return(sum(dnorm(x,mu,s)))},mu=mu,s=s))
+
+    res$Raw=res$Raw/sum(res$Raw)
+	
     res$Raw[res$Raw < eps] <- 0
     res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
     if (compact){ res <- res[res$PrDens > 0,] }
+    res$PrDens=res$PrDens/sum(res$PrDens)
     class(res) <- c("UncalGrid", class(res)) 
     if (verbose){ print("Done.") }
     return(res)
