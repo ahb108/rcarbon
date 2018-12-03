@@ -11,13 +11,14 @@
 #' @param resErrors A vector of offset value errors for any marine reservoir effect (default is no offset).
 #' @param timeRange Earliest and latest data to calibrate for, in calendar years. Posterior probabilities beyond this range will be excluded (the default is sensible in most cases).
 #' @param normalised A logical variable indicating whether the calibration should be normalised or not. Default is TRUE.
+#' @param F14C A logical variable indicating whether calibration should be carried out in F14C space or not. Default is FALSE.
 #' @param eps Cut-off value for density calculation. Default is 1e-5.
 #' @param calMatrix a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}
 #' @param ncores Number of cores/workers used for parallel execution. Default is 1 (>1 requires doParallel package).
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... ignored
 #'
-#' @details This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space, see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time. The function was modified from the \code{BchronCalibrate} function in the \code{Bchron} package developed by A.Parnell (see references below).
+#' @details This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time. The function was modified from the \code{BchronCalibrate} function in the \code{Bchron} package developed by A.Parnell (see references below).
 #'
 #' @return An object of class CalDates with the following elements:
 #' \itemize{
@@ -50,7 +51,7 @@ calibrate <- function (x, ...) {
 #' @rdname calibrate
 #' @export
 
-calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
+calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
 
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -66,6 +67,12 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     }
     if (any(is.na(x))|any(is.na(errors))){
         stop("Ages or errors contain NAs")
+    }
+  
+    if (F14C==TRUE&normalised==FALSE)
+    {
+      normalised=TRUE
+      warning("normalised cannot be FALSE when F14C is set to TRUE, calibrating with normalised=TRUE")
     }
     # calCurve checks and set-up
     if (class(calCurves) %in% c("matrix","data.frame")){
@@ -137,10 +144,27 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- x[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
+            if (F14C==FALSE)
+            {  
             mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
             tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
             dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-            dens[dens < eps] <- 0	
+            dens[dens < eps] <- 0
+            }
+            if (F14C==TRUE)
+            {
+              F14 <- exp(calcurve[,2]/-8033) 
+              F14Error <-  F14*calcurve[,3]/8033 
+              calf14 <- approx(calcurve[,1], F14, xout=calBP)$y 
+              calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y 
+              f14age <- exp(age/-8033) 
+              f14err <- f14age*error/8033 
+              p1 <- (f14age - calf14)^2 
+              p2 <- 2 * (f14err^2 + calf14error^2) 
+              p3 <- sqrt(f14err^2 + calf14error^2) 
+              dens <- exp(-p1/p2)/p3 
+              dens[dens < eps] <- 0	
+            }
             if (normalised){
                 dens <- dens/sum(dens)
                 dens[dens < eps] <- 0
@@ -171,10 +195,27 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             calBP <- seq(max(calcurve),min(calcurve),-1)
             age <- x[b] - resOffsets[b]
             error <- errors[b] + resErrors[b]
+            if (F14C==FALSE)
+            {
             mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
             tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
             dens <- dnorm(age, mean=mu, sd=sqrt(tau))
             dens[dens < eps] <- 0
+            }
+            if (F14C==TRUE)
+            {
+              F14 <- exp(calcurve[,2]/-8033) 
+              F14Error <-  F14*calcurve[,3]/8033 
+              calf14 <- approx(calcurve[,1], F14, xout=calBP)$y 
+              calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y 
+              f14age <- exp(age/-8033)
+              f14err <- f14age*error/8033 
+              p1 <- (f14age - calf14)^2 
+              p2 <- 2 * (f14err^2 + calf14error^2) 
+              p3 <- sqrt(f14err^2 + calf14error^2) 
+              dens <- exp(-p1/p2)/p3 
+              dens[dens < eps] <- 0	
+            }
             if (normalised){
                 dens <- dens/sum(dens)
                 dens[dens < eps] <- 0
@@ -194,7 +235,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     }
     ## clean-up and results
     if (length(x)>1 & verbose){ close(pb) }
-    df <- data.frame(DateID=ids, CRA=x, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, CalEPS=eps, stringsAsFactors=FALSE)
+    df <- data.frame(DateID=ids, CRA=x, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, F14C=F14C, CalEPS=eps, stringsAsFactors=FALSE)
     reslist[["metadata"]] <- df
     if (calMatrix){
         reslist[["grids"]] <- NA

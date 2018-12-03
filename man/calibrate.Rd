@@ -9,8 +9,8 @@ calibrate(x, ...)
 
 \method{calibrate}{default}(x, errors, ids = NA, dateDetails = NA,
   calCurves = "intcal13", resOffsets = 0, resErrors = 0,
-  timeRange = c(50000, 0), normalised = TRUE, calMatrix = FALSE,
-  eps = 1e-05, ncores = 1, verbose = TRUE, ...)
+  timeRange = c(50000, 0), normalised = TRUE, F14C = FALSE,
+  calMatrix = FALSE, eps = 1e-05, ncores = 1, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{A vector of uncalibrated radiocarbon ages .}
@@ -33,6 +33,8 @@ calibrate(x, ...)
 
 \item{normalised}{A logical variable indicating whether the calibration should be normalised or not. Default is TRUE.}
 
+\item{F14C}{A logical variable indicating whether calibration should be carried out in F14C space or not. Default is FALSE.}
+
 \item{calMatrix}{a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}}
 
 \item{eps}{Cut-off value for density calculation. Default is 1e-5.}
@@ -53,7 +55,7 @@ An object of class CalDates with the following elements:
 Function for calibrating one or more radiocarbon dates.
 }
 \details{
-This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (albeit not in F14C space, see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time. The function was modified from the \code{BchronCalibrate} function in the \code{Bchron} package developed by A.Parnell (see references below).
+This function computes one or more calibrated radiocarbon ages using the method described in Bronk Ramsey 2008 (see also  Parnell 2017). It is possible to specify different calibration curves or reservoir offsets individually for each date, and control whether the resulting calibrated distribution is normalised to 1 under-the-curve or not. Calculations can also be executed in parallel to reduce computing time. The function was modified from the \code{BchronCalibrate} function in the \code{Bchron} package developed by A.Parnell (see references below).
 }
 \examples{
 x1 <- calibrate(x=4000, errors=30)
