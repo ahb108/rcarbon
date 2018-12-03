@@ -1,9 +1,15 @@
 
 # Development GitHub Version (ongoing)
-* UPDATE in `modelTest()`:
+* UPDATEs in `modelTest()`:
   * Added an error message and a note in the help documentation warning users to not use calibration curves not supported by `uncalibrate()`.
-  * NEW argument `gridclip` to add range constrain in the simulation envelope
+  * NEW argument `gridclip` to add range constrain in the simulation envelope. When set to TRUE the sampling is executed within the observed range of dates.
   * UPDATE `timeRange` can now be left undefined, in which case the range of median calibrated observed dates is used. 
+  * NEW argument `normalised` handles whether simulated dates should be normalised or not.
+  * UPDATE: improved performance of `calsample` and `uncalsample` methods (update in `uncalibrate()`) `
+  * Bug fix: users no longer need to specify `nsim` when `fitonly` is set to TRUE.
+* UPDATE in `spd()`: aggregation matrix now spans beyond `timeRange` to avoid edge effects.
+* Bug fix: fixed dislay error in some `plot()` functions when calendar is set to `BC/AD'
+* NEW: `thinDates()` function to randomly select a maximum number of dates per site, bin or phase.
 
 # Version 1.2.0 (1 October 2018)
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
