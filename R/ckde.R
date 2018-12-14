@@ -203,7 +203,7 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 }
 
  
-#' @description Plot a composite Kernel Density Estimate of sample dates.  
+#' @title Plot a composite Kernel Density Estimate of sample dates.  
 #' @param x A \code{compositeKDE} class object generated using the \code{ckde()} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param type Either \code{envelope} or \code{multiline}. Default is \code{envelope}.
