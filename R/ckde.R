@@ -1,4 +1,4 @@
-#' @title Sample random calendar dates. 
+#' @title Sample random calendar dates
 #'
 #' @description Randomly samples calendar dates from each calibrated date or bin.
 #' @param x A 'CalDates' class object. 
@@ -151,18 +151,15 @@ sampleDates <- function(x,bins,nsim,boot=FALSE,verbose=TRUE)
 #'data(emedyd)
 #'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
 #'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
-#'s = sampleDates(x,bins=bins,nsim=1000,boot=FALSE)
+#'s = sampleDates(x,bins=bins,nsim=100,boot=FALSE)
 #'ckdeNorm = ckde(s1,timeRange=c(16000,9000),bw=100,normalised=TRUE)
-#'ckdeNNorm = ckde(s1,timeRange=c(16000,9000),bw=100,normalised=FALSE)
-#'plot(ckdeNorm)
-#'plot(ckdeNNorm)
+#'plot(ckdeNorm,type='multiline',cal='BCAD')
 #'
 #' @seealso \code{\link{sampleDates}}
 #'
 #' @import stats
 #' @import utils
 #' @export
-
 
 ckde<- function(x,timeRange,bw,normalised=FALSE)
 {
@@ -178,12 +175,12 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 	if (normalised)
 	{
 		raw.kde=apply(x$sdates,1,density,bw=bw,na.rm=TRUE,from=true.timeRange[1],to=true.timeRange[2])
-		}
+	}
 	if (!normalised)
 	{
 		if (length(unique(x$weight))==1)
 		{
-		warning("Simulated dates were generated from a dates calibrated with the argument `normalised` set to TRUE. The composite KDE will be executed with 'normalised' set to TRUE. To obtain a non-normalised composite KDE calibrate setting 'normalised` to FALSE")
+			warning("Simulated dates were generated from a dates calibrated with the argument `normalised` set to TRUE. The composite KDE will be executed with 'normalised' set to TRUE. To obtain a non-normalised composite KDE calibrate setting 'normalised` to FALSE")
 		}
 		if (!boot)
 		{
@@ -193,16 +190,16 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 						 return(density(y[x,],bw=bw,na.rm=TRUE,weights=z[x,],from=t1,to=t2))},y=x$sdates,z=x$weight,t1=true.timeRange[1],t2=true.timeRange[2],bw=bw)
 		}
 	}
-  res.matrix = matrix(NA,nrow=length(timeRange[1]:timeRange[2]),ncol=nsim)
-  for (i in 1:nsim)
-  {
-	  #check this line
-    res.matrix[,i]=approx(x=raw.kde[[i]]$x,xout=timeRange[1]:timeRange[2],y=raw.kde[[i]]$y)$y
-  }
+	res.matrix = matrix(NA,nrow=length(timeRange[1]:timeRange[2]),ncol=nsim)
+	for (i in 1:nsim)
+	{
+		#check this line
+		res.matrix[,i]=approx(x=raw.kde[[i]]$x,xout=timeRange[1]:timeRange[2],y=raw.kde[[i]]$y)$y
+	}
 
-  result = list(timeRange=timeRange,res.matrix=res.matrix)
-  class(result) = c("compositeKDE",class(result))
-  return(result)
+	result = list(timeRange=timeRange,res.matrix=res.matrix)
+	class(result) = c("compositeKDE",class(result))
+	return(result)
 }
 
  
@@ -220,13 +217,6 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' @param ... Additional arguments affecting the plot
 #' @details Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile iterval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown. 
 #' @seealso \code{\link{ckde}}; 
-#' @examples
-#' \dontrun{
-#' data(emedyd)
-#' levant <- emedyd[emedyd$Region=="1"|emedyd$Region=="2",]
-#' bins <- binPrep(levant$SiteName, levant$CRA, h=50)
-#' x <- calibrate(levant$CRA, levant$Error, normalised=FALSE)
-#'}
 #' @import stats
 #' @import grDevices
 #' @import graphics
