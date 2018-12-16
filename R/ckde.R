@@ -19,7 +19,7 @@
 #' @export
 
 
-sampleDates <- function(x,bins,nsim,boot=FALSE,verbose=TRUE)
+sampleDates <- function(x,bins=NA,nsim,boot=FALSE,verbose=TRUE)
 {
 	if (!"CalDates" %in% class(x)){
 		stop("x must be an object of class 'CalDates'.")
@@ -121,7 +121,7 @@ sampleDates <- function(x,bins,nsim,boot=FALSE,verbose=TRUE)
 		}
 		if (verbose) {close(pb)}
 	}
-	if (verbose){print("done")}
+	if (verbose){print("Done")}
 	result=list(sdates=res,weight=weight)
 	class(result) = c('simdates',class(result))
 	return(result)
