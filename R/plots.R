@@ -1136,3 +1136,86 @@ plot.spdGG<- function(x,calendar="BP",...)
 	abline(h=0,lty=2,col="blue")
 }
 
+
+#' @title Plots a Composite Kernel Density Estimate of sampled radiocarbon dates.  
+#' @param x A \code{compositeKDE} class object generated using the \code{\link{ckde}} function.
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param type Either \code{envelope} or \code{multiline}. Default is \code{envelope}.
+#' @param interval Percentile interval of the simulation envelope. Default is 0.95 (i.e. 95%).
+#' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
+#' @param fill.col Envelope color when \code{type='envelope'}. Default is 'lightgrey'.
+#' @param interval Quantile interval for the envelope. Default is 0.95.
+#' @param line.col Line color when \code{type='envelope'}. Default is 'black.
+#' @param line.type Line type when \code{type='envelope'}. Default is 2.
+#' @param multiline.alpha Alpha level for line transparency when \code{type='multiline'}. Default is 10/\code{nsim}, where \code{nsim} is the number of simulations. If \code{nsim} is smaller than 10, \code{line.alpha} will be set to 1.
+#' @param multiline.col Line color when \code{type='multiline'}. Default is 'black'.
+#' @param ... Additional arguments affecting the plot
+#' @details Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile iterval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown. 
+#' @seealso \code{\link{ckde}}; 
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
+#' @export 
+
+plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=NA, fill.col='lightgrey',interval=0.95,line.col='black',line.type=2, multiline.alpha=NA, multiline.col='black',...){
+
+    types <- c("envelope","multiline")
+    if (!type %in% types){
+        stop("The plot type you have chosen is not currently an option.")
+    }
+    if (any(is.na(ylim))){ ylim <- c(0,max(x$res.matrix,na.rm=TRUE)*1.1)}
+   
+    plotyears = x$timeRange[1]:x$timeRange[2]
+    
+    if (calendar=="BP"){
+        xlabel <- "Years cal BP"
+        if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
+    } else if (calendar=="BCAD"){
+        plotyears <- BPtoBCAD(plotyears)
+        xlabel <- "Years BC/AD"
+	if (all(range(plotyears)<0)){xlabel <- "Years BC"}
+	if (all(range(plotyears)>0)){xlabel <- "Years AD"}
+        if (any(is.na(xlim))){ xlim <- c(min(plotyears),max(plotyears)) }
+    } else {
+        stop("Unknown calendar type")
+    }
+
+    if (type=='multiline')
+    {
+	    plot(x=plotyears,y=x$avg.res,type='n',xlab=xlabel,ylab="Summed Probability",xlim=xlim,ylim=ylim,axes=FALSE,...)
+	    if (is.na(multiline.alpha)){multiline.alpha=10/ncol(x$res.matrix)}
+	    if (multiline.alpha>1){multiline.alpha=1}
+	    mc = c(as.numeric(col2rgb(multiline.col)/255),multiline.alpha)
+	    apply(x$res.matrix,2,lines,x=plotyears,col=rgb(mc[1],mc[2],mc[3],mc[4]))
+    }
+
+    if (type=='envelope')
+    {
+	avg=apply(x$res.matrix,1,mean)   
+	lo=apply(x$res.matrix,1,quantile,prob=(1-interval)/2)
+   	hi=apply(x$res.matrix,1,quantile,prob=interval+(1-interval)/2)
+	index = which(!is.na(hi))
+	plot(x=plotyears,y=avg,type='n',xlab=xlabel,ylab="Summed Probability",xlim=xlim,ylim=ylim,axes=FALSE,...)
+        polygon(x=c(plotyears[index],rev(plotyears[index])),y=c(lo[index],rev(hi[index])),border=NA,col=fill.col)
+	lines(plotyears,avg,lty=line.type,col=line.col,lwd=2)
+    }
+    if (calendar=="BP"){
+	rr <- range(pretty(plotyears))    
+        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+        axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)))
+    } else if (calendar=="BCAD"){
+	yy <-  plotyears
+        rr <- range(pretty(yy))    
+        prettyTicks <- seq(rr[1],rr[2],+100)
+	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+        py <- pretty(yy)
+	pyShown <- py
+	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+	py[which(py>1)] <-  py[which(py>1)]-1
+	axis(side=1,at=py,labels=abs(pyShown))
+    }
+    axis(2)
+    box()
+}

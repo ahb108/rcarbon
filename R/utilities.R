@@ -434,6 +434,126 @@ curveSamples <- function(bins,calCurves,nsim)
 }
 
 
+#' @title Sample random calendar dates
+#'
+#' @description Randomly samples calendar dates from each calibrated date or bin.
+#' @param x A 'CalDates' class object. 
+#' @param bins A vector containing the bin names associated with each radiocarbon date. If set to NA, binning is not carried out. 
+#' @param nsim Number of sampling repetitions.
+#' @param boot A logical value indicating whether bootstrapping is carried out (see details below). Default is FALSE.
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#' @details The function randomly samples calendar dates based from calibrated probability distributions. When the \code{bins} argument is supplied a single calendar date is sampled from each bin. When \code{boot=TRUE}, dates (or bins) are randomly sampled with replacement before calendar dates are sampled. 
+#' 
+#' @return An object of class \code{simdates} with the following elements
+#' \itemize{
+#' \item{\code{sdates}} {A matrix containing the randomly sampled calendar dates, with rows containing each of the \code{nsim} repetitions.}
+#' \item{\code{weight}} {A vector (or matrix in when \code{boot=TRUE}) containing the total area under the curve of each date, normalised to sum to unity. Notice this will be identical for all dates if the calibration is carried out with the argument \code{normalised} set to TRUE.}
+#'}
+#'
+#' @import stats 
+#' @import utils 
+#' @export
+
+
+sampleDates <- function(x,bins=NA,nsim,boot=FALSE,verbose=TRUE)
+{
+	# initial checks ####
+	if (!"CalDates" %in% class(x)){
+		stop("x must be an object of class 'CalDates'.")
+	}
+	if (length(bins)>1){
+		if (any(is.na(bins))){
+			stop("Cannot have NA values in bins.")
+		}
+		if (length(bins)!=nrow(x$metadata)){
+			stop("bins (if provided) must be the same length as x.")
+		}
+	}
+	else {
+		bins <- 1:(length(x))
+	}
+	uni.bins = unique(bins)
+	nbins = length(uni.bins)
+	binList = vector('list',length=nbins)
+	binLength=numeric()
+	calmatrix=FALSE
+	if (anyNA(x$grids)){calmatrix=TRUE}
+	if (calmatrix)
+	{
+		warning("Processing time is slower when dates are calibrated using calMatrix=TRUE",immediate.=TRUE)
+	}
+	# Aggregate Bins ####
+	if (verbose){
+		flush.console()
+		print("Aggregating...")
+		pb <- txtProgressBar(min = 1, max = nbins,style = 3)
+	}
+	for (b in 1:nbins)
+	{
+		if (verbose){setTxtProgressBar(pb, b)}
+		tmp.dates=x[which(bins==uni.bins[b])]
+		if (calmatrix)
+		{
+			tmp.prob=tmp.dates$calmatrix
+			binLength[b]=1
+			if (length(tmp.dates)>1)
+			{	
+				tmp.prob=apply(tmp.dates$calmatrix,1,sum)
+				binLength[b]=ncol(tmp.dates$calmatrix)
+			}
+			tmp.prob=tmp.prob[which(tmp.prob>0)]
+			binList[[b]]=data.frame(calBP=as.numeric(names(tmp.prob)),PrDens=tmp.prob)
+		} else {
+			if (length(tmp.dates)==1)
+			{
+				binList[[b]]=tmp.dates$grids[[1]]
+				binLength[b]=1
+			} else {
+				binLength[b]=length(tmp.dates)
+				st.date = max(unlist(lapply(tmp.dates$grids,function(x){max(x$calBP)})))	
+				end.date = min(unlist(lapply(tmp.dates$grids,function(x){min(x$calBP)}))) 
+				tmp.prob = data.frame(calBP=st.date:end.date,PrDens=0)
+				tmp.prob$PrDens=apply(sapply(tmp.dates$grids,function(x,r){
+								     res = rep(0,length(r))
+								     res[which(r%in%x$calBP)]=x$PrDens
+								     return(res)},r=tmp.prob$calBP),1,sum)
+				binList[[b]]=tmp.prob
+			}
+		}
+	}
+	if (verbose) {close(pb)}
+	# Sample random dates ####
+	if (!boot)
+	{
+		if (verbose){print("Simulating dates ...")}
+		res=sapply(binList,function(x,nsim){sample(x$calBP,size=nsim,prob=x$PrDens,replace=TRUE)},nsim=nsim)
+		weight=sapply(binList,function(x){return(sum(x$PrDens))})/binLength
+		weight=weight/sum(weight)
+	}
+	if (boot)
+	{
+		res = matrix(NA,nrow=nsim,ncol=nbins)
+		weight = matrix(NA,nrow=nsim,ncol=nbins)
+		if (verbose){
+			print("Bootstrapping...")
+			pb <- txtProgressBar(min = 1, max = nsim,style = 3)
+		}
+		for (i in 1:nsim)
+		{
+			if (verbose){setTxtProgressBar(pb, i)}
+			index=sample(nbins,replace=TRUE)
+			res[i,]=sapply(binList[index],function(x,nsim){sample(x$calBP,size=1,prob=x$PrDens)})
+			weight[i,]=sapply(binList[index],function(x){sum(x$PrDens)})/binLength[index]
+			weight[i,]=weight[i,]/sum(weight[i,])
+		}
+		if (verbose) {close(pb)}
+	}
+	if (verbose){print("Done")}
+	result=list(sdates=res,weight=weight)
+	class(result) = c('simdates',class(result))
+	return(result)
+}
+
 # 
 # gaussW <- function(x, bw){
 #     exp(-(x^2)/(2*(bw^2)))

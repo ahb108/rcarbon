@@ -262,3 +262,78 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
     if (verbose){ print("Done.") }
     return(reslist)
 }
+
+
+#' @title Composite Kernel Density Estimates of Radiocarbon Dates
+#'
+#' @description Computes a Composite Kernel Density Estimate (CKDE) from multiple sets of randomly sampled calendar dates.
+#' @param x A \code{simdates} class object, generated using \code{\link{sampleDates}}.
+#' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
+#' @param bw Kernel bandwith to be used.
+#' @param normalised A logical variable indicating whether the contribution of individual dates should be equal (TRUE), or weighted based on the area under the curve of non-normalised calibration (FALSE). Default is TRUE.
+#' @details The function computes Kernel Density Estimates using randomly sampled calendar dates contained in a \code{simdates} class object (generated using the \code{simulate.dates()} function). The output contains \code{nsim} KDEs, where \code{nsim} is the argument used in \code{simulate.dates()}. The resulting object can be plotted to visualise a CKDE (cf Brown 2017), and if \code{boot} was set to \code{TRUE} in \code{sampleDates} its bootstraped variant (cf McLaughlin 2018 for a similar analysis). The shape of the CKDE is comparable to an SPD generated from non-normalised dates when the argument \code{normalised} is set to FALSE.
+#' @return An object of class \code{ckdeSPD} with the following elements
+#' \itemize{
+#' \item{\code{timeRange}} {The \code{timeRange} setting used.}
+#' \item{\code{res.matrix}} {A matrix containing the KDE values with rows representing calendar dates.}
+#'}
+#'
+#' @references 
+#' Brown, W. A. 2017. The past and future of growth rate estimation in demographic temporal frequency analysis: Biodemographic interpretability and the ascendance of dynamic growth models. \emph{Journal of Archaeological Science}, 80: 96–108. DOI: https://doi.org/10.1016/j.jas.2017.02.003 \cr
+#' McLaughlin, T. R. 2018. On Applications of Space–Time Modelling with Open-Source 14C Age Calibration. \emph{Journal of Archaeological Method and Theory}. DOI https://doi.org/10.1007/s10816-018-9381-3
+#'
+#' @examples
+#'data(emedyd)
+#'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
+#'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
+#'s = sampleDates(x,bins=bins,nsim=100,boot=FALSE)
+#'ckdeNorm = ckde(s1,timeRange=c(16000,9000),bw=100,normalised=TRUE)
+#'plot(ckdeNorm,type='multiline',cal='BCAD')
+#'
+#' @seealso \code{\link{sampleDates}}
+#'
+#' @import stats
+#' @import utils
+#' @export
+
+ckde<- function(x,timeRange,bw,normalised=FALSE)
+{
+
+	if (!"simdates" %in% class(x)){
+		stop("x must be an object of class 'simdates'.")
+	}
+	true.timeRange = c(max(x$sdates),min(x$sdates))
+	nsim = nrow(x$sdates)
+	boot = FALSE
+	if (class(x$weight)=='matrix'){boot=TRUE}
+
+	if (normalised)
+	{
+		raw.kde=apply(x$sdates,1,density,bw=bw,na.rm=TRUE,from=true.timeRange[1],to=true.timeRange[2])
+	}
+	if (!normalised)
+	{
+		if (length(unique(x$weight))==1)
+		{
+			warning("Simulated dates were generated from a dates calibrated with the argument `normalised` set to TRUE. The composite KDE will be executed with 'normalised' set to TRUE. To obtain a non-normalised composite KDE calibrate setting 'normalised` to FALSE")
+		}
+		if (!boot)
+		{
+			raw.kde=apply(x$sdates,1,density,bw=bw,na.rm=TRUE,from=true.timeRange[1],to=true.timeRange[2],weights=x$weight)
+		} else {
+			raw.kde = lapply(1:nrow(x$sdates),function(x,y,z,t1,t2,bw){
+						 return(density(y[x,],bw=bw,na.rm=TRUE,weights=z[x,],from=t1,to=t2))},y=x$sdates,z=x$weight,t1=true.timeRange[1],t2=true.timeRange[2],bw=bw)
+		}
+	}
+	res.matrix = matrix(NA,nrow=length(timeRange[1]:timeRange[2]),ncol=nsim)
+	for (i in 1:nsim)
+	{
+		#check this line
+		res.matrix[,i]=approx(x=raw.kde[[i]]$x,xout=timeRange[1]:timeRange[2],y=raw.kde[[i]]$y)$y
+	}
+
+	result = list(timeRange=timeRange,res.matrix=res.matrix)
+	class(result) = c("compositeKDE",class(result))
+	return(result)
+}
+
