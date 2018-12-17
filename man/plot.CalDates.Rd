@@ -27,7 +27,7 @@ plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
 
 \item{HPD}{Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.}
 
-\item{credMass}{A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).}
+\item{credMass}{A numerical value indicating the size of the higher posterior density interval. Default is 0.95.}
 
 \item{customCalCurve}{A three column data.frame or matrix that allows you to pass and plot a custom calibration curve if you used one during calibration. You can currently only provide one such custom curve which is used for all dates.}
 

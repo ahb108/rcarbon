@@ -10,7 +10,7 @@
 #' @param ylab (optional) Label for the y axis. If unspecified the default setting will be applied ("Radiocarbon Age"). 
 #' @param axis4  Logical value indicating whether an axis of probabilities values should be displayed. Default is TRUE. 
 #' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
-#' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95 (i.e. 95\%).
+#' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95.
 #' @param customCalCurve A three column data.frame or matrix that allows you to pass and plot a custom calibration curve if you used one during calibration. You can currently only provide one such custom curve which is used for all dates.
 #' @param ... Additional arguments affecting the plot. 
 #'
@@ -1141,13 +1141,13 @@ plot.spdGG<- function(x,calendar="BP",...)
 #' @param x A \code{compositeKDE} class object generated using the \code{\link{ckde}} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param type Either \code{envelope} or \code{multiline}. Default is \code{envelope}.
-#' @param interval Percentile interval of the simulation envelope. Default is 0.95 (i.e. 95%).
+#' @param ylim the y limits of the plot.
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param fill.col Envelope color when \code{type='envelope'}. Default is 'lightgrey'.
 #' @param interval Quantile interval for the envelope. Default is 0.95.
 #' @param line.col Line color when \code{type='envelope'}. Default is 'black.
 #' @param line.type Line type when \code{type='envelope'}. Default is 2.
-#' @param multiline.alpha Alpha level for line transparency when \code{type='multiline'}. Default is 10/\code{nsim}, where \code{nsim} is the number of simulations. If \code{nsim} is smaller than 10, \code{line.alpha} will be set to 1.
+#' @param multiline.alpha Alpha level for line transparency when \code{type='multiline'}. Default is 10/\code{nsim}, where \code{nsim} is the number of simulations. If \code{nsim} is smaller than 10, \code{multiline.alpha} will be set to 1.
 #' @param multiline.col Line color when \code{type='multiline'}. Default is 'black'.
 #' @param ... Additional arguments affecting the plot
 #' @details Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile iterval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown. 

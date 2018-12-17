@@ -16,23 +16,23 @@ plot.compositeKDE(x, calendar = "BP", type = "envelope", ylim = NA,
 
 \item{type}{Either \code{envelope} or \code{multiline}. Default is \code{envelope}.}
 
+\item{ylim}{the y limits of the plot.}
+
 \item{xlim}{the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).}
 
 \item{fill.col}{Envelope color when \code{type='envelope'}. Default is 'lightgrey'.}
 
-\item{interval}{Percentile interval of the simulation envelope. Default is 0.95 (i.e. 95%).}
+\item{interval}{Quantile interval for the envelope. Default is 0.95.}
 
 \item{line.col}{Line color when \code{type='envelope'}. Default is 'black.}
 
 \item{line.type}{Line type when \code{type='envelope'}. Default is 2.}
 
-\item{multiline.alpha}{Alpha level for line transparency when \code{type='multiline'}. Default is 10/\code{nsim}, where \code{nsim} is the number of simulations. If \code{nsim} is smaller than 10, \code{line.alpha} will be set to 1.}
+\item{multiline.alpha}{Alpha level for line transparency when \code{type='multiline'}. Default is 10/\code{nsim}, where \code{nsim} is the number of simulations. If \code{nsim} is smaller than 10, \code{multiline.alpha} will be set to 1.}
 
 \item{multiline.col}{Line color when \code{type='multiline'}. Default is 'black'.}
 
 \item{...}{Additional arguments affecting the plot}
-
-\item{interval}{Quantile interval for the envelope. Default is 0.95.}
 }
 \description{
 Plots a Composite Kernel Density Estimate of sampled radiocarbon dates.
