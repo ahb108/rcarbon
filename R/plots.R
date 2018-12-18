@@ -1192,7 +1192,7 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
 
     if (type=='envelope')
     {
-	avg=apply(x$res.matrix,1,mean)   
+	avg=apply(x$res.matrix,1,mean,na.rm=TRUE)
 	lo=apply(x$res.matrix,1,quantile,prob=(1-interval)/2,na.rm=TRUE)
    	hi=apply(x$res.matrix,1,quantile,prob=interval+(1-interval)/2,na.rm=TRUE)
 	index = which(!is.na(hi))
