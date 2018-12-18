@@ -1193,8 +1193,8 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
     if (type=='envelope')
     {
 	avg=apply(x$res.matrix,1,mean)   
-	lo=apply(x$res.matrix,1,quantile,prob=(1-interval)/2)
-   	hi=apply(x$res.matrix,1,quantile,prob=interval+(1-interval)/2)
+	lo=apply(x$res.matrix,1,quantile,prob=(1-interval)/2,na.rm=TRUE)
+   	hi=apply(x$res.matrix,1,quantile,prob=interval+(1-interval)/2,na.rm=TRUE)
 	index = which(!is.na(hi))
 	plot(x=plotyears,y=avg,type='n',xlab=xlabel,ylab="Summed Probability",xlim=xlim,ylim=ylim,axes=FALSE,...)
         polygon(x=c(plotyears[index],rev(plotyears[index])),y=c(lo[index],rev(hi[index])),border=NA,col=fill.col)
