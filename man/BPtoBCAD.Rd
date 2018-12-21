@@ -7,7 +7,7 @@
 BPtoBCAD(x)
 }
 \arguments{
-\item{x}{A numerical vector (currently no checks that these numbers are in a sensible range).}
+\item{x}{A numerical vector (currently only basic checks that these numbers are in a sensible range).}
 }
 \value{
 A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
