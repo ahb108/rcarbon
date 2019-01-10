@@ -1006,7 +1006,7 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
         stop("index value missing")
 	}
 
-	if (!option%in%c("raw","test","rawlegend","testlegend"))
+	if (!option%in%c("raw","test"))
 	{
         stop(paste("The option ",option," is not available",sep=""))
 	}
