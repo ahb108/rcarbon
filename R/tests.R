@@ -781,6 +781,11 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 				for (i in 1:c(L-1))
 				{
 					res[i]=(x[i+1]/x[i])^(1/d)-1
+					# If no spd for both period the rate is NA
+					if (x[i+1]==0&x[i]==0)
+					{
+						res[i]=NA	
+					}
 				}
 				return(res)},
 				d=abs(breaks[2]-breaks[1])))
@@ -852,6 +857,11 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 						for (i in 1:c(L-1))
 						{
 							res[i]=(x[i+1]/x[i])^(1/d)-1
+
+							if (x[i+1]==0&x[i]==0)
+							{
+								res[i]=NA
+							}
 						}
 						return(res)},
 						d=abs(breaks[2]-breaks[1])))
@@ -936,6 +946,10 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 						for (i in 1:c(L-1))
 						{
 							res[i]=(x[i+1]/x[i])^(1/d)-1
+							if (x[i+1]==0&x[i]==0)
+							{
+								res[i]=NA	
+							}
 						}
 						return(res)},
 						d=abs(breaks[2]-breaks[1])))
@@ -952,13 +966,15 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 	############################
 	### Compute Significance ###
 	############################ 
-
+	
 	pvalHi=(lo+eq+1)/c(nsim+1)
 	pvalLo=(hi+eq+1)/c(nsim+1)
 	pval=pvalHi
 	pval[which(pvalHi>pvalLo)]=pvalLo[which(pvalHi>pvalLo)]
 	pval=pval*2
-	if (max(pval)>1)
+
+
+	if (max(pval,na.rm=TRUE)>1)
 	{
 		pval[which(pval>1)]=1
 	}
