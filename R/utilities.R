@@ -192,13 +192,14 @@ rangecheck <- function(x, bins, timeRange, datenormalised=FALSE){
 
 #' @title Convert BP dates to BC/AD format 
 #' @description Converts calibrated BP dates to BC/AD dates, omitting `year 0' 
-#' @param x A numerical vector (currently no checks that these numbers are in a sensible range). 
+#' @param x A numerical vector (currently only basic checks that these numbers are in a sensible range). 
 #' @return A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
 #' @examples
 #' BPtoBCAD(4200)
 #' @export
 
 BPtoBCAD <- function(x){
+    if (any(x < 0)){ stop("Post-bomb dates (<0 BP) are not currently supported.") }
     res <- matrix(c(x, rep(NA,length(x))), ncol=2)
     res[x < 1950,2] <- 1950-res[x < 1950,1]
     res[x >= 1950,2] <- 1949-res[x >= 1950,1]
@@ -207,19 +208,20 @@ BPtoBCAD <- function(x){
 
 #' @title Convert BC/AD dates to BP format
 #' @description Converts BC/AD dates to BP format while handling the absence of 'year 0' 
-#' @param x A numerical vector (currently no checks that these numbers are in a sensible range).
+#' @param x A numerical vector (currently only basic checks that these numbers are in a sensible range).
 #' @return A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
 #' @examples
 #' BCADtoBP(-1268)
 #' @export
 
 BCADtoBP <- function(x){
+    if (any(x == 0)){ stop("0 BC/AD is not a valid year.") }
+    if (any(x > 1950)){ stop("Post-bomb dates (> AD 1950) are not currently supported.") }
     res <- matrix(c(x, rep(NA,length(x))), ncol=2)
     res[x > 0,2] <- abs(res[x > 0,1] - 1950)
     res[x < 0,2] <- abs(res[x < 0,1] - 1949)
     return(res[,2])
 }
-
 
 
 #' @title Computes the median date of each bin
