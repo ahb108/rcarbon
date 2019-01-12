@@ -403,6 +403,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA, gridclip=
 permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalised=FALSE, spdnormalised=FALSE, raw=FALSE, verbose=TRUE){
 
     if (is.na(bins[1])){ bins <- as.character(1:nrow(x$metadata)) }
+    marks <- as.character(marks) 
     binNames <- unique(bins)
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(nrow=nrow(calyears), ncol=length(binNames))
