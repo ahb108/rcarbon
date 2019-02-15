@@ -37,6 +37,8 @@ Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holo
 
 Broughton,J.M., Weitzel,E.M. 2018. [Population reconstructions for humans and megafauna suggest mixed causes for North American Pleistocene extinctions](https://doi.org/10.1038/s41467-018-07897-1).Nature Communications, 9, 5441. doi:10.1038/s41467-018-07897-1
 
+Cheddadi, R., Palmisano, A., López-Sáez, J. A., Nourelbait, M., Zielhofer, C., Tabel, J., et al. 2019. [Human demography changes in Morocco and environmental imprint during the Holocene](https://doi.org/10.1177/0959683619826657) The Holocene, 0959683619826657. doi:10.1177/0959683619826657
+
 Crema, E.R., Bevan, A., Shennan, S., 2017. [Spatio-temporal approaches to archaeological radiocarbon dates](https://doi.org/10.1016/j.jas.2017.09.007). Journal of Archaeological Science 87, 1–9. doi:10.1016/j.jas.2017.09.007
 
 Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Meyer, J.A., Kelly, R.L., Anderies, J.M., 2018. [Synchronization of energy consumption by human societies throughout the Holocene](https://doi.org/10.1073/pnas.1802859115). Proceedings of the National Academy of Sciences of the United States of America, 115 (40) 9962-9967. doi:10.1073/pnas.1802859115
@@ -47,12 +49,19 @@ Nielsen, S.V., Persson, P., Solheim, S., 2019. [De-Neolithisation in southern No
 
 Palmisano, A., Bevan, A., Shennan, S. 2017. [Comparing archaeological proxies for long-term population patterns: An example from central Italy](https://doi.org/10.1016/j.jas.2017.10.001). Journal of Archaeological Science, 87, 59-72. doi:10.1016/j.jas.2017.10.001
 
+Palmisano, A., Woodbridge, J., Roberts, N., Bevan, A., Fyfe, R., Shennan, S., et al. 2019. [Holocene landscape dynamics and long-term population trends in the Levant.](https://doi.org/10.1177/0959683619826642) The Holocene, 0959683619826642. doi:10.1177/0959683619826642
+
 Riris, P. 2018 [Dates as data revisited: A statistical examination of the Peruvian preceramic radiocarbon record](https://doi.org/10.1016/j.jas.2018.06.008). Journal of Archaeological Science, 97, 67-76. doi:10.1016/j.jas.2018.06.008
 
 Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South America Correlates with Mid-holocene Climate Change](https://doi.org/10.31235/osf.io/7zw6x) SocArXiv. November 11. doi:10.31235/osf.io/7zw6x.
 
+Stoddart, S., Woodbridge, J., Palmisano, A., Mercuri, A. M., Mensing, S. A., Colombaroli, D., et al. (2019). [Tyrrhenian central Italy: Holocene population and landscape ecology.](https://doi.org/10.1177/0959683619826696) The Holocene, 0959683619826696. doi:10.1177/0959683619826696
+
 Tallavara, M., Personen, P. 2018. [Human ecodynamics in the north-west coast of Finland 10,000–2000 years ago](https://doi.org/10.1016/j.quaint.2018.06.032).Quaternary International,doi:/10.1016/j.quaint.2018.06.032
 
+Weiberg, E., Bevan, A., Kouli, K., Katsianis, M., Woodbridge, J., Bonnier, A., et al. 2019. [Long-term trends of land use and demography in Greece: A comparative study](https://doi.org/10.1177/0959683619826641) The Holocene, 0959683619826641. doi:10.1177/0959683619826641
+
+Woodbridge, J., Roberts, C. N., Palmisano, A., Bevan, A., Shennan, S., Fyfe, R., et al. 2019. [Pollen-inferred regional vegetation patterns and demographic change in Southern Anatolia through the Holocene.](https://doi.org/10.1177/0959683619826635) The Holocene, 0959683619826635. doi:10.1177/0959683619826635
 
 
 
