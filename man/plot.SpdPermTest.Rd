@@ -4,9 +4,9 @@
 \alias{plot.SpdPermTest}
 \title{Plot result of mark permutation test of SPDs}
 \usage{
-plot.SpdPermTest(x, focalm = "1", calendar = "BP", xlim = NA,
-  ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0, 0.2),
-  lwd.obs = 0.5, xaxs = "i", yaxs = "i", bbty = "f",
+\method{plot}{SpdPermTest}(x, focalm = "1", calendar = "BP",
+  xlim = NA, ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0,
+  0.2), lwd.obs = 0.5, xaxs = "i", yaxs = "i", bbty = "f",
   drawaxes = TRUE, ...)
 }
 \arguments{

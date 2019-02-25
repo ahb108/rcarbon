@@ -554,6 +554,25 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 }
 
 
+#' @title Spatial Permutation Test of summed probability distributions.
+#' @description This function is deprecated. Please use \code{\link{sptest}} instead.
+#' @return A \code{spatialTest} class object
+#' @name SPpermTest-deprecated
+#' @usage SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
+#' @seealso \code{\link{rcarbon-deprecated}}
+#' @keywords internal
+
+#' @rdname rcarbon-deprecated
+#' @section \code{SPpermTest}:
+#' For \code{SPpermTest}, use \code{\link{sptest}}.
+#'
+#' @export
+SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
+{
+.Deprecated("sptest")
+ sptest(calDates=calDates, timeRange=timeRange, bins=bins, locations=locations, breaks=breaks, spatialweights=spatialweights, nsim=nsim, runm=runm,permute=permute,ncores=ncores,datenormalised=datenormalised,verbose=verbose,raw=raw)
+}
+
 
 #' @title Spatial Permutation Test of summed probability distributions.
 #'
@@ -617,7 +636,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' ## Main Analysis (over 2 cores; requires doParallel package) 
 #' ## NOTE: the number of simulations should be ideally larger 
 #' ## to ensure a better resolution of the p/q-values.
-#' res.locations=SPpermTest(calDates,timeRange=timeRange,bins=bins,locations=locations,
+#' res.locations=sptest(calDates,timeRange=timeRange,bins=bins,locations=locations,
 #' spatialweights=spatialweights,breaks=breaks,ncores=2,nsim=100,
 #' permute="locations",datenormalised=FALSE)
 #' 
@@ -645,7 +664,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' @export
  
 
-SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
+sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 
 	###################################
@@ -1336,6 +1355,7 @@ summary.SpdPermTest<-function(object,...) {
 		cat("\n")
 	}
 }
+
 
 
 

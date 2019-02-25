@@ -4,7 +4,7 @@
 \alias{plot.spatialTest}
 \title{Plot results of the local spatial permutation test of summed probability distributions.}
 \usage{
-plot.spatialTest(x, index = 1, option, breakRange = NA,
+\method{plot}{spatialTest}(x, index = 1, option, breakRange = NA,
   breakLength = 7, rd = 5, baseSize = 0.5, plim = 0.05,
   qlim = 0.05, legend = FALSE, legSize = 1,
   location = "bottomright", ...)
@@ -43,5 +43,5 @@ Displays local growth rates, p-values, and q-values retrieved from a \code{spati
 The function displays a distribution map of local growth rates (when \code{option="raw"}), q- and p-values (when \code{option="test"}), and the associated legends (when \code{option="rawlegend"} or  \code{option="testlegend"}).
 }
 \seealso{
-\code{\link{SPpermTest}}
+\code{\link{sptest}}
 }
