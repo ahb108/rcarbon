@@ -15,9 +15,9 @@
 * NEW: `sampleDates()` function for sampling random dates from calibrated dates or bins.
 * NEW: `ckde()` function for generating composite kernel density estimates.
 * NEW: Suite of functions for mapping the spatial intensity of a set of radiocarbon dates via Kernel Density Estimates. 
- * `stkde()` Map the spatio-temporal intensity of a set of radiocarbon dates across multiple years
- * `spkde()` Map the spatial intensity of a set of radiocarbon dates for a given focal year.
- *  Associated `plot()` function.
+  * `stkde()` Map the spatio-temporal intensity of a set of radiocarbon dates across multiple years
+  * `spkde()` Map the spatial intensity of a set of radiocarbon dates for a given focal year.
+  *  Associated `plot()` function.
 * Bug fix: fixed dislay error in some `plot()` functions when calendar is set to `BC/AD'
 
 # Version 1.2.0 (1 October 2018)
