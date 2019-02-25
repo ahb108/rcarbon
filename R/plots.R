@@ -1219,3 +1219,294 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
     axis(2)
     box()
 }
+
+#' @title Plot map(s) of the spatio-temporal intensity of radiocarbon dates.
+#'
+#' @description Plotting function for single or multiple maps of the spatio-temporal intensity of radiocarbon dates at given focal years.
+#'
+#' @param x An object of class stKde.
+#' @param focalyears A vector of numeric values for focal years, in calBP, that will be timesteps at which date intensity maps will be plotted.
+#' @param type A single character string stipulating which type of plot to create. Current options are "nonfocal", "mask", "focal", "proportion", "change" and "all".
+#' @param plotdir Optional output directory for plots. If NULL, then only a single plot is made to the current device. If a valid output direcotry is provided then one or more timeslices maps are saved as png files (e.g. as source images for an animation).
+#' @param imnames The format of the output files if output is as png files to a directory. The current two options are "basic" (labelling the images in basic sequence as preferred by animation software such as ffmpeg) or "byyear" (labelling the images by calBP year).
+#' @param zlim  Numeric vector of length=2 which controlls the maximum or minimum of the colour ramp.
+#' @param main Single character string specifying a main title. "auto" implies internal default titles are used.
+#' @param ramptype What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standaridise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).
+#' @param withpts Plot with the original sample locations shown (current options are "y" and "n").
+#' @param imdim Height and width of the plot to png in cm.
+#' @param mars Margins of the plot to png.
+#' @param ribbon Whether to plot the colour ramp legend or not.
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#' @param ... Additional arguments affecting the plot.
+#'
+#' @details This function plots to a screen device if a single focal year is stipulated and no output directory. Or if an output directory is stipulated, it plots one or more focal years to png files, with some basic formatting options and optional cross-year standardisation of the colour ramps (with a view to them being stills-for-video). For even more control of plotting, call this function one year at a time in a loop.
+#' 
+#' @examples
+#' \dontrun{
+#' ## Example with a subset of English and Welsh dates from the Euroevol dataset
+#' load("euroevol-ew.rda")
+#' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
+#' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
+#' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir="im")
+#' 
+#' ## Plot just the proportion surface for just 5900 calBP
+#' plot(stkde1, 5900, type="proportion")
+#'
+#' ## Plot an example of all four basic outputs for just 5900 calBP
+#' dev.new(height=2.5, width=8)
+#' par(mar=c(0.5, 0.5, 2.5, 2))
+#' plot(stkde1, 5900, type="all")
+#'
+#' ## Plot standardised change surfaces to a sub-directory called /png for all timeslices and save to file.
+#' plot(stkde1, seq(6500, 5000, -100), type="change", ramptype="std", withpts=TRUE, plotdir="png")
+#'
+#' ## Plot all four summary surfaces in one image, saving them to a sub-directory call 'pngall', and with the output of the change map standardised to a common ramp (but leaving the focal and proportion maps unstandardised with simple ramp labelling)
+#' plot(stkde1, years, type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)), withpts=TRUE, plotdir="pngall")
+#' }
+#' 
+#' @import spatstat 
+#' @export
+#' 
+plot.stKde <- function(x, focalyears=NULL, type="focal", plotdir=NULL, imnames="byyear", zlim=NULL, box=FALSE, main="auto", col.mask="grey75", ncolours=256, ramptype="raw", imdim=c(10,10), mars=c(0.5, 0.5, 2.5, 2), ribbon=TRUE, ribargs=list(), cex.ribbon=0.5, withpts="n", cex.main=0.8, pch.pts=19, col.pts="grey50", cex.pts=0.1, tidydevs=TRUE, verbose=TRUE, ...){
+    if (is.null(plotdir) & length(focalyears)>1){
+        stop("With more that one focalyear, plots are written to file only, so plotdir must be specified.")
+    }
+    if (is.null(focalyears)){
+        if (length(x$years)>1){
+            warning("Plot object has more than one year of data but focalyears argument has not been specified...plotting first year by default.")
+        }
+        focalyears <- 1
+    } else {
+        focalyears <- as.character(focalyears)
+    }
+    maindef <- main
+    types <- c("nonfocal", "mask", "focal", "proportion", "change", "all")
+    if (!type %in% types){
+        stop("The plot type you have chosen is not currently an option.")
+    }
+    if (x$maskthresh  > 0){
+        mymask <- x$nonfocal < x$maskthresh
+    }
+    if (!is.null(plotdir)){
+        if (imnames=="basic"){
+            filenames <- paste(plotdir,"/", sprintf("img_%05d",1:length(focalyears)),".png",sep="")
+        }  else if (imnames=="byyear"){
+            filenames <- paste(plotdir,"/img_",focalyears,".png",sep="")
+        } else {
+            stop("imnames must by either basic or byyear.")
+        }
+    }
+    if (verbose & length(focalyears)>1){
+        print("Plotting to file...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(focalyears), style=3)
+    }
+    if (!all(ramptype %in% c("raw","std","unl","mmx"))){
+        stop("Invalid value(s) for ramptype.")
+    }
+    if (length(ramptype)==3 & all(class(ramptype)=="character")){
+        ramptypes <- ramptype
+        names(ramptypes) <- c("focal","proportion","change")
+    } else if (length(ramptype)==1 & all(class(ramptype)=="character")){ 
+        ramptypes <- ramptype
+        names(ramptypes) <- type
+        if (type=="all"){
+            ramptypes <- rep(ramptype,3)
+            names(ramptypes) <- c("focal","proportion","change")
+        }
+    } else {
+        stop("Incorrect number of values for ramptype argument.")
+    }
+    colfun <- spatstat.options("image.colfun")
+    zlimcheck <- zlim
+    for (a in 1:length(focalyears)){
+        if (verbose & length(focalyears)>1){ setTxtProgressBar(pb, a) }
+        load(x$impaths[focalyears[a]])
+        if (main=="auto"){
+            main.nonfocal <- paste("Overall Intensity\n(all years)",sep="")
+            main.mask <- paste("Mask for Low Intensity Areas",sep="")
+            main.focal <- paste("Focal Intensity\n(",focalyear$year, " calBP)",sep="")
+            main.proportion <- paste("Focal Proportion\n(",focalyear$year, " calBP / all years)",sep="")
+            main.change <- paste("Focal Change\n(",focalyear$year, " calBP, from ",focalyear$backsight, " yrs before)",sep="")
+        }
+        if (type=="nonfocal"){
+            if (!is.null(plotdir)){
+                png(filename=paste(plotdir,"/nonfocal.png",sep=""), res=300, height=imdim[1], width=imdim[2], units="cm")
+                par(mar=mars)
+            }
+            plot(x$nonfocal, box=box, main="", ...)
+            if (maindef=="auto"){
+                title(main.nonfocal, cex.main=cex.main, ...)
+            } else {
+                title(maindef, cex.main=cex.main, ...)
+            }
+            if (withpts=="y"){ points(x$ppp, pch=pch.pts, cex=cex.pts, col=col.pts) }
+            if (!is.null(plotdir)){ dev.off() }
+        } else if (type=="mask"){
+            if (x$maskthresh==0){
+                stop("No mask present.")
+            }   
+            if (!is.null(plotdir)){
+                png(filename=paste(plotdir,"/mask.png",sep=""), res=300, height=imdim[1], width=imdim[2], units="cm")
+                par(mar=mars)
+            }
+            plot(mymask, box=box, main="", ...)
+            if (maindef=="auto"){
+                title(main.mask, cex.main=cex.main, ...)
+            } else {
+                title(maindef, cex.main=cex.main, ...)
+            }
+            if (!is.null(plotdir)){ dev.off() }
+        } else if (type=="focal"){
+            if (!is.null(plotdir)){
+                png(filename=filenames[a], res=300, height=imdim[1], width=imdim[2], units="cm")
+                par(mar=mars)
+            }
+            if (ramptypes["focal"]=="raw"){
+                bc <- colfun(ncolours)
+                plot(focalyear$focal, col=bc, box=box, main="", ...)
+            } else if (ramptypes["focal"]=="unl"){
+                bc <- colfun(ncolours)
+                plot(focalyear$focal, col=bc, box=box, main="", ribargs=list(at=focalyear$focal$yrange, labels=c("low","high"), las=2), ...)
+            } else if (ramptypes["focal"]=="mmx"){
+                if (is.null(zlimcheck)){ zlim <- c(min(x$stats$focal[,'min']), max(x$stats$focal[,'max'])) }
+                bc <- colourmap(colfun(ncolours), range=zlim)
+                plot(focalyear$focal, col=bc, box=box, main="", ...)
+            } else if (ramptypes["focal"]=="std"){
+                m <- mean(x$stats$focal[,"mean"])
+                stdev <- mean(x$stats$focal[,"sd"])
+                nz <- 3
+                zlim <- c((m-(nz*stdev)),(m+(nz*stdev)))
+                xmax <- max(x$stats$focal[,'max'])
+                xmin <- min(x$stats$focal[,'min'])
+                if (xmax > zlim[2] & xmin < zlim[1]){
+                    bc <- colourmap(colfun(ncolours-2), range=zlim)
+                    bc <- colourmap(col=c("#000D7F",attr(bc,"stuff")$outputs,"#FEEF23"), breaks=c(xmin, attr(bc,"stuff")$breaks, xmax))
+                } else if (xmax < zlim[2] & xmin > zlim[1]){
+                    bc <- colourmap(colfun(ncolours), range=zlim)
+                } else if (xmax < zlim[2] & xmin < zlim[1]){
+                    bc <- colourmap(colfun(ncolours-1), range=zlim)
+                    bc <- colourmap(col=c("#000D7F",attr(bc,"stuff")$outputs), breaks=c(xmin, attr(bc,"stuff")$breaks))
+                } else if (xmax > zlim[2] & xmin > zlim[1]){
+                    bc <- colourmap(colfun(ncolours-1), range=zlim)
+                    bc <- colourmap(col=c(attr(bc,"stuff")$outputs,"#FEEF23"), breaks=c(attr(bc,"stuff")$breaks, xmax))
+                }
+                plot(focalyear$focal, col=bc, box=box, main="", ...)     
+            }
+            if (!is.na(col.mask) & (focalyear$maskthresh>0)){ plot(mymask, add=TRUE, col=c("white",col.mask)) }
+            if (withpts=="y"){ points(x$ppp, pch=pch.pts, cex=cex.pts, col=col.pts) }
+            if (maindef=="auto"){
+                title(main.focal, cex.main=cex.main, ...)
+            } else {
+                title(maindef, cex.main=cex.main, ...)
+            }
+            if (!is.null(plotdir)){ dev.off() }
+        } else if (type=="proportion"){
+            if (!is.null(plotdir)){
+                png(filename=filenames[a], res=300, height=imdim[1], width=imdim[2], units="cm")
+                par(mar=mars)
+            }
+            if (ramptypes["proportion"]=="raw"){
+                bc <- topo.colors(ncolours)
+                plot(focalyear$proportion, col=bc, ramptype=ramptype, box=box, main="", ...)
+            } else if (ramptypes["proportion"]=="mmx"){
+                if (is.null(zlimcheck)){ zlim <- c(min(x$stats$proportion[,'min']), max(x$stats$proportion[,'max'])) }
+                bc <- colourmap(topo.colors(ncolours), range=zlim)
+                plot(focalyear$proportion, col=bc, ramptype=ramptype, box=box, main="", ...)
+            } else if (ramptypes["proportion"]=="unl"){
+                bc <- topo.colors(ncolours)
+                plot(focalyear$proportion, col=bc, ramptype=ramptype, box=box, main="", ribargs=list(at=focalyear$proportion$yrange, labels=c("low","high"), las=2), ...)
+            } else if (ramptypes["proportion"]=="std"){
+                m <- mean(x$stats$proportion[,"mean"])
+                stdev <- mean(x$stats$proportion[,"sd"])
+                nz <- 3
+                zlim <- c((m-(nz*stdev)),(m+(nz*stdev)))
+                xmax <- max(x$stats$proportion[,'max'])
+                xmin <- min(x$stats$proportion[,'min'])
+                if (xmax > zlim[2] & xmin < zlim[1]){
+                    bc <- colourmap(topo.colors(ncolours-2), range=zlim)
+                    bc <- colourmap(col=c("#4C00FFFF",attr(bc,"stuff")$outputs,"#FFE0B3FF"), breaks=c(xmin, attr(bc,"stuff")$breaks, xmax))
+                } else if (xmax < zlim[2] & xmin > zlim[1]){
+                    bc <- colourmap(topo.colors(ncolours), range=zlim)
+                } else if (xmax < zlim[2] & xmin < zlim[1]){
+                    bc <- colourmap(topo.colors(ncolours-1), range=zlim)
+                    bc <- colourmap(col=c("#4C00FFFF",attr(bc,"stuff")$outputs), breaks=c(xmin, attr(bc,"stuff")$breaks))
+                } else if (xmax > zlim[2] & xmin > zlim[1]){
+                    bc <- colourmap(topo.colors(ncolours-1), range=zlim)
+                    bc <- colourmap(col=c(attr(bc,"stuff")$outputs,"#FFE0B3FF"), breaks=c(attr(bc,"stuff")$breaks, xmax))
+                }
+                plot(focalyear$proportion, col=bc, box=box, main="", ribbon=ribbon, ...)
+            }
+            if (!is.na(col.mask) & (focalyear$maskthresh>0)){ plot(mymask, add=TRUE, col=c("white",col.mask)) }
+            if (withpts=="y"){ points(x$ppp, pch=pch.pts, cex=cex.pts, col=col.pts) }
+            if (maindef=="auto"){
+                title(main.proportion, cex.main=cex.main, ...)
+            } else {
+                title(maindef, cex.main=cex.main, ...)
+            }
+            if (!is.null(plotdir)){ dev.off() }
+        } else if (type=="change"){
+            if (!is.null(plotdir)){
+                png(filename=filenames[a], res=300, height=imdim[1], width=imdim[2], units="cm")
+                par(mar=mars)
+            } 
+            if (ramptypes["change"]=="raw"){
+                if (is.null(zlimcheck)){ zlim <- c(min(focalyear$change),max(focalyear$change)) }
+                bc <- rybcolourmap(zlim, ncolours=ncolours)
+                plot(focalyear$change, col=bc, box=box, main="", ribbon=ribbon, ...)
+            } else if (ramptypes["change"]=="unl"){
+                if (is.null(zlim)){ zlim <- c(min(focalyear$change),max(focalyear$change)) }
+                bc <- rybcolourmap(zlim, ncolours=ncolours)
+                plot(focalyear$change, col=bc, box=box, main="", ribbon=ribbon, ribargs=list(at=focalyear$change$yrange, labels=c("low","high"), las=2), ...)
+            } else if (ramptypes["change"]=="mmx"){
+                if (is.null(zlimcheck)){ zlim <- c(min(x$stats$change[,'min']), max(x$stats$change[,'max'])) }
+                bc <- colourmap(colfun(ncolours), range=zlim)
+                plot(focalyear$change, col=bc, box=box, main="", ...)
+            } else if (ramptypes["change"]=="std"){
+                m <- mean(x$stats$change[,"mean"])
+                stdev <- mean(x$stats$change[,"sd"])
+                nz <- 3
+                zlim <- c((m-(nz*stdev)),(m+(nz*stdev)))
+                xmax <- max(x$stats$change[,'max'])
+                xmin <- min(x$stats$change[,'min'])
+                if (xmax > zlim[2] & xmin < zlim[1]){
+                    bc <- rybcolourmap(zlim, ncolours=ncolours-2)
+                    bc <- colourmap(col=c("blue",attr(bc,"stuff")$outputs,"darkred"), breaks=c(xmin, attr(bc,"stuff")$breaks, xmax))
+                } else if (xmax < zlim[2] & xmin > zlim[1]){
+                    bc <- rybcolourmap(zlim, ncolours=ncolours)
+                } else if (xmax < zlim[2] & xmin < zlim[1]){
+                    bc <- rybcolourmap(zlim, ncolours=ncolours-1)
+                    bc <- colourmap(col=c("blue",attr(bc,"stuff")$outputs), breaks=c(xmin, attr(bc,"stuff")$breaks))
+                } else if (xmax > zlim[2] & xmin > zlim[1]){
+                    bc <- rybcolourmap(zlim, ncolours=ncolours-1)
+                    bc <- colourmap(col=c(attr(bc,"stuff")$outputs,"darkred"), breaks=c(attr(bc,"stuff")$breaks, xmax))
+                }
+                plot(focalyear$change, col=bc, box=box, main="", ribbon=ribbon, ...)
+            }        
+            if (!is.na(col.mask) & x$maskthresh  > 0){ plot(mymask, add=TRUE, col=c("white",col.mask)) }
+            if (withpts=="y"){ points(x$ppp, pch=pch.pts, cex=cex.pts, col=col.pts) }
+            if (maindef=="auto"){
+                title(main.change, cex.main=cex.main, ...)
+            } else {
+                title(maindef, cex.main=cex.main, ...)
+            }
+            if (!is.null(plotdir)){ dev.off() }
+        } else if (type=="all"){
+            if (!is.null(plotdir)){
+                png(filename=filenames[a], res=300, height=imdim[1], width=imdim[2], units="cm")
+                par(mar=mars)
+            } 
+            par(mfrow=c(1,4))
+            plot(x, focalyear$year, type="focal", ramptype=ramptype, ...)
+            plot(x, focalyear$year, type="nonfocal", ramptype=ramptype, ...)
+            plot(x, focalyear$year, type="proportion", ramptype=ramptype, ...)
+            plot(x, focalyear$year, type="change", ramptype=ramptype, ...)
+            if (!is.null(plotdir)){ dev.off() }
+        }
+    }
+    if (verbose & length(focalyears)>1){
+        close(pb)
+        if (!is.null(plotdir) & tidydevs){ while (!is.null(dev.list())){ dev.off() } }
+        print("Done.")
+    }
+}

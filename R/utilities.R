@@ -57,49 +57,6 @@ runMean <- function(x, n, edge="NA"){
     return(res)
 }
 
-
-## quickMarks <- function(x, verbose=TRUE){
-
-##     if (!"CalDates" %in% class(x)){
-##         stop("Input must be of class \"CalDates\"")
-##     }
-##     df <- as.data.frame(matrix(ncol=8,nrow=nrow(x$metadata)), stringsasFactors=TRUE)
-##     names(df) <- c("DateID","CRA","Error","qMed","q95s","q95e","q68s","q68e")
-##     print("Extracting approximate values...")
-##     if (nrow(x$metadata)>1 & verbose){
-##         flush.console()
-##         pb <- txtProgressBar(min=1, max=nrow(x$metadata), style=3)
-##     }
-##     for (a in 1:nrow(x$metadata)){
-##         if (nrow(x$metadata)>1 & verbose){ setTxtProgressBar(pb, a) }
-##         if (length(x$calmatrix)>1){
-##             tmp <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,a])
-##             tmp <- tmp[tmp$PrDens >0,] 
-##         } else {
-##             tmp <- x$grids[[a]]
-##         }
-##         tmp <- tmp[tmp$PrDens>0,]
-##         tmp <- tmp[with(tmp, order(-PrDens)), ]
-##         tmp$Cumul <- cumsum(tmp$PrDens)
-##         tmp$Cumul <- tmp$Cumul/max(tmp$Cumul)
-##         tmp1 <- tmp[tmp$Cumul <= 0.95,]
-##         df[a,"q95s"] <- min(tmp1$calBP)
-##         df[a,"q95e"] <- max(tmp1$calBP)
-##         wdth <- max(tmp1$calBP)-min(tmp1$calBP)
-##         df[a,"q68s"] <- min(tmp1$calBP) + (wdth*0.25)
-##         df[a,"q68e"] <- max(tmp1$calBP) - (wdth*0.25)
-##         df[a,"qMed"] <- round(mean(c(df[a,"q95s"],df[a,"q95e"])),0)
-##         df[a,"DateID"] <- as.character(x$metadata$DateID[a])
-##         df[a,"CRA"] <- x$metadata$CRA[a]
-##         df[a,"Error"] <- x$metadata$Error[a]
-##     }
-##     if (nrow(x$metadata)>1 & verbose){ close(pb) }
-##     class(df) <- append(class(df),"quickMarks")
-##     return(df)
-## }
-
-
-
 #' Smooth a numeric vector using a Gaussian window
 #' 
 #' @description Smooth a numeric vector using a Gaussian window
@@ -556,61 +513,76 @@ sampleDates <- function(x,bins=NA,nsim,boot=FALSE,verbose=TRUE)
 	return(result)
 }
 
-# 
-# gaussW <- function(x, bw){
-#     exp(-(x^2)/(2*(bw^2)))
-# }
-# 
-# 
-# 
-# rybcolourmap <- function(range, ...) {
-#   col <- rybcolours(range, ...)
-#   z <- colourmap(col, range=range)
-#   return(z)
-# }
-# 
-# rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
-#   stopifnot(is.numeric(range) && length(range)==2)
-#   stopifnot(all(is.finite(range)))
-#   yr <- colorRampPalette(c("yellow","orangered","darkred"), space="rgb")
-#   cb <- colorRampPalette(c("blue","cyan","yellow"), space="rgb")
-#   depths <- range[1]
-#   peaks <- range[2]
-#   dv <- diff(range)/(ncolours - 1)
-#   epsilon <- nbeach * dv/2
-#   lowtide <- max(sealevel - epsilon, depths)
-#   hightide <-  min(sealevel + epsilon, peaks)
-#   countbetween <- function(a, b, delta) { max(0, round((b-a)/delta)) }
-#   nsea <- countbetween(depths, lowtide, dv)
-#   nbeach <- countbetween(lowtide,  hightide, dv)
-#   nland <- countbetween(hightide,  peaks, dv)
-#   colours <- character(0)
-#   if(nsea > 0)  colours <- cb(nsea) # cyan/blue
-#   if(nbeach > 0)  colours <- c(colours,rep("yellow",nbeach)) # yellow
-#   if(nland > 0)  colours <- c(colours, yr(nland)) # darkred/yellow
-#   return(colours)
-# }
-# 
-# spJitter <- function(pts, xamount, yamount=xamount){
-#     proj <- NA
-#     if (!is.na(proj4string(pts)) | proj4string(pts)!="NA"){
-#         proj <- proj4string(pts)
-#     }
-#     if (class(pts) == "SpatialPointsDataFrame"){
-#         df <- cbind(coordinates(pts),pts@data)
-#         df[,1] <- jitter(df[,1],amount=xamount)
-#         df[,2] <- jitter(df[,2],amount=yamount)
-#         coordinates(df) <- df[,1:2]
-#         proj4string(df) <- proj
-#     } else if (class(pts) == "SpatialPoints"){
-#         df <- coordinates(pts)
-#         df[,1] <- jitter(df[,1],amount=xamount)
-#         df[,2] <- jitter(df[,2],amount=yamount)
-#         df <- SpatialPoints(df, proj4string=CRS(proj))
-#     } else {
-#         stop("Only works for SpatialPoints* at present.")
-#     }
-#     return(df)
-# }
-# 
-# 
+#' @title Gaussian weighting of dates relative to 
+#' @description Rescale a numeric vector to a specified minimum and maximum.  
+#' @param x A numeric vector or an object of class CalDates.
+#' @param mean A single numeric value indicating the value to centre the Gaussian kernel on.
+#' @param sd A single numeric value indicating the standard deviation of the Gaussian kernel to be used.
+#' @param type The type of output to produce: currently either "weighted" (for a simple total weight value for each date) or "raw" (a list of reweighted calibrated radiocarbon probabilities for each calibrated date).
+#' @return A numeric vector of weights (or optionally a list of reweighted calibrated radiocarbon probabilities).
+#' @examples
+#' ## Example weighting fo a set of dates versus a focal date of 5950 calBP
+#' years <- seq(6500, 5500, -10)
+#' plot(cbind(years, gaussW(years, 5950, 50)))
+#' ## Example weighting of three calibrated dates  versus a focal date of 5950 calBP
+#' dates <- calibrate(c(5280, 5180, 5080), c(30,30,30), normalised=FALSE)
+#' gaussW(dates, 5950, 50)
+#' ## Or the same with raw output
+#' dateswt <- gaussW(dates, 5950, 50, type="raw")
+#' head(dateswt[[1]])
+#' @export
+#' 
+gaussW <- function(x, mean, sd, type="weights"){
+    if (!class(x)[1] %in% c("numeric", "CalDates")){
+        stop("Input must be a numeric vector of calibrated years BP or an object of class CalDates.")
+    }
+    if (!type %in% c("weights","raw")){ stop("type must be either weights or raw.") }
+    base <- (dnorm(x=mean, mean=mean, sd=sd))
+    if (class(x)[1]=="numeric"){
+        res <- dnorm(x=x, mean=mean, sd=sd) / base
+        return(res)
+    } else {
+        res <- vector(mode="list", length=length(x))
+        wts <- vector(mode="numeric", length=length(x))
+        for (a in 1: length(x)){
+            wt <- dnorm(x=x$grids[[a]]$calBP, mean=mean, sd=sd) / base
+            res[[a]] <- cbind(x$grids[[a]]$calBP, x$grids[[a]]$PrDens * wt)
+            wts[a] <- sum(x$grids[[a]]$PrDens * wt)
+        }
+    }
+    if (type=="raw"){
+        return(res)
+    } else if (type=="weights"){
+        return(wts)
+    }
+}
+
+rybcolourmap <- function(range, ...) {
+    ## slightly modified from beachcolourmap() in the spatstat package
+    col <- rybcolours(range, ...)
+    z <- colourmap(col, range=range)
+    return(z)
+}
+
+rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
+    ## modified from beachcolours() in the spatstat package
+    stopifnot(is.numeric(range) && length(range)==2)
+    stopifnot(all(is.finite(range)))
+    yr <- colorRampPalette(c("yellow","orangered","darkred"), space="rgb")
+    cb <- colorRampPalette(c("blue","cyan","yellow"), space="rgb")
+    depths <- range[1]
+    peaks <- range[2]
+    dv <- diff(range)/(ncolours - 1)
+    epsilon <- nbeach * dv/2
+    lowtide <- max(sealevel - epsilon, depths)
+    hightide <-  min(sealevel + epsilon, peaks)
+    countbetween <- function(a, b, delta) { max(0, round((b-a)/delta)) }
+    nsea <- countbetween(depths, lowtide, dv)
+    nbeach <- countbetween(lowtide,  hightide, dv)
+    nland <- countbetween(hightide,  peaks, dv)
+    colours <- character(0)
+    if(nsea > 0)  colours <- cb(nsea) # cyan/blue
+    if(nbeach > 0)  colours <- c(colours,rep("yellow",nbeach)) # yellow
+    if(nland > 0)  colours <- c(colours, yr(nland)) # darkred/yellow
+    return(colours)
+}

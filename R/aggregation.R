@@ -337,3 +337,257 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 	return(result)
 }
 
+
+#' @title Map the spatio-temporal intensity of a set of radiocarbon dates
+#'
+#' @description Function for mapping the spatio-temporal intensity of radiocarbon dates for a given geographical region in one or more timeslices.
+#'
+#' @param x An object of class CalDates with calibrated radiocarbon ages.
+#' @param coords A two column matrix of geographical coordinates from a a projected coordinate system (no checks are made for this) and with the same number of rows as length(x).
+#' @param sbw A single numeric value for the spatial bandwith to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).
+#' @param focalyears A vector of numeric values for focal years, in calBP, that will be timesteps at which date intensity maps will be produced.
+#' @param tbw A single numeric value for the temporal bandwith to be applied around each focal year, expressed as the standard deviation of a continuous Gaussian kernel.
+#' @param win The bounding polygon for the mapping (must be an object of class 'owin', see the spatstat package)
+#' @param cellres The cell or pixel resolution of the output raster maps.
+#' @param outdir The output directory for timeslice maps and data that are saved to file.
+#' @param bins  A vector of labels corresponding to site names, ids, bins or phases (same length as x)
+#' @param backsight A single numeric value (which will be coerced to be positive) that specifies a comparison timestep in the past for a mapping of temporal change.
+#' @param maskthresh A single numeric value for a lower-bound cut-off for all maps, based on a minimum required spatial intensity of all dates in x.
+#' @param changexpr An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#' @param ... ignored or passed to internal functions.
+#'
+#' @details This function computes one or more timeslice maps of the spatio-temporal kernel intensity of radiocarbon dates across a geographic region and for a specific focal year. The user specifies the arbitrary sizes of both the spatial and the temporal Gaussian kernels that will be used to summarise radiocarbon date intensity per grid cell per timestep. The results allow standardisation of colour ramps, etc. across timesteps and are amenable to plotting individually via plot.stKde and/or for output to png for animation.
+#'
+#' @return A list object of class stKde with the following elements:
+#' \itemize{
+#' \item {A series of list items storing some of the input parameters such as the focalyears, sbw, tbw, backsight, maskthresh} 
+#' \item{\code{nonfocal}} {An im object mapping the basic spatial intensity of all dates, without reference to a focal year.} 
+#' \item{\code{impaths}} {A character vector of the paths to the individual timeslices stored on file. Maps are not stored in memory (see spkde() for further details of what is stored).}
+#' \item{\code{stats}} {A list of data.frames offering summary statistics on each of the different types of output surface across all timeslices. Used primarily to allow consistent colour ramps across time-slices.}
+#' \item{\code{ppp}} {The ppp object for all dates and the observation window.}
+#' }
+#'
+#' @examples
+#' #' \dontrun{
+#' ## Example with a subset of English and Welsh dates from the Euroevol dataset
+#' load("euroevol-ew.rda")
+#' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
+#' ## Create centennial timeslices (also with site binning)
+#' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
+#' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir="im")
+#' ## Plot an example of all four basic outputs for 5900 calBP
+#' dev.new(height=2.5, width=8)
+#' par(mar=c(0.5, 0.5, 2.5, 2))
+#' plot(stkde1, 5900, type="all")
+#' }
+#' 
+#' @import spatstat 
+#' @export
+#' 
+stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bins=NA, backsight=NA, maskthresh=0, changexpr=expression((t1-t0)/tk), verbose=TRUE, ...){
+    if (!"CalDates" %in% class(x)){ stop("x must be of class CalDates.") }
+    outpaths <- vector(mode="character", length=length(focalyears))
+    forsumstats <- c("focal", "proportion", "change")
+    statslist <- vector(mode="list", length=length(forsumstats))
+    names(statslist) <- forsumstats
+    df0 <- as.data.frame(matrix(ncol=10, nrow=length(focalyears)), stringsAsFactors=FALSE)
+    names(df0) <- c("year", "min", "2.5", "25", "median", "75", "97.5", "max", "mean", "sd")
+    for (g in 1:length(forsumstats)){ statslist[[g]] <- df0 }
+    if (verbose){
+        print("Mapping focal intensities and then writing to file...")
+        flush.console()
+        pb <- txtProgressBar(min=1, max=length(focalyears), style=3)
+    }
+    backsight <- abs(backsight)
+    for (a in 1:length(focalyears)){
+        if (verbose){ setTxtProgressBar(pb, a) }
+        focalyear <- spkde(x=x, coords=coords, win=win, sbw=sbw, cellres=cellres, focalyear=focalyears[a], tbw=tbw, bins=bins, backsight=backsight, verbose=FALSE, maskthresh=0)
+        outpath <- paste(outdir, "/",focalyears[a],".rda", sep="")
+        for (d in 1:length(names(statslist))){
+            thisone <- names(statslist)[d]
+            q <- quantile(focalyear[[thisone]], probs=c(0,0.025,0.25,0.5,0.75,0.975,1))
+            statslist[[names(statslist)[d]]][a,] <- c(focalyears[a], q, mean(focalyear[[thisone]]), sd(focalyear[[thisone]]))
+        }
+        outpaths[a] <- outpath
+        save(focalyear, file=outpath)
+    }
+    if (verbose){ close(pb) }
+    resnames <- c("years", "sbw", "tbw", "backsight", "maskthresh", "nonfocal", "impaths", "stats")
+    res <- vector(mode="list", length=length(resnames))
+    names(res) <- resnames
+    res[["focalyears"]] <- focalyears
+    pppA <- ppp(coords[,1],coords[,2], window=win)
+    res[["ppp"]] <- pppA
+    res[["sbw"]] <- sbw
+    res[["tbw"]] <- tbw
+    res[["backsight"]] <- backsight
+    res[["maskthresh"]] <- maskthresh
+    ppAwts <- sapply(x$grids, function(x){ sum(x$PrDens) })
+    alldens <- density(pppA, weights=ppAwts, eps=cellres, sigma=sbw)
+    res[["nonfocal"]] <- alldens
+    res[["impaths"]] <- outpaths
+    names(res[["impaths"]]) <- focalyears
+    res[["stats"]] <- statslist
+    class(res) <- c("stKde", class(res)) 
+    if (verbose){ print("Done.") }
+    return(res)
+}
+
+#' @title Map the spatial intensity of a set of radiocarbon dates for a given focal year.
+#'
+#' @description Function for mapping the spatial intensity of radiocarbon dates for a given geographical region and focal year.
+#'
+#' @param x An object of class CalDates with calibrated radiocarbon ages.
+#' @param coords A two column matrix of geographical coordinates from a a projected coordinate system (no checks are made for this) and with the same number of rows as length(x).
+#' @param sbw A single numeric value for the spatial bandwith to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).
+#' @param focalyear A single numeric value for the focal year for the intensity map.
+#' @param tbw A single numeric value for the temporal bandwith to be applied around each focal year, expressed as the standard deviation of a continuous Gaussian kernel.
+#' @param win The bounding polygon for the mapping (must be an object of class 'owin', see the spatstat package)
+#' @param cellres The cell or pixel resolution of the output raster maps.
+#' @param bins  A vector of labels corresponding to site names, ids, bins or phases (same length as x)
+#' @param backsight A single numeric value (which will be coerced to be positive) that specifies a comparison timestep in the past for a mapping of temporal change.
+#' @param maskthresh A single numeric value for a lower-bound cut-off for all maps, based on a minimum required spatial intensity of all dates in x.
+#' @param changexpr An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#' @param ... ignored or passed to internal functions.
+#'
+#' @details This function is not really intended for general use, but rather as an internal function for stkde(). Most applications should use the latter, but spkde has been exported and made externally available, both because this function retains the result in memory (in contrast to stkde) and with a view to possible addition of bootstrap methods in the future. Some function arguments therefore remain experimental. The function computes timeslice maps of the spatio-temporal kernel intensity of radiocarbon dates across a geographic region for a specific focal year. The user specifies the arbitrary size of both the spatial and the temporal Gaussian kernels that will be used to summarise radiocarbon date intensity per grid cell.
+#'
+#' @return A list object of class spKde with the following elements:
+#' \itemize{
+#' \item {A series of list items storing some of the input parameters such as the focal year, sbw, tbw, backsight, maskthresh.} 
+#' \item{\code{nonfocal}} {An im object mapping the basic spatial intensity of all dates, without reference to a focal year.} 
+#' \item{\code{focal}} {An im object mapping the spatial intensity of dates for the focal year (i.e. weighted by how much each dates probability distribution overlaps with a Gaussian kernel centred on the focal year with a standard deviation of tbw).}
+#' \item{\code{proportion}} {An im object mapping the proportional intensity of dates for the focal year (i.e. the focal surface divided by the nonfocal surface).}
+#' \item{\code{change}} {An im object mapping the amount of change between the intensity of dates for the focal year and a chosen backsight year (i.e. as defined by changexpr).}
+#' }
+#'
+#' @examples
+#' \dontrun{
+#' ## Example for the focal year 5600 calBP (also with site binning), using a subset of English and Welsh dates from the Euroevol dataset
+#' load("euroevol-ew.rda")
+#' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
+#' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
+#' spkde1 <- spkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyear=5600, tbw=50, bins=bins1, backsight=200)
+#' plot(spkde1$focal)
+#' plot(spkde1$proportion)
+#' }
+#' 
+#' @import spatstat 
+#' @export
+#' 
+spkde <- function(x, coords, sbw, focalyear, tbw, win, cellres, bins=NA, backsight=NA, nsim=NULL, maskthresh=0, changexpr=expression((t1-t0)/tk), raw=FALSE, verbose=TRUE, ...){
+    if (!"CalDates" %in% class(x)){ stop("x must be of class CalDates.") }
+    basic <- c("nsim", "year", "backsight", "sbw", "tbw", "maskthresh")
+    coreres <- c("nonfocal", "focal", "proportion", "change")
+    extrares <- append(coreres,c("samplemean", "samplestdev", "sampleprop", "samplechange"))
+    if (!is.null(nsim)){
+        resnames <- append(basic,extrares)
+    } else {
+        resnames <- append(basic,coreres)
+    }   
+    if (is.null(nsim) & verbose){ print("Mapping spatial intensities...") }
+    pppA <- ppp(coords[,1],coords[,2], window=win)
+    ppAwts <- sapply(x$grids, function(x){ sum(x$PrDens) })
+    if (!is.na(bins)[1]){
+        bindf0 <- data.frame(origrows=1:length(ppAwts), bins=bins, auc=ppAwts, stringsAsFactors=FALSE)
+        bindf1 <- as.data.frame(table(bins), stringsAsFactors=FALSE)
+        names(bindf1) <- c("bins","ndates")
+        bindf <- merge(bindf0, bindf1, by="bins", all.x=TRUE)
+        bindf$finalwt <- bindf$auc / bindf$ndates
+        bindf <- bindf[with(bindf, order(origrows)), ]
+        ppAwts <- bindf$finalwt
+    }
+    tk <- density(pppA, weights=ppAwts, eps=cellres, sigma=sbw)
+    pppAwtsg <- gaussW(x, focalyear, tbw)
+    if (!is.na(bins)[1]){ pppAwtsg <- pppAwtsg / bindf$ndates }
+    t1 <- density(pppA, weights=pppAwtsg, eps=cellres, sigma=sbw)
+    if (!is.null(nsim)){
+        s1 <- sampleDates(x, nsim=nsim, bins=bins, verbose=verbose, ...)
+        imlist <- vector(mode="list", length=nsim)
+        win <- as.owin(win)
+        coords <- as.matrix(coords)
+        if (!is.na(backsight)){
+            note <- "backsight must be NA or a single positive integer"
+            if (length(backsight)!=1){ stop(note) }
+            if (!is.numeric(backsight)){ stop(note) }
+            if (backsight<=0){ stop(note) }
+            bsBP <- focalyear + backsight
+            bimlist <- vector(mode="list", length=nsim)
+        }
+        if (nsim>1 & verbose){
+            print("Mapping spatial intensities...")
+            flush.console()
+            pb <- txtProgressBar(min=1, max=nsim, style=3)
+        }
+        for (a in 1:nsim){
+            if (nsim > 1 & verbose){ setTxtProgressBar(pb, a) }
+            if (is.matrix(s1$sdates)){
+                fset <- cbind(s1$sdates[a,], s1$weight, coords[,1], coords[,2])
+            } else {
+                fset <- cbind(s1$sdates, s1$weight, coords[,1], coords[,2])
+            }
+            fWt <- gaussW(fset[,1], focalyear, tbw)
+            cWt <- fset[,2] * fWt
+            if (!is.na(bins)[1]){ cWt <- cWt / bindf$ndates }
+            pppF <- ppp(fset[,3],fset[,4], window=win)
+            imlist[[a]] <- density(pppF, weights=cWt, eps=cellres, sigma=sbw)
+            if (!is.na(backsight)){   
+                fWt <- gaussW(fset[,1], bsBP, tbw)
+                cWt <- fset[,2] * fWt
+                if (!is.na(bins)[1]){ cWt <- cWt / bindf$ndates }
+                pppF <- ppp(fset[,3],fset[,4], window=win)
+                bimlist[[a]] <- density(pppF, weights=cWt, eps=cellres, sigma=sbw)
+            }
+        }
+        if (nsim > 1 & verbose){ close(pb) }
+    }
+    if (raw & !is.null(nsim)){
+        if (verbose){ print("Done.") }
+        return(imlist)
+    } else {
+        res <- vector(mode="list", length=length(resnames))
+        names(res) <- resnames
+        res[["year"]] <- focalyear
+        res[["backsight"]] <- backsight
+        res[["sbw"]] <- sbw
+        res[["tbw"]] <- tbw
+        res[["maskthresh"]] <- maskthresh
+        res[["nonfocal"]] <- tk
+        t1[as.matrix(tk) < maskthresh] <- NA
+        res[["focal"]] <- t1
+        tmp <- t1 / tk
+        tmp[as.matrix(tk) < maskthresh] <- NA
+        res[["proportion"]] <- tmp
+        if (!is.null(nsim)){
+            res[["nsim"]] <- nsim
+            t1 <- im.apply(imlist, mean)
+            t1[as.matrix(tk) < maskthresh] <- NA
+            res[["samplemean"]] <- t1
+            tmp <- im.apply(imlist, sd)
+            tmp[as.matrix(tk) < maskthresh] <- NA
+            res[["samplestdev"]] <- tmp
+            tmp <- t1 / tk
+            tmp[as.matrix(tk) < maskthresh] <- NA
+            res[["sampleprop"]] <- tmp
+        }
+        if (!is.na(backsight)){
+            bsBP <- focalyear + backsight
+            bswt <- gaussW(x, bsBP, tbw)
+            t0 <- density(pppA, weights=bswt, eps=cellres, sigma=sbw)
+            tmp <- eval(changexpr)
+            tmp[as.matrix(tk) < maskthresh] <- NA
+            res[["change"]] <- tmp
+            if (!is.null(nsim)){
+                t0 <- im.apply(bimlist, mean)
+                tmp <- eval(changexpr)
+                tmp[as.matrix(tk) < maskthresh] <- NA
+                res[["samplechange"]] <- tmp
+            }
+        }
+        class(res) <- c("spKde", class(res))   
+        if (verbose){ print("Done.") }
+        return(res)
+    }
+}
