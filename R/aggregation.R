@@ -369,9 +369,10 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' }
 #'
 #' @examples
-#' #' \dontrun{
+#' \dontrun{
 #' ## Example with a subset of English and Welsh dates from the Euroevol dataset
-#' load("euroevol-ew.rda")
+#' data(ewdates)
+#' data(ewowin)
 #' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 #' ## Create centennial timeslices (also with site binning)
 #' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
@@ -466,7 +467,8 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #' @examples
 #' \dontrun{
 #' ## Example for the focal year 5600 calBP (also with site binning), using a subset of English and Welsh dates from the Euroevol dataset
-#' load("euroevol-ew.rda")
+#' data(ewdates)
+#' data(ewowin)
 #' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 #' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
 #' spkde1 <- spkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyear=5600, tbw=50, bins=bins1, backsight=200)

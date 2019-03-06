@@ -61,3 +61,43 @@
 #'}
 "emedyd"
 
+
+#' @title Subset of EUROEVOL radiocarbon dates from Great Britain
+#' @description Radiocarbon dates (n=2,324) and site coordinates (n=652) from England and Wales collected from the EUROEVOL project database. See \cite{\link{euroevol}} for more details regarding the source data.
+#'
+#' @format A data.frame with the following variables:
+#' \describe{
+#' \item{\code{C14ID}}{ID of each radiocarbon date}
+#' \item{\code{C14Age}}{Radiocarbon age in 14C years BP}
+#' \item{\code{C14SD}}{Radiocarbon age error}
+#' \item{\code{LabCode}}{Labcode of the radiocarbon date}
+#' \item{\code{Material}}{Material of the dated sample}
+#' \item{\code{SiteID}}{ID of the site from which the sample has been recovered}
+#' \item{\code{Eastings}}{Easting coordinates of the sampling site in meters (OSGB 1936 epsg:27700) }
+#' \item{\code{Northings}}{Northing coordinates of the sampling site in meters (OSGB 1936 epsg:27700)}
+#'}
+#' @source Manning, K., Colledge, S., Crema, E., Shennan, S., Timpson, A., 2016. The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data. Journal of Open Archaeology Data 5. doi:10.5334/joad.40
+#'
+"ewdates"
+
+
+#' @title Polygonal window of England and Wales 
+#' @description An \code{\link{owin}} class polygonal window of England and Wales.
+#' @format An \code{owin} class object. 
+#' @examples
+#' \donotrun{
+#' data(ewowin)
+#' # Obtained from rworldmap:
+#' library(maptools)
+#' library(rgeos)
+#' library(rworldmap)
+#' bng <- CRS("+init=epsg:27700")
+#' sbrit <- getMap(resolution="high")
+#' sbrit <- spTransform(sbrit[sbrit$GEOUNIT =="United Kingdom",], bng)
+#' tmp <- SpatialPolygons(list(Polygons(list(Polygon(cbind(c(130000,130000,310000,425000,700000,700000,130000), c(0,300000,560000,598000,300000,0,0)))), "1")), 1:1, proj4string=bng)
+#' sbrit <- gIntersection(sbrit,tmp) 
+#' ewowin <- as.owin(sbrit)
+#' }
+#' @source South,A.2011.rworldmap: A New R package for Mapping Global Data. The R Journal Vol. 3/1 : 35-43.
+"ewowin"
+
