@@ -8,11 +8,16 @@
   * UPDATE: improved performance of `calsample` and `uncalsample` methods (update in `uncalibrate()`) `
   * Bug fix: users no longer need to specify `nsim` when `fitonly` is set to TRUE.
 * UPDATE in `spd()`: aggregation matrix now spans beyond `timeRange` to avoid edge effects.
-* UPDATE in `calibrate`: the new agrument `F14C` enables calibratio in F14C space.
+* UPDATE in `calibrate()`: the new agrument `F14C` enables calibratio in F14C space.
+* UPDATE in `SPpermTest()`: function is deprecated and renamed `sptest()`
 * NEW: `thinDates()` function to randomly select a maximum number of dates per site, bin or phase.
 * NEW: `as.CalDates()` function converts dates in `BchronCalibratedDates` class ([Bchron](https://cran.r-project.org/web/packages/Bchron/index.html)) and `oxcAARCalibratedDatesList`class ([oxAAR](https://cran.r-project.org/web/packages/oxcAAR/index.html)) into CalDates` class (rcarbon).
 * NEW: `sampleDates()` function for sampling random dates from calibrated dates or bins.
 * NEW: `ckde()` function for generating composite kernel density estimates.
+* NEW: Suite of functions for mapping the spatial intensity of a set of radiocarbon dates via Kernel Density Estimates. 
+  * `stkde()` Map the spatio-temporal intensity of a set of radiocarbon dates across multiple years
+  * `spkde()` Map the spatial intensity of a set of radiocarbon dates for a given focal year.
+  *  Associated `plot()` function.
 * Bug fix: fixed dislay error in some `plot()` functions when calendar is set to `BC/AD'
 
 # Version 1.2.0 (1 October 2018)
