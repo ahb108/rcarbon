@@ -586,3 +586,47 @@ rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
     if(nland > 0)  colours <- c(colours, yr(nland)) # darkred/yellow
     return(colours)
 }
+
+#' @title Subsetting calibrated dates
+#' @description Subsets calibrated dates (\code{CalDates} class object) based on Logical expressions of time intervals.  
+#' @param x A CalDates class object
+#' @param s Logical expression indicating dates to keep. The expression should include the term \code{BP} which refers to specific dates.
+#' @param p Probability mass meeting the condition defined by \code{ss}.
+#' @details The function subsets \code{CalDates} class objects by identifying all dates that have a probability mass larger than \code{p} for a user defined logical expression of temporal interval containing the term \code{BP}, where \code{BP} refers to radiocarbon date. See examples for further detailes
+#' @return A CalDates class object.
+#' @examples
+#' ## Generate some calibrated dates
+#' x = calibrate(c(12100,5410,5320,3320),errors=c(20,20,30,30))
+#' ## Subsets all dates that have a probability mass above 0.8 before 10000 BP
+#' x2 = subset(x,BP>10000,p=0.8)
+#' ## Subsets all dates that have a probability mass above 0.5 between 6000 and 6300 BP
+#' x3 = subset(x,BP>6000&BP<6300,p=0.5)
+#' @import stats
+#' @export
+
+subset.CalDates=function(x,s,p,...)
+{
+	index=rep(NA,length(x))
+	s=substitute(s)
+	calmat=anyNA(x$calmatrix)
+	if (calmat)
+	{
+		for (i in 1:length(x))
+		{
+			tmp=x$grids[[i]]	 
+			BP=tmp$calBP
+			prdens=tmp$PrDens/sum(tmp$PrDens)   
+			sumprob=sum(prdens[eval(s)])
+			index[i]=sumprob>p
+		}
+	} else {
+		BP=as.numeric(row.names(x$calmatrix))
+		tmp=apply(x$calmatrix,2,function(x){x/sum(x)})
+		index=apply(tmp[eval(s),],2,sum)>p 
+	}
+	return(x[which(index)])
+}
+
+
+
+
