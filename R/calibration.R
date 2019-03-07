@@ -249,6 +249,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     return(reslist)
 }
 
+#' @rdname calibrate
 #' @export
 
 calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(50000,0), compact=TRUE, eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE, ...){
@@ -309,7 +310,6 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
     return(res)
 }
 
-#' @export
 
 
 #' @title Uncalibrate (back-calibrate) a calibrated radiocarbon date (or summed probability distribution).
@@ -461,6 +461,31 @@ as.CalGrid <- function(x) {
     class(df) <- c("CalGrid", class(df)) 
     return(df)
 }
+
+#' @title Convert data to class UncalGrid. 
+#'
+#' @description Tries to coerce any two-column matrix or data.frame to a uncalibrated probability distribution (an object of class "UncalGrid") for use by the rcarbon package. 
+#' 
+#' @param x A two-column \code{matrix} or \code{data.frame} class object.
+#'
+#' @return A CalGrid class object of probabilities or summed probabilities per CRA.
+#' @examples
+#' df <- data.frame(CRA=5000:2000,PrDens=runif(length(5000:2000)))
+#' mycalgrid <- as.UncalGrid(df)
+#' @export
+ 
+as.UncalGrid <- function(x) {
+    df <- as.data.frame(x)
+    if (ncol(x) == 2){
+        names(df) <- c("CRA", "PrDens")
+    } else {
+        stop("Input must be 2 columns.")
+    }
+    class(df) <- c("UncalGrid", class(df)) 
+    return(df)
+}
+
+
 
 #' @title Convert to a CalDates object 
 #' @description Convert other calibrated date formats to an rcarbon CalDates object. 
