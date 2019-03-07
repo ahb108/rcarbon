@@ -309,6 +309,9 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
     return(res)
 }
 
+#' @export
+
+
 #' @title Uncalibrate (back-calibrate) a calibrated radiocarbon date (or summed probability distribution).
 #'
 #' @description Function for uncalibrating one or more radiocarbon dates.
