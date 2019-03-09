@@ -18,6 +18,7 @@
   * `stkde()` Map the spatio-temporal intensity of a set of radiocarbon dates across multiple years
   * `spkde()` Map the spatial intensity of a set of radiocarbon dates for a given focal year.
   *  Associated `plot()` function.
+* NEW: `subset()` method for subsetting calibrated dates based on temporal intervals described by logical conditions (e.g. between 5500 and 4500 cal BP) and user defined probability mass.
 * Bug fix: fixed dislay error in some `plot()` functions when calendar is set to `BC/AD'
 
 # Version 1.2.0 (1 October 2018)
