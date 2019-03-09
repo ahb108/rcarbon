@@ -809,6 +809,8 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, n
 				}
 				return(res)},
 				d=abs(breaks[2]-breaks[1])))
+	#if single transition transpose matrix:
+	if (nBreaks==2){rocaObs=t(rocaObs)} 
 
 	##############################
 	### Permutation Subroutine ###
@@ -973,6 +975,9 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, n
 						}
 						return(res)},
 						d=abs(breaks[2]-breaks[1])))
+
+			# if single transition transpose matrix:
+			if (nBreaks==2) {rocaSim=t(rocaSim)}
 
 			hi=hi+(rocaObs>rocaSim)
 			lo=lo+(rocaObs<rocaSim)
