@@ -355,7 +355,7 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' @param maskthresh A single numeric value for a lower-bound cut-off for all maps, based on a minimum required spatial intensity of all dates in x.
 #' @param changexpr An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.
 #' @param spjitter Whether noise is applied to the spatial coordinates or not. Default is TRUE. 
-#' @param amount Ammount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.   
+#' @param amount Ammount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.    
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... ignored or passed to internal functions.
 #'
@@ -378,7 +378,7 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 #' ## Create centennial timeslices (also with site binning)
 #' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
-#' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir="im")
+#' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir="im",amount=1)
 #' ## Plot an example of all four basic outputs for 5900 calBP
 #' dev.new(height=2.5, width=8)
 #' par(mar=c(0.5, 0.5, 2.5, 2))
@@ -491,7 +491,7 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #' data(ewowin)
 #' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 #' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
-#' spkde1 <- spkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyear=5600, tbw=50, bins=bins1, backsight=200)
+#' spkde1 <- spkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyear=5600, tbw=50, bins=bins1, backsight=200,amount=1)
 #' plot(spkde1$focal)
 #' plot(spkde1$proportion)
 #' }
