@@ -354,6 +354,8 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' @param backsight A single numeric value (which will be coerced to be positive) that specifies a comparison timestep in the past for a mapping of temporal change.
 #' @param maskthresh A single numeric value for a lower-bound cut-off for all maps, based on a minimum required spatial intensity of all dates in x.
 #' @param changexpr An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.
+#' @param spjitter Whether noise is applied to the spatial coordinates or not. Default is TRUE. 
+#' @param amount Ammount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.   
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... ignored or passed to internal functions.
 #'
@@ -386,7 +388,7 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' @import spatstat 
 #' @export
 #' 
-stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bins=NA, backsight=NA, maskthresh=0, changexpr=expression((t1-t0)/tk), verbose=TRUE, ...){
+stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bins=NA, backsight=NA, maskthresh=0, changexpr=expression((t1-t0)/tk),spjitter=TRUE,amount=NULL, verbose=TRUE, ...){
     if (!"CalDates" %in% class(x)){ stop("x must be of class CalDates.") }
     outpaths <- vector(mode="character", length=length(focalyears))
     forsumstats <- c("focal", "proportion", "change")
@@ -401,9 +403,25 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
         pb <- txtProgressBar(min=1, max=length(focalyears), style=3)
     }
     backsight <- abs(backsight)
+
+    dpoints = FALSE
+    if (spjitter==FALSE&anyDuplicated(coords)){dpoints=TRUE}
+    if (spjitter|dpoints)
+    {
+	coords[,1]=jitter(coords[,1],amount=amount)
+    	coords[,2]=jitter(coords[,2],amount=amount)
+	if(dpoints){warning("duplicated coordinates: spkde() has been executed setting spjitter to TRUE")}
+    }	    
+
+    if (any(inside.owin(coords[,1],coords[,2],win)==FALSE))
+    {
+	print("working?")    
+	stop("One or more points are oustide the window of analysis. Consider using a smaller setting for amount")
+    }
+    
     for (a in 1:length(focalyears)){
         if (verbose){ setTxtProgressBar(pb, a) }
-        focalyear <- spkde(x=x, coords=coords, win=win, sbw=sbw, cellres=cellres, focalyear=focalyears[a], tbw=tbw, bins=bins, backsight=backsight, verbose=FALSE, maskthresh=0)
+        focalyear <- spkde(x=x, coords=coords, win=win, sbw=sbw, cellres=cellres, focalyear=focalyears[a], tbw=tbw, bins=bins, backsight=backsight, verbose=FALSE, maskthresh=0,spjitter=FALSE)
         outpath <- paste(outdir, "/",focalyears[a],".rda", sep="")
         for (d in 1:length(names(statslist))){
             thisone <- names(statslist)[d]
@@ -450,6 +468,8 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #' @param backsight A single numeric value (which will be coerced to be positive) that specifies a comparison timestep in the past for a mapping of temporal change.
 #' @param maskthresh A single numeric value for a lower-bound cut-off for all maps, based on a minimum required spatial intensity of all dates in x.
 #' @param changexpr An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.
+#' @param spjitter Whether noise is applied to the spatial coordinates or not. Default is TRUE. 
+#' @param amount Ammount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.   
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... ignored or passed to internal functions.
 #'
@@ -479,7 +499,7 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #' @import spatstat 
 #' @export
 #' 
-spkde <- function(x, coords, sbw, focalyear, tbw, win, cellres, bins=NA, backsight=NA, nsim=NULL, maskthresh=0, changexpr=expression((t1-t0)/tk), raw=FALSE, verbose=TRUE, ...){
+spkde <- function(x, coords, sbw, focalyear, tbw, win, cellres, bins=NA, backsight=NA, nsim=NULL, maskthresh=0, changexpr=expression((t1-t0)/tk), raw=FALSE, spjitter=TRUE,amount=NULL,verbose=TRUE, ...){
     if (!"CalDates" %in% class(x)){ stop("x must be of class CalDates.") }
     basic <- c("nsim", "year", "backsight", "sbw", "tbw", "maskthresh")
     coreres <- c("nonfocal", "focal", "proportion", "change")
@@ -490,7 +510,24 @@ spkde <- function(x, coords, sbw, focalyear, tbw, win, cellres, bins=NA, backsig
         resnames <- append(basic,coreres)
     }   
     if (is.null(nsim) & verbose){ print("Mapping spatial intensities...") }
+    
+    dpoints = FALSE
+    if (spjitter==FALSE&anyDuplicated(coords)){dpoints=TRUE}
+    if (spjitter|dpoints)
+    {
+	coords[,1]=jitter(coords[,1],amount=amount)
+    	coords[,2]=jitter(coords[,2],amount=amount)
+	if(dpoints){warning("duplicated coordinates: spkde() has been executed setting spjitter to TRUE")}
+    }	    
+
+    if (any(inside.owin(coords[,1],coords[,2],win)==FALSE))
+    {
+	stop("One or more points are oustide the window of analysis. Consider using a smaller setting for amount")
+    }
+
     pppA <- ppp(coords[,1],coords[,2], window=win)
+
+
     ppAwts <- sapply(x$grids, function(x){ sum(x$PrDens) })
     if (!is.na(bins)[1]){
         bindf0 <- data.frame(origrows=1:length(ppAwts), bins=bins, auc=ppAwts, stringsAsFactors=FALSE)
