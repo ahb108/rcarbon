@@ -410,13 +410,18 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
     {
 	coords[,1]=jitter(coords[,1],amount=amount)
     	coords[,2]=jitter(coords[,2],amount=amount)
-	if(dpoints){warning("duplicated coordinates: spkde() has been executed setting spjitter to TRUE")}
+	if(dpoints){warning("Duplicated coordinates: spkde() has been executed with spjitter set to TRUE")}
     }	    
 
     if (any(inside.owin(coords[,1],coords[,2],win)==FALSE))
     {
-	print("working?")    
-	stop("One or more points are oustide the window of analysis. Consider using a smaller setting for amount")
+	in.pts=inside.owin(coords[,1],coords[,2],win)    
+        x=x[which(in.pts)]
+	coords=coords[which(in.pts),]
+	bins=bins[which(in.pts)]
+	plural=" points were "
+	if (sum(!in.pts)==1){plural=" point was "}
+	warning(paste0(sum(!in.pts),plural,"rejected as lying outside the window of analysis. Consider using a smaller setting for the agrument 'amount'"))
     }
     
     for (a in 1:length(focalyears)){
@@ -517,16 +522,21 @@ spkde <- function(x, coords, sbw, focalyear, tbw, win, cellres, bins=NA, backsig
     {
 	coords[,1]=jitter(coords[,1],amount=amount)
     	coords[,2]=jitter(coords[,2],amount=amount)
-	if(dpoints){warning("duplicated coordinates: spkde() has been executed setting spjitter to TRUE")}
+	if(dpoints){warning("Duplicated coordinates: spkde() has been executed with spjitter set to TRUE")}
     }	    
-
+    
     if (any(inside.owin(coords[,1],coords[,2],win)==FALSE))
     {
-	stop("One or more points are oustide the window of analysis. Consider using a smaller setting for amount")
+	in.pts=inside.owin(coords[,1],coords[,2],win)    
+        x=x[which(in.pts)]
+	coords=coords[which(in.pts),]
+	bins=bins[which(in.pts)]
+	plural=" points were "
+	if (sum(!in.pts)==1){plural=" point was "}
+	warning(paste0(sum(!in.pts),plural,"rejected as lying outside the window of analysis. Consider using a smaller setting for the agrument 'amount'"))
     }
 
     pppA <- ppp(coords[,1],coords[,2], window=win)
-
 
     ppAwts <- sapply(x$grids, function(x){ sum(x$PrDens) })
     if (!is.na(bins)[1]){
