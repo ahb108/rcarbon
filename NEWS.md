@@ -9,7 +9,12 @@
   * Bug fix: users no longer need to specify `nsim` when `fitonly` is set to TRUE.
 * UPDATE in `spd()`: aggregation matrix now spans beyond `timeRange` to avoid edge effects.
 * UPDATE in `calibrate()`: the new agrument `F14C` enables calibratio in F14C space.
-* UPDATE in `SPpermTest()`: function is deprecated and renamed `sptest()`
+* UPDATE in `SPpermTest()`: 
+  * function is deprecated and renamed `sptest()`
+  * function now allows user defined expression for computing the rate of change
+* UPDATE in `spd2gg()`:
+  * function is deprecated and renamed `spd2rc()`
+  * function now allows user defined expression for computing the rate of change
 * NEW: `thinDates()` function to randomly select a maximum number of dates per site, bin or phase.
 * NEW: `as.CalDates()` function converts dates in `BchronCalibratedDates` class ([Bchron](https://cran.r-project.org/web/packages/Bchron/index.html)) and `oxcAARCalibratedDatesList`class ([oxAAR](https://cran.r-project.org/web/packages/oxcAAR/index.html)) into CalDates` class (rcarbon).
 * NEW: `sampleDates()` function for sampling random dates from calibrated dates or bins.
