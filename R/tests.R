@@ -567,7 +567,7 @@ permTest <- function(x, marks,  timeRange, nsim, bins=NA, runm=NA, datenormalise
 #' For \code{SPpermTest}, use \code{\link{sptest}}.
 #'
 #' @export
-SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
+SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 .Deprecated("sptest")
  sptest(calDates=calDates, timeRange=timeRange, bins=bins, locations=locations, breaks=breaks, spatialweights=spatialweights, nsim=nsim, runm=runm,permute=permute,ncores=ncores,datenormalised=datenormalised,verbose=verbose,raw=raw)
@@ -584,6 +584,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @param locations A \code{SpatialPoints} or a \code{SpatialPointsDataFrame} class object. Rownames of each point should much the first part of the bin names supplied (e.g. "S023","S034") 
 #' @param breaks A vector of break points for defining the temporal slices.
 #' @param spatialweights A \code{spatialweights} class object defining the spatial weights between the locations (cf. \code{\link{spweights}})
+#' @param rate An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block, \code{t2} is the summed probability for next block, and \code{d} is the duration of the blocks. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).
 #' @param nsim The total number of simulations. Default is 1000.
 #' @param runm The window size of the moving window average. Must be set to \code{NA} if the rates of change are calculated from the raw SPDs. 
 #' @param permute Indicates whether the permutations should be based on the \code{"bins"} or the \code{"locations"}. Default is \code{"locations"}. 
@@ -664,7 +665,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @export
  
 
-sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
+sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 
 	###################################
@@ -795,20 +796,24 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, n
 
 	## Compute Rate of Change #3
 
-	rocaObs=t(apply(obsGridVal,1,function(x,d){
+	rocaObs=t(apply(obsGridVal,1,function(x,d,rate){
 				L=length(x)
 				res=numeric(length=L-1)
 				for (i in 1:c(L-1))
 				{
-					res[i]=(x[i+1]/x[i])^(1/d)-1
+					t2 = x[i+1]
+					t1 = x[i]
+					res[i] = eval(rate)
+# 					res[i]=(x[i+1]/x[i])^(1/d)-1
 					# If no spd for both period the rate is NA
-					if (x[i+1]==0&x[i]==0)
+					if (x[i+1]==0|x[i]==0)
 					{
 						res[i]=NA	
 					}
 				}
 				return(res)},
-				d=abs(breaks[2]-breaks[1])))
+				d=abs(breaks[2]-breaks[1]),
+				rate=rate))
 	#if single transition transpose matrix:
 	if (nBreaks==2){rocaObs=t(rocaObs)} 
 
@@ -873,20 +878,23 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, n
 
 			## Compute Rate of Change ##
 
-			rocaSim=t(apply(simGridVal,1,function(x,d){
+			rocaSim=t(apply(simGridVal,1,function(x,d,rate){
 						L=length(x)
 						res=numeric(length=L-1)
 						for (i in 1:c(L-1))
 						{
-							res[i]=(x[i+1]/x[i])^(1/d)-1
-
-							if (x[i+1]==0&x[i]==0)
+							t2 = x[i+1]
+							t1 = x[i]
+							res[i] = eval(rate)
+# 							res[i]=(x[i+1]/x[i])^(1/d)-1
+							if (x[i+1]==0|x[i]==0)
 							{
 								res[i]=NA
 							}
 						}
 						return(res)},
-						d=abs(breaks[2]-breaks[1])))
+						d=abs(breaks[2]-breaks[1]),
+						rate=rate))
 
 			lo=rocaObs<rocaSim	    
 			hi=rocaObs>rocaSim
@@ -962,19 +970,23 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, n
 
 
 			##Compute Rate of Change
-			rocaSim=t(apply(simGridVal,1,function(x,d){
+			rocaSim=t(apply(simGridVal,1,function(x,d,rate){
 						L=length(x)
 						res=numeric(length=L-1)
 						for (i in 1:c(L-1))
 						{
-							res[i]=(x[i+1]/x[i])^(1/d)-1
-							if (x[i+1]==0&x[i]==0)
+							t2 = x[i+1]
+							t1 = x[i]
+							res[i] = eval(rate)
+# 							res[i]=(x[i+1]/x[i])^(1/d)-1
+							if (x[i+1]==0|x[i]==0)
 							{
 								res[i]=NA	
 							}
 						}
 						return(res)},
-						d=abs(breaks[2]-breaks[1])))
+						d=abs(breaks[2]-breaks[1]),
+						rate=rate))
 
 			# if single transition transpose matrix:
 			if (nBreaks==2) {rocaSim=t(rocaSim)}

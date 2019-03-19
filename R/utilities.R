@@ -326,16 +326,15 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
     return(res)   
 }
 
-#' @title Compute geometric growth rates from SPDs
+#' @title Computes rates of change from SPDs
 #'
-#' @description Function for computing the geometric growth rates between abutting user-defined time-blocks.
+#' @description Function for computing rates of change between abutting user-defined time-blocks.
 #'
 #' @param spd Summed Probability Distribution obtained using the \code{\link{spd}} function. 
 #' @param breaks A vector giving the breakpoints between the time-blocks.
+#' @param rate An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block, \code{t2} is the summed probability for next block, and \code{d} is the duration of the blocks. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).
 #'
-#' @details The function computes the growth rate between abutting phases as \eqn{(X_{t}/X_{t+1})^{(1/d)}-1}, where \eqn{X_{t}} is the summed probability of radiocarbon dates in the block \eqn{t}, and \eqn{d} is the duration of the time-blocks. 
-#'
-#' @return An object of class \code{spdGG} containing the total summed probability for each time-block and the geometric growth rate between abutting blocks.
+#' @return An object of class \code{spdRC} containing the total summed probability for each time-block and the rate of change between abutting blocks.
 #'
 #' @examples
 #' \dontrun{
@@ -343,14 +342,14 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
 #' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
 #' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 #' emedyd.spd <- spd(caldates,bins,timeRange=c(16000,9000))
-#' emedyd.gg <- spd2gg(emedyd.spd,breaks=seq(16000,9000,-1000))
+#' emedyd.gg <- spd2rc(emedyd.spd,breaks=seq(16000,9000,-1000))
 #' plot(emedyd.gg)
 #' }
 
 #' @import stats
 #' @export
 
-spd2gg <- function(spd,breaks)
+spd2rc <- function(spd,breaks,rate=expression((t2/t1)^(1/d)-1))
 {
 	require(rcarbon)	
 	if (length(unique(round(abs(diff(breaks)))))!=1)
@@ -371,10 +370,13 @@ spd2gg <- function(spd,breaks)
 	for (i in 1:(nBreaks-1))
 	{
 		d=abs(breaks[i+1]-breaks[i]) 	
-		res[i]=(obs[i+1]/obs[i])^(1/d)-1
+		t1 = obs[i]
+		t2 = obs[i+1]
+		res[i] = eval(rate)
+# 		res[i]=(obs[i+1]/obs[i])^(1/d)-1
 	}
-	res=list(sumblock=obs,geomg=res,breaks=breaks)
-	class(res) <- append(class(res),"spdGG")
+	res=list(sumblock=obs,roca=res,breaks=breaks)
+	class(res) <- append(class(res),"spdRC")
 	return(res)   
 }
 

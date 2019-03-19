@@ -1093,14 +1093,14 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 
 
 
-#' @title Plot \code{spdGG} class objects 
+#' @title Plot \code{spdRC} class objects 
 #'
-#' @description Plot calibrated geometric growth rates.
-#' @param x \code{spdGG} class object containing geometric growth rates.
+#' @description Plot rates of change between time-blocks
+#' @param x \code{spdRC} class object containing geometric growth rates.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param ... Additional arguments affecting the plot. 
 #'
-#' @seealso \code{\link{spd2gg}}
+#' @seealso \code{\link{spd2rc}}
 #'
 #' @import stats
 #' @import grDevices
@@ -1108,11 +1108,11 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #' @import utils
 #' @export  
 
-plot.spdGG<- function(x,calendar="BP",...)
+plot.spdRC<- function(x,calendar="BP",...)
 {
 	breaks=x$breaks
 	obs=x$sumblock
-	res=x$geomg
+	res=x$roca
 	par(mar=c(4,4,4,4))
 	nn = paste(breaks[-length(breaks)],breaks[-1],sep=" to ")
 	xxlab="Years cal BP"
@@ -1132,7 +1132,7 @@ plot.spdGG<- function(x,calendar="BP",...)
 	lines(xx,res,lwd=2,col="darkgreen")
 	points(xx,res,pch=20,col="darkgreen")
 	axis(4,col="darkgreen", col.axis="darkgreen")
-	mtext(side=4,"geometric growth rate",col="darkgreen",line=2)
+	mtext(side=4,"rate of change",col="darkgreen",line=2)
 	abline(h=0,lty=2,col="blue")
 }
 

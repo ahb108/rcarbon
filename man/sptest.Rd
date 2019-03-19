@@ -5,8 +5,9 @@
 \title{Spatial Permutation Test of summed probability distributions.}
 \usage{
 sptest(calDates, timeRange, bins, locations, breaks, spatialweights,
-  nsim = 1000, runm = NA, permute = "locations", ncores = 1,
-  datenormalised = FALSE, verbose = TRUE, raw = FALSE)
+  rate = expression((t2/t1)^(1/d) - 1), nsim = 1000, runm = NA,
+  permute = "locations", ncores = 1, datenormalised = FALSE,
+  verbose = TRUE, raw = FALSE)
 }
 \arguments{
 \item{calDates}{A \code{CalDates} class object.}
@@ -20,6 +21,8 @@ sptest(calDates, timeRange, bins, locations, breaks, spatialweights,
 \item{breaks}{A vector of break points for defining the temporal slices.}
 
 \item{spatialweights}{A \code{spatialweights} class object defining the spatial weights between the locations (cf. \code{\link{spweights}})}
+
+\item{rate}{An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block, \code{t2} is the summed probability for next block, and \code{d} is the duration of the blocks. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).}
 
 \item{nsim}{The total number of simulations. Default is 1000.}
 

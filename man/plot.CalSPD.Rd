@@ -4,11 +4,10 @@
 \alias{plot.CalSPD}
 \title{Plot a summed probability distribution}
 \usage{
-\method{plot}{CalSPD}(x, runm = NA, calendar = "BP",
-  type = "standard", xlim = NA, ylim = NA,
-  ylab = "Summed Probability", spdnormalised = FALSE,
-  rescale = FALSE, fill.p = "grey75", border.p = NA, xaxt = "s",
-  yaxt = "s", add = FALSE, ...)
+plot.CalSPD(x, runm = NA, calendar = "BP", type = "standard",
+  xlim = NA, ylim = NA, ylab = "Summed Probability",
+  spdnormalised = FALSE, rescale = FALSE, fill.p = "grey75",
+  border.p = NA, xaxt = "s", yaxt = "s", add = FALSE, ...)
 }
 \arguments{
 \item{x}{A \code{CalSPD} class object.}
