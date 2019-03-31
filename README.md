@@ -59,6 +59,8 @@ Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South Americ
 
 Roberts, N., Woodbridge, J., Palmisano, A., Bevan, A., Fyfe, R., & Shennan, S. 2019. [Mediterranean landscape change during the Holocene: Synthesis, comparison and regional trends in population, land cover and climate](https://doi:10.1177/0959683619826697). The Holocene, 0959683619826697. 
 
+Schauer, P., Shennan, S., Bevan, A., Cook, G., Edinborough, K., Fyfe, R., et al. (2019). [Supply and demand in prehistory? Economics of Neolithic mining in northwest Europe](https://doi:10.1016/j.jaa.2019.03.001). Journal of Anthropological Archaeology, 54, 149–160. doi:10.1016/j.jaa.2019.03.001
+
 Stoddart, S., Woodbridge, J., Palmisano, A., Mercuri, A. M., Mensing, S. A., Colombaroli, D., et al. (2019). [Tyrrhenian central Italy: Holocene population and landscape ecology.](https://doi.org/10.1177/0959683619826696) The Holocene, 0959683619826696. doi:10.1177/0959683619826696
 
 Szpak, P., Savelle, J. M., Conolly, J., & Richards, M. P. (2019). [Variation in late holocene marine environments in the Canadian Arctic Archipelago: Evidence from ringed seal bone collagen stable isotope compositions](https://doi.org/10.1016/j.quascirev.2019.03.016). Quaternary Science Reviews, 211, 136–155. doi:10.1016/j.quascirev.2019.03.016
