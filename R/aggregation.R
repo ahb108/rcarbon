@@ -288,7 +288,7 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
 #'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
 #'s = sampleDates(x,bins=bins,nsim=100,boot=FALSE)
 #'ckdeNorm = ckde(s1,timeRange=c(16000,9000),bw=100,normalised=TRUE)
-#'plot(ckdeNorm,type='multiline',cal='BCAD')
+#'plot(ckdeNorm,type='multiline',calendar='BCAD')
 #'
 #' @seealso \code{\link{sampleDates}}
 #'
