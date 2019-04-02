@@ -4,9 +4,10 @@
 \alias{permTest}
 \title{Random mark permutation test for SPDs}
 \usage{
-permTest(x, marks, timeRange, nsim, bins = NA, runm = NA,
-  datenormalised = FALSE, spdnormalised = FALSE, raw = FALSE,
-  verbose = TRUE)
+permTest(x, marks, timeRange, backsight = 10,
+  changexpr = expression((t1/t0)^(1/d) - 1), nsim, bins = NA,
+  runm = NA, datenormalised = FALSE, spdnormalised = FALSE,
+  raw = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{x}{A \code{CalDates} class object containing the calibrated radiocarbon dates.}
@@ -14,6 +15,10 @@ permTest(x, marks, timeRange, nsim, bins = NA, runm = NA,
 \item{marks}{A numerical or character vector containing the marks associated to each radiocarbon date.}
 
 \item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP.}
+
+\item{backsight}{A single numeric value defining the distance in time between the focal year and the backsight year for computing the rate of change. Default is 10.}
+
+\item{changexpr}{An expression for calculating the rate of change in SPD between the focal year and a backsight year. Available input options are t1 (the SPD for the focal year), t0 (the SPD for the backsight year), d (the distance between t0 and t1), and any other standard constants and mathematical operators. A sensible default is provided.}
 
 \item{nsim}{Number of random permutations}
 

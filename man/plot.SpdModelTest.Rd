@@ -4,22 +4,24 @@
 \alias{plot.SpdModelTest}
 \title{Plot result of Monte-Carlo simulation of observed versus modelled SPDs}
 \usage{
-plot.SpdModelTest(x, calendar = "BP", ylim = NA, xlim = NA,
-  col.obs = "black", lwd.obs = 0.5, xaxs = "i", yaxs = "i",
-  bbty = "f", bbtyRet = TRUE, drawaxes = TRUE, ...)
+plot.SpdModelTest(x, calendar = "BP", type = "spd", ylim = NA,
+  xlim = NA, col.obs = "black", lwd.obs = 0.5, xaxs = "i",
+  yaxs = "i", bbty = "f", bbtyRet = TRUE, drawaxes = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
+\item{type}{Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart.}
+
 \item{ylim}{the y limits of the plot.}
 
 \item{xlim}{the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).}
 
-\item{col.obs}{Line colour for the observed SPD}
+\item{col.obs}{Line colour for the observed SPD.}
 
-\item{lwd.obs}{Line width for the observed SPD}
+\item{lwd.obs}{Line width for the observed SPD.}
 
 \item{xaxs}{The style of x-axis interval calculation (see \code{\link{par}})}
 

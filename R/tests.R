@@ -414,6 +414,8 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 #' @param x A \code{CalDates} class object containing the calibrated radiocarbon dates.
 #' @param marks A numerical or character vector containing the marks associated to each radiocarbon date.
 #' @param timeRange  A vector of length 2 indicating the start and end date of the analysis in cal BP.
+#' @param backsight A single numeric value defining the distance in time between the focal year and the backsight year for computing the rate of change. Default is 10.
+#' @param changexpr An expression for calculating the rate of change in SPD between the focal year and a backsight year. Available input options are t1 (the SPD for the focal year), t0 (the SPD for the backsight year), d (the distance between t0 and t1), and any other standard constants and mathematical operators. A sensible default is provided.
 #' @param bins  A vector indicating which bin each radiocarbon date is assigned to.  
 #' @param nsim Number of random permutations 
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied.Default is NA.  
@@ -456,8 +458,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 #' @import doParallel
 #' @export
 
-
-permTest <- function(x, marks, timeRange, nsim, bins=NA, runm=NA, datenormalised=FALSE, spdnormalised=FALSE, raw=FALSE, verbose=TRUE){
+permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/t0)^(1/d)-1),nsim, bins=NA, runm=NA, datenormalised=FALSE, spdnormalised=FALSE, raw=FALSE, verbose=TRUE){
 
     if (is.na(bins[1])){ bins <- as.character(1:nrow(x$metadata)) }
     marks <- as.character(marks) 
@@ -513,6 +514,7 @@ permTest <- function(x, marks, timeRange, nsim, bins=NA, runm=NA, datenormalised
         }
         GroupList[b] <- marks[index][1]
     }
+
     if (verbose & length(binNames)>1){ close(pb) }
     observedSPD <- vector("list",length=length(unique(GroupList)))
     names(observedSPD) <- unique(GroupList)
@@ -562,38 +564,101 @@ permTest <- function(x, marks, timeRange, nsim, bins=NA, runm=NA, datenormalised
     }
     names(simulatedSPD) <- unique(GroupList)
     if (verbose){ close(pb) }
-    ## Statistics
-    simulatedCIlist <- vector("list",length=length(unique(GroupList)))
+
+    #compute rates of change
+    timeSequence = timeRange[1]:timeRange[2]
+
+    foo = function(spd,backsight,timeSequence,changexpr)
+    {
+	    obs=rep(NA,length(timeSequence))
+
+	    for (i in 1:c(length(obs)-backsight))
+	    {
+		    d=backsight 	
+		    t0 = spd[i]
+		    t1 = spd[i+backsight]
+		    obs[i+backsight] = eval(changexpr)
+	    }
+	    return(obs)
+    }
+
+  observedROC = simulatedROC = vector("list",length=length(observedSPD))
+
+  for (i in 1:length(observedSPD))
+  {
+    tmp=foo(observedSPD[[i]][,2],backsight=backsight,timeSequence=timeSequence,changexpr=changexpr)
+    observedROC[[i]] = data.frame(calBP=timeSequence,roc=tmp)
+    names(observedROC)[[i]]=names(observedSPD)[[i]]
+    simulatedROC[[i]] = apply(simulatedSPD[[i]],2,foo,backsight=backsight,timeSequence=timeSequence,changexpr=changexpr)
+  }
+
+
+    ## Simulation Envelope
+    simulatedCIlist = simulatedCIlist.roc = vector("list",length=length(unique(GroupList)))
     for (d in 1:length(unique(GroupList))){
         simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975)))
+        simulatedCIlist.roc[[d]] <- cbind(apply(simulatedROC[[d]],1,quantile,prob=c(0.025),na.rm=TRUE), apply(simulatedROC[[d]],1,quantile,prob=c(0.975),na.rm=TRUE))
         names(simulatedCIlist) <- unique(GroupList)
+        names(simulatedCIlist.roc) <- unique(GroupList)
     }
-    pValueList <- numeric(length=length(simulatedSPD))
+
+
+
+
+    ## Compute Global P-value
+    pValueList = pValueList.roc = numeric(length=length(simulatedSPD))
+
     for (a in 1:length(simulatedSPD)){
         zscoreMean <- apply(simulatedSPD[[a]],1,mean)
         zscoreSD <- apply(simulatedSPD[[a]],1,sd)
+        zscoreMean.roc <- apply(simulatedROC[[a]],1,mean,na.rm=TRUE)
+        zscoreSD.roc <- apply(simulatedROC[[a]],1,sd,na.rm=TRUE)
+
         tmp.sim <- t(apply(simulatedSPD[[a]],1,function(x){ return((x - mean(x))/sd(x)) }))
-        tmp.sim[is.na(tmp.sim)] <- 0
+        tmp.sim.roc <- t(apply(simulatedROC[[a]],1,function(x){ return((x - mean(x))/sd(x)) }))
+#         tmp.sim[is.na(tmp.sim)] <- 0
+
         tmp.obs <- observedSPD[[a]]
         tmp.obs[,2] <- (tmp.obs[,2] - zscoreMean) / zscoreSD
-        tmp.obs[is.na(tmp.obs[,2]),2] <- 0
+#         tmp.obs[is.na(tmp.obs[,2]),2] <- 0
+        tmp.obs.roc <- observedROC[[a]]
+        tmp.obs.roc[,2] <- (tmp.obs.roc[,2] - zscoreMean.roc) / zscoreSD.roc
+
         tmp.ci <- t(apply(tmp.sim,1, quantile, prob=c(0.025,0.975)))
+        tmp.ci.roc <- t(apply(tmp.sim.roc,1, quantile, prob=c(0.025,0.975),na.rm=TRUE))
+
         expectedstatistic <- abs(apply(tmp.sim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=tmp.ci[,1])) + apply(tmp.sim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=tmp.ci[,2])   
+        expectedstatistic.roc <- abs(apply(tmp.sim.roc,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=tmp.ci.roc[,1])) + apply(tmp.sim.roc,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=tmp.ci.roc[,2])   
         lower <- tmp.obs[,2] - tmp.ci[,1]
         indexLow <- which(tmp.obs[,2] < tmp.ci[,1])
         higher <- tmp.obs[,2] - tmp.ci[,2]
         indexHi <- which(tmp.obs[,2] > tmp.ci[,2])
+        lower.roc <- tmp.obs.roc[,2] - tmp.ci.roc[,1]
+        indexLow.roc <- which(tmp.obs.roc[,2] < tmp.ci.roc[,1])
+        higher.roc <- tmp.obs.roc[,2] - tmp.ci.roc[,2]
+        indexHi.roc <- which(tmp.obs.roc[,2] > tmp.ci.roc[,2])
+
         observedStatistic <- sum(abs(lower[indexLow]))+sum(higher[indexHi])
+        observedStatistic.roc <- sum(abs(lower.roc[indexLow.roc]))+sum(higher.roc[indexHi.roc])
+
         pValueList[[a]] <- 1
+        pValueList.roc[[a]] <- 1
+
         if (observedStatistic>0){    
             pValueList[[a]] <-c(length(expectedstatistic[expectedstatistic > observedStatistic])+1)/c(nsim+1)
-#	1 - c(length(expectedstatistic[expectedstatistic <= observedStatistic])+1)/c(length(expectedstatistic)+1)
-
         }
+        if (observedStatistic.roc>0){    
+            pValueList.roc[[a]] <-c(length(expectedstatistic.roc[expectedstatistic.roc > observedStatistic.roc])+1)/c(nsim+1)
+        }
+
         names(pValueList) <- unique(GroupList)
-    }        
+    } 
+
     res <- list(observed=observedSPD, envelope=simulatedCIlist, pValueList=pValueList)
-    
+    res$observed.roc=observedROC
+    res$envelope.roc=simulatedCIlist.roc
+    res$pValueList.roc=pValueList.roc
+
     metadata=vector("list",length=length(unique(GroupList)))
     names(metadata) = unique(GroupList)
 	for (k in 1:length(unique(GroupList)))
@@ -604,7 +669,12 @@ permTest <- function(x, marks, timeRange, nsim, bins=NA, runm=NA, datenormalised
 	}
     res$nsim = nsim
     res$metadata = metadata    
-    if (raw){ res$raw <- simulatedSPD }
+    res$backsight = backsight
+    if (raw)
+    {
+	    res$raw <- simulatedSPD
+	    res$raw.row <- simulatedROC
+    }
     class(res) <- "SpdPermTest"
     if (verbose){ print("Done.") }
     return(res)
@@ -1208,7 +1278,7 @@ p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE,plot=FALSE)
 #' @description \code{summary} method for class "\code{SpdModelTest}" 
 #'
 #' @param object A \code{SpdModelTest} class object produced using the \code{link{modelTest}} function.
-#' @param which Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.
+#' @param type Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.
 #' @param ... Ignored
 #'
 #' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope.
@@ -1217,25 +1287,25 @@ p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE,plot=FALSE)
 #' @import stats
 #' @export
 
-summary.SpdModelTest<-function(object,which='spd',...) {
+summary.SpdModelTest<-function(object,type='spd',...) {
 
-	if (!which%in%c('spd','roc'))
+	if (!type%in%c('spd','roc'))
 	{
-	 stop("The argument which should be either 'spd' or 'roc'.")
+	 stop("The argument 'type' should be either 'spd' or 'roc'.")
 	}
 
 	cat("'modelTest()' function summary:\n")
 	cat("\n") 
 	cat(paste("Number of radiocarbon dates: ",object$n,"\n",sep=""))
 	cat(paste("Number of bins: ",object$nbins,"\n",sep=""))
-	if(which=='roc'){cat(paste("Backsight size: ",object$backsight,"\n",sep=""))}
+	if(type=='roc'){cat(paste("Backsight size: ",object$backsight,"\n",sep=""))}
 	cat("\n")
 	cat(paste("Statistical Significance computed using ",object$nsim," simulations. \n",sep=""))
-	if(which=='spd'){cat(paste("Global p-value: ",round(object$pval,5),".\n",sep=""))}
-	if(which=='roc'){cat(paste("Global p-value (rate of change): ",round(object$pval.roc,5),".\n",sep=""))}
+	if(type=='spd'){cat(paste("Global p-value: ",round(object$pval,5),".\n",sep=""))}
+	if(type=='roc'){cat(paste("Global p-value (rate of change): ",round(object$pval.roc,5),".\n",sep=""))}
 	cat("\n")
 
-	if (which=='spd')
+	if (type=='spd')
 	{
 	obs <- object$result[,1:2]
 	envelope <- object$result[,3:4]
@@ -1243,7 +1313,7 @@ summary.SpdModelTest<-function(object,which='spd',...) {
 	busts <- which(obs$PrDens<envelope[,1])
 	}
 
-	if (which=='roc')
+	if (type=='roc')
 	{
 	obs <- object$result.roc[,1:2]
 	envelope <- object$result.roc[,3:4]
@@ -1339,6 +1409,7 @@ summary.SpdModelTest<-function(object,which='spd',...) {
 #' @description \code{summary} method for class "\code{SpdPermTest}" 
 #'
 #' @param object A \code{SpdPermTest} class object produced using the \code{link{permTest}} function.
+#' @param type Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.
 #' @param ... Ignored
 #'
 #' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
@@ -1347,46 +1418,56 @@ summary.SpdModelTest<-function(object,which='spd',...) {
 #' @import stats
 #' @export
 
-summary.SpdPermTest<-function(object,...) {
+summary.SpdPermTest<-function(object,type='spd',...) {
+
+	if (!type%in%c('spd','roc'))
+	{
+	 stop("The argument 'type' should be either 'spd' or 'roc'.")
+	}
 
 	cat("'permTest()' function summary:\n")
 	cat("\n") 
 	cat(paste("Number of sets: ",length(object$observed),"\n",sep=""))
+	if(type=='roc'){cat(paste("Backsight size: ",object$backsight,"\n",sep=""))}
 	cat(paste("Statistical Significance computed using ",object$nsim," simulations. \n",sep=""))
 	cat("\n")
 	
 	for (i in 1:length(object$observed))
 	{
 
-		cat(paste("--- ",names(object$observed)[i]," ---\n",sep=""))
+		if (type=='spd'){cat(paste("--- ",names(object$observed)[i]," ---\n",sep=""))}
+		if (type=='roc'){cat(paste("--- ",names(object$observed.roc)[i]," ---\n",sep=""))}
 		cat(paste("Number of radiocarbon dates:",object$metadata[[i]][1],"\n",sep=""))
 		cat(paste("Number of bins:",object$metadata[[i]][2],"\n",sep=""))
 		cat("\n")
-		cat(paste("Global p-value: ",round(object$pValueList[i],5),"\n",sep=""))
+		if(type=='spd'){cat(paste("Global p-value: ",round(object$pValueList[i],5),"\n",sep=""))}
+		if(type=='roc'){cat(paste("Global p-value (rate of change): ",round(object$pValueList.roc[i],5),"\n",sep=""))}
 		cat("\n")
 
-		obs <- object$observed[[i]]
-		envelope <-object$envelope[[i]]
-		booms <- which(obs$PrDens>envelope[,2])
-		busts <- which(obs$PrDens<envelope[,1])
+		obs <- object$observed.roc[[i]]
+		envelope <-object$envelope.roc[[i]]
+		booms <- which(obs[,2]>envelope[,2])
+		busts <- which(obs[,2]<envelope[,1])
 
 		if (length(booms)>0)
 		{
 			cat(paste("Signficant positive local deviations at:\n"))
 			i=1
-			while (i < length(obs$calBP))
+			while (i < length(obs[,1]))
 			{	
-				if(obs$PrDens[i]>envelope[i,2])
+				if(!is.na(obs[i,2]))
 				{
-					ss=obs$calBP[i]
-					while(obs$PrDens[i]>envelope[i,2])
+				if(obs[i,2]>envelope[i,2])
+				{
+					ss=obs[i,1]
+					while(obs[i,2]>envelope[i,2])
 					{
-						ee=obs$calBP[i]
+						ee=obs[i,1]
 						i=i+1
-						if (i>length(obs$calBP))
+						if (i>length(obs[,1]))
 						{
-							i = length(obs$calBP)
-							ee=obs$calBP[i]
+							i = length(obs[,1])
+							ee=obs[i,1]
 							break()
 						}
 					}
@@ -1395,8 +1476,8 @@ summary.SpdPermTest<-function(object,...) {
 					if (ss==ee)	
 						cat(paste(ss," BP \n",sep=""))
 				}
+				}
 				i = i+1
-
 			}
 		}
 
@@ -1414,19 +1495,21 @@ summary.SpdPermTest<-function(object,...) {
 
 
 			i=1
-			while (i < length(obs$calBP))
-			{	
-				if(obs$PrDens[i]<envelope[i,1])
+			while (i < length(obs[,1]))
+			{
+				if(!is.na(obs[i,2]))
 				{
-					ss=obs$calBP[i]
-					while(obs$PrDens[i]<envelope[i,1])
+				if(obs[i,2]<envelope[i,1])
+				{
+					ss=obs[i,1]
+					while(obs[i,2]<envelope[i,1])
 					{
-						ee=obs$calBP[i]
+						ee=obs[i,1]
 						i=i+1
-						if (i>length(obs$calBP))
+						if (i>length(obs[,1]))
 						{
-							i = length(obs$calBP)
-							ee=obs$calBP[i]
+							i = length(obs[,1])
+							ee=obs[i,1]
 							break()
 						}
 					}
@@ -1435,8 +1518,8 @@ summary.SpdPermTest<-function(object,...) {
 					if (ss==ee)	
 						cat(paste(ss," BP \n",sep=""))
 				}
+				}
 				i = i+1
-
 			}
 		}
 

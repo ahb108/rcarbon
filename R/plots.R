@@ -169,7 +169,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #'
 #' @param x A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
-#' @param roc Whether the output should display the SPD (FALSE) or the associated rate of change (TRUE). Default is FALSE.
+#' @param type Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart. 
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param ylim the y limits of the plot.
 #' @param col.obs Line colour for the observed SPD.
@@ -190,11 +190,17 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @import utils
 #' @export 
 
-plot.SpdModelTest <- function(x, calendar="BP", roc=FALSE, ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", bbtyRet=TRUE, drawaxes=TRUE, ...){
+plot.SpdModelTest <- function(x, calendar="BP", type='spd', ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", bbtyRet=TRUE, drawaxes=TRUE, ...){
 
 	obs <- x$result[,1:2]
 	envelope <- x$result[,3:4]
-	if (roc)
+	
+	if (!type%in%c('spd','roc'))
+	{
+	 stop("The argument 'type' should be either 'spd' or 'roc'.")
+	}
+
+	if (type=='roc')
 	{
 		obs <- x$result.roc[,1:2]
 		envelope <- x$result.roc[,3:4]
@@ -220,7 +226,7 @@ plot.SpdModelTest <- function(x, calendar="BP", roc=FALSE, ylim=NA, xlim=NA, col
 	if (any(is.na(ylim)))
 		{
 		       	ylim <- c(0, max(envelope[,"hi"], obs$PrDens,na.rm=TRUE)*1.1) 
-			if (roc) {ylim[1] <- min(c(envelope[,"lo"],obs$PrDens),na.rm=TRUE)}
+			if (type=='roc') {ylim[1] <- min(c(envelope[,"lo"],obs$PrDens),na.rm=TRUE)}
 		}
 	
 	booms <- which(obs$PrDens>envelope[,2])
@@ -229,7 +235,7 @@ plot.SpdModelTest <- function(x, calendar="BP", roc=FALSE, ylim=NA, xlim=NA, col
 
 
   	ylab = 'Summed Probability'
-	if (roc) 
+	if (type=='roc') 
 	{
 		ylab = 'Rate of Change'
 		colpts = rep(col.obs,length(obs$PrDens))
@@ -240,7 +246,7 @@ plot.SpdModelTest <- function(x, calendar="BP", roc=FALSE, ylim=NA, xlim=NA, col
 
 	if (drawaxes & bbty != "n"){
 			plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab=ylab, type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE,...)
-		if(roc)
+		if(type=='roc')
 		{
 			abline(h=0,lty=2,lwd=1)
 		}
@@ -248,7 +254,7 @@ plot.SpdModelTest <- function(x, calendar="BP", roc=FALSE, ylim=NA, xlim=NA, col
 	} else if (bbty != "n")
 	{
 		plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
-		if (roc)
+		if (type=='roc')
 		{
 		abline(h=0,lty=2,lwd=1)
 		}
@@ -688,6 +694,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'
 #' @param x A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})
 #' @param focalm Value specifying the name of the focal mark (group) to be plotted. 
+#' @param type Whether to display SPDs ('spd') or rates of change ('roc'). Default is 'spd'.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param ylim the y limits of the plot.
@@ -707,130 +714,152 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @import utils
 #' @export 
 
-plot.SpdPermTest <- function(x, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
+plot.SpdPermTest <- function(x, focalm=1, type='spd', calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
-    obs <- x$observed[[focalm]]
-    if (calendar=="BP"){
-        obs$Years <- obs$calBP
-        xlabel <- "Years cal BP"
-        if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
-    } else if (calendar=="BCAD"){
-        obs$Years <- BPtoBCAD(obs$calBP)
-        xlabel <- "Years BC/AD"
-	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
-	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
-        if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
-    } else {
-        stop("Unknown calendar type")
-    }
-    envelope <- x$envelope[[focalm]]
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)*1.1) }
-    booms <- which(obs$PrDens>envelope[,2])
-    busts <- which(obs$PrDens<envelope[,1])
-    baseline <- rep(NA,nrow(obs))
-    if (drawaxes & bbty != "n"){
-        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
-        #axis(side=1,padj=-1)
-        axis(side=2,padj=1)
-    } else if (bbty != "n"){
-        plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
-    }
-    boomPlot <- baseline
-    if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
-    bustPlot <- baseline
-    if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }                 
-    boomBlocks <- vector("list")
-    counter <- 0
-    state <- "off"
-    for (i in 1:length(boomPlot)){
-        if (!is.na(boomPlot[i])&state=="off"){
-            counter <- counter+1
-            boomBlocks <- c(boomBlocks,vector("list",1))
-            boomBlocks[[counter]] <- vector("list",2)
-            boomBlocks[[counter]][[1]] <- boomPlot[i]
-            boomBlocks[[counter]][[2]] <- obs[i,"Years"]
-            state <- "on"
-        }
-        if (state=="on"){
-            if (!is.na(boomPlot[i])){
-                boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
-                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
-            }
-            if (is.na(boomPlot[i])){
-                state <- "off"
-            }
-        }    
-    }
-    bustBlocks <- vector("list")
-    counter <- 0
-    state <- "off"
-    for (i in 1:length(bustPlot)){
-        if (!is.na(bustPlot[i])&state=="off"){
-            counter <- counter+1
-            bustBlocks <- c(bustBlocks,vector("list",1))
-            bustBlocks[[counter]] <- vector("list",2)
-            bustBlocks[[counter]][[1]] <- bustPlot[i]
-            bustBlocks[[counter]][[2]] <- obs[i,"Years"]
-            state <- "on"
-        }
-        if (state=="on"){
-            if (!is.na(bustPlot[i])){
-                bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
-                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
-            }
-            if (is.na(bustPlot[i])){
-                state <- "off"
-            }
-        }    
-    }
-    if (length(booms)>0){
-        for (i in 1:length(boomBlocks)){
-            if (bbty=="f"){
-                polygon(c(boomBlocks[[i]][[2]],rev(boomBlocks[[i]][[2]])),c(rep(+100,length(boomBlocks[[i]][[1]])),rep(-100,length(boomBlocks[[i]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
-            } else if (bbty %in% c("s","b","n")){
-            } else {
-                stop("Incorrect bbty argument.")
-            }
-        }
-    }
-    if (length(busts)>0){
-        for (i in 1:length(bustBlocks)){
-            if (bbty=="f"){
-                polygon(c(bustBlocks[[i]][[2]],rev(bustBlocks[[i]][[2]])),c(rep(+100,length(bustBlocks[[i]][[1]])),rep(-100,length(bustBlocks[[i]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
-            } else if (bbty %in% c("s","b","n")){
-            } else {
-                stop("Incorrect bbty argument.")
-            }
-        }
-    }  
-    if (bbty != "n"){
-        polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=col.env, border=NA)
-        box()
-    }
-    #if (drawaxes & bbty != "n"){
-    #    axis(side=1, at=seq(max(obs[,"Years"]), min(obs[,"Years"]),-100), labels=NA, tck=-0.01)
-    #}
 
-    if (drawaxes & bbty != "n" & calendar=="BP"){
-	rr <- range(pretty(obs[,"Years"]))    
-        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
-    } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
-	yy <-  obs[,"Years"]
-	rr <- range(pretty(yy))    
-        prettyTicks <- seq(rr[1],rr[2],+100)
-	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
-        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+	if (!type%in%c('spd','roc'))
+	{
+	 stop("The argument 'type' should be either 'spd' or 'roc'.")
+	}
 
-        py <- pretty(yy)
-	pyShown <- py
-	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
-	py[which(py>1)] <-  py[which(py>1)]-1
-	axis(side=1,at=py,labels=abs(pyShown))
-    }
-    bbp <- list(booms=boomBlocks, busts=bustBlocks)
-    class(bbp) <- c("BBPolygons",class(bbp))
-    if (bbty %in% c("n","b")){ return(bbp) }
+	obs <- x$observed[[focalm]]
+	envelope <- x$envelope[[focalm]]
+	ylab <- 'Summed Probability'
+
+	if (type=='roc')
+	{
+		ylab <- 'Rate of Change'
+		obs <- x$observed.roc[[focalm]]
+		envelope <- x$envelope.roc[[focalm]]
+		colnames(obs)<-c("calBP","PrDens")
+		colnames(envelope)<-c("lo","hi")
+	}
+
+	if (calendar=="BP"){
+		obs$Years <- obs$calBP
+		xlabel <- "Years cal BP"
+		if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
+	} else if (calendar=="BCAD"){
+		obs$Years <- BPtoBCAD(obs$calBP)
+		xlabel <- "Years BC/AD"
+		if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
+		if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
+		if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
+	} else {
+		stop("Unknown calendar type")
+	}
+
+
+	if (any(is.na(ylim)))
+		{
+		       	ylim <- c(0, max(envelope[,2], obs$PrDens,na.rm=TRUE)*1.1) 
+			if (type=='roc') {ylim[1] <- min(c(envelope[,1],obs$PrDens),na.rm=TRUE)}
+		}
+
+	booms <- which(obs$PrDens>envelope[,2])
+	busts <- which(obs$PrDens<envelope[,1])
+	baseline <- rep(NA,nrow(obs))
+	if (drawaxes & bbty != "n"){
+		plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab=ylab, type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+		axis(side=2,padj=1)
+		if (type=='roc'){abline(h=0,lty=2)}
+	} else if (bbty != "n"){
+		plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+		if (type=='roc'){abline(h=0,lty=2)}
+	}
+	boomPlot <- baseline
+	if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
+	bustPlot <- baseline
+	if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }                 
+	boomBlocks <- vector("list")
+	counter <- 0
+	state <- "off"
+	for (i in 1:length(boomPlot)){
+		if (!is.na(boomPlot[i])&state=="off"){
+			counter <- counter+1
+			boomBlocks <- c(boomBlocks,vector("list",1))
+			boomBlocks[[counter]] <- vector("list",2)
+			boomBlocks[[counter]][[1]] <- boomPlot[i]
+			boomBlocks[[counter]][[2]] <- obs[i,"Years"]
+			state <- "on"
+		}
+		if (state=="on"){
+			if (!is.na(boomPlot[i])){
+				boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
+				boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
+			}
+			if (is.na(boomPlot[i])){
+				state <- "off"
+			}
+		}    
+	}
+	bustBlocks <- vector("list")
+	counter <- 0
+	state <- "off"
+	for (i in 1:length(bustPlot)){
+		if (!is.na(bustPlot[i])&state=="off"){
+			counter <- counter+1
+			bustBlocks <- c(bustBlocks,vector("list",1))
+			bustBlocks[[counter]] <- vector("list",2)
+			bustBlocks[[counter]][[1]] <- bustPlot[i]
+			bustBlocks[[counter]][[2]] <- obs[i,"Years"]
+			state <- "on"
+		}
+		if (state=="on"){
+			if (!is.na(bustPlot[i])){
+				bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
+				bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
+			}
+			if (is.na(bustPlot[i])){
+				state <- "off"
+			}
+		}    
+	}
+	if (length(booms)>0){
+		for (i in 1:length(boomBlocks)){
+			if (bbty=="f"){
+				polygon(c(boomBlocks[[i]][[2]],rev(boomBlocks[[i]][[2]])),c(rep(+100,length(boomBlocks[[i]][[1]])),rep(-100,length(boomBlocks[[i]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+			} else if (bbty %in% c("s","b","n")){
+			} else {
+				stop("Incorrect bbty argument.")
+			}
+		}
+	}
+	if (length(busts)>0){
+		for (i in 1:length(bustBlocks)){
+			if (bbty=="f"){
+				polygon(c(bustBlocks[[i]][[2]],rev(bustBlocks[[i]][[2]])),c(rep(+100,length(bustBlocks[[i]][[1]])),rep(-100,length(bustBlocks[[i]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+			} else if (bbty %in% c("s","b","n")){
+			} else {
+				stop("Incorrect bbty argument.")
+			}
+		}
+	}  
+	if (bbty != "n"){
+		polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=col.env, border=NA)
+		box()
+	}
+
+	if (drawaxes & bbty != "n" & calendar=="BP"){
+		rr <- range(pretty(obs[,"Years"]))    
+		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+		axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
+	} else if (drawaxes & bbty != "n" & calendar=="BCAD"){
+		yy <-  obs[,"Years"]
+		rr <- range(pretty(yy))    
+		prettyTicks <- seq(rr[1],rr[2],+100)
+		prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+		axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+
+		py <- pretty(yy)
+		pyShown <- py
+		if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+		py[which(py>1)] <-  py[which(py>1)]-1
+		axis(side=1,at=py,labels=abs(pyShown))
+	}
+	bbp <- list(booms=boomBlocks, busts=bustBlocks)
+	class(bbp) <- c("BBPolygons",class(bbp))
+	if (bbty %in% c("n","b")){ return(bbp) }
 }
 
 

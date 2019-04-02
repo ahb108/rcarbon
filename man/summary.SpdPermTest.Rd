@@ -4,10 +4,12 @@
 \alias{summary.SpdPermTest}
 \title{Summarise a \code{SpdPermTest} class object}
 \usage{
-summary.SpdPermTest(object, ...)
+summary.SpdPermTest(object, type = "spd", ...)
 }
 \arguments{
 \item{object}{A \code{SpdPermTest} class object produced using the \code{link{permTest}} function.}
+
+\item{type}{Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.}
 
 \item{...}{Ignored}
 }
