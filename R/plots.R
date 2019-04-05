@@ -1173,6 +1173,10 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #' @description Plot rates of change between time-blocks
 #' @param x \code{spdRC} class object containing geometric growth rates.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param col.obs Line colour for the observed SPD
+#' @param lwd.obs Line width for the observed SPD
+#' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
+#' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
 #' @param ... Additional arguments affecting the plot. 
 #'
 #' @seealso \code{\link{spd2rc}}
@@ -1183,32 +1187,81 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #' @import utils
 #' @export  
 
-plot.spdRC<- function(x,calendar="BP",...)
+plot.spdRC<- function(x,calendar="BP",col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i",xlim=NA,...)
 {
-	breaks=x$breaks
-	obs=x$sumblock
-	res=x$roca
-	par(mar=c(4,4,4,4))
-	nn = paste(breaks[-length(breaks)],breaks[-1],sep=" to ")
-	xxlab="Years cal BP"
-	if (calendar=="BCAD")
+	if (x$type=='blocks')
 	{
-		bcad.breaks=BPtoBCAD(breaks)
-		nn = paste(abs(bcad.breaks[-length(bcad.breaks)]),abs(bcad.breaks[-1]),sep="-")
-		xxlab="Years BC/AD"
-		if (all(range(bcad.breaks)<0)){xxlab="Years BC"}
-		if (all(range(bcad.breaks)>0)){xxlab="Years AD"}
+		breaks=x$breaks
+		obs=x$sumblock
+		res=x$roca
+		par(mar=c(4,4,4,4))
+		nn = paste(breaks[-length(breaks)],breaks[-1],sep=" to ")
+		xxlab="Years cal BP"
+		if (calendar=="BCAD")
+		{
+			bcad.breaks=BPtoBCAD(breaks)
+			nn = paste(abs(bcad.breaks[-length(bcad.breaks)]),abs(bcad.breaks[-1]),sep="-")
+			xxlab="Years BC/AD"
+			if (all(range(bcad.breaks)<0)){xxlab="Years BC"}
+			if (all(range(bcad.breaks)>0)){xxlab="Years AD"}
 
+		}
+		barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,xlab=xxlab,...)
+		par(new=T)
+		xx = 1:c(length(nn)-1)
+		plot(0,0,xlim=c(0,length(nn)),ylim=range(res),axes=FALSE,xlab="",ylab="",type="n")
+		lines(xx,res,lwd=2,col="darkgreen")
+		points(xx,res,pch=20,col="darkgreen")
+		axis(4,col="darkgreen", col.axis="darkgreen")
+		mtext(side=4,"rate of change",col="darkgreen",line=2)
+		abline(h=0,lty=2,col="blue")
 	}
-	barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,xlab=xxlab,...)
-	par(new=T)
-	xx = 1:c(length(nn)-1)
-	plot(0,0,xlim=c(0,length(nn)),ylim=range(res),axes=FALSE,xlab="",ylab="",type="n")
-	lines(xx,res,lwd=2,col="darkgreen")
-	points(xx,res,pch=20,col="darkgreen")
-	axis(4,col="darkgreen", col.axis="darkgreen")
-	mtext(side=4,"rate of change",col="darkgreen",line=2)
-	abline(h=0,lty=2,col="blue")
+
+	if (x$type=='backsight')
+	{
+		obs=data.frame(calBP=x$timeSequence, roc=x$roca)
+
+		if (calendar=="BP"){
+			obs$Years <- obs$calBP
+			xlabel <- "Years cal BP"
+			if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
+		} else if (calendar=="BCAD"){
+			xlabel <- 'Years BC/AD'    
+			obs$Years <- BPtoBCAD(obs$calBP)
+			if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
+			if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
+			if (any(is.na(xlim))){xlim <- c(min(obs$Years),max(obs$Years)) }
+		} else {
+			stop("Unknown calendar type")
+		}
+
+
+			plot(obs$Years, obs$roc, xlim=xlim, xlab=xlabel, ylab='Rate of Change', type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE,...)
+
+			abline(h=0,lty=2,lwd=1)
+			box()
+			axis(side=2)
+
+			
+			if (calendar=="BP"){
+				rr <- range(pretty(obs[,"Years"]))    
+				axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+				axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
+			} else if (calendar=="BCAD"){
+				yy <-  obs[,"Years"]
+
+				rr <- range(pretty(yy))    
+				prettyTicks <- seq(rr[1],rr[2],+100)
+				prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+				axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+
+				py <- pretty(yy)
+				pyShown <- py
+				if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+				py[which(py>1)] <-  py[which(py>1)]-1
+				axis(side=1,at=py,labels=abs(pyShown))
+			}
+	}
 }
 
 

@@ -4,28 +4,36 @@
 \alias{spd2rc}
 \title{Computes rates of change from SPDs}
 \usage{
-spd2rc(spd, breaks, rate = expression((t2/t1)^(1/d) - 1))
+spd2rc(spd, breaks = NULL, backsight = NULL,
+  changexpr = expression((t1/t0)^(1/d) - 1))
 }
 \arguments{
 \item{spd}{Summed Probability Distribution obtained using the \code{\link{spd}} function.}
 
 \item{breaks}{A vector giving the breakpoints between the time-blocks.}
 
-\item{rate}{An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block, \code{t2} is the summed probability for next block, and \code{d} is the duration of the blocks. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).}
+\item{backsight}{A single numeric value defining the distance in time between the focal year and the backsight year for computing the rate of change.}
+
+\item{changexpr}{An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block or year, \code{t0} is the summed probability for previsous block or backsight year, and \code{d} is the duration of the block or the length of the backsight. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).}
 }
 \value{
-An object of class \code{spdRC} containing the total summed probability for each time-block and the rate of change between abutting blocks.
+An object of class \code{spdRC}.
 }
 \description{
 Function for computing rates of change between abutting user-defined time-blocks.
+}
+\details{
+When the argument \code{breaks} is supplied the function aggregates the summed probability within each time-block and compared them across abutting blocks using the expression defined by \code{changexpr}. When the argument \code{backsight} is provided he expression is based on the comparison between the summed probability of each year and the associated backsight year.
 }
 \examples{
 \dontrun{
 data(emedyd)
 caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
 bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
-emedyd.spd <- spd(caldates,bins,timeRange=c(16000,9000))
+emedyd.spd <- spd(caldates,bins,timeRange=c(16000,9000),runm=100)
 emedyd.gg <- spd2rc(emedyd.spd,breaks=seq(16000,9000,-1000))
+emedyd.gg2 <- spd2rc(emedyd.spd,backsight=10)
 plot(emedyd.gg)
+plot(emedyd.gg2)
 }
 }
