@@ -4,15 +4,17 @@
 \alias{plot.SpdPermTest}
 \title{Plot result of mark permutation test of SPDs}
 \usage{
-plot.SpdPermTest(x, focalm = "1", calendar = "BP", xlim = NA,
-  ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0, 0.2),
-  lwd.obs = 0.5, xaxs = "i", yaxs = "i", bbty = "f",
+plot.SpdPermTest(x, focalm = 1, type = "spd", calendar = "BP",
+  xlim = NA, ylim = NA, col.obs = "black", col.env = rgb(0, 0, 0,
+  0.2), lwd.obs = 0.5, xaxs = "i", yaxs = "i", bbty = "f",
   drawaxes = TRUE, ...)
 }
 \arguments{
 \item{x}{A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})}
 
 \item{focalm}{Value specifying the name of the focal mark (group) to be plotted.}
+
+\item{type}{Whether to display SPDs ('spd') or rates of change ('roc'). Default is 'spd'.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 

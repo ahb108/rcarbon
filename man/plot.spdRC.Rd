@@ -4,12 +4,21 @@
 \alias{plot.spdRC}
 \title{Plot \code{spdRC} class objects}
 \usage{
-plot.spdRC(x, calendar = "BP", ...)
+plot.spdRC(x, calendar = "BP", col.obs = "black", lwd.obs = 0.5,
+  xaxs = "i", yaxs = "i", xlim = NA, ...)
 }
 \arguments{
 \item{x}{\code{spdRC} class object containing geometric growth rates.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
+
+\item{col.obs}{Line colour for the observed SPD}
+
+\item{lwd.obs}{Line width for the observed SPD}
+
+\item{xaxs}{The style of x-axis interval calculation (see \code{\link{par}})}
+
+\item{yaxs}{The style of y-axis interval calculation (see \code{\link{par}})}
 
 \item{...}{Additional arguments affecting the plot.}
 }

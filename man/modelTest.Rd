@@ -5,6 +5,7 @@
 \title{Monte-Carlo simulation test for SPDs}
 \usage{
 modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
+  backsight = 50, changexpr = expression((t1/t0)^(1/d) - 1),
   gridclip = TRUE, raw = FALSE, model = c("exponential"),
   method = c("uncalsample"), predgrid = NA, normalised = NA,
   datenormalised = NA, spdnormalised = FALSE, ncores = 1,
@@ -22,6 +23,10 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 \item{runm}{A number indicating the window size of the moving average to smooth both observed and simulated SPDs. If set to \code{NA} no moving average is applied.Default is \code{NA}.}
 
 \item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP. The fitting process is applied considering the SPD within the interval defined by this parameter. If no values are supplied the earliest and latest median calibrated dates of the observed data will be used.}
+
+\item{backsight}{A single numeric value defining the distance in time between the focal year and the backsight year for computing the rate of change. Default is 10.}
+
+\item{changexpr}{An expression for calculating the rate of change in SPD between the focal year and a backsight year. Available input options are t1 (the SPD for the focal year), t0 (the SPD for the backsight year), d (the distance between t0 and t1), and any other standard constants and mathematical operators. A sensible default is provided.}
 
 \item{gridclip}{Whether the sampling of random dates is constrained to the observed range (TRUE) or not (FALSE). Default is TRUE.}
 
@@ -51,21 +56,11 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
-\value{
-An object of class \code{SpdModelTest} with the following elements
-\itemize{
-\item{\code{result}} {A four column data.frame containing the observed probability density (column \emph{PrDens}) and the lower and the upper values of the simulation envelope (columns \emph{lo} and \emph{hi}) for each calendar year column \emph{calBP}}
-\item{\code{sim}} {A matrix containing the simulation results. Available only when \code{raw} is set to TRUE} 
-\item{\code{pval}} {A numeric vector containing the p-value of the global significance test.}  
-\item{\code{fit}} {A data.frame containing the probability densities of the fitted model for each calendar year within the time range of analysis}  
-\item{\code{fitobject}} {Fitted model. Not available when \code{model} is \code{'custom'}}  
-}
-}
 \description{
 Comparison of an observed summed radiocarbon date distribution (aka SPD) with simulated outcomes from a theoretical model.
 }
 \details{
-The function implements a Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD). A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The function generates \code{nsim} theoretical SPDs from the fitted model via Monte-Carlo simulation, this is then used to define a 95\% critical envelope for each calendar year. The observed SPD is then compared against the simulation envelope; local departures from the model are defined as instances where the observed SPD is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. The theoretical SPDs can be generated using two different sampling approaches defined by the parameter \code{method}. If \code{method} is set to \code{'uncalsample'} each date is drawn after the fitted model is backcalibrated as a whole and adjusted for a baseline expectation; if it is set to  \code{'calsample'} samples are drawn from the fitted model in calendar year then individually back calibrated and recalibrated (the approach of Timpson et al. 2014). For each simulation, both approaches produces \eqn{n} samples, with \eqn{n} equal to the number of bins or number of dates (when bins are not defined). Differences between these two approaches are particularly evident at dates coincident with steeper portions of the calibration curve. If more than one type of calibration curve is associated with the observed dates, at each Monte-Carlo iteration, the function randomly assigns each bin to one of the calibration curves with probability based on the proportion of dates within the bin associated to the specific curves. For example, if a bin is composed of four dates and three are calibrated with 'intcal13' the probability of that particular bin being assigned to 'intcal13' is 0.75.
+The function implements a Monte-Carlo test for comparing a theoretical or fitted statistical model to an observed summed radiocarbon date distribution (aka SPD) and associated rates of changes. A variety of theoretical expectations can be compared to the observed distribution by setting the \code{model} argument, for example to fit basic \code{'uniform'} (the mean of the SPD), \code{'linear'} (fitted using the \code{\link{lm}} function) or \code{model='exponential'} models (fitted using the \code{\link{nls}} function). Models are fitted to the period spanned by \code{timeRange} although \code{x} can contain dates outside this range to mitigate possible edge effects (see also \code{bracket}). Alternatively, it is possible for the user to provide a model of their own by setting \code{model='custom'} and then supplying a two-column data.frame to \code{predgrid}. The function generates \code{nsim} theoretical SPDs from the fitted model via Monte-Carlo simulation, this is then used to define a 95\% critical envelope for each calendar year. The observed SPD is then compared against the simulation envelope; local departures from the model are defined as instances where the observed SPD is outside such an envelope, while an estimate of the global significance of the observed SPD is also computed by comparing the total areas of observed and simulated SPDs that fall outside the simulation envelope. The theoretical SPDs can be generated using two different sampling approaches defined by the parameter \code{method}. If \code{method} is set to \code{'uncalsample'} each date is drawn after the fitted model is backcalibrated as a whole and adjusted for a baseline expectation; if it is set to  \code{'calsample'} samples are drawn from the fitted model in calendar year then individually back calibrated and recalibrated (the approach of Timpson et al. 2014). For each simulation, both approaches produces \eqn{n} samples, with \eqn{n} equal to the number of bins or number of dates (when bins are not defined). Differences between these two approaches are particularly evident at dates coincident with steeper portions of the calibration curve. If more than one type of calibration curve is associated with the observed dates, at each Monte-Carlo iteration, the function randomly assigns each bin to one of the calibration curves with probability based on the proportion of dates within the bin associated to the specific curves. For example, if a bin is composed of four dates and three are calibrated with 'intcal13' the probability of that particular bin being assigned to 'intcal13' is 0.75.
 }
 \note{
 \itemize{

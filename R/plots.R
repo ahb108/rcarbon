@@ -169,10 +169,11 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #'
 #' @param x A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param type Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart. 
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param ylim the y limits of the plot.
-#' @param col.obs Line colour for the observed SPD
-#' @param lwd.obs Line width for the observed SPD
+#' @param col.obs Line colour for the observed SPD.
+#' @param lwd.obs Line width for the observed SPD.
 #' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
 #' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
 #' @param bbty Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details below.
@@ -189,126 +190,177 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @import utils
 #' @export 
 
-plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", bbtyRet=TRUE, drawaxes=TRUE, ...){
+plot.SpdModelTest <- function(x, calendar="BP", type='spd', ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", bbtyRet=TRUE, drawaxes=TRUE, ...){
 
-    obs <- x$result[,1:2]
-    if (calendar=="BP"){
-        obs$Years <- obs$calBP
-        xlabel <- "Years cal BP"
-        if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
-    } else if (calendar=="BCAD"){
-	xlabel <- 'Years BC/AD'    
-        obs$Years <- BPtoBCAD(obs$calBP)
-	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
-	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
-        if (any(is.na(xlim))){xlim <- c(min(obs$Years),max(obs$Years)) }
-    } else {
-        stop("Unknown calendar type")
-    }    
-    envelope <- x$result[,3:4]
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,"hi"], obs$PrDens)*1.1) }
-    booms <- which(obs$PrDens>envelope[,2])
-    busts <- which(obs$PrDens<envelope[,1])
-    baseline <- rep(NA,nrow(obs))
-    if (drawaxes & bbty != "n"){
-        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
-    } else if (bbty != "n"){
-        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
-    }
-    if (drawaxes){
-	box()
-    axis(side=2)}
-    boomPlot <- baseline
- 	if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
-    bustPlot <- baseline
-    if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }           
-    boomBlocks <- vector("list")
-    counter <- 0
-    state <- "off"
-    for (i in 1:length(boomPlot)){
-        if (!is.na(boomPlot[i])&state=="off"){
-            counter <- counter+1
-            boomBlocks <- c(boomBlocks,vector("list",1))
-            boomBlocks[[counter]] <- vector("list",2)
-            boomBlocks[[counter]][[1]] <- boomPlot[i]
-            boomBlocks[[counter]][[2]] <- obs[i,"Years"]
-            state <- "on"
-        }
-        if (state=="on"){
-            if (!is.na(boomPlot[i])){
-                boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
-                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
-            }
-            if (is.na(boomPlot[i])){
-                state <- "off"
-            }
-        }   
-    }
-    bustBlocks <- vector("list")
-    counter <- 0
-    state <- "off"
-    for (i in 1:length(bustPlot)){
-        if (!is.na(bustPlot[i])&state=="off"){
-            counter <- counter+1
-            bustBlocks <- c(bustBlocks,vector("list",1))
-            bustBlocks[[counter]] <- vector("list",2)
-            bustBlocks[[counter]][[1]] <- bustPlot[i]
-            bustBlocks[[counter]][[2]] <- obs[i,"Years"]
-            state <- "on"
-        }
-        if (state=="on"){
-            if (!is.na(bustPlot[i])){
-                bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
-                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
-            }
-            if (is.na(bustPlot[i])){
-                state <- "off"
-            }
-        }   
-    }
-    if (length(booms)>0){
-        for (i in 1:length(boomBlocks)){
-            if (bbty=="f"){
-                polygon(c(boomBlocks[[i]][[2]],rev(boomBlocks[[i]][[2]])),c(rep(+100,length(boomBlocks[[i]][[1]])),rep(-100,length(boomBlocks[[i]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
-            } else if (bbty %in% c("s","b","n")){
-            } else {
-                stop("Incorrect bbty argument.")
-            }
-        }
-    }  
-    if (length(busts)>0){
-        for (i in 1:length(bustBlocks)){
-            if (bbty=="f"){
-                polygon(c(bustBlocks[[i]][[2]],rev(bustBlocks[[i]][[2]])),c(rep(+100,length(bustBlocks[[i]][[1]])),rep(-100,length(bustBlocks[[i]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
-            } else if (bbty %in% c("s","b","n")){
-            } else {
-                stop("Incorrect bbty argument.")
-            }
-        }
-    }  
-    polygon(x=c(obs[,"Years"],rev(obs[,"Years"])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
-    if (drawaxes & bbty != "n" & calendar=="BP"){
-	rr <- range(pretty(obs[,"Years"]))    
-        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
-    } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
-	yy <-  obs[,"Years"]
-       
-	rr <- range(pretty(yy))    
-        prettyTicks <- seq(rr[1],rr[2],+100)
-	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
-        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+	obs <- x$result[,1:2]
+	envelope <- x$result[,3:4]
+	
+	if (!type%in%c('spd','roc'))
+	{
+	 stop("The argument 'type' should be either 'spd' or 'roc'.")
+	}
 
-        py <- pretty(yy)
-	pyShown <- py
-	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
-	py[which(py>1)] <-  py[which(py>1)]-1
-	axis(side=1,at=py,labels=abs(pyShown))
-    }
+	if (type=='roc')
+	{
+		obs <- x$result.roc[,1:2]
+		envelope <- x$result.roc[,3:4]
+		colnames(obs)<-c("calBP","PrDens")
+		colnames(envelope)<-c("lo","hi")
+	}
 
-    bbp <- list(booms=boomBlocks, busts=bustBlocks)
-    class(bbp) <- c("BBPolygons",class(bbp))
-    if ((bbty %in% c("n","b")) & bbtyRet){ return(bbp) }
+	if (calendar=="BP"){
+		obs$Years <- obs$calBP
+		xlabel <- "Years cal BP"
+		if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
+	} else if (calendar=="BCAD"){
+		xlabel <- 'Years BC/AD'    
+		obs$Years <- BPtoBCAD(obs$calBP)
+		if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
+		if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
+		if (any(is.na(xlim))){xlim <- c(min(obs$Years),max(obs$Years)) }
+	} else {
+		stop("Unknown calendar type")
+	}    
+
+
+	if (any(is.na(ylim)))
+		{
+		       	ylim <- c(0, max(envelope[,"hi"], obs$PrDens,na.rm=TRUE)*1.1) 
+			if (type=='roc') {ylim[1] <- min(c(envelope[,"lo"],obs$PrDens),na.rm=TRUE)}
+		}
+	
+	booms <- which(obs$PrDens>envelope[,2])
+	busts <- which(obs$PrDens<envelope[,1])
+	baseline <- rep(NA,nrow(obs))
+
+
+  	ylab = 'Summed Probability'
+	if (type=='roc') 
+	{
+		ylab = 'Rate of Change'
+		colpts = rep(col.obs,length(obs$PrDens))
+		colpts[booms] = 'red'
+		colpts[busts] = 'blue'
+	}
+
+
+	if (drawaxes & bbty != "n"){
+			plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab=ylab, type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE,...)
+		if(type=='roc')
+		{
+			abline(h=0,lty=2,lwd=1)
+		}
+
+	} else if (bbty != "n")
+	{
+		plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+		if (type=='roc')
+		{
+		abline(h=0,lty=2,lwd=1)
+		}
+	}
+
+
+
+
+	if (drawaxes)
+	{
+		box()
+		axis(side=2)
+	}
+
+	boomPlot <- baseline
+	if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
+	bustPlot <- baseline
+	if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }           
+	boomBlocks <- vector("list")
+	counter <- 0
+	state <- "off"
+	for (i in 1:length(boomPlot)){
+		if (!is.na(boomPlot[i])&state=="off"){
+			counter <- counter+1
+			boomBlocks <- c(boomBlocks,vector("list",1))
+			boomBlocks[[counter]] <- vector("list",2)
+			boomBlocks[[counter]][[1]] <- boomPlot[i]
+			boomBlocks[[counter]][[2]] <- obs[i,"Years"]
+			state <- "on"
+		}
+		if (state=="on"){
+			if (!is.na(boomPlot[i])){
+				boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
+				boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
+			}
+			if (is.na(boomPlot[i])){
+				state <- "off"
+			}
+		}   
+	}
+	bustBlocks <- vector("list")
+	counter <- 0
+	state <- "off"
+	for (i in 1:length(bustPlot)){
+		if (!is.na(bustPlot[i])&state=="off"){
+			counter <- counter+1
+			bustBlocks <- c(bustBlocks,vector("list",1))
+			bustBlocks[[counter]] <- vector("list",2)
+			bustBlocks[[counter]][[1]] <- bustPlot[i]
+			bustBlocks[[counter]][[2]] <- obs[i,"Years"]
+			state <- "on"
+		}
+		if (state=="on"){
+			if (!is.na(bustPlot[i])){
+				bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
+				bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
+			}
+			if (is.na(bustPlot[i])){
+				state <- "off"
+			}
+		}   
+	}
+	if (length(booms)>0){
+		for (i in 1:length(boomBlocks)){
+			if (bbty=="f"){
+				polygon(c(boomBlocks[[i]][[2]],rev(boomBlocks[[i]][[2]])),c(rep(+100,length(boomBlocks[[i]][[1]])),rep(-100,length(boomBlocks[[i]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+			} else if (bbty %in% c("s","b","n")){
+			} else {
+				stop("Incorrect bbty argument.")
+			}
+		}
+	}  
+	if (length(busts)>0){
+		for (i in 1:length(bustBlocks)){
+			if (bbty=="f"){
+				polygon(c(bustBlocks[[i]][[2]],rev(bustBlocks[[i]][[2]])),c(rep(+100,length(bustBlocks[[i]][[1]])),rep(-100,length(bustBlocks[[i]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+			} else if (bbty %in% c("s","b","n")){
+			} else {
+				stop("Incorrect bbty argument.")
+			}
+		}
+	}
+
+	polygon(x=c(obs[,"Years"],rev(obs[,"Years"])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
+	if (drawaxes & bbty != "n" & calendar=="BP"){
+		rr <- range(pretty(obs[,"Years"]))    
+		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+		axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
+	} else if (drawaxes & bbty != "n" & calendar=="BCAD"){
+		yy <-  obs[,"Years"]
+
+		rr <- range(pretty(yy))    
+		prettyTicks <- seq(rr[1],rr[2],+100)
+		prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+		axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+
+		py <- pretty(yy)
+		pyShown <- py
+		if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+		py[which(py>1)] <-  py[which(py>1)]-1
+		axis(side=1,at=py,labels=abs(pyShown))
+	}
+
+	bbp <- list(booms=boomBlocks, busts=bustBlocks)
+	class(bbp) <- c("BBPolygons",class(bbp))
+	if ((bbty %in% c("n","b")) & bbtyRet){ return(bbp) }
 }
 
 #' @title Plot the median values of calibrated radiocarbon dates or bins 
@@ -363,11 +415,11 @@ plot.SpdModelTest <- function(x, calendar="BP", ylim=NA, xlim=NA, col.obs="black
 #' @export
 
 barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue=255), border=NA, ...){
-    barcodes <- x
-    halfbw <- width/2
-    for (a in 1:length(barcodes)){
-        polygon(x=c(barcodes[a]-halfbw,barcodes[a]-halfbw,barcodes[a]+halfbw,barcodes[a]+halfbw,barcodes[a]-halfbw),y=c(yrng[1],yrng[2],yrng[2],yrng[1],yrng[1]), border=border, col=col, ...)
-    }
+	barcodes <- x
+	halfbw <- width/2
+	for (a in 1:length(barcodes)){
+		polygon(x=c(barcodes[a]-halfbw,barcodes[a]-halfbw,barcodes[a]+halfbw,barcodes[a]+halfbw,barcodes[a]-halfbw),y=c(yrng[1],yrng[2],yrng[2],yrng[1],yrng[1]), border=border, col=col, ...)
+	}
 }
 
 
@@ -447,61 +499,61 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 
 plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', add=FALSE,...){
 
-    types <- c("standard","simple")
-    if (!type %in% types){
-        stop("The plot type you have chosen is not currently an option.")
-    }
-    spdvals <- x$grid$PrDens
-    if (!is.na(runm)){ spdvals <- runMean(spdvals, runm, edge="fill") }
-    if (spdnormalised){ spdvals <- spdvals/sum(spdvals) }
-    if (rescale){ spdvals <- reScale(spdvals) }
-    if (any(is.na(ylim))){ ylim <- c(0,max(spdvals)*1.1) }
-    if (calendar=="BP"){
-        plotyears <- x$grid$calBP
-        xlabel <- "Years cal BP"
-        if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
-    } else if (calendar=="BCAD"){
-        plotyears <- BPtoBCAD(x$grid$calBP)
-        xlabel <- "Years BC/AD"
-	if (all(range(plotyears)<0)){xlabel <- "Years BC"}
-	if (all(range(plotyears)>0)){xlabel <- "Years AD"}
-        if (any(is.na(xlim))){ xlim <- c(min(plotyears),max(plotyears)) }
-    } else {
-        stop("Unknown calendar type")
-    }
-    if (xaxt=='n'){ xlabel <- "" }
-    if (yaxt=='n'){ ylabel <- "" } else { ylabel <- ylab }
-    if (type=="standard"){
-        par(xaxs="i")
-        par(yaxs="i")
-        if (!add){
-            plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt)
-        }
-        polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
-    } else if (type=="simple"){
-        if (!add){
-            plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
-        } else {
-            lines(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, ...)
-        }
-    }
-    box()
-    if (calendar=="BP" & xaxt!="n"){
-	rr <- range(pretty(plotyears))    
-        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)))
-    } else if (calendar=="BCAD" & xaxt!="n"){
-	yy <-  plotyears
-        rr <- range(pretty(yy))    
-        prettyTicks <- seq(rr[1],rr[2],+100)
-	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
-        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
-        py <- pretty(yy)
-	pyShown <- py
-	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
-	py[which(py>1)] <-  py[which(py>1)]-1
-	axis(side=1,at=py,labels=abs(pyShown))
-    }
+	types <- c("standard","simple")
+	if (!type %in% types){
+		stop("The plot type you have chosen is not currently an option.")
+	}
+	spdvals <- x$grid$PrDens
+	if (!is.na(runm)){ spdvals <- runMean(spdvals, runm, edge="fill") }
+	if (spdnormalised){ spdvals <- spdvals/sum(spdvals) }
+	if (rescale){ spdvals <- reScale(spdvals) }
+	if (any(is.na(ylim))){ ylim <- c(0,max(spdvals)*1.1) }
+	if (calendar=="BP"){
+		plotyears <- x$grid$calBP
+		xlabel <- "Years cal BP"
+		if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
+	} else if (calendar=="BCAD"){
+		plotyears <- BPtoBCAD(x$grid$calBP)
+		xlabel <- "Years BC/AD"
+		if (all(range(plotyears)<0)){xlabel <- "Years BC"}
+		if (all(range(plotyears)>0)){xlabel <- "Years AD"}
+		if (any(is.na(xlim))){ xlim <- c(min(plotyears),max(plotyears)) }
+	} else {
+		stop("Unknown calendar type")
+	}
+	if (xaxt=='n'){ xlabel <- "" }
+	if (yaxt=='n'){ ylabel <- "" } else { ylabel <- ylab }
+	if (type=="standard"){
+		par(xaxs="i")
+		par(yaxs="i")
+		if (!add){
+			plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt)
+		}
+		polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
+	} else if (type=="simple"){
+		if (!add){
+			plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
+		} else {
+			lines(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", ylab="", xlab=xlabel, ...)
+		}
+	}
+	box()
+	if (calendar=="BP" & xaxt!="n"){
+		rr <- range(pretty(plotyears))    
+		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+		axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)))
+	} else if (calendar=="BCAD" & xaxt!="n"){
+		yy <-  plotyears
+		rr <- range(pretty(yy))    
+		prettyTicks <- seq(rr[1],rr[2],+100)
+		prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+		axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+		py <- pretty(yy)
+		pyShown <- py
+		if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+		py[which(py>1)] <-  py[which(py>1)]-1
+		axis(side=1,at=py,labels=abs(pyShown))
+	}
 }
 
 
@@ -537,58 +589,58 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 
 plot.CalGrid <- function(x, runm=NA, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3), add=FALSE,...){
 
-    yearsBP <- x$calBP
-    prob <- x$PrDens
-    calendars <- c("BP","BCAD")
-    if (!calendar %in% calendars){
-        stop("The calendar you have chosen is not currently an option.")
-    }        
-    if (yearsBP[1] > yearsBP[length(yearsBP)]){
-        yearsBP <- rev(yearsBP)
-        prob <- rev(prob)
-    }
-    if (calendar=="BP"){
-        plotyears <- yearsBP
-        xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
-        xlabel <- "Years cal BP"
-    } else if (calendar=="BCAD"){
-        plotyears <- BPtoBCAD(yearsBP)
-        xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
-        xlabel <- "Years BC/AD"
-	if (all(range(plotyears)<0)){xlabel<-"Years BC"}
-	if (all(range(plotyears)>0)){xlabel<-"Years AD"}
-    } else {
-        stop("Unknown calendar type")
-    }
-    yvals <- c(0,prob,0,0)
-    if (calendar=="BP"){
-        xrng <- c(max(plotyears)+50, min(plotyears)-50)
-        xticks <- 200*(xrng%/%100 + as.logical(xrng%%200))
-        xticks <- seq(xticks[1]-200, xticks[2], -200)
-    } else {
-        xrng <- c(min(plotyears)-50, max(plotyears)+50)
-        xticks <- 200*(xrng%/%100 + as.logical(xrng%%200))
-        xticks <- seq(xticks[1]-200, xticks[2], 200)
-    }
-    if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
-    if (is.na(xlim[1])){ xlim <- xrng }
-    if (!add){
-        par(mar=mar) #c(bottom, left, top, right)
-        par(cex.lab=cex.lab)
-        plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n',axes=F, cex.axis=cex.axis,...)
-    }
-    xticksLab <- xticks
-    if (calendar=="BCAD"){
-        if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
-        xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
-    }
-    if (!add){
-        axis(1, at=xticks, labels=abs(xticksLab), las=2, cex.axis=cex.axis)
-        axis(2, cex.axis=cex.axis)
-    }
-    if (!is.na(runm)){ yvals <- runMean(yvals, runm, edge="fill") }
-    polygon(xvals,yvals, col=fill.p, border=border.p)
-    box()
+	yearsBP <- x$calBP
+	prob <- x$PrDens
+	calendars <- c("BP","BCAD")
+	if (!calendar %in% calendars){
+		stop("The calendar you have chosen is not currently an option.")
+	}        
+	if (yearsBP[1] > yearsBP[length(yearsBP)]){
+		yearsBP <- rev(yearsBP)
+		prob <- rev(prob)
+	}
+	if (calendar=="BP"){
+		plotyears <- yearsBP
+		xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
+		xlabel <- "Years cal BP"
+	} else if (calendar=="BCAD"){
+		plotyears <- BPtoBCAD(yearsBP)
+		xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
+		xlabel <- "Years BC/AD"
+		if (all(range(plotyears)<0)){xlabel<-"Years BC"}
+		if (all(range(plotyears)>0)){xlabel<-"Years AD"}
+	} else {
+		stop("Unknown calendar type")
+	}
+	yvals <- c(0,prob,0,0)
+	if (calendar=="BP"){
+		xrng <- c(max(plotyears)+50, min(plotyears)-50)
+		xticks <- 200*(xrng%/%100 + as.logical(xrng%%200))
+		xticks <- seq(xticks[1]-200, xticks[2], -200)
+	} else {
+		xrng <- c(min(plotyears)-50, max(plotyears)+50)
+		xticks <- 200*(xrng%/%100 + as.logical(xrng%%200))
+		xticks <- seq(xticks[1]-200, xticks[2], 200)
+	}
+	if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
+	if (is.na(xlim[1])){ xlim <- xrng }
+	if (!add){
+		par(mar=mar) #c(bottom, left, top, right)
+		par(cex.lab=cex.lab)
+		plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n',axes=F, cex.axis=cex.axis,...)
+	}
+	xticksLab <- xticks
+	if (calendar=="BCAD"){
+		if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
+		xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
+	}
+	if (!add){
+		axis(1, at=xticks, labels=abs(xticksLab), las=2, cex.axis=cex.axis)
+		axis(2, cex.axis=cex.axis)
+	}
+	if (!is.na(runm)){ yvals <- runMean(yvals, runm, edge="fill") }
+	polygon(xvals,yvals, col=fill.p, border=border.p)
+	box()
 }
 
 
@@ -599,38 +651,38 @@ plot.CalGrid <- function(x, runm=NA, calendar="BP", fill.p="grey50", border.p=NA
 
 plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3),...){
 
-    years <- x$CRA
-    if (type=="adjusted"){
-        prob <- x$PrDens
-    } else if (type=="raw"){
-        prob <- x$Raw
-    } else {
-        stop("Currently, type must be 'raw' or 'adjusted'.")
-    }
-    if (years[1] > years[length(years)]){
-        years <- rev(years)
-        prob <- rev(prob)
-    }
-    plotyears <- years
-    xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
-    xlabel <- "C14 Years"
-    yvals <- c(0,prob,0,0)
-    xrng <- c(max(plotyears)+50, min(plotyears)-50)
-    if (dist(xrng)>10000){
-        xticks <- 1000*(xrng%/%1000 + as.logical(xrng%%1000))
-        xticks <- seq(xticks[1]-1000, xticks[2], -1000)
-    } else {
-        xticks <- 100*(xrng%/%100 + as.logical(xrng%%100))
-        xticks <- seq(xticks[1]-100, xticks[2], -100)
-    }
-    if (is.na(xlim[1])){ xlim <- xrng }
-    if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
-    par(mar=mar) #c(bottom, left, top, right)
-    par(cex.lab=cex.lab)
-    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n', cex.axis=cex.axis,...)
-    axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=cex.axis)
-    axis(4, cex.axis=cex.axis)
-    polygon(xvals,yvals, col=fill.p, border=border.p)
+	years <- x$CRA
+	if (type=="adjusted"){
+		prob <- x$PrDens
+	} else if (type=="raw"){
+		prob <- x$Raw
+	} else {
+		stop("Currently, type must be 'raw' or 'adjusted'.")
+	}
+	if (years[1] > years[length(years)]){
+		years <- rev(years)
+		prob <- rev(prob)
+	}
+	plotyears <- years
+	xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
+	xlabel <- "C14 Years"
+	yvals <- c(0,prob,0,0)
+	xrng <- c(max(plotyears)+50, min(plotyears)-50)
+	if (dist(xrng)>10000){
+		xticks <- 1000*(xrng%/%1000 + as.logical(xrng%%1000))
+		xticks <- seq(xticks[1]-1000, xticks[2], -1000)
+	} else {
+		xticks <- 100*(xrng%/%100 + as.logical(xrng%%100))
+		xticks <- seq(xticks[1]-100, xticks[2], -100)
+	}
+	if (is.na(xlim[1])){ xlim <- xrng }
+	if (is.na(ylim[1])){ ylim <- c(0,max(yvals*1.1)) }
+	par(mar=mar) #c(bottom, left, top, right)
+	par(cex.lab=cex.lab)
+	plot(xvals,yvals, type="n", xlab=xlabel, ylab="", xlim=xlim, ylim=ylim, xaxt='n', yaxt='n', cex.axis=cex.axis,...)
+	axis(1, at=xticks, labels=abs(xticks), las=2, cex.axis=cex.axis)
+	axis(4, cex.axis=cex.axis)
+	polygon(xvals,yvals, col=fill.p, border=border.p)
 }
 
 
@@ -642,6 +694,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'
 #' @param x A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})
 #' @param focalm Value specifying the name of the focal mark (group) to be plotted. 
+#' @param type Whether to display SPDs ('spd') or rates of change ('roc'). Default is 'spd'.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param ylim the y limits of the plot.
@@ -661,130 +714,152 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @import utils
 #' @export 
 
-plot.SpdPermTest <- function(x, focalm="1", calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
+plot.SpdPermTest <- function(x, focalm=1, type='spd', calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
 
-    obs <- x$observed[[focalm]]
-    if (calendar=="BP"){
-        obs$Years <- obs$calBP
-        xlabel <- "Years cal BP"
-        if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
-    } else if (calendar=="BCAD"){
-        obs$Years <- BPtoBCAD(obs$calBP)
-        xlabel <- "Years BC/AD"
-	if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
-	if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
-        if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
-    } else {
-        stop("Unknown calendar type")
-    }
-    envelope <- x$envelope[[focalm]]
-    if (any(is.na(ylim))){ ylim <- c(0, max(envelope[,2], obs$PrDens)*1.1) }
-    booms <- which(obs$PrDens>envelope[,2])
-    busts <- which(obs$PrDens<envelope[,1])
-    baseline <- rep(NA,nrow(obs))
-    if (drawaxes & bbty != "n"){
-        plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab="Summed Probability", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
-        #axis(side=1,padj=-1)
-        axis(side=2,padj=1)
-    } else if (bbty != "n"){
-        plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
-    }
-    boomPlot <- baseline
-    if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
-    bustPlot <- baseline
-    if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }                 
-    boomBlocks <- vector("list")
-    counter <- 0
-    state <- "off"
-    for (i in 1:length(boomPlot)){
-        if (!is.na(boomPlot[i])&state=="off"){
-            counter <- counter+1
-            boomBlocks <- c(boomBlocks,vector("list",1))
-            boomBlocks[[counter]] <- vector("list",2)
-            boomBlocks[[counter]][[1]] <- boomPlot[i]
-            boomBlocks[[counter]][[2]] <- obs[i,"Years"]
-            state <- "on"
-        }
-        if (state=="on"){
-            if (!is.na(boomPlot[i])){
-                boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
-                boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
-            }
-            if (is.na(boomPlot[i])){
-                state <- "off"
-            }
-        }    
-    }
-    bustBlocks <- vector("list")
-    counter <- 0
-    state <- "off"
-    for (i in 1:length(bustPlot)){
-        if (!is.na(bustPlot[i])&state=="off"){
-            counter <- counter+1
-            bustBlocks <- c(bustBlocks,vector("list",1))
-            bustBlocks[[counter]] <- vector("list",2)
-            bustBlocks[[counter]][[1]] <- bustPlot[i]
-            bustBlocks[[counter]][[2]] <- obs[i,"Years"]
-            state <- "on"
-        }
-        if (state=="on"){
-            if (!is.na(bustPlot[i])){
-                bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
-                bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
-            }
-            if (is.na(bustPlot[i])){
-                state <- "off"
-            }
-        }    
-    }
-    if (length(booms)>0){
-        for (i in 1:length(boomBlocks)){
-            if (bbty=="f"){
-                polygon(c(boomBlocks[[i]][[2]],rev(boomBlocks[[i]][[2]])),c(rep(+100,length(boomBlocks[[i]][[1]])),rep(-100,length(boomBlocks[[i]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
-            } else if (bbty %in% c("s","b","n")){
-            } else {
-                stop("Incorrect bbty argument.")
-            }
-        }
-    }
-    if (length(busts)>0){
-        for (i in 1:length(bustBlocks)){
-            if (bbty=="f"){
-                polygon(c(bustBlocks[[i]][[2]],rev(bustBlocks[[i]][[2]])),c(rep(+100,length(bustBlocks[[i]][[1]])),rep(-100,length(bustBlocks[[i]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
-            } else if (bbty %in% c("s","b","n")){
-            } else {
-                stop("Incorrect bbty argument.")
-            }
-        }
-    }  
-    if (bbty != "n"){
-        polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=col.env, border=NA)
-        box()
-    }
-    #if (drawaxes & bbty != "n"){
-    #    axis(side=1, at=seq(max(obs[,"Years"]), min(obs[,"Years"]),-100), labels=NA, tck=-0.01)
-    #}
 
-    if (drawaxes & bbty != "n" & calendar=="BP"){
-	rr <- range(pretty(obs[,"Years"]))    
-        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
-    } else if (drawaxes & bbty != "n" & calendar=="BCAD"){
-	yy <-  obs[,"Years"]
-	rr <- range(pretty(yy))    
-        prettyTicks <- seq(rr[1],rr[2],+100)
-	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
-        axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+	if (!type%in%c('spd','roc'))
+	{
+	 stop("The argument 'type' should be either 'spd' or 'roc'.")
+	}
 
-        py <- pretty(yy)
-	pyShown <- py
-	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
-	py[which(py>1)] <-  py[which(py>1)]-1
-	axis(side=1,at=py,labels=abs(pyShown))
-    }
-    bbp <- list(booms=boomBlocks, busts=bustBlocks)
-    class(bbp) <- c("BBPolygons",class(bbp))
-    if (bbty %in% c("n","b")){ return(bbp) }
+	obs <- x$observed[[focalm]]
+	envelope <- x$envelope[[focalm]]
+	ylab <- 'Summed Probability'
+
+	if (type=='roc')
+	{
+		ylab <- 'Rate of Change'
+		obs <- x$observed.roc[[focalm]]
+		envelope <- x$envelope.roc[[focalm]]
+		colnames(obs)<-c("calBP","PrDens")
+		colnames(envelope)<-c("lo","hi")
+	}
+
+	if (calendar=="BP"){
+		obs$Years <- obs$calBP
+		xlabel <- "Years cal BP"
+		if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
+	} else if (calendar=="BCAD"){
+		obs$Years <- BPtoBCAD(obs$calBP)
+		xlabel <- "Years BC/AD"
+		if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
+		if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
+		if (any(is.na(xlim))){ xlim <- c(min(obs$Years),max(obs$Years)) }
+	} else {
+		stop("Unknown calendar type")
+	}
+
+
+	if (any(is.na(ylim)))
+		{
+		       	ylim <- c(0, max(envelope[,2], obs$PrDens,na.rm=TRUE)*1.1) 
+			if (type=='roc') {ylim[1] <- min(c(envelope[,1],obs$PrDens),na.rm=TRUE)}
+		}
+
+	booms <- which(obs$PrDens>envelope[,2])
+	busts <- which(obs$PrDens<envelope[,1])
+	baseline <- rep(NA,nrow(obs))
+	if (drawaxes & bbty != "n"){
+		plot(obs$Years, obs$PrDens, xlim=xlim, ylim=ylim, xlab=xlabel, ylab=ylab, type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+		axis(side=2,padj=1)
+		if (type=='roc'){abline(h=0,lty=2)}
+	} else if (bbty != "n"){
+		plot(obs$Years,obs$PrDens, xlim=xlim, ylim=ylim, xlab="", ylab="", type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE, ...)
+		if (type=='roc'){abline(h=0,lty=2)}
+	}
+	boomPlot <- baseline
+	if (length(booms)>0){ boomPlot[booms]=obs[booms,2] }
+	bustPlot <- baseline
+	if (length(busts)>0){ bustPlot[busts]=obs[busts,2] }                 
+	boomBlocks <- vector("list")
+	counter <- 0
+	state <- "off"
+	for (i in 1:length(boomPlot)){
+		if (!is.na(boomPlot[i])&state=="off"){
+			counter <- counter+1
+			boomBlocks <- c(boomBlocks,vector("list",1))
+			boomBlocks[[counter]] <- vector("list",2)
+			boomBlocks[[counter]][[1]] <- boomPlot[i]
+			boomBlocks[[counter]][[2]] <- obs[i,"Years"]
+			state <- "on"
+		}
+		if (state=="on"){
+			if (!is.na(boomPlot[i])){
+				boomBlocks[[counter]][[1]] <- c(boomBlocks[[counter]][[1]],boomPlot[i])
+				boomBlocks[[counter]][[2]] <- c(boomBlocks[[counter]][[2]],obs[i,"Years"])
+			}
+			if (is.na(boomPlot[i])){
+				state <- "off"
+			}
+		}    
+	}
+	bustBlocks <- vector("list")
+	counter <- 0
+	state <- "off"
+	for (i in 1:length(bustPlot)){
+		if (!is.na(bustPlot[i])&state=="off"){
+			counter <- counter+1
+			bustBlocks <- c(bustBlocks,vector("list",1))
+			bustBlocks[[counter]] <- vector("list",2)
+			bustBlocks[[counter]][[1]] <- bustPlot[i]
+			bustBlocks[[counter]][[2]] <- obs[i,"Years"]
+			state <- "on"
+		}
+		if (state=="on"){
+			if (!is.na(bustPlot[i])){
+				bustBlocks[[counter]][[1]] <- c(bustBlocks[[counter]][[1]],bustPlot[i])
+				bustBlocks[[counter]][[2]] <- c(bustBlocks[[counter]][[2]],obs[i,"Years"])
+			}
+			if (is.na(bustPlot[i])){
+				state <- "off"
+			}
+		}    
+	}
+	if (length(booms)>0){
+		for (i in 1:length(boomBlocks)){
+			if (bbty=="f"){
+				polygon(c(boomBlocks[[i]][[2]],rev(boomBlocks[[i]][[2]])),c(rep(+100,length(boomBlocks[[i]][[1]])),rep(-100,length(boomBlocks[[i]][[1]]))),col=rgb(0.7,0,0,0.2),border=NA)
+			} else if (bbty %in% c("s","b","n")){
+			} else {
+				stop("Incorrect bbty argument.")
+			}
+		}
+	}
+	if (length(busts)>0){
+		for (i in 1:length(bustBlocks)){
+			if (bbty=="f"){
+				polygon(c(bustBlocks[[i]][[2]],rev(bustBlocks[[i]][[2]])),c(rep(+100,length(bustBlocks[[i]][[1]])),rep(-100,length(bustBlocks[[i]][[1]]))),col=rgb(0,0,0.7,0.2),border=NA)
+			} else if (bbty %in% c("s","b","n")){
+			} else {
+				stop("Incorrect bbty argument.")
+			}
+		}
+	}  
+	if (bbty != "n"){
+		polygon(x=c(obs[,"Years"], rev(obs[,"Years"])), y=c(envelope[,1], rev(envelope[,2])), col=col.env, border=NA)
+		box()
+	}
+
+	if (drawaxes & bbty != "n" & calendar=="BP"){
+		rr <- range(pretty(obs[,"Years"]))    
+		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+		axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
+	} else if (drawaxes & bbty != "n" & calendar=="BCAD"){
+		yy <-  obs[,"Years"]
+		rr <- range(pretty(yy))    
+		prettyTicks <- seq(rr[1],rr[2],+100)
+		prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+		axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+
+		py <- pretty(yy)
+		pyShown <- py
+		if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+		py[which(py>1)] <-  py[which(py>1)]-1
+		axis(side=1,at=py,labels=abs(pyShown))
+	}
+	bbp <- list(booms=boomBlocks, busts=bustBlocks)
+	class(bbp) <- c("BBPolygons",class(bbp))
+	if (bbty %in% c("n","b")){ return(bbp) }
 }
 
 
@@ -1098,6 +1173,10 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #' @description Plot rates of change between time-blocks
 #' @param x \code{spdRC} class object containing geometric growth rates.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param col.obs Line colour for the observed SPD
+#' @param lwd.obs Line width for the observed SPD
+#' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
+#' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
 #' @param ... Additional arguments affecting the plot. 
 #'
 #' @seealso \code{\link{spd2rc}}
@@ -1108,32 +1187,81 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #' @import utils
 #' @export  
 
-plot.spdRC<- function(x,calendar="BP",...)
+plot.spdRC<- function(x,calendar="BP",col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i",xlim=NA,...)
 {
-	breaks=x$breaks
-	obs=x$sumblock
-	res=x$roca
-	par(mar=c(4,4,4,4))
-	nn = paste(breaks[-length(breaks)],breaks[-1],sep=" to ")
-	xxlab="Years cal BP"
-	if (calendar=="BCAD")
+	if (x$type=='blocks')
 	{
-		bcad.breaks=BPtoBCAD(breaks)
-		nn = paste(abs(bcad.breaks[-length(bcad.breaks)]),abs(bcad.breaks[-1]),sep="-")
-		xxlab="Years BC/AD"
-		if (all(range(bcad.breaks)<0)){xxlab="Years BC"}
-		if (all(range(bcad.breaks)>0)){xxlab="Years AD"}
+		breaks=x$breaks
+		obs=x$sumblock
+		res=x$roca
+		par(mar=c(4,4,4,4))
+		nn = paste(breaks[-length(breaks)],breaks[-1],sep=" to ")
+		xxlab="Years cal BP"
+		if (calendar=="BCAD")
+		{
+			bcad.breaks=BPtoBCAD(breaks)
+			nn = paste(abs(bcad.breaks[-length(bcad.breaks)]),abs(bcad.breaks[-1]),sep="-")
+			xxlab="Years BC/AD"
+			if (all(range(bcad.breaks)<0)){xxlab="Years BC"}
+			if (all(range(bcad.breaks)>0)){xxlab="Years AD"}
 
+		}
+		barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,xlab=xxlab,...)
+		par(new=T)
+		xx = 1:c(length(nn)-1)
+		plot(0,0,xlim=c(0,length(nn)),ylim=range(res),axes=FALSE,xlab="",ylab="",type="n")
+		lines(xx,res,lwd=2,col="darkgreen")
+		points(xx,res,pch=20,col="darkgreen")
+		axis(4,col="darkgreen", col.axis="darkgreen")
+		mtext(side=4,"rate of change",col="darkgreen",line=2)
+		abline(h=0,lty=2,col="blue")
 	}
-	barplot(x$sumblock,names.arg=nn,ylab="Summed Probability",,space=0,col="bisque3",border=NA,xlab=xxlab,...)
-	par(new=T)
-	xx = 1:c(length(nn)-1)
-	plot(0,0,xlim=c(0,length(nn)),ylim=range(res),axes=FALSE,xlab="",ylab="",type="n")
-	lines(xx,res,lwd=2,col="darkgreen")
-	points(xx,res,pch=20,col="darkgreen")
-	axis(4,col="darkgreen", col.axis="darkgreen")
-	mtext(side=4,"rate of change",col="darkgreen",line=2)
-	abline(h=0,lty=2,col="blue")
+
+	if (x$type=='backsight')
+	{
+		obs=data.frame(calBP=x$timeSequence, roc=x$roca)
+
+		if (calendar=="BP"){
+			obs$Years <- obs$calBP
+			xlabel <- "Years cal BP"
+			if (any(is.na(xlim))){ xlim <- c(max(obs$Years),min(obs$Years)) }
+		} else if (calendar=="BCAD"){
+			xlabel <- 'Years BC/AD'    
+			obs$Years <- BPtoBCAD(obs$calBP)
+			if (all(range(obs$Years)<0)){xlabel <- "Years BC"}
+			if (all(range(obs$Years)>0)){xlabel <- "Years AD"}
+			if (any(is.na(xlim))){xlim <- c(min(obs$Years),max(obs$Years)) }
+		} else {
+			stop("Unknown calendar type")
+		}
+
+
+			plot(obs$Years, obs$roc, xlim=xlim, xlab=xlabel, ylab='Rate of Change', type="l", col=col.obs, lwd=lwd.obs, xaxs=xaxs, yaxs=yaxs, axes=FALSE,...)
+
+			abline(h=0,lty=2,lwd=1)
+			box()
+			axis(side=2)
+
+			
+			if (calendar=="BP"){
+				rr <- range(pretty(obs[,"Years"]))    
+				axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
+				axis(side=1,at=pretty(obs[,"Years"]),labels=abs(pretty(obs[,"Years"])))
+			} else if (calendar=="BCAD"){
+				yy <-  obs[,"Years"]
+
+				rr <- range(pretty(yy))    
+				prettyTicks <- seq(rr[1],rr[2],+100)
+				prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+				axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
+
+				py <- pretty(yy)
+				pyShown <- py
+				if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+				py[which(py>1)] <-  py[which(py>1)]-1
+				axis(side=1,at=py,labels=abs(pyShown))
+			}
+	}
 }
 
 

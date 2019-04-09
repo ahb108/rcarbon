@@ -332,50 +332,91 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
 #'
 #' @param spd Summed Probability Distribution obtained using the \code{\link{spd}} function. 
 #' @param breaks A vector giving the breakpoints between the time-blocks.
-#' @param rate An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block, \code{t2} is the summed probability for next block, and \code{d} is the duration of the blocks. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).
+#' @param backsight A single numeric value defining the distance in time between the focal year and the backsight year for computing the rate of change.
+#' @param changexpr An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block or year, \code{t0} is the summed probability for previsous block or backsight year, and \code{d} is the duration of the block or the length of the backsight. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).
+#' @details When the argument \code{breaks} is supplied the function aggregates the summed probability within each time-block and compared them across abutting blocks using the expression defined by \code{changexpr}. When the argument \code{backsight} is provided he expression is based on the comparison between the summed probability of each year and the associated backsight year.  
 #'
-#' @return An object of class \code{spdRC} containing the total summed probability for each time-block and the rate of change between abutting blocks.
+#' @return An object of class \code{spdRC}.
 #'
 #' @examples
 #' \dontrun{
 #' data(emedyd)
 #' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
 #' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
-#' emedyd.spd <- spd(caldates,bins,timeRange=c(16000,9000))
+#' emedyd.spd <- spd(caldates,bins,timeRange=c(16000,9000),runm=100)
 #' emedyd.gg <- spd2rc(emedyd.spd,breaks=seq(16000,9000,-1000))
+#' emedyd.gg2 <- spd2rc(emedyd.spd,backsight=10)
 #' plot(emedyd.gg)
+#' plot(emedyd.gg2)
 #' }
 
 #' @import stats
 #' @export
 
-spd2rc <- function(spd,breaks,rate=expression((t2/t1)^(1/d)-1))
+spd2rc <- function(spd,breaks=NULL,backsight=NULL,changexpr=expression((t1/t0)^(1/d)-1))
 {
-	require(rcarbon)	
-	if (length(unique(round(abs(diff(breaks)))))!=1)
+	if (is.null(breaks)&is.null(backsight))
 	{
-		stop("Unequal break intervals is not supported")
-	}
-	nBreaks = length(breaks)-1
-	timeRange = eval(parse(text=spd$metadata[2]))
-	timeSequence = timeRange[1]:timeRange[2]
-	obs=numeric(length=nBreaks)    
-	for (x in 1:nBreaks)
-	{
-		index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
-		obs[x]=sum(spd$grid[index,2])
+		stop('Either breaks or backsight should be provided')
 	}
 
-	res=numeric(length=nBreaks-1)
-	for (i in 1:(nBreaks-1))
+	if (!is.null(breaks)&!is.null(backsight))
 	{
-		d=abs(breaks[i+1]-breaks[i]) 	
-		t1 = obs[i]
-		t2 = obs[i+1]
-		res[i] = eval(rate)
-# 		res[i]=(obs[i+1]/obs[i])^(1/d)-1
+		stop('Both breaks and backsight cannot be provided')
 	}
-	res=list(sumblock=obs,roca=res,breaks=breaks)
+
+	if (is.null(backsight))
+	{
+		if (length(unique(round(abs(diff(breaks)))))!=1)
+		{
+			stop("Unequal break intervals is not supported")
+		}
+		nBreaks = length(breaks)-1
+	}
+
+	timeRange = eval(parse(text=spd$metadata[2]))
+	timeSequence = timeRange[1]:timeRange[2]
+	
+	# if block based:
+	if(!is.null(breaks))
+	{
+		type='blocks'
+		obs=numeric(length=nBreaks)    
+		for (x in 1:nBreaks)
+		{
+			index=which(timeSequence<=breaks[x]&timeSequence>breaks[x+1])
+			obs[x]=sum(spd$grid[index,2])
+		}
+
+		res=numeric(length=nBreaks-1)
+		for (i in 1:(nBreaks-1))
+		{
+			d=abs(breaks[i+1]-breaks[i]) 	
+			t0 = obs[i]
+			t1 = obs[i+1]
+			res[i] = eval(changexpr)
+			# 		res[i]=(obs[i+1]/obs[i])^(1/d)-1
+		}
+	}
+
+	# if backsight based:
+	if (!is.null(backsight))
+	{
+		type ='backsight'
+		breaks = NA
+		res=rep(NA,length(timeSequence))
+		obs=NA
+
+		for (i in 1:c(length(timeSequence)-backsight))
+		{
+			d=backsight 	
+			t0 = spd$grid$PrDens[i]
+			t1 = spd$grid$PrDens[i+backsight]
+			res[i+backsight] = eval(changexpr)
+		}
+	}
+
+	res=list(sumblock=obs,roca=res,breaks=breaks,timeSequence=timeSequence,type=type)
 	class(res) <- append(class(res),"spdRC")
 	return(res)   
 }

@@ -4,10 +4,12 @@
 \alias{summary.SpdModelTest}
 \title{Summarise a \code{SpdModelTest} class object}
 \usage{
-summary.SpdModelTest(object, ...)
+summary.SpdModelTest(object, type = "spd", ...)
 }
 \arguments{
 \item{object}{A \code{SpdModelTest} class object produced using the \code{link{modelTest}} function.}
+
+\item{type}{Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.}
 
 \item{...}{Ignored}
 }
