@@ -50,8 +50,7 @@ binPrep <- function(sites, ages, h){
 #' @param errors A vector of uncalibrated radiocarbon errors (same length as ages)
 #' @param bins A vector of labels corresponding to site names, ids, bins or phases (same length as ages)
 #' @param size A single integer specifying the maximum number of desired dates for each label stated bin.
-#' @param errorcap A single integer specifying the maximum allowable error (applied only in cases where a bin has more than the maximum number of allowable dates).
-#' @param thresh A single numeric value between 0 and 1 specifying the approximate proportion (after rounding) of the resulting sample that will be chosen according to lowest date errors. At the extremes, O produces a simple random sample whereas 1 selectes the sample dates with the lowest errors. Ignored if method="random".
+#' @param thresh A single numeric value between 0 and 1 specifying the approximate proportion (after rounding) of the resulting sample that will be chosen according to lowest date errors. At the extremes, O produces a simple random sample whereas 1 selects the sample dates with the lowest errors. Ignored if method="random".
 #' @param method The method to be applied where "random" simple selects a random sample, whereas "splitsample", picks some proportion (see thresh) of the sample to minimise errors, and randomly samples the rest. At present, these are the only two options.
 #' @param seed Allows setting of a random seed to ensure reproducibility.
 #'
@@ -71,7 +70,7 @@ binPrep <- function(sites, ages, h){
 #' @seealso \code{\link{binPrep}}
 #' @export
 #'
-thinDates <- function(ages, errors, bins, size, errorcap=NA, thresh=0.5, method="random", seed=NA){
+thinDates <- function(ages, errors, bins, size, thresh=0.5, method="random", seed=NA){
     if (length(size)!=1){ stop("The size argument must be a single integer.") }
     if (thresh < 0 |  thresh > 1){ stop("The thresh argument must be between 0 and 1.") }
     df <- data.frame(ages=ages, errors=errors, bins=bins, RN=1:length(ages))
@@ -83,11 +82,9 @@ thinDates <- function(ages, errors, bins, size, errorcap=NA, thresh=0.5, method=
             sitelist[[a]] <- df1$RN
         } else {
             if (method=="random"){
-                if (!is.na(errorcap)){ df1 <- df1[df1$errors <= errorcap,] }
                 if (!is.na(seed) & is.numeric(seed)){ set.seed(seed) }
                 sitelist[[a]] <- sample(df1$RN,size)
             } else if (method=="splitsample"){
-                if (!is.na(errorcap)){ df1 <- df1[df1$errors <= errorcap,] }
                 rnks <- rank(df1$errors)
                 check <- min(rnks[rnks>(size*thresh)])
                 myinds <- which(rnks<=check)
@@ -109,6 +106,7 @@ thinDates <- function(ages, errors, bins, size, errorcap=NA, thresh=0.5, method=
     allres <- sort(unlist(sitelist))
     return(allres)
 }
+
 
 #' @title Summed probability distributions (SPD) of radiocarbon dates.  
 #'
