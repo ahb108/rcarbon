@@ -4,8 +4,8 @@
 \alias{thinDates}
 \title{Sampling function to select a maximum number of dates per site, bin or phase.}
 \usage{
-thinDates(ages, errors, bins, size, errorcap = NA, thresh = 0.5,
-  method = "random", seed = NA)
+thinDates(ages, errors, bins, size, thresh = 0.5, method = "random",
+  seed = NA)
 }
 \arguments{
 \item{ages}{A vector of uncalibrated radiocarbon ages}
@@ -16,9 +16,7 @@ thinDates(ages, errors, bins, size, errorcap = NA, thresh = 0.5,
 
 \item{size}{A single integer specifying the maximum number of desired dates for each label stated bin.}
 
-\item{errorcap}{A single integer specifying the maximum allowable error (applied only in cases where a bin has more than the maximum number of allowable dates).}
-
-\item{thresh}{A single numeric value between 0 and 1 specifying the approximate proportion (after rounding) of the resulting sample that will be chosen according to lowest date errors. At the extremes, O produces a simple random sample whereas 1 selectes the sample dates with the lowest errors. Ignored if method="random".}
+\item{thresh}{A single numeric value between 0 and 1 specifying the approximate proportion (after rounding) of the resulting sample that will be chosen according to lowest date errors. At the extremes, O produces a simple random sample whereas 1 selects the sample dates with the lowest errors. Ignored if method="random".}
 
 \item{method}{The method to be applied where "random" simple selects a random sample, whereas "splitsample", picks some proportion (see thresh) of the sample to minimise errors, and randomly samples the rest. At present, these are the only two options.}
 
