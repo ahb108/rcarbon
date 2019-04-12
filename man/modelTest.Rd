@@ -56,6 +56,23 @@ modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
+\value{
+An object of class \code{SpdModelTest} with the following elements
+\itemize{
+\item{\code{result}} {A four column data.frame containing the observed probability density (column \emph{PrDens}) and the lower and the upper values of the simulation envelope (columns \emph{lo} and \emph{hi}) for each calendar year column \emph{calBP}}
+\item{\code{result.roc}} {A four column data.frame containing the observed rates of change (column \emph{roc}) and the lower and the upper values of the simulation envelope (columns \emph{lo.roc} and \emph{hi.roc}) for the mid point between two chronological blocks \emph{calBP}}
+\item{\code{sim}} {A matrix containing the simulation results of the summed probabilities. Available only when \code{raw} is set to TRUE} 
+\item{\code{sim.roc}} {A matrix containing the simulation results of the rate of change of summed probabilities. Available only when \code{raw} is set to TRUE} 
+\item{\code{pval}} {A numeric vector containing the p-value of the global significance test for the summed probabilities}  
+\item{\code{pval.roc}} {A numeric vector containing the p-value of the global significance test for the rates of change}  
+\item{\code{fit}} {A data.frame containing the probability densities of the fitted model for each calendar year within the time range of analysis}  
+\item{\code{fitobject}} {Fitted model. Not available when \code{model} is \code{'custom'}}  
+\item{\code{n}} {Number of radiocarbon dates.}
+\item{\code{nbins}}{Number of bins.}
+\item{\code{nsim}}{Number of Monte-Carlo simulations.}
+\code{\code{backsight}}{Backsight size.} 
+}
+}
 \description{
 Comparison of an observed summed radiocarbon date distribution (aka SPD) with simulated outcomes from a theoretical model.
 }

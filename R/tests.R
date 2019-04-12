@@ -42,7 +42,7 @@
 #' \item{\code{result}} {A four column data.frame containing the observed probability density (column \emph{PrDens}) and the lower and the upper values of the simulation envelope (columns \emph{lo} and \emph{hi}) for each calendar year column \emph{calBP}}
 #' \item{\code{result.roc}} {A four column data.frame containing the observed rates of change (column \emph{roc}) and the lower and the upper values of the simulation envelope (columns \emph{lo.roc} and \emph{hi.roc}) for the mid point between two chronological blocks \emph{calBP}}
 #' \item{\code{sim}} {A matrix containing the simulation results of the summed probabilities. Available only when \code{raw} is set to TRUE} 
-#' \item{\code{sim.roc} {A matrix containing the simulation results of the rate of change of summed probabilities. Available only when \code{raw} is set to TRUE} 
+#' \item{\code{sim.roc}} {A matrix containing the simulation results of the rate of change of summed probabilities. Available only when \code{raw} is set to TRUE} 
 #' \item{\code{pval}} {A numeric vector containing the p-value of the global significance test for the summed probabilities}  
 #' \item{\code{pval.roc}} {A numeric vector containing the p-value of the global significance test for the rates of change}  
 #' \item{\code{fit}} {A data.frame containing the probability densities of the fitted model for each calendar year within the time range of analysis}  

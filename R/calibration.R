@@ -316,7 +316,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #'
 #' @description Function for uncalibrating one or more radiocarbon dates.
 #'
-#' @param x Either a vector of uncalibrated radiocarbon ages or an object of class CalGrid.
+#' @param x Either a vector of calibrated radiocarbon ages or an object of class CalGrid.
 #' @param CRAerrors A vector of standard deviations corresponding to each estimated radiocarbon age (ignored if x is a CalGrid object).
 #' @param roundyear An optional vector of IDs for each date (ignored if x is a CalGrid object).
 #' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently 'intcal13','intcal13nhpine16','shcal13',"shcal13shkauri16', and 'marine13' are possible) or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the 'intcal13' curve and only one curve can currently be specified for all dates. 

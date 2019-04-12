@@ -15,7 +15,7 @@ uncalibrate(x, ...)
   compact = TRUE, verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{Either a vector of uncalibrated radiocarbon ages or an object of class CalGrid.}
+\item{x}{Either a vector of calibrated radiocarbon ages or an object of class CalGrid.}
 
 \item{...}{ignored}
 
