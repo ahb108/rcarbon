@@ -5,8 +5,11 @@
   * NEW argument `gridclip` to add range constrain in the simulation envelope. When set to TRUE the sampling is executed within the observed range of dates.
   * UPDATE `timeRange` can now be left undefined, in which case the range of median calibrated observed dates is used. 
   * NEW argument `normalised` handles whether simulated dates should be normalised or not.
+  * NEW arguments `backsight` and `changexpr` enabling the comparison of expected and observed rates of changes. 
   * UPDATE: improved performance of `calsample` and `uncalsample` methods (update in `uncalibrate()`) `
   * Bug fix: users no longer need to specify `nsim` when `fitonly` is set to TRUE.
+* UPDATE in `permTest()`
+  * NEW arguments `backsight` and `changexpr` enabling the comparison of expected and observed rates of changes. 
 * UPDATE in `spd()`: aggregation matrix now spans beyond `timeRange` to avoid edge effects.
 * UPDATE in `calibrate()`: the new agrument `F14C` enables calibratio in F14C space.
 * UPDATE in `SPpermTest()`: 
@@ -15,6 +18,7 @@
 * UPDATE in `spd2gg()`:
   * function is deprecated and renamed `spd2rc()`
   * function now allows user defined expression for computing the rate of change
+  * rates of changes can now be based on abutting time-blocks (e.g. 5600-5501 to 5500-5401) or a fixed interval across all years.
 * NEW: `thinDates()` function to randomly select a maximum number of dates per site, bin or phase.
 * NEW: `as.CalDates()` function converts dates in `BchronCalibratedDates` class ([Bchron](https://cran.r-project.org/web/packages/Bchron/index.html)) and `oxcAARCalibratedDatesList`class ([oxAAR](https://cran.r-project.org/web/packages/oxcAAR/index.html)) into CalDates` class (rcarbon).
 * NEW: `sampleDates()` function for sampling random dates from calibrated dates or bins.
