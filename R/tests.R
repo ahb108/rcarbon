@@ -350,6 +350,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 		    t0 = spd[i]
 		    t1 = spd[i+backsight]
 		    obs[i+backsight] = eval(changexpr)
+		    if (t1==0|t0==0){obs[i+backsight]=NA}
 	    }
 	    return(obs)
     }
@@ -578,6 +579,7 @@ permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/
 		    t0 = spd[i]
 		    t1 = spd[i+backsight]
 		    obs[i+backsight] = eval(changexpr)
+		    if (t1==0|t0==0){obs[i+backsight]=NA}
 	    }
 	    return(obs)
     }

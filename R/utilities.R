@@ -395,6 +395,7 @@ spd2rc <- function(spd,breaks=NULL,backsight=NULL,changexpr=expression((t1/t0)^(
 			t0 = obs[i]
 			t1 = obs[i+1]
 			res[i] = eval(changexpr)
+			if (t1==0|t0==0){res[i]=NA}
 			# 		res[i]=(obs[i+1]/obs[i])^(1/d)-1
 		}
 	}
@@ -413,6 +414,7 @@ spd2rc <- function(spd,breaks=NULL,backsight=NULL,changexpr=expression((t1/t0)^(
 			t0 = spd$grid$PrDens[i]
 			t1 = spd$grid$PrDens[i+backsight]
 			res[i+backsight] = eval(changexpr)
+			if (t1==0|t0==0){res[i+backsight]=NA}
 		}
 	}
 
