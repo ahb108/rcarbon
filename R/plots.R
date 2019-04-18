@@ -12,6 +12,9 @@
 #' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
 #' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95.
 #' @param customCalCurve A three column data.frame or matrix that allows you to pass and plot a custom calibration curve if you used one during calibration. You can currently only provide one such custom curve which is used for all dates.
+#' @param col The primary fill color for the calibrated date distribution. 
+#' @param col2 The secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}.
+#' @param add if set to \code{TRUE} the calibrated date is displayed over the existing plot. Default is \code{FALSE}. 
 #' @param ... Additional arguments affecting the plot. 
 #'
 #' @seealso \code{\link{calibrate}}
@@ -27,7 +30,7 @@
 #' @import utils
 #' @export  
 
-plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95, customCalCurve=NA,...){
+plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95, customCalCurve=NA,add=FALSE,col='grey50',col2='grey82',...){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
@@ -77,28 +80,32 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
         xticks <- seq(xticks[1]-100, xticks[2], 100)
     }
     yrng <- c(min(yvals[yvals>0]),max(yvals[yvals>0])+(max(yvals[yvals>0])*2))
-    par(cex.lab=0.75)
-    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75,...)
-    
+
+    if (!add)
+    {
+	    par(cex.lab=0.75)
+	    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75,...)
+    }
+
     xticksLab <- xticks
     if (calendar=="BCAD")
     {
       if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
       xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
-    axis(1, at=xticks, labels=abs(xticksLab), las=2, cex.axis=0.75)
+    if(!add) {axis(1, at=xticks, labels=abs(xticksLab), las=2, cex.axis=0.75)}
     
-    if (axis4){ axis(4, cex.axis=0.75) }
+    if (!add&axis4){ axis(4, cex.axis=0.75) }
     if (!HPD){
-    polygon(xvals,yvals, col="grey50", border="grey50")
+    polygon(xvals,yvals, col=col, border=col)
     } else {
-    polygon(xvals,yvals, col="grey82", border="grey82")
+    polygon(xvals,yvals, col=col2, border=col2)
     hdres <- hpdi(x,credMass=credMass)[[ind]]
     if(calendar=="BCAD"){hdres=1950-hdres}
 	for (i in 1:nrow(hdres))
 	{
 	 index <- which(xvals%in%hdres[i,1]:hdres[i,2])
-         polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],0,0), col="grey50", border="grey50")
+         polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],0,0), col=col, border=col)
 	}
     }
 
@@ -106,27 +113,30 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
         if (type=="auc"){
             lines(xvals, yvals/sum(yvals), col="black", lty="dotted")
         }
-        par(new=TRUE)
-        cradf1 <- data.frame(CRA=50000:0,Prob=dnorm(50000:0, mean=cra, sd=error))
-        cradf1 <- cradf1[cradf1$Prob>0.0001,]
-        ylim <- c(cra-(12*error),cra+(8*error))    
-        cradf1$RX <- reScale(cradf1$Prob, to=c(xlim[1],(xlim[1]+diff(xlim)*0.33)))
-        yticks <- ylim[1]:ylim[2]
-        yticks <- yticks[yticks %% 200 == 0]
-        plot(cradf1$RX,cradf1$CRA,type="l", axes=FALSE, xlab=NA, ylab=NA, xlim=xlim, ylim=ylim, col=rgb(144,238,144,120,maxColorValue=255))
-        polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
-        axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
-        if (is.na(ylab)){
-            mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)
-        } else {
-            mtext(side=2, line=3, xlab, cex=0.75)
-        }
+    if(!add)
+    {
+	    par(new=TRUE)
+	    cradf1 <- data.frame(CRA=50000:0,Prob=dnorm(50000:0, mean=cra, sd=error))
+	    cradf1 <- cradf1[cradf1$Prob>0.0001,]
+	    ylim <- c(cra-(12*error),cra+(8*error))    
+	    cradf1$RX <- reScale(cradf1$Prob, to=c(xlim[1],(xlim[1]+diff(xlim)*0.33)))
+	    yticks <- ylim[1]:ylim[2]
+	    yticks <- yticks[yticks %% 200 == 0]
+	    plot(cradf1$RX,cradf1$CRA,type="l", axes=FALSE, xlab=NA, ylab=NA, xlim=xlim, ylim=ylim, col=rgb(144,238,144,120,maxColorValue=255))
+	    polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
+	    axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
+	    if (is.na(ylab)){
+		    mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)
+	    } else {
+		    mtext(side=2, line=3, xlab, cex=0.75)
+	    }
+    }
         calcurvemetadata <- x$metadata$CalCurve[ind]
         calcurvecheck <- TRUE
         if (calcurvemetadata == "custom" & !class(customCalCurve) %in% c("data.frame","matrix")){
             calcurvecheck <- FALSE
         }
-        if (calcurvecheck){
+        if (calcurvecheck&!add){
             if (calcurvemetadata == "custom"){
                 cc <- as.data.frame(customCalCurve)[,1:3]
                 names(cc) <- c("BP","CRA","Error")

@@ -6,7 +6,8 @@
 \usage{
 plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
   type = "standard", xlab = NA, ylab = NA, axis4 = TRUE,
-  HPD = FALSE, credMass = 0.95, customCalCurve = NA, ...)
+  HPD = FALSE, credMass = 0.95, customCalCurve = NA, add = FALSE,
+  col = "grey50", col2 = "grey82", ...)
 }
 \arguments{
 \item{x}{\code{CalDates} class object containing calibrated radiocarbon dates.}
@@ -30,6 +31,12 @@ plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
 \item{credMass}{A numerical value indicating the size of the higher posterior density interval. Default is 0.95.}
 
 \item{customCalCurve}{A three column data.frame or matrix that allows you to pass and plot a custom calibration curve if you used one during calibration. You can currently only provide one such custom curve which is used for all dates.}
+
+\item{add}{if set to \code{TRUE} the calibrated date is displayed over the existing plot. Default is \code{FALSE}.}
+
+\item{col}{The primary fill color for the calibrated date distribution.}
+
+\item{col2}{The secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}.}
 
 \item{...}{Additional arguments affecting the plot.}
 }
