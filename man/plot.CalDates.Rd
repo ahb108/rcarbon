@@ -7,7 +7,8 @@
 plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
   type = "standard", xlab = NA, ylab = NA, axis4 = TRUE,
   HPD = FALSE, credMass = 0.95, customCalCurve = NA, add = FALSE,
-  col = "grey50", col2 = "grey82", ...)
+  col = "grey50", col2 = "grey82", cex.axis = 0.75, cex.lab = 0.75,
+  ...)
 }
 \arguments{
 \item{x}{\code{CalDates} class object containing calibrated radiocarbon dates.}
@@ -37,6 +38,10 @@ plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
 \item{col}{The primary fill color for the calibrated date distribution.}
 
 \item{col2}{The secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}.}
+
+\item{cex.axis}{The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 0.75.}
+
+\item{cex.lab}{The magnification to be used for x and y labels relative to the current setting of cex. Default is adjusted to 0.75.}
 
 \item{...}{Additional arguments affecting the plot.}
 }

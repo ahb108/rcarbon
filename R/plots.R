@@ -14,6 +14,8 @@
 #' @param customCalCurve A three column data.frame or matrix that allows you to pass and plot a custom calibration curve if you used one during calibration. You can currently only provide one such custom curve which is used for all dates.
 #' @param col The primary fill color for the calibrated date distribution. 
 #' @param col2 The secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}.
+#' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 0.75.
+#' @param cex.lab The magnification to be used for x and y labels relative to the current setting of cex. Default is adjusted to 0.75.
 #' @param add if set to \code{TRUE} the calibrated date is displayed over the existing plot. Default is \code{FALSE}. 
 #' @param ... Additional arguments affecting the plot. 
 #'
@@ -30,7 +32,7 @@
 #' @import utils
 #' @export  
 
-plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95, customCalCurve=NA,add=FALSE,col='grey50',col2='grey82',...){
+plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95, customCalCurve=NA,add=FALSE,col='grey50',col2='grey82',cex.axis=0.75,cex.lab=0.75,...){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
@@ -84,7 +86,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     if (!add)
     {
 	    par(cex.lab=0.75)
-	    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.axis=0.75,...)
+	    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.lab=cex.lab,cex.axis=cex.axis,...)
     }
 
     xticksLab <- xticks
@@ -93,9 +95,9 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
       if (any(xticksLab==0)){xticksLab[which(xticksLab==0)]=1}
       xticks[which(xticks>1)]=xticks[which(xticks>1)]-1
     }
-    if(!add) {axis(1, at=xticks, labels=abs(xticksLab), las=2, cex.axis=0.75)}
+    if(!add) {axis(1, at=xticks, labels=abs(xticksLab), las=2, cex.axis=cex.axis)}
     
-    if (!add&axis4){ axis(4, cex.axis=0.75) }
+    if (!add&axis4){ axis(4, cex.axis=cex.axis) }
     if (!HPD){
     polygon(xvals,yvals, col=col, border=col)
     } else {
@@ -124,11 +126,11 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 	    yticks <- yticks[yticks %% 200 == 0]
 	    plot(cradf1$RX,cradf1$CRA,type="l", axes=FALSE, xlab=NA, ylab=NA, xlim=xlim, ylim=ylim, col=rgb(144,238,144,120,maxColorValue=255))
 	    polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
-	    axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=0.75)
+	    axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=cex.axis)
 	    if (is.na(ylab)){
-		    mtext(side=2, line=3, "Radiocarbon Age", cex=0.75)
+		    title(line=3, ylab="Radiocarbon Age", cex.lab=cex.lab)
 	    } else {
-		    mtext(side=2, line=3, xlab, cex=0.75)
+		    title(line=3, ylab=ylab, cex=cex.lab)
 	    }
     }
         calcurvemetadata <- x$metadata$CalCurve[ind]
@@ -167,7 +169,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
         }
     }
     if (!is.na(label)){
-        legend("topright", label, bty="n", cex=0.75)
+        legend("topright", label, bty="n", cex=cex.label)
     }
 }
 
@@ -507,7 +509,7 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @import utils
 #' @export 
 
-plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', add=FALSE,...){
+plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', add=FALSE, cex.axis=1, ...){
 
 	types <- c("standard","simple")
 	if (!type %in% types){
@@ -537,7 +539,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 		par(xaxs="i")
 		par(yaxs="i")
 		if (!add){
-			plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt)
+			plot(plotyears, spdvals, xlim=xlim, ylim=ylim, type="l", col="white", ylab=ylabel, xlab=xlabel, xaxt="n", yaxt=yaxt, ...)
 		}
 		polygon(c(plotyears,rev(plotyears)),c(spdvals,rep(0,length(spdvals))),border=border.p, col=fill.p)
 	} else if (type=="simple"){
@@ -550,8 +552,8 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 	box()
 	if (calendar=="BP" & xaxt!="n"){
 		rr <- range(pretty(plotyears))    
-		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-		axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)))
+		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01,cex.axis=cex.axis)
+		axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)),cex.axis=cex.axis)
 	} else if (calendar=="BCAD" & xaxt!="n"){
 		yy <-  plotyears
 		rr <- range(pretty(yy))    
