@@ -1043,18 +1043,22 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 		lo=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
 		eq=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
 
-		print("Permutation test...")
-		flush.console()
+
+		if(verbose){
+			print("Permutation test...")
+			flush.console()
+		}
 
 		if(raw)
 		{
 			rocaSimAll = array(NA,dim=c(nsim,nrow(spatialweights$w),nBreaks-1))
 		}
-		pb <- txtProgressBar(min = 1, max = nsim, style=3)
+		
+		if(verbose){pb <- txtProgressBar(min = 1, max = nsim, style=3)}
 
 		for (s in 1:nsim)
 		{
-			setTxtProgressBar(pb, s)
+			if(verbose){setTxtProgressBar(pb, s)}
 			simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
 			## Aggregate by Site ## 
 			simResMatrix=matrix(0,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
@@ -1125,7 +1129,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 			eq=eq+(rocaObs==rocaSim)
 			if(raw){rocaSimAll[s,,]=rocaSim}
 		}
-		close(pb)
+		if(verbose){close(pb)}
 	}
 
 
