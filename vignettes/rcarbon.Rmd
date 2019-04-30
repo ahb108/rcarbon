@@ -1,5 +1,5 @@
 ---
-title: "Analysing radiocarbon dates using the *rcarbon* package"
+title: "Analysing radiocarbon dates using the rcarbon package"
 author: "Enrico Crema, Andrew Bevan"
 date: "`r Sys.Date()`"
 output:
@@ -10,7 +10,7 @@ output:
 fontsize: 11pt
 documentclass: article
 vignette: >
-  %\VignetteIndexEntry{Analysing Radiocarbon dates with the *rcarbon* package}
+  %\VignetteIndexEntry{Analysing Radiocarbon dates with the rcarbon package}
   %\VignetteEngine{knitr::rmarkdown_notangle}
 ---
 
@@ -21,34 +21,34 @@ w = 3.5
 is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",
              "_R_CHECK_LICENSE_") %in% names(Sys.getenv()))
 knitr::opts_chunk$set(fig.align = "center", eval = !is_check)
-library(rcarbon)
-```
-
-```{r, include = FALSE}
-devtools::load_all()
 ```
 
 # Introduction
 
-A seminal paper by John Rick some 30 years ago (1987) first introduced the idea of using the frequency of archaeological radiocarbon dates through time as a proxy for highs and lows in human population dynamics. The increased availability of large collection of archaeological (especially anthropogenic) radiocarbon dates have dramatically pushed this research agenda forward in recent years. New case studies from across the globe are regularly being published, stimulating the development of new techniques to tackle specific methodological and interpretative issues.
+A seminal paper by John Rick some 30 years ago (1987) first introduced the idea of using the frequency of archaeological radiocarbon dates through time as a proxy for highs and lows in human population dynamics. The increased availability of large collections of archaeological (especially anthropogenic) radiocarbon dates has dramatically pushed this research agenda forward in recent years. New case studies from across the globe are regularly being published, stimulating the development of new techniques to tackle specific methodological and interpretative issues.
 
-*rcarbon* is an *R* package for the analysis of large collection of radiocarbon dates, with particular emphasis on the “date as data” approach pioneered by Rick (1987). It offers basic calibration functions as well as a suite of statistical tests for examining aggregated calibrated dates, generally referred to as summed probability distributions of radiocarbon dates (SPDs, or sometimes SPDRDs).
+_rcarbon_ is an *R* package for the analysis of large collections of radiocarbon dates, with particular emphasis on the “date as data” approach pioneered by Rick (1987). It offers basic calibration functions as well as a suite of statistical tests for examining aggregated calibrated dates, generally referred to as summed probability distributions of radiocarbon dates (SPDs, or sometimes SPDRDs).
 
 
-## Installing the *rcarbon* package
+## Installing and loading the _rcarbon_ package
 
-Stable versions of the *rcarbon* package can be directly installed from CRAN (using the command `install.packages("rcabon")`), whilst the development version can be installed from the [github repository](https://github.com/ahb108/rcarbon) using the following command (the function requires the *devtools* package):
+Stable versions of the _rcarbon_ package can be directly installed from CRAN (using the command `install.packages("rcabon")`), whilst the development version can be installed from the [github repository](https://github.com/ahb108/rcarbon) using the following command (the function requires the *devtools* package):
 
 ```{r,eval=FALSE}
 devtools::install_github("ahb108/rcarbon")
 ```
 
-Notice that the development version can be unstable, so for general use we recommend the stable CRAN version
+Notice that the development version can be unstable, so for general use we recommend the stable CRAN version.
 
+Once the installation is completed the package can be loaded using the `library()` command:
+
+```{r}
+library(rcarbon)
+```
 
 # Calibrating $^{14}$C Dates
 
-Single or multiple radiocarbon dates can be calibrated using the `calibrate()` function, which uses the probability density approach (Stuiver and Reimar 1993, Van Der Plicht 1993, Bronk Ramsey 2008) implemented in most calibration software (e.g. [OxCal](https://c14.arch.ox.ac.uk/oxcal.html)) as well as in other R packages (especially [Bchron](https://CRAN.R-project.org/package=Bchron), which also provides age-depth modelling for environmental cores with radiocarbon dates and experimental options for aggregating dates via Gaussian mixtures). 
+Single or multiple radiocarbon dates can be calibrated using the `calibrate()` function, which uses the probability density approach (see Bronk Ramsey 2008) implemented in most calibration software (e.g. [OxCal](https://c14.arch.ox.ac.uk/oxcal.html)) as well as in other R packages (especially [Bchron](https://CRAN.R-project.org/package=Bchron), which also provides age-depth modelling for environmental cores with radiocarbon dates and experimental options for aggregating dates via Gaussian mixtures). 
 
 The example below calibrates a sample with a $^{14}$C Age of 4200 BP and an error of 30 years using the *intcal13* calibration curve:
 
@@ -65,13 +65,21 @@ plot(x,HPD=TRUE,credMass=0.95)
 Multiple dates can be calibrated by supplying a vector of numerical values, and the `summary()` function can be used to retrieve one and the two sigma ranges as well as the median calibrated date:
 
 ```{r,results='hide'}
-xx <- calibrate(x=c(5700,4820,6450),errors=c(30,40,40),calCurves='intcal13')
+xx <- calibrate(x=c(5700,4820,6450,7200),errors=c(30,40,40,30),calCurves='intcal13')
 ```
 ```{r}
 summary(xx)
 ```
 
 The `calibrate()` function can also be executed in parallel by specifying the number of cores using the argument `ncores`. 
+
+Individual calibrated dates stored in the `CalDates` class objects can be extracted using square bracket (e.g. `xx[2]` to extract the second date). The package provides also a `subset()` method and a `which.CalDates()` function to subset or identify specific dates with a given probability mass within a given interval. The example below extracts all dates from the object `xx` with a cumulative probability mass of 0.5 or over between 7000 and 5500 cal BP:
+
+```{r}
+which.CalDates(xx,BP<=7000&BP>=5500,p=0.5)
+xx2 = subset(xx,BP<=7000&BP>=5500,p=0.5)
+summary(xx2)
+```
 
 Calibration can be done with different curves. The following example is for a marine sample with $\Delta R = 340\pm20$:
 
@@ -89,12 +97,9 @@ plot(calibrate(4000,30,calCurves=myCurve))
 
 ```
 
-
-
-
 ### Normalisation
 
-By default, calibrated probabilities are normalised so the total probability is equal to one, in step with most other radiocarbon calibration software. However, Weninger et al (2015) argue that when dates are aggregated by summation, this normalisation process can generate artificial spikes in the resulting summed probability distributions (SPDs) coinciding with steeper portions of the calibration curve. By specifying `normalised=FALSE` in `calibrate()` it is possible to obtain non-normalised calibrations. Using normalised or non-normalised calibrations does not have an impact on the shape of individual calibrated probability distribution, but does influence the shape of SPDs, so we suggest that at minimum a case study should explore whether its results differ much when normalised versus unnormalised dates are used. 
+By default, calibrated probabilities are normalised so the total probability is equal to one, in step with most other radiocarbon calibration software. However, Weninger et al (2015) argue that when dates are aggregated by summation, this normalisation process can generate artificial spikes in the resulting summed probability distributions (SPDs) coinciding with steeper portions of the calibration curve. By specifying `normalised=FALSE` in `calibrate()` it is possible to obtain non-normalised calibrations. Using normalised or non-normalised calibrations does not have an impact on the shape of each calibrated probability distributions, but does influence the shape of SPDs, so we suggest that at minimum a case study should explore whether its results differ much when normalised versus unnormalised dates are used. 
 
 # Aggregating $^{14}$C Dates: Summed Probability Distributions (SPD)
 
@@ -137,7 +142,7 @@ DK.spd.bins = spd(DK.caldates,bins=DK.bins,timeRange=c(8000,4000))
 plot(DK.spd.bins)
 ```
 
-The selection of appropriate cut-off values have not been discussed in the literature (Shennan et al 2013 uses a value of 200 years but their algorithm is slightly different). From a practical point a “bin” represents an “phase” or episode of occupation, but clearly this is problematic definition in case of a continuous occupation. The binning process should hence be used with caution, and its implication explored via a sensitivity analysis. The function `binsense()` enables a visual assessment of how different cut-off values can modify the shape of the SPD. The example below explores 6 different values and show how the highest peak in the SPD changes as function of `h` but the overall dynamics remains essentially the same.
+The selection of appropriate cut-off values has not been discussed in the literature (Shennan et al 2013 uses a value of 200 years but their algorithm is slightly different). From a practical point, a “bin” represents a “phase” or episode of occupation, but clearly, this is a problematic definition in case of continuous occupation. The binning process should hence be used with caution, and its implication explored via sensitivity analysis. The function `binsense()` enables a visual assessment of how different cut-off values can modify the shape of the SPD. The example below explores six different values and show how the highest peak in the SPD changes as a function of `h` but the overall dynamics remains essentially the same.
 
 
 ```{r,results="hide",fig.height=5,fig.width=5}
@@ -150,7 +155,7 @@ par(new=T)
 
 ### Visualising Bins
 
-The location (in time) of individual bins can be shown by using the `binMed()` and the `barCodes()` functions. The former computes the median date from each bin whilst the latter display them as vertical lines on an existing SPD plot.
+The location (in time) of individual bins can be shown by using the `binMed()` and the `barCodes()` functions. The former computes the median date from each bin while the latter display them as vertical lines on an existing SPD plot.
 
 
 ```{r,results='hide',fig.height=5,fig.width=5}
@@ -159,13 +164,42 @@ plot(DK.spd.bins,runm=200)
 barCodes(Dk.bins.med,yrng = c(0,0.01))
 ```
 
+### Thinning
+
+An alternative way to tackle inter-site variation in sampling intensity is to set a maximum sample size per site or bin. This can be achieved by using the `thinDates()` function which returns index values based on a variety of criteria. The example below randomly selects one date from each bin and constructs an SPD without binning:
+
+```{r,fig.height=5,fig.width=5}
+# subset CalDates object based on random thinning
+DK.caldates2 = DK.caldates[thinDates(ages=DK$C14Age,  errors=DK$C14SD, bins=DK.bins, size=1, method='random')]
+# aggregation and visualisation of the SPD
+DK.spd.thinned = spd(DK.caldates2,timeRange=c(8000,4000))
+plot(DK.spd.thinned)
+```
+
+## Composite Kernel Density Estimates (CKDE)
+
+An alternative approach to visualise the changing frequencies of radiocarbon dates is to create a Composite Kernel Density Estimate (CKDE, Brown 2017). The methods consist of randomly sampling calendar dates from each calibrated date and generate a kernel density estimate (KDE) with a user-defined bandwidth. The process is iterated multiple times and the resulting set of KDE visualised as an envelope. To generate a CKDE using the _rcarbon_ package we first use the `sampleDates()` function. This generates multiple sets of random dates that can then be used to generate the CKDE. If the bin argument is supplied the function generates random dates from each bin rather than each date:
+
+```{r}
+DK.randates = sampleDates(DK.caldates,bins=DK.bins,nsim=100,verbose=FALSE)
+```
+
+The resulting object becomes the key argument for the `ckde()` function, which output can be displayed using the generic `plot()` function: 
+
+```{r,results='hide',fig.height=5,fig.width=5}
+D.ckde = ckde(DK.randates,timeRange=c(8000,4000),bw=200)
+plot(D.ckde,type='multiline')
+```
+
+The _rcarbon_ package enables also bootstrapping (by setting`boot=TRUE` in `sampleDates()`), and the CKDE can be weighted (by setting`normalised=FALSE` in `ckde()`; though the calibrated dates supplied to `sampleDates()` should not be normalised) to emulate SPD with non-normalised dates. For further details, please read the help documentation of the two functions. 
+
 # Hypothesis Testing
 
-The shape of empirical SPDs can be affected by a host of possible biases including taphonomic loss, sampling error, and the shape of the calibration curve. One way to approach this problem is to assess SPDs in relation to theoretical expectations and adopt a hypothesis-testing framework. *rcarbon* provides several functions for doing this.
+The shape of empirical SPDs can be affected by a host of possible biases including taphonomic loss, sampling error, and the shape of the calibration curve. One way to approach this problem is to assess SPDs in relation to theoretical expectations and adopt a hypothesis-testing framework. _rcarbon_ provides several functions for doing this.
 
-## Testing against theorethical growth models
+## Testing against theoretical growth models
 
-Shennan et al 2013 (Timpson et al 2014 for more detail and methodological refinement) introduced a Monte-Carlo simulation approach consisting of a three stage process: 1) fit a growth model to the observed SPD, for example via regression; 2) generate random samples from the fitted model; and 3) uncalibrate the samples. The resulting set of radiocarbon dates can then be calibrated and aggregated in order to generate an expected SPD of the fitted model that takes into account idiosyncrasies of the calibration process. This process can be repeated $n$ times to generate a distribution of SPDs (which takes into account the effect of sampling error) that can be compared to the observed data. Higher or lower than expected density of observed SPDs for a particular year will indicate local divergence of the observed SPD from the fitted model, and the magnitude and frequency of these deviations can be used to assess the goodness-of-fit via a global test. *rcarbon* implements this routine with the function `modelTest()`, which enables testing against exponential, linear, uniform, and user-defined custom models. The script below shows an example with the Danish SPD fitted to an exponential growth model:
+Shennan et al 2013 (Timpson et al 2014 for more detail and methodological refinement) introduced a Monte-Carlo simulation approach consisting of a three-stage process: 1) fit a growth model to the observed SPD, for example via regression; 2) generate random samples from the fitted model; and 3) uncalibrate the samples. The resulting set of radiocarbon dates can then be calibrated and aggregated in order to generate an expected SPD of the fitted model that takes into account idiosyncrasies of the calibration process. This process can be repeated $n$ times to generate a distribution of SPDs (which takes into account the effect of sampling error) that can be compared to the observed data. Higher or lower than expected density of observed SPDs for a particular year will indicate local divergence of the observed SPD from the fitted model, and the magnitude and frequency of these deviations can be used to assess the goodness-of-fit via a global test. _rcarbon_ implements this routine with the function `modelTest()`, which enables testing against exponential, linear, uniform, and user-defined custom models. The script below shows an example with the Danish SPD fitted to an exponential growth model:
 
 
 ```{r,results='hide'}
@@ -211,9 +245,20 @@ plot(LogNull)
 LogNull$pval
 ```
 
+
+### Testing Growth Rates
+
+The `modelTest()` function also enables the statistical comparison between the observed and expected growth rates of the fitted model. The rate is based on the comparison of the summed probability observed at each focal year $t$ against the summed probability at $t-\Delta$, where $\Delta$ is defined by the argument `backsight` in `modelTest()` a the range is calculated using the expression defined in the argument `changexpr`. The default values for `backsight` an `changexpr` are 50 years and the expression `(t1/t0)^(1/d) - 1` where `t1` is the summed probability for each year (i.e. $t$), `t0` is the summed probability of the backsight year (i.e. $t-\Delta$), and `d` is the distance between the two time points (i.e. $\Delta$).  The output of the growth rates analysis can be assessed by setting the argument `type` in the `summary()` and in the `plot()` functions. For example:      
+
+```{r,fig.width=5,fig.height=5}
+summary(expnull,type='roc')
+plot(expnull,type='roc')
+```
+
+
 ### Point-to-point Test
 
-The `modelTest()` function does not discern whether the observed difference between two particular points in time are significant, as both local and global tests are based on the overall shape of the observed and expected SPDs. The `p2pTest()` follows a procedure introduced by Edinborough et al (2017) which compares the expected and the observed difference in radiocarbon density between just two user-defined points in time. The example below is based on the Danish subset using a uniform theoretical model.
+The `modelTest()` function does not discern whether the observed difference between two particular points in time are significant, as both local and global tests are based on the overall shape of the observed and expected SPDs (or their corresponding rates of change). The `p2pTest()` follows a procedure introduced by Edinborough et al (2017) which compares the expected and the observed difference in radiocarbon density between just two user-defined points in time. The example below is based on the Danish subset using a uniform theoretical model.
 
 ```{r,results='hide'}
 #Fit a Uniform model (the argumet raw should be set to TRUE for p2pTest())
@@ -224,7 +269,8 @@ uninull <- modelTest(DK.caldates, errors=DK$C14SD, bins=DK.bins, nsim=100, timeR
 results=p2pTest(uninull,p1=5120,p2=4920)
 ```
 
-Notice that when the arguments `p1` and `p2` are not supplied `p2pTest()` displays the SPD and enable users to interactively select the two points on the plotted SPD.
+Notice that when the arguments `p1` and `p2` are not supplied `p2pTest()` displays the SPD and enable users to select the two points on the plotted SPD interactively.
+
 
 ## Comparing empirical SPDs against each other
 
@@ -244,10 +290,47 @@ plot(perm.emedyd,focalm = 2,main="Northern Levant/Upper Mesopotamia")
 plot(perm.emedyd,focalm = 3,main="South-Central Anatolia")
 ```
 
+As for `modelTest()`, it is also possible to compare the growth rates rather than the SPD:
+
+```{r,fig.width=5,fig.height=10}
+par(mfrow=c(3,1))
+plot(perm.emedyd,focalm = 1,main="Southern Levant", type='roc')
+plot(perm.emedyd,focalm = 2,main="Northern Levant/Upper Mesopotamia", type='roc')
+plot(perm.emedyd,focalm = 3,main="South-Central Anatolia", type='roc')
+```
 
 ## Spatial Analysis
 
-When geographic study areas are very large, it becomes inappropriate to assume that there is complete spatial homogeneity in the demographic trajectories of different sub-regions in the study area. At the same time, evaluating such regional divergences is difficult because any increase in spatial scale of a study usually entails also an increase in the heterogeneity of research design and in overall sampling intensity. *rcarbon* enables an exploration of spatial heterogeneity in the SPDs that is robust to differences in sampling intensity and provides a permutation-based statistical significance framework (for details in the method see Crema et al. 2017).
+The core principles of the "dates as data" approach can be extended over space by interpreting regions of high/low concentrations of dates across multiple temporal slices as evidence of higher/low population densities. As for the temporal SPDs, the visual inspection of such maps can be problematic, as peaks and troughs in the density of radiocarbon dates can potentially be the result of calibration processes or sampling error. The problem is further exacerbated when the spatial window of analysis becomes larger, as differences in sampling design and intensity can  hinder the observed pattern. The _rcarbon_ package offers two techniques that take into account these issues when assessing spatio-temporal patterns in the density of radiocarbon dates.     
+### Spatio-Temporal Kernel Density Estimates
+
+The `stkde()` function enables the computation of spatio-temporal kernel density estimates (KDE) of radiocarbon dates for a particular `focal` year based on user-defined spatial (`sbw`) and temporal (`tbw`) bandwidths. In practice, this is achieved by placing a Gaussian kernel around a chosen year and then the degree of overlap between this kernel and the probability distribution of each date is evaluated.  The weights are then used to compute weighted spatial kernel density estimates using the `density()` function of the _spatstat_ package (Baddeley et al 2015). The function returns the KDE for each focal year, the rate of change (based on the user-defined expression provided in the argument `changepr`) between focal years and some earlier `backsight` year, as well as relative risk surfaces (Kelsall and Diggle 1995). The latter consist of dividing the KDE of a particular year with the KDE of all periods to take into account overall differences in sampling intensity (see Chaput et al 2015 and Bevan et 2017 for examples).
+
+The example below examines a subset of the EUROEVOL radiocarbon dates from England and Wales between 6500 to 5000 BP, using a temporal bandwidth of 50 years, a spatial bandwidth of 40km, and `backsight` of 200 years (i.e. change is computed between focal year and focal year minus 200 years):
+
+```{r}
+## Load Data
+data(ewdates)
+data(ewowin)
+
+## Calibrate and Bin
+x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE,verbose=FALSE)
+bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
+
+## Create centennial timeslices (see help doc for further argument details)
+stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir=tempdir(), amount=1, verbose=FALSE)
+```
+
+The actual KDE time-slices are stored by the `stkde()` function stores in a user-defined directory defined by the argument `outdir` (the example above uses a temporary directory via the  `tempdir()` function). The `plot()` function can then be used to display a variety of maps. The example below shows the _focal intensity_ at year 5900 cal BP, the _overall intensity_ across all years, the relative risk surface ( _focal proportion_ ), and the rate of change between 5700 and 5900 cal BP ( _focal change_ ).
+
+```{r,fig.width=8,fig.height=2.5}
+par(mar=c(0.5, 0.5, 2.5, 2))
+plot(stkde1, 5900, type="all")
+```
+
+### Spatial Permutation Test 
+
+When geographic study areas are very large, it becomes inappropriate to assume that there is complete spatial homogeneity in the demographic trajectories of different sub-regions in the study area. At the same time, evaluating such regional divergences is difficult because any increase in spatial scale of a study usually entails also an increase in the heterogeneity of research design and in the overall sampling intensity. _rcarbon_ enables an exploration of spatial heterogeneity in the SPDs that is robust to differences in sampling intensity and provides a permutation-based statistical significance framework (for details in the method see Crema et al. 2017).
 
 In order to carry out a spatial analysis of aggregate radiocarbon dates, we need calibrated dates, bins, and a `SpatialPoints` class object containing the site locations:
 
@@ -275,28 +358,26 @@ d <- sp::spDists(sites,sites,longlat=TRUE)
 w <- spweights(d,h=100)
 ```
 
-The core function `SPpermTest()` compares the observed and the expected geometric growth rates rather than the raw SPD. Thus we need to define the break points of our chronological blocks and of course the overall time range of our analysis. In this case we examine sequences blocks of 500 years.
+The core function `sptest()` compares the observed and the expected geometric growth rates rather than the raw SPD. Thus we need to define the breakpoints of our chronological blocks and of course the overall time range of our analysis. In this case, we examine sequences blocks of 500 years.
 
 ```{r,results='hide'}
 breaks <- seq(8000,5000,-500) #500 year blocks
 timeRange <- c(8000,5000) #set the timerange of analysis in calBP, older date first
 ```
 
-The function `spd2gg()` can be used to calculate and visualise the growth rates for specific sequence of blocks.
+The function `spd2rc()` can be used to calculate and visualise the growth rates for specific sequence of blocks.
 
 ```{r,results='hide',fig.width=8,fig.height=4}
 eurospd = spd(x = eurodates,bins=eurobins,timeRange = timeRange)
-plot(spd2gg(eurospd,breaks = breaks))
+plot(spd2rc(eurospd,breaks = breaks))
 ```
 
-In this case the pan-regional trend shows a positive but declining growth rates through time, with the exception of the transition from to 6500-6000 to 6000-5500 cal BP when the rate increases slightly. 
+In this case, the pan-regional trend shows a positive but declining growth rates through time, except for the transition 6500-6000 to 6000-5500 cal BP when the rate increases slightly. 
 
-In order examine whether this dynamics is observed across the study region we execute our permutation test with the `SPpermTest()` function:
+In order examine whether this dynamics is observed across the study region we execute our permutation test with the `sptest()` function:
 
 ```{r,results='hide'}
-eurospatial <- SPpermTest(calDates=eurodates,bins=eurobins,timeRange=timeRange,
-		  locations=sites,permute="locations",nsim=1000,
-		  breaks=breaks,spatialweights=w,ncores=3) 
+eurospatial <- sptest(calDates=eurodates, bins=eurobins,timeRange=timeRange, locations=sites,permute="locations",nsim=1000, breaks=breaks, spatialweights=w,ncores=3) 
 ```
 
 The output of the function has its own `plot()` method which provides various ways to display the outcome. The function plots only the point locations, so it is often convenient to load a separate base map. The example below uses the *rworldmap* package:
@@ -309,54 +390,57 @@ xrange <- bbox(sites)[1,]
 yrange <- bbox(sites)[2,]
 ```
 
-The plot function requires the definition of an `index` value (a numerical integer representing the i-th transition (thus `index=1` means first transition, in this case the transition from the time block 8000-7500 to the time block 7500-7000 calBP), and an `option` argument, which indicates what needs to be plotted (either the results of the statistical tests or the local estimates of geometric growth rates). The scripts below examines the transition when the declining growth rate exhibits a short reversion (i.e. 6500-6000 to 6000-5500 cal BP).
-
-The plot function requires the definition of an `index` value (a numerical integer representing the i-th transition (thus `index=1` means first transition, in this case the transition from the time block 8000-7500 to the time block 7500-7000 calBP), and an `option` argument, which indicates what needs to be plotted (either the results of the statistical tests or the local estimates of geometric growth rates). The scripts below examines the transition when the declining growth rate exhibits a short reversion (i.e.6500-6000 to 6000-5500 cal BP).
+The plot function requires the definition of an `index` value (a numerical integer representing the $i$-th transition (thus `index=1` means first transition, in this case the transition from the time block 8000-7500 to the time block 7500-7000 cal BP), and an `option` argument, which indicates what needs to be plotted (either the results of the statistical tests or the local estimates of geometric growth rates). The script below examines the transition when the declining growth rate exhibits a short reversion (i.e. 6500-6000 to 6000-5500 cal BP).
 
 ```{r, fig.height=5,fig.width=10}
 ## Spatial Permutation Test for Transition 4
 par(mar=c(1,1,4,1),mfrow=c(1,2))
-plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange,main="6.5-6 to 6-5.5 kBP \n (Test Results)")
-plot(eurospatial,index=4,option="test",add=TRUE,legend=TRUE,legSize=0.7,location="topleft")
+plot(base,col="antiquewhite3", border="antiquewhite3",xlim=xrange, ylim=yrange,main="6.5-6 to 6-5.5 kBP \n (Test Results)")
+plot(eurospatial,index=4, option="test", add=TRUE, legend=TRUE, legSize=0.7, location="topleft")
 
 ## Geometric Growth Rate for Transition 4
-plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange,main="6.5-6 to 6-5.5 kBP \n (Growth Rate)")
-plot(eurospatial,index=4,option="raw",add=TRUE,breakRange=c(-0.005,0.005),legend=TRUE,legSize=0.7,location="topleft")
+plot(base,col="antiquewhite3", border="antiquewhite3", xlim=xrange, ylim=yrange, main="6.5-6 to 6-5.5 kBP \n (Growth Rate)")
+plot(eurospatial,index=4, option="raw", add=TRUE, breakRange=c(-0.005,0.005), legend=TRUE,legSize=0.7, location="topleft")
 ```
 
-The two figures shows signficant spatial hetorogeneity in growth rates. Southern Ireland, Britain, and the Baltic area all exhibit positive growth, while most of France is associated with negative deviations from the pan-regional model. Given the large number of site locations and consequent inflation of type I error, `SPpermTest()` calculates also the false discovery rate (q-values) using the `p.adjust()` function with `method="fdr"`. A q-value of 0.05 implies that 5% of the results that have a q-value below 0.05 are false positives.
+The two figures show significant spatial heterogeneity in growth rates. Southern Ireland, Britain, and the Baltic area all exhibit positive growth, while most of France is associated with negative deviations from the pan-regional model. Given the large number of site locations and consequent inflation of type I error, `sptest()` calculates also the false discovery rate (q-values) using the `p.adjust()` function with `method="fdr"`. A q-value of 0.05 implies that 5% of the results that have a q-value below 0.05 are false positives.
+
 
 # References
 
-Bevan, A., S. Colledge., D. Fuller., R. Fyfe., S. Shennan. & C. Stevens. 2017. Holocene fluctuations in human population demonstrate repeated links to food production and climate Proceedings of the National Academy of Sciences 114: E10524–31.
+Baddeley, A., Rubak, R., Turner, R. 2015. [Spatial Point Patterns: Methodology and Applications with R].(http://www.crcpress.com/Spatial-Point-Patterns-Methodology-and-Applications-with-R/Baddeley-Rubak-Turner/9781482210200/) London: Chapman and Hall/CRC Press, 2015.
 
-Bronk Ramsey C. 2008. Radiocarbon dating: revolutions in understanding. Archaeometry 50: 249–75.
+Bevan, A., S. Colledge., D. Fuller., R. Fyfe., S. Shennan. & C. Stevens. 2017. [Holocene fluctuations in human population demonstrate repeated links to food production and climate.](https://doi.org/10.1073/pnas.1709190114) Proceedings of the National Academy of Sciences 114: E10524–31.
 
-Collard, M., K. Edinborough, S. Shennan & M.G. Thomas 2010. Radiocarbon evidence indicates that migrants introduced farming to Britain Journal of Archaeological Science 37: 866–70.
+Bronk Ramsey C. 2008. [Radiocarbon dating: revolutions in understanding.](https://doi.org/10.1111/j.1475-4754.2008.00394.x) Archaeometry 50: 249–75.
 
-Crema, E.R., J. Habu, K. Kobayashi & M. Madella 2016. Summed Probability Distribution of 14 C Dates Suggests Regional Divergences in the Population Dynamics of the Jomon Period in Eastern Japan PLOS ONE 11: e0154809.
+Brown, W. A. 2017. [The past and future of growth rate estimation in demographic temporal frequency analysis: Biodemographic interpretability and the ascendance of dynamic growth models.](https://doi.org/10.1016/j.jas.2017.02.003) Journal of Archaeological Science, 80, 96–108.
 
-Crema, E.R., A. Bevan. & S. Shennan. 2017. Spatio-temporal approaches to archaeological radiocarbon dates Journal of Archaeological Science 87: 1–9.
+Chaput, M. A., Kriesche, B., Betts, M., Martindale, A., Kulik, R., Schmidt, V., & Gajewski, K. 2015. [Spatiotemporal distribution of Holocene populations in North America.](https://doi.org/10.1073/pnas.1505657112) Proceedings of the National Academy of Sciences, 112(39), 12127–12132. 
 
-Edinborough, K., M. Porčić, A. Martindale, T.J. Brown, K. Supernant & K.M. Ames 2017. Radiocarbon test for demographic events in written and oral history Proceedings of the National Academy of Sciences 114: 12436–41.
+Collard, M., K. Edinborough, S. Shennan & M.G. Thomas 2010. [Radiocarbon evidence indicates that migrants introduced farming to Britain.](https://doi.org/10.1016/j.jas.2009.11.016) Journal of Archaeological Science 37: 866–70.
 
-Manning, K., S. Colledge, E. Crema, S. Shennan & A. Timpson 2016. The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data Journal of Open Archaeology Data 5. http://openarchaeologydata.metajnl.com/articles/10.5334/joad.40/.
+Crema, E.R., J. Habu, K. Kobayashi & M. Madella 2016. [Summed Probability Distribution of 14 C Dates Suggests Regional Divergences in the Population Dynamics of the Jomon Period in Eastern Japan.](https://doi.org/10.1371/journal.pone.0154809) PLOS ONE 11: e0154809.
 
-Rick, J.W. 1987. Dates as Data: An Examination of the Peruvian Preceramic Radiocarbon Record American Antiquity 52: 55–73
+Crema, E.R., A. Bevan. & S. Shennan. 2017. [Spatio-temporal approaches to archaeological radiocarbon dates.](https://doi.org/10.1016/j.jas.2017.09.007) Journal of Archaeological Science 87: 1–9.
 
-Roberts, N., J. Woodbridge, A. Bevan, A. Palmisano, S. Shennan & E. Asouti 2018. Human responses and non-responses to climatic variations during the last Glacial-Interglacial transition in the eastern Mediterranean Quaternary Science Reviews 184. Late Glacial to Early Holocene Socio-Ecological Responses to Climatic Instability within the Mediterranean Basin: 47–67.
+Edinborough, K., M. Porčić, A. Martindale, T.J. Brown, K. Supernant & K.M. Ames 2017. [Radiocarbon test for demographic events in written and oral history.](https://doi.org/10.1073/pnas.1713012114) Proceedings of the National Academy of Sciences 114: 12436–41.
 
-Shennan, S., S.S. Downey., A. Timpson., K. Edinborough., S. Colledge., T. Kerig., K. Manning. & M.G. Thomas. 2013. Regional population collapse followed initial agriculture booms in mid-Holocene Europe Nature Communications 4: ncomms3486.
+Kelsall, J. E., & Diggle, P. J. 1995. [Non-parametric estimation of spatial variation in relative risk.](https://doi.org/10.1002/sim.4780142106) Statistics in Medicine, 14(21–22), 2335–2342.
 
-Stevens, C.J. & D.Q. Fuller 2012. Did Neolithic farming fail? The case for a Bronze Age agricultural revolution in the British Isles Antiquity 86: 707–22.
+Manning, K., S. Colledge, E. Crema, S. Shennan & A. Timpson 2016. [The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data.](http://openarchaeologydata.metajnl.com/articles/10.5334/joad.40/) Journal of Open Archaeology Data 5.
 
-Stuiver, M., & P. J. Reimer, 1993, Extended C‐14 data‐base and revised calib 3.0 C‐14 age calibration program, Radiocarbon 351: 215–30.
+Rick, J.W. 1987. [Dates as Data: An Examination of the Peruvian Preceramic Radiocarbon Record.](https://doi.org/10.2307/281060) American Antiquity 52: 55–73
 
-Timpson, A., S. Colledge, E. Crema, K. Edinborough, T. Kerig, K. Manning, M.G. Thomas & S. Shennan. 2014. Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method Journal of Archaeological Science 52: 549–57
+Roberts, N., J. Woodbridge, A. Bevan, A. Palmisano, S. Shennan & E. Asouti 2018. [Human responses and non-responses to climatic variations during the last Glacial-Interglacial transition in the eastern Mediterranean.](https://doi.org/10.1016/j.quascirev.2017.09.011) Quaternary Science Reviews 184. Late Glacial to Early Holocene Socio-Ecological Responses to Climatic Instability within the Mediterranean Basin: 47–67.
 
-Van Der Plicht, J., 1993, The Groningen Radiocarbon Calibration Program, Radiocarbon 35: 231–7.
+Shennan, S., S.S. Downey., A. Timpson., K. Edinborough., S. Colledge., T. Kerig., K. Manning. & M.G. Thomas. 2013. [Regional population collapse followed initial agriculture booms in mid-Holocene Europe.](https://doi.org/10.1038/ncomms3486) Nature Communications 4: ncomms3486.
 
-Weninger, B., L. Clare, O. Jöris, R. Jung & K. Edinborough 2015. Quantum theory of radiocarbon calibration World Archaeology 47: 543–66.
+Stevens, C.J. & D.Q. Fuller 2012. [Did Neolithic farming fail? The case for a Bronze Age agricultural revolution in the British Isles.](http://antiquity.ac.uk/ant/086/ant0860707.htm) Antiquity 86: 707–22.
+
+Timpson, A., S. Colledge, E. Crema, K. Edinborough, T. Kerig, K. Manning, M.G. Thomas & S. Shennan. 2014. [Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method.](https://doi.org/10.1016/j.jas.2014.08.011) Journal of Archaeological Science 52: 549–57
+
+Weninger, B., L. Clare, O. Jöris, R. Jung & K. Edinborough 2015. [Quantum theory of radiocarbon calibration.](https://doi.org/10.1080/00438243.2015.1064022) World Archaeology 47: 543–66.
 
 
 
