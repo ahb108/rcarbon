@@ -55,7 +55,7 @@ Palmisano, A., Woodbridge, J., Roberts, N., Bevan, A., Fyfe, R., Shennan, S., et
 
 Riris, P. 2018 [Dates as data revisited: A statistical examination of the Peruvian preceramic radiocarbon record](https://doi.org/10.1016/j.jas.2018.06.008). Journal of Archaeological Science, 97, 67-76. doi:10.1016/j.jas.2018.06.008
 
-Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South America Correlates with Mid-holocene Climate Change](https://doi.org/10.31235/osf.io/7zw6x) SocArXiv. November 11. doi:10.31235/osf.io/7zw6x.
+Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South America Correlates with Mid-holocene Climate Change](https://doi.org/10.1038/s41598-019-43086-w) Scientific Reports, 9, Article number: 6850 (2019). doi:10.1038/s41598-019-43086-w.
 
 Roberts, N., Woodbridge, J., Palmisano, A., Bevan, A., Fyfe, R., & Shennan, S. 2019. [Mediterranean landscape change during the Holocene: Synthesis, comparison and regional trends in population, land cover and climate](https://doi:10.1177/0959683619826697). The Holocene, 0959683619826697. 
 
