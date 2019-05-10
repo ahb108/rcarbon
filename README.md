@@ -57,7 +57,9 @@ Riris, P. 2018 [Dates as data revisited: A statistical examination of the Peruvi
 
 Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South America Correlates with Mid-holocene Climate Change](https://doi.org/10.1038/s41598-019-43086-w) Scientific Reports, 9, Article number: 6850 (2019). doi:10.1038/s41598-019-43086-w.
 
-Roberts, N., Woodbridge, J., Palmisano, A., Bevan, A., Fyfe, R., & Shennan, S. 2019. [Mediterranean landscape change during the Holocene: Synthesis, comparison and regional trends in population, land cover and climate](https://doi:10.1177/0959683619826697). The Holocene, 0959683619826697. 
+Roberts, N., Woodbridge, J., Palmisano, A., Bevan, A., Fyfe, R., & Shennan, S. 2019. [Mediterranean landscape change during the Holocene: Synthesis, comparison and regional trends in population, land cover and climate](https://doi.org/10.1177/0959683619826697). The Holocene, 0959683619826697. 
+
+Saag, L., Laneman, M., Varul, L., Malve, M., Valk, H., Razzak, M. A., et al. (2019). [The Arrival of Siberian Ancestry Connecting the Eastern Baltic to Uralic Speakers further East](https://doi.org/10.1016/j.cub.2019.04.026). Current Biology,
 
 Schauer, P., Shennan, S., Bevan, A., Cook, G., Edinborough, K., Fyfe, R., et al. 2019. [Supply and demand in prehistory? Economics of Neolithic mining in northwest Europe](https://doi:10.1016/j.jaa.2019.03.001). Journal of Anthropological Archaeology, 54, 149–160. doi:10.1016/j.jaa.2019.03.001
 
