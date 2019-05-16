@@ -261,6 +261,63 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
     return(reslist)
 }
 
+#' @title Stacked Summed Probability Distribution
+#' @description Generates and combines multiple SPDs based on a user defined grouping.
+#' @param x A \code{CalDates} class object containing the calibrated radiocarbon dates.
+#' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
+#' @param bins A vector containing the bin names associated with each radiocarbon date. If set to NA, binning is not carried out. 
+#' @param group A vector containing the grouping variable.
+#' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE. 
+#' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
+#' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
+#' @param edgeSize Controls edge effect by expanding the fitted model beyond the range defined by \code{timeRange}.
+#'
+#' @return An object of class \code{stackCalSPD} 
+#' @examples
+#'data(emedyd)
+#'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
+#'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
+#'res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
+
+
+stackspd <- function(x, timeRange, bins=NA, group=NULL, datenormalised=FALSE, runm=NA, verbose=TRUE, edgeSize=500){
+
+	if (is.null(group))
+	{
+		stop("The argument group must be provided")
+	}
+
+	stackLength = length(unique(group))
+
+
+	## Main for Loop
+
+	stackG = unique(group)
+	stackL = length(stackG)
+	stackedSPDs = vector("list",length=stackL)
+	names(stackedSPDs) = stackG
+
+	for (i in 1:stackL)
+	{
+		if (verbose)
+		{
+			print(paste0("Computing SPD for group ", i, " out of ", stackL))
+		}
+	k = which(group==stackG[i])	
+
+	stackedSPDs[[i]]=spd(x[k], timeRange=timeRange, bins=bins[k], datenormalised=datenormalised, spdnormalised=FALSE, runm=runm, verbose=verbose, edgeSize=edgeSize)
+	}
+
+	## Create General Metadata
+	metadata = list(ndates=length(x),ngroups=stackL,timeRange=timeRange)
+	
+	## Final List
+	result = list(metadata=metadata,spds=stackedSPDs)
+
+	## Define Class
+	class(result) <- c("stackCalSPD",class(result))
+	return(result)
+}
 
 #' @title Composite Kernel Density Estimates of Radiocarbon Dates
 #'
