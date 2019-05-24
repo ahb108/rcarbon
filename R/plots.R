@@ -702,6 +702,263 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 
 
 
+#' @title Plot a stack of SPDs
+#'
+#' @description Visualises multiple SPDs organised as \code{stackCalSPD} object.
+#' 
+#' @param x A \code{stackCalSPD] class object. Result of \code{\link{stackspd}} function.
+#' @param type How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}. 
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param spdnormalised A logical variable indicating whether the total probability mass of the SPDs are normalised to sum to unity. Default is FALSE. 
+#' @param rescale  A logical variable indicating whether the SPDs should be rescaled to range 0 to 1. Default is FALSE.
+#' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
+#' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
+#' @param ylim the y limits of the plot.
+#' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
+#' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
+#' @param gapFactor Defines spacing between SPDs as proportion of the y-axis range for multipanel plots. Default is 0.2.
+#' @param col.fill Vector of fill color for the observed SPDs. The default color scheme is based on the Dark2 pallette of RColorBrewer package.
+#' @param col.obs Line colour for the observed SPDs.The default color scheme is based on the Dark2 pallette of RColorBrewer package.
+#' @param lwd.obs Line width for the observed SPDs. Default is 1.
+#' @param lty.obs Line type for the observed SPDs. Default is 1.
+#' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.
+#' @param legend.arg list of additional arguments to pass to \code\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.
+#' @references 
+#' Erich Neuwirth (2014). RColorBrewer: ColorBrewer Palettes. R package version 1.1-2. \url{https://CRAN.R-project.org/package=RColorBrewer}.
+#' @examples
+#' \dontrun{
+#'data(emedyd)
+#'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
+#'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
+#'res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
+#'plot(res,type='stacked')
+#'plot(res,type='multipanel')
+#'}
+#' @export
+
+plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.obs=NA, lwd.obs=NA, lty.obs=NA, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA)
+{
+  # Based on Dark2 of RcolorBrewer
+  colpal=c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666")
+
+	#issue error messages
+	if (!'stackCalSPD'%in%class(x))
+	{
+	 stop("The argument x should be a 'stackCalSPD' class object")
+	}
+
+	if (!type%in%c('multipanel','lines','stacked','proportion'))
+	{
+	 stop("The argument 'type' should be one between 'multipanel', 'lines', 'stacked'  or 'proportion'.")
+	}
+  
+  # Calendar Setting
+  if (!calendar %in% c("BP","BCAD")){
+    stop("The calendar you have chosen is not currently an option.")
+  }
+
+  if (calendar=="BP"){
+    plotyears <- x$metadata$timeRange[1]:x$metadata$timeRange[2]
+    xlabel <- "Years cal BP"
+    if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
+  } else if (calendar=="BCAD"){
+    plotyears <- BPtoBCAD(x$metadata$timeRange[1]:x$metadata$timeRange[2])
+    xlabel <- "Years BC/AD"
+    if (all(range(plotyears)<0)){xlabel <- "Years BC"}
+    if (all(range(plotyears)>0)){xlabel <- "Years AD"}
+    if (any(is.na(xlim))){ xlim <- c(min(plotyears),max(plotyears)) }
+  } else {
+    stop("Unknown calendar type")
+  }
+  if (xaxt=='n'){ xlabel <- "" }
+  if (yaxt=='n'){ ylabel <- "" } else { ylabel <- ylab }
+
+  #pre-processing (create a single matrix for plotting)
+  nsets = length(x$spds)
+	PrDens = matrix(NA,ncol=nsets,nrow=length(plotyears))
+	
+	for (i in 1:nsets)
+	{
+	  PrDens[,i]=x$spds[[i]][[2]][[2]]
+	  if (!is.na(runm)){ PrDens[,i] <- runMean(PrDens[,i], runm, edge="fill") }
+	}
+	
+	if (spdnormalised) {PrDens=apply(PrDens,2,function(x){x/sum(x)})}
+	if (rescale){PrDens = apply(PrDens,2,reScale)}
+	
+	#Assign Colours and Line Types
+	if (any(is.na(col.fill)))
+	{
+	  if (nsets<=8)
+	  {
+	    col.fill=colpal[1:nsets]
+	  }
+	  if (nsets > 8)
+	  {
+	    col.fill=sample(colors(),size=nsets,replace=TRUE)
+	  warning("Color sequence randomised due to a large number of SPDs (>8). Consider selecting an appropriate color sequence manually")
+	  }
+	}
+	
+	if (any(is.na(col.obs)))
+	{
+	  if (nsets<=8)
+	  {
+	    col.obs=colpal[1:nsets]
+	  }
+	  if (nsets > 8)
+	  {
+	    col.obs=sample(colors(),size=nsets,replace=TRUE)
+	  warning("Color sequence randomised due to a large number of SPDs (>8). Consider selecting an appropriate color sequence manually")
+	  }
+	}
+	
+	if (any(is.na(lwd.obs))){lwd.obs=rep(1,nsets)}
+	if (any(is.na(lty.obs))){lty.obs=rep(1,nsets)}
+	
+	
+	#Plot
+
+	#lines 
+	if (type=='lines')
+	{
+	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*1.1) }
+	  if (is.na(ylab)){ylab='Summed Probability'}
+	  plot(0, 0, xlim=xlim, ylim=ylim, type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
+	  
+	  for (i in 1:nsets)
+	  {
+	    lines(plotyears,PrDens[,i],col=col.obs[i],lty=lty.obs[i],lwd=lwd.obs[i])
+	  }
+	  
+	  if (legend)
+	  {
+	    if (is.null(legend.arg))
+	    {
+	      legend("topleft",legend=names(x$spds),col=col.obs,lty=lty.obs,lwd=lwd.obs)
+	    } else {
+	      args.legend1 <- list("topleft", legend = names(x$spds),col=col.obs,lty=lty.obs,lwd=lwd.obs)
+	      args.legend1[names(args.legend)] <- args.legend
+	      do.call("legend", args.legend1)
+	    }
+	  }
+	}
+
+	#stacked
+	if (type=='stacked')
+	{
+	  PrDens = t(apply(PrDens,1,cumsum))
+	  PrDens = cbind(0,PrDens)
+	  
+	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*1.1) }
+	  if (is.na(ylab)){ylab='Summed Probability'}
+	  
+	  plot(0, 0, xlim=xlim, ylim=ylim, type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
+	  
+	  for (i in 2:(nsets+1))
+	  {
+	    polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs)
+	  }
+	  if (legend)
+	  {
+	    if (is.null(legend.arg))
+	    {
+	      legend("topleft",legend=names(x$spds),fill=col.fill)
+	    } else {
+	      args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+	      args.legend1[names(args.legend)] <- args.legend
+	      do.call("legend", args.legend1)
+	    }
+	  }
+	}
+
+	#proportion
+	if (type=='proportion')
+	{
+	  
+	  PrDens=prop.table(PrDens,1)
+	  PrDens = t(apply(PrDens,1,cumsum))
+	  PrDens = cbind(0,PrDens)
+	  if (is.na(ylab)){ylab='Relative Proportion'}
+	  plot(0, 0, xlim=xlim, ylim=c(0,1), type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
+	  
+	  for (i in 2:(nsets+1))
+	  {
+	    polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs)
+	  }
+	  if (legend)
+	  {
+	    if (is.null(legend.arg))
+	    {
+	      legend("topleft",legend=names(x$spds),fill=col.fill)
+	    } else {
+	      args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+	      args.legend1[names(args.legend)] <- args.legend
+	      do.call("legend", args.legend1)
+	    }
+	  }
+	}
+
+	#multipanel
+  if (type=='multipanel')
+  {
+    # individual ylim
+    if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*1.1) }
+    if (is.na(ylab)){ylab='Summed Probability'}
+    
+    # max ylim: combine ylim giving as a space 1/7 of the original distance
+    gap = abs(diff(ylim))*gapFactor
+    # generate ylim sequences:
+    YLIMs = vector("list",length=nsets)
+    YLIMs[[1]] = ylim
+    for (i in 2:nsets)
+    {
+      YLIMs[[i]]=c(YLIMs[[i-1]][2]+gap,YLIMs[[i-1]][2]+gap+abs(diff(ylim)))
+    }
+    
+    plot(0, 0, xlim=xlim, ylim=c(min(unlist(YLIMs)),max(unlist(YLIMs))+gap), type="l", ylab=ylab, xlab=xlabel, axes=F,cex.lab=cex.lab)
+    
+    for (i in 1:nsets)
+    {
+      tmpYlim= YLIMs[[i]]
+      axis(2,at=c(tmpYlim[1],median(tmpYlim),max(tmpYlim)),labels=round(c(min(ylim),median(ylim),max(ylim)),2),las=2,cex.axis=cex.axis)
+      
+      polygon(c(plotyears,rev(plotyears)),c(PrDens[,i]+tmpYlim[1],rep(0,length(plotyears))+tmpYlim[1]),col=col.fill[i],lwd=lwd.obs)
+    }
+    
+    if (legend)
+    {
+      if (is.null(legend.arg))
+      {
+        legend("topleft",legend=names(x$spds),fill=col.fill)
+      } else {
+        args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+        args.legend1[names(args.legend)] <- args.legend
+        do.call("legend", args.legend1)
+      }
+    }
+    
+}
+
+
+	# draw x-axis
+	if (calendar=="BP" & xaxt!="n"){
+	  rr <- range(pretty(plotyears))    
+	  axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01,cex.axis=cex.axis)
+	  axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)),cex.axis=cex.axis)
+	} else if (calendar=="BCAD" & xaxt!="n"){
+	  yy <-  plotyears
+	  rr <- range(pretty(yy))    
+	  prettyTicks <- seq(rr[1],rr[2],+100)
+	  prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+	  axis(side=1,at=prettyTicks, labels=NA,tck = -.01,cex.axis=cex.axis)
+	  py <- pretty(yy)
+	  pyShown <- py
+	  if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+	  py[which(py>1)] <-  py[which(py>1)]-1
+	  axis(side=1,at=py,labels=abs(pyShown),cex.axis=cex.axis)
+	}
+}
 
 #' @title Plot result of mark permutation test of SPDs
 #'
