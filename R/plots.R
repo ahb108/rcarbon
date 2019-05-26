@@ -172,6 +172,240 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     }
 }
 
+#' @title Plot multiple dates
+#' 
+#' @description Plot multiple radiocarbon dates.
+#' @param x A CalDates class object with length > 1.
+#' @param type Whether the calibrated dates are displayed as distributions (\code{'d'}) or as horizzontal bars (\code{'b'}) spanning the HPD interal. Default is \code{'d'}.
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
+#' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95.
+#' @param decreasing Whether dates should be plotted with decreasing order of median calibrated date (i.e. old to new; TRUE) or increasing order (i.e. new to old; FALSE). If set to NULL the dates plotted in the supplied order. Default is NULL 
+#' @param label Whether the ID of each date should be displayed. Default is TRUE.
+#' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
+#' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").
+#' @param col The primary fill color for the calibrated date distribution. 
+#' @param col2 The secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}.
+#' @param lwd Line width (ignored when \code{type} is set to \code{'d'}). Default is 1.
+#' @param cex.lab The magnification to be used for x and y  labels relative to the current setting of cex. Default is adjusted to 1.
+#' @param cex.id The magnification to be used the date labels relative to the current setting of cex. Default is adjusted to 1.
+#' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.
+#' @param ydisp Whether the y axis should be displayed. Ignored when \code{type} is set to \cod{'b'}. Default is FALSE
+#' @param gapFactor Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of indivial y-axis ranges. Default is 0.2.
+#' @seealso \code{\link{calibrate}}
+#'
+#' @examples
+#' data("emedyd")
+#' tellaswad = subset(emedyd,SiteName=='Tell Aswad')
+#' x = calibrate(tellaswad$CRA,tellaswad$Error,ids=tellaswad$LabID)
+#' multiplot(x,HPD=TRUE,decreasing=TRUE,label=FALSE,gapFactor = 0.1)
+#' multiplot(x,type='b',calendar='BCAD',cex.id = 0.5,lwd=2,gapFactor = 0.5)
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
+#' @export  
+
+
+multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,xlim=NULL,xlab=NA,ylab=NA,col='grey50',col2='grey82',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2)
+{
+
+	if (!is.null(decreasing))
+	{
+		x = x[order(medCal(x),decreasing=decreasing)]
+	}
+
+	medDates = medCal(x)
+
+
+	calendars <- c("BP","BCAD")
+	if (!calendar %in% calendars){
+		stop("The calendar you have chosen is not currently an option.")
+	}        
+
+
+	# Estimate general xlim
+	if (is.null(xlim))
+	{
+		if(anyNA(x$grids))
+		{
+			tmp = apply(x$calmatrix,1,sum)
+			st = as.numeric(names(tmp[which(tmp>0)[1]-1]))
+			en = as.numeric(names(tmp[which(tmp>0)[length(which(tmp>0))]+1]))
+		} else {
+			st = max(unlist(lapply(x$grids,function(x){max(x$calBP)})))
+			en = min(unlist(lapply(x$grids,function(x){min(x$calBP)})))
+		}
+		xlim = c(st,en)
+	}
+
+	yearsBP = xlim[1]:xlim[2]
+
+
+
+	if (calendar=="BP"){
+		plotyears <- yearsBP
+		xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
+		if (is.na(xlab)){ xlabel <- "Years cal BP" } else { xlabel <- xlab } 
+	} else if (calendar=="BCAD"){
+		plotyears <- BPtoBCAD(yearsBP)
+		xlim <- BPtoBCAD(xlim)
+		xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
+		if (is.na(xlab)){ 
+			xlabel <- "Years BC/AD"
+			if (all(range(plotyears)<0)) {xlabel <- "Years BC"}
+			if (all(range(plotyears)>0)) {xlabel <- "Years AD"}
+		} else { xlabel <- xlab }       
+	} else {
+		stop("Unknown calendar type")
+	}
+
+
+
+	# Plot 
+	if (type=='b')
+	{
+		bse = hpdi(x,credMass=credMass)
+		plot(0,0,xlim=xlim,ylim=c(0,length(bse)+1),axes=F,xlab=xlabel,ylab="",type='n')
+		for (i in 1:length(bse))
+		{
+			tmp = bse[[i]]
+			if (calendar=='BP')
+			{
+				apply(tmp,1,function(x,y,lwd){lines(c(x),c(y,y),lwd=lwd)},y=i,lwd=lwd)
+				if(label){text(x=medDates[i],y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
+			}
+			if (calendar=='BCAD')
+			{
+				apply(tmp,1,function(x,y,lwd){lines(BPtoBCAD(c(x)),c(y,y),lwd=lwd)},y=i,lwd=lwd)
+				if(label){text(x=BPtoBCAD(medDates[i]),y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
+			}
+		}
+	}
+
+	if (type=='d')
+	{
+
+
+		if(anyNA(x$grids))
+		{
+			tmp = apply(x$calmatrix,1,max)
+			ylim = as.numeric(c(0,tmp[which.max(tmp)]))
+		} else {
+			ylim = c(0,max(unlist(lapply(x$grids,function(x){max(x$PrDens)}))))
+		}
+
+		
+
+		# max ylim: combine ylim giving as a space 1/7 of the original distance
+		gap = abs(diff(ylim))*gapFactor
+		# generate ylim sequences:
+		YLIMs = vector("list",length=length(x))
+		YLIMs[[1]] = ylim
+		for (i in 2:length(x))
+		{
+			YLIMs[[i]]=c(YLIMs[[i-1]][2]+gap,YLIMs[[i-1]][2]+gap+abs(diff(ylim)))
+		}
+
+
+		plot(0, 0, xlim=xlim, ylim=c(min(unlist(YLIMs)),max(unlist(YLIMs))+gap), type="n", ylab=ylab, xlab=xlabel, axes=F,cex.lab=cex.lab)
+
+
+
+		for (i in 1:length(x))
+		{
+			tmpYlim= YLIMs[[i]]
+			if (ydisp)
+			{axis(2,at=c(tmpYlim[1],median(tmpYlim),max(tmpYlim)),labels=round(c(min(ylim),median(ylim),max(ylim)),2),las=2,cex.axis=cex.axis)}
+
+			if(anyNA(x$grid))
+			{
+ 				years = as.numeric(rownames(x$calmatrix))
+				PrDens = x$calmatrix[,i]
+				ii = which(PrDens>0)[1]-1
+				jj = max(which(PrDens>0))+1
+				years = years[ii:jj]
+				PrDens = PrDens[ii:jj]
+			} else {
+				years=x$grid[[i]]$calBP
+				PrDens = x$grid[[i]]$PrDens
+			}
+
+			if (calendar=='BCAD'){years=BPtoBCAD(years)}
+
+			xvals = c(years,rev(years))
+			yvals = c(PrDens+tmpYlim[1],rep(0,length(years))+tmpYlim[1])
+
+
+
+			if (!HPD){
+				polygon(xvals,yvals, col=col, border=col)
+			} else {
+				polygon(xvals,yvals, col=col2, border=col2)
+				hdres <- hpdi(x,credMass=credMass)[[i]]
+				for (j in 1:nrow(hdres))
+				{
+					if (calendar=='BCAD')
+					{
+						index <- which(xvals%in%BPtoBCAD(hdres[j,1]:hdres[j,2]))
+					} else {
+						index <- which(xvals%in%hdres[j,1]:hdres[j,2])
+					}
+					polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],min(tmpYlim),min(tmpYlim)), col=col, border=col)
+				}
+			}
+
+
+			if (label)
+			{
+				xx = medDates[i]
+				if (calendar=='BCAD'){xx = BPtoBCAD(xx)}
+				text(x=xx,y=max(yvals)+gap/2,labels=x$metadata$DateID[i],cex=cex.id)
+			}
+
+		}
+
+	}
+
+
+	# draw x-axis
+	if (calendar=="BP"){
+		rr <- range(pretty(plotyears))    
+		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01,cex.axis=cex.axis)
+		axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)),cex.axis=cex.axis)
+	} else if (calendar=="BCAD"){
+		yy <-  plotyears
+		rr <- range(pretty(yy))    
+		prettyTicks <- seq(rr[1],rr[2],100)
+		prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+		axis(side=1,at=prettyTicks, labels=NA,tck = -.01,cex.axis=cex.axis)
+		py <- pretty(yy)
+		pyShown <- py
+		if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+		py[which(py>1)] <-  py[which(py>1)]-1
+		axis(side=1,at=py,labels=abs(pyShown),cex.axis=cex.axis)
+	}
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #' @title Plot result of Monte-Carlo simulation of observed versus modelled SPDs
