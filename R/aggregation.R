@@ -305,8 +305,10 @@ stackspd <- function(x, timeRange, bins=NA, group=NULL, datenormalised=FALSE, ru
 			print(paste0("Computing SPD for group ", i, " out of ", stackL))
 		}
 	k = which(group==stackG[i])	
+	b = bins[k]
+	if (anyNA(b)){b=NA}
 
-	stackedSPDs[[i]]=spd(x[k], timeRange=timeRange, bins=bins[k], datenormalised=datenormalised, spdnormalised=FALSE, runm=runm, verbose=verbose, edgeSize=edgeSize)
+	stackedSPDs[[i]]=spd(x[k], timeRange=timeRange, bins=b, datenormalised=datenormalised, spdnormalised=FALSE, runm=runm, verbose=verbose, edgeSize=edgeSize)
 	}
 
 	## Create General Metadata
