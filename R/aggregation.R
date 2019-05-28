@@ -278,7 +278,8 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
 #'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
 #'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
 #'res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
-
+#' @import utils
+#' @export
 
 stackspd <- function(x, timeRange, bins=NA, group=NULL, datenormalised=FALSE, runm=NA, verbose=TRUE, edgeSize=500){
 
