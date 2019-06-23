@@ -37,13 +37,19 @@ Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holo
 
 Broughton,J.M., Weitzel,E.M. 2018. [Population reconstructions for humans and megafauna suggest mixed causes for North American Pleistocene extinctions](https://doi.org/10.1038/s41467-018-07897-1).Nature Communications, 9, 5441. doi:10.1038/s41467-018-07897-1
 
+Brown, A. A., Crema, E. R. 2019. [Māori Population Growth in Pre-contact New Zealand: Regional Population Dynamics Inferred From Summed Probability Distributions of Radiocarbon Dates](https://doi.org/10.1080/15564894.2019.1605429). The Journal of Island and Coastal Archaeology, 1–19. 
+
 Cheddadi, R., Palmisano, A., López-Sáez, J. A., Nourelbait, M., Zielhofer, C., Tabel, J., et al. 2019. [Human demography changes in Morocco and environmental imprint during the Holocene](https://doi.org/10.1177/0959683619826657) The Holocene, 0959683619826657. doi:10.1177/0959683619826657
 
 Crema, E.R., Bevan, A., Shennan, S., 2017. [Spatio-temporal approaches to archaeological radiocarbon dates](https://doi.org/10.1016/j.jas.2017.09.007). Journal of Archaeological Science 87, 1–9. doi:10.1016/j.jas.2017.09.007
 
+de Souza, J. G., Robinson, M., Maezumi, S. Y., Capriles, J., Hoggarth, J. A., Lombardo, U., et al. (2019). [Climate change and cultural resilience in late pre-Columbian Amazonia](https://doi.org/10.1038/s41559-019-0924-0). Nature Ecology & Evolution, 1. doi:10.1038/s41559-019-0924-0
+
 Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Meyer, J.A., Kelly, R.L., Anderies, J.M., 2018. [Synchronization of energy consumption by human societies throughout the Holocene](https://doi.org/10.1073/pnas.1802859115). Proceedings of the National Academy of Sciences of the United States of America, 115 (40) 9962-9967. doi:10.1073/pnas.1802859115
 
 Fyfe, R.M., Woodbridge, J., Palmisano, A., Bevan, A., Shennan, S., Burjachs, F., Legarra Herrero, B., García Puchol, O., Carrión, J.-S., Revelles, J., Roberts, C.N., 2019. [Prehistoric palaeodemographics and regional land cover change in eastern Iberia](https://doi.org/10.1177/0959683619826643). The Holocene 0959683619826643. doi:10.1177/0959683619826643
+
+Liu, L., Chen, X., Wright, H., Xu, H., Li, Y., Chen, G., et al. 2019. [Rise and fall of complex societies in the Yiluo region, North China: The spatial and temporal changes.](https://doi.org/10.1016/j.quaint.2019.05.025) Quaternary International. 
 
 MacInnes, D. 2019. [The impact of population dynamics on social complexity in Neolithic Orkney.](https://doi.org/10.1016/j.jasrep.2019.02.036) Journal of Archaeological Science: Reports, 24, 721–728. doi:10.1016/j.jasrep.2019.02.036
 
