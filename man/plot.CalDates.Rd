@@ -7,8 +7,8 @@
 plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
   type = "standard", xlab = NA, ylab = NA, axis4 = TRUE,
   HPD = FALSE, credMass = 0.95, customCalCurve = NA, add = FALSE,
-  col = "grey50", col2 = "grey82", cex.axis = 0.75, cex.lab = 0.75,
-  ...)
+  col = "grey50", col2 = "grey82", cex.axis = 0.75,
+  cex.xylab = 0.75, cex.label = 0.75, ...)
 }
 \arguments{
 \item{x}{\code{CalDates} class object containing calibrated radiocarbon dates.}
@@ -41,7 +41,9 @@ plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
 
 \item{cex.axis}{The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 0.75.}
 
-\item{cex.lab}{The magnification to be used for x and y labels relative to the current setting of cex. Default is adjusted to 0.75.}
+\item{cex.xylab}{The magnification to be used for x and y labels relative to the current setting of cex. Default is adjusted to 0.75.}
+
+\item{cex.label}{The magnification to be used for the label on the top right corner defined by the argument \code{label}. Default is adjusted to 0.75.}
 
 \item{...}{Additional arguments affecting the plot.}
 }
