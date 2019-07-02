@@ -15,7 +15,8 @@
 #' @param col The primary fill color for the calibrated date distribution. 
 #' @param col2 The secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}.
 #' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 0.75.
-#' @param cex.lab The magnification to be used for x and y labels relative to the current setting of cex. Default is adjusted to 0.75.
+#' @param cex.xylab The magnification to be used for x and y labels relative to the current setting of cex. Default is adjusted to 0.75.
+#' @param cex.label The magnification to be used for the label on the top right corner defined by the argument \code{label}. Default is adjusted to 0.75.
 #' @param add if set to \code{TRUE} the calibrated date is displayed over the existing plot. Default is \code{FALSE}. 
 #' @param ... Additional arguments affecting the plot. 
 #'
@@ -32,7 +33,7 @@
 #' @import utils
 #' @export  
 
-plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95, customCalCurve=NA,add=FALSE,col='grey50',col2='grey82',cex.axis=0.75,cex.lab=0.75,...){
+plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95, customCalCurve=NA,add=FALSE,col='grey50',col2='grey82',cex.axis=0.75,cex.xylab=0.75,cex.label=0.75,...){
 
     types <- c("standard", "simple", "auc")
     if (!type %in% types){
@@ -86,7 +87,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     if (!add)
     {
 	    par(cex.lab=0.75)
-	    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.lab=cex.lab,cex.axis=cex.axis,...)
+	    plot(xvals,yvals, type="n", xlab=xlabel, ylab="", ylim=yrng, xlim=xlim, xaxt='n', yaxt='n', cex.lab=cex.xylab,cex.axis=cex.axis,...)
     }
 
     xticksLab <- xticks
@@ -128,9 +129,9 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 	    polygon(c(cradf1$RX,rev(cradf1$RX)),c(cradf1$CRA,rep(xlim[1],length(cradf1$CRA))), col=rgb(144,238,144,80,maxColorValue=255), border=NA)
 	    axis(side=2, at=yticks, labels=abs(yticks),las=2, cex.axis=cex.axis)
 	    if (is.na(ylab)){
-		    title(line=3, ylab="Radiocarbon Age", cex.lab=cex.lab)
+		    title(line=3, ylab="Radiocarbon Age", cex.lab=cex.xylab)
 	    } else {
-		    title(line=3, ylab=ylab, cex=cex.lab)
+		    title(line=3, ylab=ylab, cex=cex.xylab)
 	    }
     }
         calcurvemetadata <- x$metadata$CalCurve[ind]
