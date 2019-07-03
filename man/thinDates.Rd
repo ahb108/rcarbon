@@ -33,11 +33,14 @@ data(euroevol)
 foursites <- euroevol[euroevol$SiteID \%in\% c("S2072","S4380","S6139","S9222"),]
 table(as.character(foursites$SiteID))
 ## Thin so each site has 10 dates each max, with random selection
-thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, bins=foursites$SiteID, size=10, method="random", seed=123)
+thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, 
+bins=foursites$SiteID, size=10, method="random", seed=123)
 tdates <- foursites[thinInds,]
 tdates
-## Same but choose the first 60\% (i.e. 6 dates) from the lowest errors and then fill in the rest randomly.
-thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, bins=foursites$SiteID, size=10, method="splitsample", thresh=0.6, seed=123)
+## Same but choose the first 60\% (i.e. 6 dates) from the lowest errors 
+## and then fill in the rest randomly.
+thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, 
+bins=foursites$SiteID, size=10, method="splitsample", thresh=0.6, seed=123)
 tdates1 <- foursites[thinInds,]
 tdates1
 }

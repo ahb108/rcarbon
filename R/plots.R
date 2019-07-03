@@ -27,11 +27,9 @@
 #' plot(x) #display the first date
 #' plot(x,2) #displays the second date
 #' plot(x,3, calendar="BCAD", HPD=TRUE) #display in BC/AD with higher posterior density interval
-#' @import stats
-#' @import grDevices
-#' @import graphics
-#' @import utils
+#' @method plot CalDates
 #' @export  
+
 
 plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xlab=NA, ylab=NA, axis4=TRUE, HPD=FALSE, credMass=0.95, customCalCurve=NA,add=FALSE,col='grey50',col2='grey82',cex.axis=0.75,cex.xylab=0.75,cex.label=0.75,...){
 
@@ -201,6 +199,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @import grDevices
 #' @import graphics
 #' @import utils
+#' @method plot SpdModelTest
 #' @export 
 
 plot.SpdModelTest <- function(x, calendar="BP", type='spd', ylim=NA, xlim=NA, col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", bbtyRet=TRUE, drawaxes=TRUE, ...){
@@ -482,6 +481,7 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @param border.p Border colour for the SPD
 #' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
 #' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
+#' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is 1.
 #' @param add Whether or not the new graphic should be added to an existing plot.
 #' @param ... Additional arguments affecting the plot
 #'
@@ -508,6 +508,7 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #' @import grDevices
 #' @import graphics
 #' @import utils
+#' @method plot CalSPD
 #' @export 
 
 plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, ylim=NA, ylab="Summed Probability", spdnormalised=FALSE, rescale=FALSE, fill.p="grey75", border.p=NA, xaxt='s', yaxt='s', add=FALSE, cex.axis=1, ...){
@@ -598,6 +599,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @import grDevices
 #' @import graphics
 #' @import utils
+#' @method plot CalGrid
 #' @export 
 
 plot.CalGrid <- function(x, runm=NA, calendar="BP", fill.p="grey50", border.p=NA, xlim=NA, ylim=NA, cex.lab=0.75, cex.axis=cex.lab, mar=c(4,4,1,3), add=FALSE,...){
@@ -725,6 +727,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @import grDevices
 #' @import graphics
 #' @import utils
+#' @method plot SpdPermTest
 #' @export 
 
 plot.SpdPermTest <- function(x, focalm=1, type='spd', calendar="BP", xlim=NA, ylim=NA, col.obs="black", col.env=rgb(0,0,0,0.2), lwd.obs=0.5, xaxs="i", yaxs="i", bbty="f", drawaxes=TRUE, ...){
@@ -1079,6 +1082,7 @@ res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 #' @import grDevices
 #' @import graphics
 #' @import utils
+#' @method plot spatialTest
 #' @export 
 
 
@@ -1188,6 +1192,7 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param col.obs Line colour for the observed SPD
 #' @param lwd.obs Line width for the observed SPD
+#' @param xlim Limits for the x axis.
 #' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
 #' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
 #' @param ... Additional arguments affecting the plot. 
@@ -1198,6 +1203,7 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
 #' @import grDevices
 #' @import graphics
 #' @import utils
+#' @method plot spdRC
 #' @export  
 
 plot.spdRC<- function(x,calendar="BP",col.obs="black", lwd.obs=0.5, xaxs="i", yaxs="i",xlim=NA,...)
@@ -1297,6 +1303,7 @@ plot.spdRC<- function(x,calendar="BP",col.obs="black", lwd.obs=0.5, xaxs="i", ya
 #' @import grDevices
 #' @import graphics
 #' @import utils
+#' @method plot compositeKDE
 #' @export 
 
 plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=NA, fill.col='lightgrey',interval=0.95,line.col='black',line.type=2, multiline.alpha=NA, multiline.col='black',...){
@@ -1388,7 +1395,9 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
 #' load("euroevol-ew.rda")
 #' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 #' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
-#' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir="im")
+#' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], 
+#' win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100),
+#' tbw=50, bins=bins1, backsight=200, outdir="im")
 #' 
 #' ## Plot just the proportion surface for just 5900 calBP
 #' plot(stkde1, 5900, type="proportion")
@@ -1398,14 +1407,19 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
 #' par(mar=c(0.5, 0.5, 2.5, 2))
 #' plot(stkde1, 5900, type="all")
 #'
-#' ## Plot standardised change surfaces to a sub-directory called /png for all timeslices and save to file.
+#' ## Plot standardised change surfaces to a sub-directory called 
+#' ## /png for all timeslices and save to file.
 #' plot(stkde1, seq(6500, 5000, -100), type="change", ramptype="std", withpts=TRUE, plotdir="png")
 #'
-#' ## Plot all four summary surfaces in one image, saving them to a sub-directory call 'pngall', and with the output of the change map standardised to a common ramp (but leaving the focal and proportion maps unstandardised with simple ramp labelling)
-#' plot(stkde1, years, type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)), withpts=TRUE, plotdir="pngall")
+#' ## Plot all four summary surfaces in one image, saving them to a sub-directory call 'pngall',
+#' ## and with the output of the change map standardised to a common ramp 
+#' ## (but leaving the focal and proportion maps unstandardised with simple ramp labelling)
+#' plot(stkde1, years, type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)),
+#' withpts=TRUE, plotdir="pngall")
 #' }
 #' 
 #' @import spatstat 
+#' @method plot stKde
 #' @export
 #' 
 plot.stKde <- function(x, focalyears=NULL, type="focal", plotdir=NULL, imnames="byyear", zlim=NULL, box=FALSE, main="auto", col.mask="grey75", ncolours=256, ramptype="raw", imdim=c(10,10), mars=c(0.5, 0.5, 2.5, 2), ribbon=TRUE, ribargs=list(), cex.ribbon=0.5, withpts="n", cex.main=0.8, pch.pts=19, col.pts="grey50", cex.pts=0.1, tidydevs=TRUE, verbose=TRUE, ...){

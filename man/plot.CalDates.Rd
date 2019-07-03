@@ -4,7 +4,7 @@
 \alias{plot.CalDates}
 \title{Plot calibrated dates}
 \usage{
-plot.CalDates(x, ind = 1, label = NA, calendar = "BP",
+\method{plot}{CalDates}(x, ind = 1, label = NA, calendar = "BP",
   type = "standard", xlab = NA, ylab = NA, axis4 = TRUE,
   HPD = FALSE, credMass = 0.95, customCalCurve = NA, add = FALSE,
   col = "grey50", col2 = "grey82", cex.axis = 0.75,

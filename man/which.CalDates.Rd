@@ -4,7 +4,7 @@
 \alias{which.CalDates}
 \title{Which indices for calibrated dates}
 \usage{
-which.CalDates(x, s, p, ...)
+which.CalDates(x, s, p)
 }
 \arguments{
 \item{x}{A CalDates class object}
@@ -26,7 +26,7 @@ The function subsets \code{CalDates} class objects by identifying all dates that
 ## Generate some calibrated dates
 x = calibrate(c(12100,5410,5320,3320),errors=c(20,20,30,30))
 ## Subsets all dates that have a probability mass above 0.8 before 10000 BP
-x2 = which(x,BP>10000,p=0.8)
+x2 = which.CalDates(x,BP>10000,p=0.8)
 ## Subsets all dates that have a probability mass above 0.5 between 6000 and 6300 BP
-x3 = which(x,BP>6000&BP<6300,p=0.5)
+x3 = which.CalDates(x,BP>6000&BP<6300,p=0.5)
 }

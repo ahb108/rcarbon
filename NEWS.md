@@ -1,5 +1,5 @@
 
-# Development GitHub Version (ongoing)
+#  Version 1.3.0 (July 2019)
 * UPDATEs in `modelTest()`:
   * Added an error message and a note in the help documentation warning users to not use calibration curves not supported by `uncalibrate()`.
   * NEW argument `gridclip` to add range constrain in the simulation envelope. When set to TRUE the sampling is executed within the observed range of dates.
@@ -20,7 +20,7 @@
   * function now allows user defined expression for computing the rate of change
   * rates of changes can now be based on abutting time-blocks (e.g. 5600-5501 to 5500-5401) or a fixed interval across all years.
 * NEW: `thinDates()` function to randomly select a maximum number of dates per site, bin or phase.
-* NEW: `as.CalDates()` function converts dates in `BchronCalibratedDates` class ([Bchron](https://cran.r-project.org/web/packages/Bchron/index.html)) and `oxcAARCalibratedDatesList`class ([oxAAR](https://cran.r-project.org/web/packages/oxcAAR/index.html)) into CalDates` class (rcarbon).
+* NEW: `as.CalDates()` function converts dates in `BchronCalibratedDates` class ([Bchron](https://cran.r-project.org/package=Bchron)) and `oxcAARCalibratedDatesList`class ([oxAAR](https://cran.r-project.org/package=oxcAAR)) into CalDates` class (rcarbon).
 * NEW: `sampleDates()` function for sampling random dates from calibrated dates or bins.
 * NEW: `ckde()` function for generating composite kernel density estimates.
 * NEW: Suite of functions for mapping the spatial intensity of a set of radiocarbon dates via Kernel Density Estimates. 
@@ -28,7 +28,7 @@
   * `spkde()` Map the spatial intensity of a set of radiocarbon dates for a given focal year.
   *  Associated `plot()` function.
 * NEW: `subset()` and `which.CalDates()` for subsetting and extracting indices of calibrated dates based on temporal intervals described by logical conditions (e.g. between 5500 and 4500 cal BP) and user defined probability mass.
-* Bug fix: fixed dislay error in some `plot()` functions when calendar is set to `BC/AD'
+* Bug fix: fixed display error in some `plot()` functions when calendar is set to `BC/AD'
 
 # Version 1.2.0 (1 October 2018)
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
@@ -63,9 +63,8 @@
 
 # Version 1.1.0 (12 March 2018)
 * Improved performance of `modelTest()` function when running with multiple cores.
-* NEW function: `p2pTest()` for comparing point to point differences in SPD (as in [Edinborough et al 2017](http://dx.doi.org/10.1073/pnas.1713012114)
-)
-* p-values of Monte-Carlo simulations are now all calculated using the formula in [North el al 2002](http://dx.doi.org/10.1086/341527)
+* NEW function: `p2pTest()` for comparing point to point differences in SPD.
+* p-values of Monte-Carlo simulations are now all calculated using a different formula.
 * minor bug fixes
 
 

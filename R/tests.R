@@ -1,4 +1,4 @@
- if(getRversion() >= "2.15.1")  utils::globalVariables(c("s"))
+ if(getRversion() >= "2.15.1")  utils::globalVariables(c("s","calBP"))
 
 
 
@@ -50,7 +50,7 @@
 #' \item{\code{n}} {Number of radiocarbon dates.}
 #' \item{\code{nbins}}{Number of bins.}
 #' \item{\code{nsim}}{Number of Monte-Carlo simulations.}
-#' \code{\code{backsight}}{Backsight size.} 
+#' \item{\code{backsight}}{Backsight size.} 
 #' }
 #'
 #' @references 
@@ -687,19 +687,20 @@ permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/
 #' @description This function is deprecated. Please use \code{\link{sptest}} instead.
 #' @return A \code{spatialTest} class object
 #' @name SPpermTest-deprecated
-#' @usage SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
+#' @usage SPpermTest(calDates, timeRange, bins, locations, breaks, 
+#' spatialweights,rate=expression((t2/t1)^(1/d)-1), nsim=1000, runm=NA,permute="locations",
+#' ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 #' @seealso \code{\link{rcarbon-deprecated}}
 #' @keywords internal
-
+NULL
 #' @rdname rcarbon-deprecated
 #' @section \code{SPpermTest}:
 #' For \code{SPpermTest}, use \code{\link{sptest}}.
-#'
 #' @export
 SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 .Deprecated("sptest")
- sptest(calDates=calDates, timeRange=timeRange, bins=bins, locations=locations, breaks=breaks, spatialweights=spatialweights, nsim=nsim, runm=runm,permute=permute,ncores=ncores,datenormalised=datenormalised,verbose=verbose,raw=raw)
+ sptest(calDates=calDates, timeRange=timeRange, bins=bins, locations=locations, breaks=breaks, spatialweights=spatialweights,rate=rate, nsim=nsim, runm=runm,permute=permute,ncores=ncores,datenormalised=datenormalised,verbose=verbose,raw=raw)
 }
 
 
@@ -719,9 +720,8 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @param permute Indicates whether the permutations should be based on the \code{"bins"} or the \code{"locations"}. Default is \code{"locations"}. 
 #' @param ncores Number of cores used for for parallel execution. Default is 1.
 #' @param datenormalised A logical variable indicating whether the probability mass of each date within \code{timeRange} is equal to 1. Default is FALSE. 
-#' @param raw A logical variable indicating whether permuted sets of geometric growth rates for each location should be returned. Default is FALSE. 
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
-#'
+#' @param raw A logical variable indicating whether permuted sets of geometric growth rates for each location should be returned. Default is FALSE. 
 #'
 #' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates, weighting the contribution of dates from neighbouring sites using a weight scheme provided by the \code{spatialweights} class object; 2) define temporal slices (using \code{breaks} as break values), then compute the total probability mass within each slice; 3) compute the rate of change between abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of individual bins or the entire sequence of bins associated with a given location and carry out steps 1 to 3; 5) repeat step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate with the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.    
 #'
@@ -730,7 +730,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @references
 #' Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates. Journal of Archaeological Science, 87, 1-9.
 #' 
-#' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights; \code{\link{spd2gg}} for computing geometric growth rates.
+#' @seealso \code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights; \code{\link{spd2rc}} for computing geometric growth rates.
 #'
 #' @examples
 #' ## Reproduce Crema et al 2017 ##
@@ -1291,6 +1291,7 @@ p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE,plot=FALSE)
 #' @seealso \code{\link{modelTest}}.
 #' @import utils
 #' @import stats
+#' @method summary SpdModelTest
 #' @export
 
 summary.SpdModelTest<-function(object,type='spd',...) {
@@ -1422,6 +1423,7 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 #' @seealso  \code{\link{permTest}}.
 #' @import utils
 #' @import stats
+#' @method summary SpdPermTest
 #' @export
 
 summary.SpdPermTest<-function(object,type='spd',...) {

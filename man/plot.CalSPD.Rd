@@ -4,11 +4,11 @@
 \alias{plot.CalSPD}
 \title{Plot a summed probability distribution}
 \usage{
-plot.CalSPD(x, runm = NA, calendar = "BP", type = "standard",
-  xlim = NA, ylim = NA, ylab = "Summed Probability",
-  spdnormalised = FALSE, rescale = FALSE, fill.p = "grey75",
-  border.p = NA, xaxt = "s", yaxt = "s", add = FALSE,
-  cex.axis = 1, ...)
+\method{plot}{CalSPD}(x, runm = NA, calendar = "BP",
+  type = "standard", xlim = NA, ylim = NA,
+  ylab = "Summed Probability", spdnormalised = FALSE,
+  rescale = FALSE, fill.p = "grey75", border.p = NA, xaxt = "s",
+  yaxt = "s", add = FALSE, cex.axis = 1, ...)
 }
 \arguments{
 \item{x}{A \code{CalSPD} class object.}
@@ -38,6 +38,8 @@ plot.CalSPD(x, runm = NA, calendar = "BP", type = "standard",
 \item{yaxt}{Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).}
 
 \item{add}{Whether or not the new graphic should be added to an existing plot.}
+
+\item{cex.axis}{The magnification to be used for axis annotation relative to the current setting of cex. Default is 1.}
 
 \item{...}{Additional arguments affecting the plot}
 }

@@ -432,7 +432,7 @@ Kelsall, J. E., & Diggle, P. J. 1995. [Non-parametric estimation of spatial vari
 
 Manning, K., S. Colledge, E. Crema, S. Shennan & A. Timpson 2016. [The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data.](http://openarchaeologydata.metajnl.com/articles/10.5334/joad.40/) Journal of Open Archaeology Data 5.
 
-Rick, J.W. 1987. [Dates as Data: An Examination of the Peruvian Preceramic Radiocarbon Record.](https://doi.org/10.2307/281060) American Antiquity 52: 55–73
+Rick, J.W. 1987.Dates as Data: An Examination of the Peruvian Preceramic Radiocarbon Record.  American Antiquity 52: 55–73
 
 Roberts, N., J. Woodbridge, A. Bevan, A. Palmisano, S. Shennan & E. Asouti 2018. [Human responses and non-responses to climatic variations during the last Glacial-Interglacial transition in the eastern Mediterranean.](https://doi.org/10.1016/j.quascirev.2017.09.011) Quaternary Science Reviews 184. Late Glacial to Early Holocene Socio-Ecological Responses to Climatic Instability within the Mediterranean Basin: 47–67.
 

@@ -70,7 +70,7 @@ An object of class \code{SpdModelTest} with the following elements
 \item{\code{n}} {Number of radiocarbon dates.}
 \item{\code{nbins}}{Number of bins.}
 \item{\code{nsim}}{Number of Monte-Carlo simulations.}
-\code{\code{backsight}}{Backsight size.} 
+\item{\code{backsight}}{Backsight size.} 
 }
 }
 \description{

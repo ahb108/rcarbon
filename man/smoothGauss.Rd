@@ -16,9 +16,12 @@ smoothGauss(x, alpha, window = 0.1)
 \description{
 Smooth a numeric vector using a Gaussian window
 }
+\details{
+Adapted from \code{smth.gaussian} in the \code{smoother} package.
+}
 \examples{
 smoothGauss(runif(200),alpha=5)
 }
 \references{
-Adapted from \code{\link[smoother]{smth.gaussian}}
+Hamilton, N. (2015). smoother: Functions Relating to the Smoothing of Numerical Data, R package version 1.1, https://CRAN.R-project.org/package=smoother
 }

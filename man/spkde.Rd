@@ -58,12 +58,14 @@ This function is not really intended for general use, but rather as an internal 
 }
 \examples{
 \dontrun{
-## Example for the focal year 5600 calBP (also with site binning), using a subset of English and Welsh dates from the Euroevol dataset
+## Example for the focal year 5600 calBP (also with site binning), 
+## using a subset of English and Welsh dates from the Euroevol dataset
 data(ewdates)
 data(ewowin)
 x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
-spkde1 <- spkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyear=5600, tbw=50, bins=bins1, backsight=200,amount=1)
+spkde1 <- spkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, 
+sbw=40000, cellres=2000, focalyear=5600, tbw=50, bins=bins1, backsight=200,amount=1)
 plot(spkde1$focal)
 plot(spkde1$proportion)
 }

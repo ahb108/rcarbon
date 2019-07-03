@@ -29,12 +29,14 @@ Computes a Composite Kernel Density Estimate (CKDE) from multiple sets of random
 The function computes Kernel Density Estimates using randomly sampled calendar dates contained in a \code{simdates} class object (generated using the \code{simulate.dates()} function). The output contains \code{nsim} KDEs, where \code{nsim} is the argument used in \code{simulate.dates()}. The resulting object can be plotted to visualise a CKDE (cf Brown 2017), and if \code{boot} was set to \code{TRUE} in \code{sampleDates} its bootstraped variant (cf McLaughlin 2018 for a similar analysis). The shape of the CKDE is comparable to an SPD generated from non-normalised dates when the argument \code{normalised} is set to FALSE.
 }
 \examples{
+\dontrun{
 data(emedyd)
 x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
 bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
 s = sampleDates(x,bins=bins,nsim=100,boot=FALSE)
-ckdeNorm = ckde(s1,timeRange=c(16000,9000),bw=100,normalised=TRUE)
+ckdeNorm = ckde(s,timeRange=c(16000,9000),bw=100,normalised=TRUE)
 plot(ckdeNorm,type='multiline',calendar='BCAD')
+}
 
 }
 \references{

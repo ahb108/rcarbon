@@ -63,8 +63,9 @@ runMean <- function(x, n, edge="NA"){
 #' @param x numeric vector of values to smooth.
 #' @param alpha numeric value controlling the size of the gaussian smoothing window. Proportional to the standard deviation of the Gaussian smoothing kernel where sd=(N-1)/(2*alpha) with N being the length of the input vector.
 #' @param window a fraction between 0 and 1 representing the proportion of the input vector to include in the moving window.
-#' @references
-#' Adapted from \code{\link[smoother]{smth.gaussian}}
+#' @details Adapted from \code{smth.gaussian} in the \code{smoother} package. 
+#' @references 
+#' Hamilton, N. (2015). smoother: Functions Relating to the Smoothing of Numerical Data, R package version 1.1, https://CRAN.R-project.org/package=smoother
 #' @examples
 #' smoothGauss(runif(200),alpha=5)
 #' @import stats
@@ -637,6 +638,7 @@ rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
 #' @param x A CalDates class object
 #' @param s Logical expression indicating dates to keep. The expression should include the term \code{BP} which refers to specific dates.
 #' @param p Probability mass meeting the condition defined by \code{ss}.
+#' @param ... Further arguments to be passed to or from other methods (ignored).
 #' @details The function subsets \code{CalDates} class objects by identifying all dates that have a probability mass larger than \code{p} for a user defined logical expression of temporal interval containing the term \code{BP}, where \code{BP} refers to radiocarbon date. See examples for further detailes
 #' @return A CalDates class object.
 #' @examples
@@ -686,13 +688,13 @@ subset.CalDates=function(x,s,p,...)
 #' ## Generate some calibrated dates
 #' x = calibrate(c(12100,5410,5320,3320),errors=c(20,20,30,30))
 #' ## Subsets all dates that have a probability mass above 0.8 before 10000 BP
-#' x2 = which(x,BP>10000,p=0.8)
+#' x2 = which.CalDates(x,BP>10000,p=0.8)
 #' ## Subsets all dates that have a probability mass above 0.5 between 6000 and 6300 BP
-#' x3 = which(x,BP>6000&BP<6300,p=0.5)
+#' x3 = which.CalDates(x,BP>6000&BP<6300,p=0.5)
 #' @import stats
 #' @export
 
-which.CalDates=function(x,s,p,...)
+which.CalDates=function(x,s,p)
 {
 	index=rep(NA,length(x))
 	s=substitute(s)

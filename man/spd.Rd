@@ -21,6 +21,8 @@ spd(x, timeRange, bins = NA, datenormalised = FALSE,
 \item{runm}{A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
+
+\item{edgeSize}{Extra margin in C14 Age time to handle edge effect when \code{datenormalise} is set to TRUE. Default is 500.}
 }
 \value{
 An object of class \code{CalSPD} with the following elements

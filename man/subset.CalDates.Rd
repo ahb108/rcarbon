@@ -12,6 +12,8 @@
 \item{s}{Logical expression indicating dates to keep. The expression should include the term \code{BP} which refers to specific dates.}
 
 \item{p}{Probability mass meeting the condition defined by \code{ss}.}
+
+\item{...}{Further arguments to be passed to or from other methods (ignored).}
 }
 \value{
 A CalDates class object.

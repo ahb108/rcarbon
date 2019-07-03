@@ -16,21 +16,23 @@ A CalDates object
 Convert other calibrated date formats to an rcarbon CalDates object.
 }
 \examples{
-**## Not run:** 
+\dontrun{ 
 library(Bchron)
 library(oxcAAR)
 quickSetupOxcal()
 dates <- data.frame(CRA=c(3200,2100,1900), Error=c(35,40,50))
-bcaldates <- BchronCalibrate(ages=dates$CRA, ageSds=dates$Error, calCurves=rep("intcal13", nrow(dates)))
+bcaldates <- BchronCalibrate(ages=dates$CRA, ageSds=dates$Error, 
+calCurves=rep("intcal13", nrow(dates)))
 rcaldates <- rcarbon::calibrate(dates$CRA, dates$Error, calCurves=rep("intcal13"))
 ocaldates <- oxcalCalibrate(c(3200,2100,1900),c(35,40,50),c("a","b","c"))
 ## Convert to rcarbon format
 caldates.b <- as.CalDates(bcaldates)
 caldates.o <- as.CalDates(ocaldates)
 ## Comparison plot
-plot(rcaldates$grids[[2]]$calBP,rcaldates$grids[[2]]$PrDens, type="l", col="green", xlim=c(2300,1900))
+plot(rcaldates$grids[[2]]$calBP,rcaldates$grids[[2]]$PrDens, 
+type="l", col="green", xlim=c(2300,1900))
 lines(caldates.b$grids[[2]]$calBP,caldates.b$grids[[2]]$PrDens, col="red")
 lines(caldates.o$grids[[2]]$calBP,caldates.o$grids[[2]]$PrDens, col="blue")
 legend("topright", legend=c("rcarbon","Bchron","OxCal"), col=c("green","red","blue"), lwd=2)
-## End(**Not run**)
+}
 }

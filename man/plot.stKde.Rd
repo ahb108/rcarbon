@@ -4,11 +4,11 @@
 \alias{plot.stKde}
 \title{Plot map(s) of the spatio-temporal intensity of radiocarbon dates.}
 \usage{
-plot.stKde(x, focalyears = NULL, type = "focal", plotdir = NULL,
-  imnames = "byyear", zlim = NULL, box = FALSE, main = "auto",
-  col.mask = "grey75", ncolours = 256, ramptype = "raw",
-  imdim = c(10, 10), mars = c(0.5, 0.5, 2.5, 2), ribbon = TRUE,
-  ribargs = list(), cex.ribbon = 0.5, withpts = "n",
+\method{plot}{stKde}(x, focalyears = NULL, type = "focal",
+  plotdir = NULL, imnames = "byyear", zlim = NULL, box = FALSE,
+  main = "auto", col.mask = "grey75", ncolours = 256,
+  ramptype = "raw", imdim = c(10, 10), mars = c(0.5, 0.5, 2.5, 2),
+  ribbon = TRUE, ribargs = list(), cex.ribbon = 0.5, withpts = "n",
   cex.main = 0.8, pch.pts = 19, col.pts = "grey50", cex.pts = 0.1,
   tidydevs = TRUE, verbose = TRUE, ...)
 }
@@ -53,7 +53,9 @@ This function plots to a screen device if a single focal year is stipulated and 
 load("euroevol-ew.rda")
 x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
-stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir="im")
+stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], 
+win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100),
+tbw=50, bins=bins1, backsight=200, outdir="im")
 
 ## Plot just the proportion surface for just 5900 calBP
 plot(stkde1, 5900, type="proportion")
@@ -63,11 +65,15 @@ dev.new(height=2.5, width=8)
 par(mar=c(0.5, 0.5, 2.5, 2))
 plot(stkde1, 5900, type="all")
 
-## Plot standardised change surfaces to a sub-directory called /png for all timeslices and save to file.
+## Plot standardised change surfaces to a sub-directory called 
+## /png for all timeslices and save to file.
 plot(stkde1, seq(6500, 5000, -100), type="change", ramptype="std", withpts=TRUE, plotdir="png")
 
-## Plot all four summary surfaces in one image, saving them to a sub-directory call 'pngall', and with the output of the change map standardised to a common ramp (but leaving the focal and proportion maps unstandardised with simple ramp labelling)
-plot(stkde1, years, type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)), withpts=TRUE, plotdir="pngall")
+## Plot all four summary surfaces in one image, saving them to a sub-directory call 'pngall',
+## and with the output of the change map standardised to a common ramp 
+## (but leaving the focal and proportion maps unstandardised with simple ramp labelling)
+plot(stkde1, years, type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)),
+withpts=TRUE, plotdir="pngall")
 }
 
 }

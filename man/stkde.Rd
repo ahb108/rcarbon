@@ -53,7 +53,7 @@ A list object of class stKde with the following elements:
 }
 }
 \description{
-Function for mapping the spatio-temporal intensity of radiocarbon dates for a given geographical region in one or more timeslices.
+Function for mapping the spatio-temporal intensity of radiocarbon dates for a given geographical region in one or more tim.
 }
 \details{
 This function computes one or more timeslice maps of the spatio-temporal kernel intensity of radiocarbon dates across a geographic region and for a specific focal year. The user specifies the arbitrary sizes of both the spatial and the temporal Gaussian kernels that will be used to summarise radiocarbon date intensity per grid cell per timestep. The results allow standardisation of colour ramps, etc. across timesteps and are amenable to plotting individually via plot.stKde and/or for output to png for animation.
@@ -66,7 +66,9 @@ data(ewowin)
 x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 ## Create centennial timeslices (also with site binning)
 bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
-stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir="im",amount=1)
+stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, 
+sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, 
+backsight=200, outdir="im",amount=1)
 ## Plot an example of all four basic outputs for 5900 calBP
 dev.new(height=2.5, width=8)
 par(mar=c(0.5, 0.5, 2.5, 2))

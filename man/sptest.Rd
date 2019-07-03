@@ -105,5 +105,5 @@ plot(res.locations,index=4,add=TRUE,legend=TRUE,option="test")
 Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates. Journal of Archaeological Science, 87, 1-9.
 }
 \seealso{
-\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights; \code{\link{spd2gg}} for computing geometric growth rates.
+\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spweights}} for computing spatial weights; \code{\link{spd2rc}} for computing geometric growth rates.
 }

@@ -15,7 +15,7 @@ ewowin
 An \code{\link{owin}} class polygonal window of England and Wales.
 }
 \examples{
-\\donotrun{
+\dontrun{
 data(ewowin)
 # Obtained from rworldmap:
 library(maptools)
@@ -24,7 +24,9 @@ library(rworldmap)
 bng <- CRS("+init=epsg:27700")
 sbrit <- getMap(resolution="high")
 sbrit <- spTransform(sbrit[sbrit$GEOUNIT =="United Kingdom",], bng)
-tmp <- SpatialPolygons(list(Polygons(list(Polygon(cbind(c(130000,130000,310000,425000,700000,700000,130000), c(0,300000,560000,598000,300000,0,0)))), "1")), 1:1, proj4string=bng)
+tmp <- SpatialPolygons(list(Polygons(list(Polygon(cbind(c(130000,130000,310000,
+425000,700000,700000,130000), c(0,300000,560000,598000,300000,0,0)))), 
+"1")), 1:1, proj4string=bng)
 sbrit <- gIntersection(sbrit,tmp) 
 ewowin <- as.owin(sbrit)
 }

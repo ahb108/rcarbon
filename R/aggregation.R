@@ -1,3 +1,6 @@
+ if(getRversion() >= "2.15.1")  utils::globalVariables(c("focalyear"))
+
+
 #' @title Binning function of radiocarbon dates.  
 #'
 #' @description Prepare a set of bins for controlling the aggregation of radiocarbon dates
@@ -60,11 +63,14 @@ binPrep <- function(sites, ages, h){
 #'foursites <- euroevol[euroevol$SiteID %in% c("S2072","S4380","S6139","S9222"),]
 #'table(as.character(foursites$SiteID))
 #'## Thin so each site has 10 dates each max, with random selection
-#'thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, bins=foursites$SiteID, size=10, method="random", seed=123)
+#'thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, 
+#' bins=foursites$SiteID, size=10, method="random", seed=123)
 #'tdates <- foursites[thinInds,]
 #'tdates
-#'## Same but choose the first 60% (i.e. 6 dates) from the lowest errors and then fill in the rest randomly.
-#'thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, bins=foursites$SiteID, size=10, method="splitsample", thresh=0.6, seed=123)
+#'## Same but choose the first 60% (i.e. 6 dates) from the lowest errors 
+#'## and then fill in the rest randomly.
+#'thinInds<- thinDates(ages=foursites$C14Age, errors=foursites$C14SD, 
+#'bins=foursites$SiteID, size=10, method="splitsample", thresh=0.6, seed=123)
 #'tdates1 <- foursites[thinInds,]
 #'tdates1
 #' @seealso \code{\link{binPrep}}
@@ -118,6 +124,7 @@ thinDates <- function(ages, errors, bins, size, thresh=0.5, method="random", see
 #' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE. 
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity. 
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
+#' @param edgeSize Extra margin in C14 Age time to handle edge effect when \code{datenormalise} is set to TRUE. Default is 500.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #' @details The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link{binPrep}}, whilst the sensitivity to parameter choice can be explored with the \code{\link{binsense}} function.
@@ -135,7 +142,7 @@ thinDates <- function(ages, errors, bins, size, thresh=0.5, method="random", see
 #' @import utils
 #' @export
 
-spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE, edgeSize=500){
+spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE, edgeSize=500){
     
     defcall <- as.list(args(spd))
     defcall <- defcall[-length(defcall)]
@@ -281,12 +288,14 @@ spd <- function(x, timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE
 #' McLaughlin, T. R. 2018. On Applications of Space–Time Modelling with Open-Source 14C Age Calibration. \emph{Journal of Archaeological Method and Theory}. DOI https://doi.org/10.1007/s10816-018-9381-3
 #'
 #' @examples
+#' \dontrun{
 #'data(emedyd)
 #'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
 #'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
 #'s = sampleDates(x,bins=bins,nsim=100,boot=FALSE)
-#'ckdeNorm = ckde(s1,timeRange=c(16000,9000),bw=100,normalised=TRUE)
+#'ckdeNorm = ckde(s,timeRange=c(16000,9000),bw=100,normalised=TRUE)
 #'plot(ckdeNorm,type='multiline',calendar='BCAD')
+#' }
 #'
 #' @seealso \code{\link{sampleDates}}
 #'
@@ -338,8 +347,7 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 
 #' @title Map the spatio-temporal intensity of a set of radiocarbon dates
 #'
-#' @description Function for mapping the spatio-temporal intensity of radiocarbon dates for a given geographical region in one or more timeslices.
-#'
+#' @description Function for mapping the spatio-temporal intensity of radiocarbon dates for a given geographical region in one or more tim.
 #' @param x An object of class CalDates with calibrated radiocarbon ages.
 #' @param coords A two column matrix of geographical coordinates from a a projected coordinate system (no checks are made for this) and with the same number of rows as length(x).
 #' @param sbw A single numeric value for the spatial bandwith to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).
@@ -376,7 +384,9 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 #' ## Create centennial timeslices (also with site binning)
 #' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
-#' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, backsight=200, outdir="im",amount=1)
+#' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, 
+#' sbw=40000, cellres=2000, focalyears=seq(6500, 5000, -100), tbw=50, bins=bins1, 
+#' backsight=200, outdir="im",amount=1)
 #' ## Plot an example of all four basic outputs for 5900 calBP
 #' dev.new(height=2.5, width=8)
 #' par(mar=c(0.5, 0.5, 2.5, 2))
@@ -489,12 +499,14 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #'
 #' @examples
 #' \dontrun{
-#' ## Example for the focal year 5600 calBP (also with site binning), using a subset of English and Welsh dates from the Euroevol dataset
+#' ## Example for the focal year 5600 calBP (also with site binning), 
+#' ## using a subset of English and Welsh dates from the Euroevol dataset
 #' data(ewdates)
 #' data(ewowin)
 #' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 #' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
-#' spkde1 <- spkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, sbw=40000, cellres=2000, focalyear=5600, tbw=50, bins=bins1, backsight=200,amount=1)
+#' spkde1 <- spkde(x=x, coords=ewdates[,c("Eastings", "Northings")], win=ewowin, 
+#' sbw=40000, cellres=2000, focalyear=5600, tbw=50, bins=bins1, backsight=200,amount=1)
 #' plot(spkde1$focal)
 #' plot(spkde1$proportion)
 #' }

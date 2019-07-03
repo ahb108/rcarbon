@@ -4,8 +4,8 @@
 \alias{plot.spdRC}
 \title{Plot \code{spdRC} class objects}
 \usage{
-plot.spdRC(x, calendar = "BP", col.obs = "black", lwd.obs = 0.5,
-  xaxs = "i", yaxs = "i", xlim = NA, ...)
+\method{plot}{spdRC}(x, calendar = "BP", col.obs = "black",
+  lwd.obs = 0.5, xaxs = "i", yaxs = "i", xlim = NA, ...)
 }
 \arguments{
 \item{x}{\code{spdRC} class object containing geometric growth rates.}
@@ -19,6 +19,8 @@ plot.spdRC(x, calendar = "BP", col.obs = "black", lwd.obs = 0.5,
 \item{xaxs}{The style of x-axis interval calculation (see \code{\link{par}})}
 
 \item{yaxs}{The style of y-axis interval calculation (see \code{\link{par}})}
+
+\item{xlim}{Limits for the x axis.}
 
 \item{...}{Additional arguments affecting the plot.}
 }
