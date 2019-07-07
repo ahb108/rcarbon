@@ -45,6 +45,8 @@ Crema, E.R., Bevan, A., Shennan, S., 2017. [Spatio-temporal approaches to archae
 
 de Souza, J. G., Robinson, M., Maezumi, S. Y., Capriles, J., Hoggarth, J. A., Lombardo, U., et al. (2019). [Climate change and cultural resilience in late pre-Columbian Amazonia](https://doi.org/10.1038/s41559-019-0924-0). Nature Ecology & Evolution, 1. doi:10.1038/s41559-019-0924-0
 
+Feeser, I., Dörfler, W., Kneisel, J., Hinz, M., & Dreibrodt, S. (2019). [Human impact and population dynamics in the Neolithic and Bronze Age: Multi-proxy evidence from north-western Central Europe](https://doi.org/10.1177/0959683619857223). The Holocene, 0959683619857223. doi:10.1177/0959683619857223
+
 Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Meyer, J.A., Kelly, R.L., Anderies, J.M., 2018. [Synchronization of energy consumption by human societies throughout the Holocene](https://doi.org/10.1073/pnas.1802859115). Proceedings of the National Academy of Sciences of the United States of America, 115 (40) 9962-9967. doi:10.1073/pnas.1802859115
 
 Fyfe, R.M., Woodbridge, J., Palmisano, A., Bevan, A., Shennan, S., Burjachs, F., Legarra Herrero, B., García Puchol, O., Carrión, J.-S., Revelles, J., Roberts, C.N., 2019. [Prehistoric palaeodemographics and regional land cover change in eastern Iberia](https://doi.org/10.1177/0959683619826643). The Holocene 0959683619826643. doi:10.1177/0959683619826643
