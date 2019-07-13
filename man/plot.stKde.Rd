@@ -90,13 +90,13 @@ plot(stkde1, 5900, type="all")
 ## Plot standardised change surfaces to a sub-directory called 
 ## /png for all timeslices and save to file.
 dir.create(file.path("png"), showWarnings=FALSE)
-plot(stkde1, seq(6500, 5000, -100), type="change", ramptype="std", withpts=TRUE, plotdir="png")
+plot(stkde1, seq(6500,5000,-100), type="change", ramptype="std", withpts=TRUE, plotdir="png")
 
 ## Plot all four summary surfaces in one image, saving them to a sub-directory call 'pngall',
 ## and with the output of the change map standardised to a common ramp 
 ## (but leaving the focal and proportion maps unstandardised with simple ramp labelling)
 dir.create(file.path("pngall"), showWarnings=FALSE)
-plot(stkde1, years, type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)),
+plot(stkde1, seq(6500,5000,-100), type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)),
 withpts=TRUE, plotdir="pngall")
 }
 
