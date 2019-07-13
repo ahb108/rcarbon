@@ -14,9 +14,8 @@ calibrate(x, ...)
   calMatrix = FALSE, eps = 1e-05, ncores = 1, verbose = TRUE, ...)
 
 \method{calibrate}{UncalGrid}(x, errors = 0, calCurves = "intcal13",
-  timeRange = c(50000, 0), compact = TRUE, eps = 1e-05,
-  type = "fast", datenormalised = FALSE, spdnormalised = FALSE,
-  verbose = TRUE, ...)
+  timeRange = c(50000, 0), eps = 1e-05, type = "fast",
+  datenormalised = FALSE, spdnormalised = FALSE, verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{A vector of uncalibrated radiocarbon ages or a UncalGrid class object.}
@@ -49,9 +48,7 @@ calibrate(x, ...)
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 
-\item{compact}{TO WRITE}
-
-\item{type}{TO WRITE}
+\item{type}{Currently, two ways are offered. With "fast", a look-up is conducted for each calendar year that picks up the amplitude of the nearest CRA age. With "full", each CRA is calibrated individually and then summed (much slower).}
 
 \item{datenormalised}{Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE.}
 
