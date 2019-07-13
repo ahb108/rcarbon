@@ -50,7 +50,6 @@ calibrate <- function (x, ...) {
 
 #' @rdname calibrate
 #' @export
-
 calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
 
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
@@ -258,7 +257,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
 #' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE. 
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity. 
 #' @rdname calibrate
-
+#' @export
 calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(50000,0), eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE, ...){
 
     if (length(errors)==1){
