@@ -258,7 +258,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity. 
 #' @rdname calibrate
 #' @export
-calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(50000,0), eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE, ...){
+calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(50000,0), eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE, calmatrix=TRUE,...){
 
     if (length(errors)==1){
         errors <- rep(errors,length(x$CRA))
