@@ -479,8 +479,10 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #' @param cellres The cell or pixel resolution of the output raster maps.
 #' @param bins  A vector of labels corresponding to site names, ids, bins or phases (same length as x)
 #' @param backsight A single numeric value (which will be coerced to be positive) that specifies a comparison timestep in the past for a mapping of temporal change.
+#' @param nsim How many bootstrap simulations to run (default is none).
 #' @param maskthresh A single numeric value for a lower-bound cut-off for all maps, based on a minimum required spatial intensity of all dates in x.
 #' @param changexpr An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.
+#' @param raw Whether to output the raw simulations (if nsim is set) or just the summaries (the latter is default).
 #' @param spjitter Whether noise is applied to the spatial coordinates or not. Default is TRUE. 
 #' @param amount Ammount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.   
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.

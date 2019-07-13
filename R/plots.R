@@ -1378,12 +1378,22 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
 #' @param plotdir Optional output directory for plots. If NULL, then only a single plot is made to the current device. If a valid output direcotry is provided then one or more timeslices maps are saved as png files (e.g. as source images for an animation).
 #' @param imnames The format of the output files if output is as png files to a directory. The current two options are "basic" (labelling the images in basic sequence as preferred by animation software such as ffmpeg) or "byyear" (labelling the images by calBP year).
 #' @param zlim  Numeric vector of length=2 which controlls the maximum or minimum of the colour ramp.
+#' @param box  Logical. Plot a border around the map or not.
 #' @param main Single character string specifying a main title. "auto" implies internal default titles are used.
+#' @param col.mask The colour used to depict any areas that are being masked out.
+#' @param ncolours The maximum number of colours to use in the colour ramp. 
 #' @param ramptype What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standaridise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).
 #' @param withpts Plot with the original sample locations shown (current options are "y" and "n").
 #' @param imdim Height and width of the plot to png in cm.
 #' @param mars Margins of the plot to png.
 #' @param ribbon Whether to plot the colour ramp legend or not.
+#' @param ribargs Whether to plot the colour ramp legend or not.
+#' @param cex.ribbon The size of the ribbon font.
+#' @param cex.main The size of the title font.
+#' @param pch.pts The symbols used for the plotted points.
+#' @param col.pts The colours used for the plotted points.
+#' @param cex.pts The size used for the plotted points.
+#' @param tidydevs Logical for whether to clean up any open grpahics devices or not (default is TRUE).
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... Additional arguments affecting the plot.
 #'
@@ -1392,7 +1402,9 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
 #' @examples
 #' \dontrun{
 #' ## Example with a subset of English and Welsh dates from the Euroevol dataset
-#' load("euroevol-ew.rda")
+#' data(ewdates)
+#' data(ewowin)
+#' dir.create(file.path("im"), showWarnings=FALSE)
 #' x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 #' bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
 #' stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], 
@@ -1409,11 +1421,13 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
 #'
 #' ## Plot standardised change surfaces to a sub-directory called 
 #' ## /png for all timeslices and save to file.
+#' dir.create(file.path("png"), showWarnings=FALSE)
 #' plot(stkde1, seq(6500, 5000, -100), type="change", ramptype="std", withpts=TRUE, plotdir="png")
 #'
 #' ## Plot all four summary surfaces in one image, saving them to a sub-directory call 'pngall',
 #' ## and with the output of the change map standardised to a common ramp 
 #' ## (but leaving the focal and proportion maps unstandardised with simple ramp labelling)
+#' dir.create(file.path("pngall"), showWarnings=FALSE)
 #' plot(stkde1, years, type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)),
 #' withpts=TRUE, plotdir="pngall")
 #' }

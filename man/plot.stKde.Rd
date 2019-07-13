@@ -25,7 +25,13 @@
 
 \item{zlim}{Numeric vector of length=2 which controlls the maximum or minimum of the colour ramp.}
 
+\item{box}{Logical. Plot a border around the map or not.}
+
 \item{main}{Single character string specifying a main title. "auto" implies internal default titles are used.}
+
+\item{col.mask}{The colour used to depict any areas that are being masked out.}
+
+\item{ncolours}{The maximum number of colours to use in the colour ramp.}
 
 \item{ramptype}{What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standaridise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).}
 
@@ -35,7 +41,21 @@
 
 \item{ribbon}{Whether to plot the colour ramp legend or not.}
 
+\item{ribargs}{Whether to plot the colour ramp legend or not.}
+
+\item{cex.ribbon}{The size of the ribbon font.}
+
 \item{withpts}{Plot with the original sample locations shown (current options are "y" and "n").}
+
+\item{cex.main}{The size of the title font.}
+
+\item{pch.pts}{The symbols used for the plotted points.}
+
+\item{col.pts}{The colours used for the plotted points.}
+
+\item{cex.pts}{The size used for the plotted points.}
+
+\item{tidydevs}{Logical for whether to clean up any open grpahics devices or not (default is TRUE).}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 
@@ -50,7 +70,9 @@ This function plots to a screen device if a single focal year is stipulated and 
 \examples{
 \dontrun{
 ## Example with a subset of English and Welsh dates from the Euroevol dataset
-load("euroevol-ew.rda")
+data(ewdates)
+data(ewowin)
+dir.create(file.path("im"), showWarnings=FALSE)
 x <- calibrate(x=ewdates$C14Age, errors=ewdates$C14SD, normalised=FALSE)
 bins1 <- binPrep(sites=ewdates$SiteID, ages=ewdates$C14Age, h=50)
 stkde1 <- stkde(x=x, coords=ewdates[,c("Eastings", "Northings")], 
@@ -67,11 +89,13 @@ plot(stkde1, 5900, type="all")
 
 ## Plot standardised change surfaces to a sub-directory called 
 ## /png for all timeslices and save to file.
+dir.create(file.path("png"), showWarnings=FALSE)
 plot(stkde1, seq(6500, 5000, -100), type="change", ramptype="std", withpts=TRUE, plotdir="png")
 
 ## Plot all four summary surfaces in one image, saving them to a sub-directory call 'pngall',
 ## and with the output of the change map standardised to a common ramp 
 ## (but leaving the focal and proportion maps unstandardised with simple ramp labelling)
+dir.create(file.path("pngall"), showWarnings=FALSE)
 plot(stkde1, years, type="all", ramptype=c("unl","unl","std"), imdim=cm(c(2.5,8)),
 withpts=TRUE, plotdir="pngall")
 }

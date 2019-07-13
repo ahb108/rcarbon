@@ -603,6 +603,7 @@ gaussW <- function(x, mean, sd, type="weights"){
     }
 }
 
+#' @export
 rybcolourmap <- function(range, ...) {
     ## slightly modified from beachcolourmap() in the spatstat package
     col <- rybcolours(range, ...)
@@ -610,6 +611,7 @@ rybcolourmap <- function(range, ...) {
     return(z)
 }
 
+#' @export
 rybcolours <- function(range, sealevel=0, ncolours=100, nbeach=0){
     ## modified from beachcolours() in the spatstat package
     stopifnot(is.numeric(range) && length(range)==2)

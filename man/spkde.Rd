@@ -28,9 +28,13 @@ spkde(x, coords, sbw, focalyear, tbw, win, cellres, bins = NA,
 
 \item{backsight}{A single numeric value (which will be coerced to be positive) that specifies a comparison timestep in the past for a mapping of temporal change.}
 
+\item{nsim}{How many bootstrap simulations to run (default is none).}
+
 \item{maskthresh}{A single numeric value for a lower-bound cut-off for all maps, based on a minimum required spatial intensity of all dates in x.}
 
 \item{changexpr}{An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.}
+
+\item{raw}{Whether to output the raw simulations (if nsim is set) or just the summaries (the latter is default).}
 
 \item{spjitter}{Whether noise is applied to the spatial coordinates or not. Default is TRUE.}
 
