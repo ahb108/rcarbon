@@ -67,6 +67,10 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     if (any(is.na(x))|any(is.na(errors))){
         stop("Ages or errors contain NAs")
     }
+    if (is.null(calCurves)|anyNA(calCurves)){
+	stop("calCurves is NULL or contain NAs")
+    }
+
   
     if (F14C==TRUE&normalised==FALSE)
     {
