@@ -237,7 +237,8 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 			st = max(unlist(lapply(x$grids,function(x){max(x$calBP)})))
 			en = min(unlist(lapply(x$grids,function(x){min(x$calBP)})))
 		}
-		xlim = c(st,en)
+		edge = 0.1*abs(st-en)
+		xlim = c(st+edge,en-edge)
 	}
 
 	yearsBP = xlim[1]:xlim[2]
