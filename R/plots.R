@@ -968,10 +968,11 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'}
 #' @export
 
-plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.obs=NA, lwd.obs=NA, lty.obs=NA, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA)
+plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.obs=NA, lwd.obs=NA, lty.obs=NA, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA,ymargin=1.1)
 {
   # Based on Dark2 of RcolorBrewer
   colpal=c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666")
+  
 
 	#issue error messages
 	if (!'stackCalSPD'%in%class(x))
@@ -1054,7 +1055,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	#lines 
 	if (type=='lines')
 	{
-	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*1.1) }
+	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*ymargin) }
 	  if (is.na(ylab)){ylab='Summed Probability'}
 	  plot(0, 0, xlim=xlim, ylim=ylim, type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
 	  
@@ -1070,7 +1071,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	      legend("topleft",legend=names(x$spds),col=col.obs,lty=lty.obs,lwd=lwd.obs)
 	    } else {
 	      args.legend1 <- list("topleft", legend = names(x$spds),col=col.obs,lty=lty.obs,lwd=lwd.obs)
-	      args.legend1[names(args.legend)] <- args.legend
+	      args.legend1[names(legend.arg)] <- legend.arg
 	      do.call("legend", args.legend1)
 	    }
 	  }
@@ -1082,7 +1083,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	  PrDens = t(apply(PrDens,1,cumsum))
 	  PrDens = cbind(0,PrDens)
 	  
-	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*1.1) }
+	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*ymargin) }
 	  if (is.na(ylab)){ylab='Summed Probability'}
 	  
 	  plot(0, 0, xlim=xlim, ylim=ylim, type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
@@ -1098,7 +1099,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	      legend("topleft",legend=names(x$spds),fill=col.fill)
 	    } else {
 	      args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
-	      args.legend1[names(args.legend)] <- args.legend
+	      args.legend1[names(legend.arg)] <- legend.arg
 	      do.call("legend", args.legend1)
 	    }
 	  }
@@ -1125,7 +1126,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	      legend("topleft",legend=names(x$spds),fill=col.fill)
 	    } else {
 	      args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
-	      args.legend1[names(args.legend)] <- args.legend
+	      args.legend1[names(legend.arg)] <- legend.arg
 	      do.call("legend", args.legend1)
 	    }
 	  }
@@ -1135,7 +1136,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
   if (type=='multipanel')
   {
     # individual ylim
-    if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*1.1) }
+    if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*ymargin) }
     if (is.na(ylab)){ylab='Summed Probability'}
     
     # max ylim: combine ylim giving as a space 1/7 of the original distance
@@ -1256,7 +1257,7 @@ plot.SpdPermTest <- function(x, focalm=1, type='spd', calendar="BP", xlim=NA, yl
 
 	if (any(is.na(ylim)))
 		{
-		       	ylim <- c(0, max(envelope[,2], obs$PrDens,na.rm=TRUE)*1.1) 
+		       	ylim <- c(0, max(envelope[,2], obs$PrDens,na.rm=TRUE)*ymargin) 
 			if (type=='roc') {ylim[1] <- min(c(envelope[,1],obs$PrDens),na.rm=TRUE)}
 		}
 
