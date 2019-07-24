@@ -963,10 +963,13 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @examples
 #' \dontrun{
 #'data(emedyd)
+#'emedyd = subset(emedyd,Region==1)
 #'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
 #'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
 #'res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
 #'plot(res,type='stacked')
+#'plot(res,type='lines')
+#'plot(res,type='proportion')
 #'plot(res,type='multipanel')
 #'}
 #' @export
@@ -1011,7 +1014,8 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 
   #pre-processing (create a single matrix for plotting)
   nsets = length(x$spds)
-	PrDens = matrix(NA,ncol=nsets,nrow=length(plotyears))
+  if (nsets==1 & type=='multipanel') {type='stacked'}
+  PrDens = matrix(NA,ncol=nsets,nrow=length(plotyears))
 	
 	for (i in 1:nsets)
 	{
@@ -1083,8 +1087,11 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	#stacked
 	if (type=='stacked')
 	{
-	  PrDens = t(apply(PrDens,1,cumsum))
-	  PrDens = cbind(0,PrDens)
+		if (nsets>1)
+		{	  
+			PrDens = t(apply(PrDens,1,cumsum))
+		}
+		PrDens = cbind(0,PrDens)
 	  
 	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*ymargin) }
 	  if (is.na(ylab)){ylab='Summed Probability'}
@@ -1111,28 +1118,31 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	#proportion
 	if (type=='proportion')
 	{
-	  
-	  PrDens=prop.table(PrDens,1)
-	  PrDens = t(apply(PrDens,1,cumsum))
-	  PrDens = cbind(0,PrDens)
-	  if (is.na(ylab)){ylab='Relative Proportion'}
-	  plot(0, 0, xlim=xlim, ylim=c(0,1), type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
-	  
-	  for (i in 2:(nsets+1))
-	  {
-	    polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs)
-	  }
-	  if (legend)
-	  {
-	    if (is.null(legend.arg))
-	    {
-	      legend("topleft",legend=names(x$spds),fill=col.fill)
-	    } else {
-	      args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
-	      args.legend1[names(legend.arg)] <- legend.arg
-	      do.call("legend", args.legend1)
-	    }
-	  }
+
+		PrDens=prop.table(PrDens,1)
+		if (nsets>1)
+		{
+			PrDens = t(apply(PrDens,1,cumsum))
+		}
+		PrDens = cbind(0,PrDens)
+		if (is.na(ylab)){ylab='Relative Proportion'}
+		plot(0, 0, xlim=xlim, ylim=c(0,1), type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
+
+		for (i in 2:(nsets+1))
+		{
+			polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs)
+		}
+		if (legend)
+		{
+			if (is.null(legend.arg))
+			{
+				legend("topleft",legend=names(x$spds),fill=col.fill)
+			} else {
+				args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+				args.legend1[names(legend.arg)] <- legend.arg
+				do.call("legend", args.legend1)
+			}
+		}
 	}
 
 	#multipanel
