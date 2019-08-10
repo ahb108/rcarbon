@@ -79,6 +79,8 @@ Szpak, P., Savelle, J. M., Conolly, J., & Richards, M. P. 2019. [Variation in la
 
 Tallavara, M., Personen, P. 2018. [Human ecodynamics in the north-west coast of Finland 10,000–2000 years ago](https://doi.org/10.1016/j.quaint.2018.06.032).Quaternary International,doi:/10.1016/j.quaint.2018.06.032
 
+van der Bilt, W. G. M., Born, A., & Haaga, K. A. 2019. [Was Common Era glacier expansion in the Arctic Atlantic region triggered by unforced atmospheric cooling?](https://doi.org/10.1016/j.quascirev.2019.07.042) Quaternary Science Reviews, 105860. doi:10.1016/j.quascirev.2019.07.042
+
 Weiberg, E., Bevan, A., Kouli, K., Katsianis, M., Woodbridge, J., Bonnier, A., et al. 2019. [Long-term trends of land use and demography in Greece: A comparative study](https://doi.org/10.1177/0959683619826641) The Holocene, 0959683619826641. doi:10.1177/0959683619826641
 
 Woodbridge, J., Roberts, C. N., Palmisano, A., Bevan, A., Shennan, S., Fyfe, R., et al. 2019. [Pollen-inferred regional vegetation patterns and demographic change in Southern Anatolia through the Holocene.](https://doi.org/10.1177/0959683619826635) The Holocene, 0959683619826635. doi:10.1177/0959683619826635
