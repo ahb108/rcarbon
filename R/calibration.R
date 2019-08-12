@@ -749,12 +749,13 @@ medCal <- function(x)
 return(meddates)
 }
 
-#' @title Creates mixed terrestrial/marine calibration curves.
+#' @title Creates mixed calibration curves.
 #'
 #' @description Function for generating a vector median calibrated dates from a \code{CalDates} class object.
 #' 
-#' @param calCurve Name of the terrestrial curve, either 'intcal13' or 'shcal13'. Default is 'intcal13'.
-#' @param p Proportion of terrestrial contribution. Deafult is 1.
+#' @param calCurve1 Name of the first curve, chosen from 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13'. Default is 'intcal13'.
+#' @param calCurve2 Name of the second curve, from the same list. Default is 'shcal13'.
+#' @param p The proportion of contribution of the first curve. Default is 1.
 #' @param resOffsets Offset value for the marine reservoir effect. Default is 0.
 #' @param resErrors Error of the marine reservoir effect offset. Default is 0.
 #' @return A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link{calibrate}} function.
@@ -762,7 +763,8 @@ return(meddates)
 #' @references 
 #' Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autorgressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
 #' Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
-#'
+#' Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
+#' Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 #' @examples
 #' myCurve <- mixCurves('intcal13',p=0.7,resOffsets=300,resErrors=20)
 #' x <- calibrate(4000,30,calCurves=myCurve)
@@ -770,38 +772,43 @@ return(meddates)
 #' @export
 
 
-mixCurves <- function(calCurve='intcal13',p=1,resOffsets=0,resErrors=0)
+mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 1, resOffsets = 0, 
+                       resErrors = 0) 
 {
-
-            terrestrialFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurve,".14c", sep="")
-            marineFile <- paste(system.file("extdata", package="rcarbon"), "/","marine13.14c", sep="")
-            options(warn=-1)
-            terrestrial <- readLines(terrestrialFile, encoding="UTF-8")
-            marine<- readLines(marineFile, encoding="UTF-8")
-
-            terrestrial <- terrestrial[!grepl("[#]",terrestrial)]
-            marine <- marine[!grepl("[#]",marine)]
-            terrestrial.con <- textConnection(terrestrial) 
-	    marine.con <- textConnection(marine)
-	    terrestrial <- as.matrix(read.csv(terrestrial.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
-	    marine <- as.matrix(read.csv(marine.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
-	    close(terrestrial.con)
-	    close(marine.con)
-            options(warn=0)
-            colnames(marine) <- c("CALBP","C14BP","Error")
-            colnames(terrestrial) <- c("CALBP","C14BP","Error")
-
- 	    marine.mu <- approx(marine[, 1], marine[, 2], terrestrial[, 1], rule = 2)$y + resOffsets
-	    marine.error <- approx(marine[, 1], marine[, 3], terrestrial[, 1], rule = 2)$y
- 	    marine.error <- sqrt(marine.error^2 + resErrors^2)
- 	    mu <- p * terrestrial[, 2] + (1 - p) * marine.mu
- 	    error <- p * terrestrial[, 3] + (1 - p) * marine.error
-	    res = cbind(terrestrial[,1],mu,error)
-	    colnames(res) = c("CALBP","C14BP","Error")
-
-	    return(res)
-
+  File1 <- paste(system.file("extdata", package = "rcarbon"), 
+                     "/", calCurve1, ".14c", sep = "")
+  File2 <- paste(system.file("extdata", package = "rcarbon"), 
+                     "/", calCurve2, ".14c", sep = "")
+  options(warn = -1)
+  nh <- readLines(File1, encoding = "UTF-8")
+  sh <- readLines(File2, encoding = "UTF-8")
+  nh <- nh[!grepl("[#]", nh)]
+  sh <- sh[!grepl("[#]", sh)]
+  nh.con <- textConnection(nh)
+  sh.con <- textConnection(sh)
+  nh <- as.matrix(read.csv(nh.con, header = FALSE, 
+                           stringsAsFactors = FALSE))[, 1:3]
+  sh <- as.matrix(read.csv(sh.con, header = FALSE, 
+                           stringsAsFactors = FALSE))[, 1:3]
+  close(nh.con)
+  close(sh.con)
+  options(warn = 0)
+  colnames(sh) <- c("CALBP", "C14BP", "Error")
+  colnames(nh) <- c("CALBP", "C14BP", 
+                    "Error")
+  sh.mu <- approx(sh[, 1], sh[, 2], nh[, 
+                                       1], rule = 2)$y + resOffsets
+  sh.error <- approx(sh[, 1], sh[, 3], nh[, 
+                                          1], rule = 2)$y
+  sh.error <- sqrt(sh.error^2 + resErrors^2)
+  mu <- p * nh[, 2] + (1 - p) * sh.mu
+  error <- p * nh[, 3] + (1 - p) * sh.error
+  res = cbind(nh[, 1], mu, error)
+  colnames(res) = c("CALBP", "C14BP", "Error")
+  return(res)
 }
+
+
 
 
 
