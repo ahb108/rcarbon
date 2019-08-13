@@ -751,59 +751,51 @@ return(meddates)
 
 #' @title Creates mixed calibration curves.
 #'
-#' @description Function for generating a vector median calibrated dates from a \code{CalDates} class object.
+#' @description Function for generating mixed calibration curves (e.g. intcal13/marine13, intcal13/shcal13)  with user-defined proportions.
 #' 
 #' @param calCurve1 Name of the first curve, chosen from 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13'. Default is 'intcal13'.
-#' @param calCurve2 Name of the second curve, from the same list. Default is 'shcal13'.
+#' @param calCurve2 Name of the second curve, from the same list. Default is 'marine13'.
 #' @param p The proportion of contribution of the first curve. Default is 1.
-#' @param resOffsets Offset value for the marine reservoir effect. Default is 0.
-#' @param resErrors Error of the marine reservoir effect offset. Default is 0.
+#' @param resOffsets Offset value for the marine reservoir effect to be applied to calCurve2. Default is 0.
+#' @param resErrors Error of the marine reservoir effect offset to be applied to calCurve2. Default is 0.
 #' @return A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link{calibrate}} function.
-#' @details The function is based on the \code{mix.calibrationcurves} function of the \code{clam} package. 
+#' @details The function is based on the \code{mix.calibrationcurves} function of the \code{clam} package.   
 #' @references 
 #' Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autorgressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
 #' Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
-#' Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
 #' Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 #' @examples
-#' myCurve <- mixCurves('intcal13',p=0.7,resOffsets=300,resErrors=20)
+#' myCurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=300,resErrors=20)
 #' x <- calibrate(4000,30,calCurves=myCurve)
 #' @seealso \code{\link{calibrate}}
 #' @export
 
 
-mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 1, resOffsets = 0, 
+mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "marine13", p = 1, resOffsets = 0, 
                        resErrors = 0) 
 {
-  File1 <- paste(system.file("extdata", package = "rcarbon"), 
-                     "/", calCurve1, ".14c", sep = "")
-  File2 <- paste(system.file("extdata", package = "rcarbon"), 
-                     "/", calCurve2, ".14c", sep = "")
+  File1 <- paste(system.file("extdata", package = "rcarbon"),"/", calCurve1, ".14c", sep = "")
+  File2 <- paste(system.file("extdata", package = "rcarbon"),"/", calCurve2, ".14c", sep = "")
   options(warn = -1)
-  nh <- readLines(File1, encoding = "UTF-8")
-  sh <- readLines(File2, encoding = "UTF-8")
-  nh <- nh[!grepl("[#]", nh)]
-  sh <- sh[!grepl("[#]", sh)]
-  nh.con <- textConnection(nh)
-  sh.con <- textConnection(sh)
-  nh <- as.matrix(read.csv(nh.con, header = FALSE, 
-                           stringsAsFactors = FALSE))[, 1:3]
-  sh <- as.matrix(read.csv(sh.con, header = FALSE, 
-                           stringsAsFactors = FALSE))[, 1:3]
-  close(nh.con)
-  close(sh.con)
+  curve1 <- readLines(File1, encoding = "UTF-8")
+  curve2 <- readLines(File2, encoding = "UTF-8")
+  curve1 <- curve1[!grepl("[#]", curve1)]
+  curve2 <- curve2[!grepl("[#]", curve2)]
+  curve1.con <- textConnection(curve1)
+  curve2.con <- textConnection(curve2)
+  curve1 <- as.matrix(read.csv(curve1.con, header = FALSE, stringsAsFactors = FALSE))[, 1:3]
+  curve2 <- as.matrix(read.csv(curve2.con, header = FALSE, stringsAsFactors = FALSE))[, 1:3]
+  close(curve1.con)
+  close(curve2.con)
   options(warn = 0)
-  colnames(sh) <- c("CALBP", "C14BP", "Error")
-  colnames(nh) <- c("CALBP", "C14BP", 
-                    "Error")
-  sh.mu <- approx(sh[, 1], sh[, 2], nh[, 
-                                       1], rule = 2)$y + resOffsets
-  sh.error <- approx(sh[, 1], sh[, 3], nh[, 
-                                          1], rule = 2)$y
-  sh.error <- sqrt(sh.error^2 + resErrors^2)
-  mu <- p * nh[, 2] + (1 - p) * sh.mu
-  error <- p * nh[, 3] + (1 - p) * sh.error
-  res = cbind(nh[, 1], mu, error)
+  colnames(curve2) <- c("CALBP", "C14BP", "Error")
+  colnames(curve1) <- c("CALBP", "C14BP", "Error")
+  curve2.mu <- approx(curve2[, 1], curve2[, 2], curve1[,1], rule = 2)$y + resOffsets
+  curve2.error <- approx(curve2[, 1], curve2[, 3], curve1[,1], rule = 2)$y
+  curve2.error <- sqrt(curve2.error^2 + resErrors^2)
+  mu <- p * curve1[, 2] + (1 - p) * curve2.mu
+  error <- p * curve1[, 3] + (1 - p) * curve2.error
+  res = cbind(curve1[, 1], mu, error)
   colnames(res) = c("CALBP", "C14BP", "Error")
   return(res)
 }
