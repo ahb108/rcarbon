@@ -871,7 +871,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 		slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
 		tmp <- lapply(slist,`[`,2)
 		if (datenormalised){
-			tmp <- lapply(tmp,FUN=function(x) x/sum(x))
+			tmp <- lapply(tmp,FUN=function(x) {if(sum(x)!=0){return(x/sum(x))}else{return(x)}})
 		}
 		if (length(binNames)>1){
 			spd.tmp <- Reduce("+", tmp) / length(index)
