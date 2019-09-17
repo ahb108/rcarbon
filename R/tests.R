@@ -202,9 +202,13 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
         est <- predict(fit, list(x=pred.time))
         predgrid <- data.frame(calBP=pred.time, PrDens=est)
     } else if (model=="custom"){
-        if (length(predgrid)!=2){
-            stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
-        }
+	    if (length(predgrid)!=2){
+		    stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
+	    }
+	    if (!all(colnames(predgrid)%in%c("CalBP","PrDens")))
+	    {
+		    stop("Column names in the predgrid argument should be 'CalBP' and 'PrDens'")
+	    }
     } else {
         stop("Specified model not one of current choices.")
     }
