@@ -62,7 +62,7 @@
 #' ## Example with Younger Dryas period Near East, including site bins
 #' \dontrun{
 #' data(emedyd)
-#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE)
 #' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 #' nsim=5 #toy example
 #' expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,
@@ -1194,7 +1194,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 #' ## Example with Younger Dryas period Near East, including site bins
 #' \dontrun{
 #' data(emedyd)
-#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE)
 #' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 #' nsim=10 #toy example
 #' expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,
