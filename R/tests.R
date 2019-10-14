@@ -62,7 +62,7 @@
 #' ## Example with Younger Dryas period Near East, including site bins
 #' \dontrun{
 #' data(emedyd)
-#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE)
 #' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 #' nsim=5 #toy example
 #' expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,
@@ -202,9 +202,13 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
         est <- predict(fit, list(x=pred.time))
         predgrid <- data.frame(calBP=pred.time, PrDens=est)
     } else if (model=="custom"){
-        if (length(predgrid)!=2){
-            stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
-        }
+	    if (length(predgrid)!=2){
+		    stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
+	    }
+	    if (!all(colnames(predgrid)%in%c("CalBP","PrDens")))
+	    {
+		    stop("Column names in the predgrid argument should be 'CalBP' and 'PrDens'")
+	    }
     } else {
         stop("Specified model not one of current choices.")
     }
@@ -871,7 +875,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 		slist <- lapply(slist, FUN=function(x) x[with(x, order(-calBP)), ])
 		tmp <- lapply(slist,`[`,2)
 		if (datenormalised){
-			tmp <- lapply(tmp,FUN=function(x) x/sum(x))
+			tmp <- lapply(tmp,FUN=function(x) {if(sum(x)!=0){return(x/sum(x))}else{return(x)}})
 		}
 		if (length(binNames)>1){
 			spd.tmp <- Reduce("+", tmp) / length(index)
@@ -1190,7 +1194,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 #' ## Example with Younger Dryas period Near East, including site bins
 #' \dontrun{
 #' data(emedyd)
-#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE, calMatrix=TRUE)
+#' caldates <- calibrate(x=emedyd$CRA, errors=emedyd$Error, normalised=FALSE)
 #' bins <- binPrep(sites=emedyd$SiteName, ages=emedyd$CRA, h=50)
 #' nsim=10 #toy example
 #' expnull <- modelTest(caldates, errors=emedyd$Error, bins=bins, nsim=nsim, runm=50,

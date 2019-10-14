@@ -2,36 +2,39 @@
 % Please edit documentation in R/calibration.R
 \name{mixCurves}
 \alias{mixCurves}
-\title{Creates mixed terrestrial/marine calibration curves.}
+\title{Creates mixed calibration curves.}
 \usage{
-mixCurves(calCurve = "intcal13", p = 1, resOffsets = 0,
-  resErrors = 0)
+mixCurves(calCurve1 = "intcal13", calCurve2 = "marine13", p = 1,
+  resOffsets = 0, resErrors = 0)
 }
 \arguments{
-\item{calCurve}{Name of the terrestrial curve, either 'intcal13' or 'shcal13'. Default is 'intcal13'.}
+\item{calCurve1}{Name of the first curve, chosen from 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13'. Default is 'intcal13'.}
 
-\item{p}{Proportion of terrestrial contribution. Deafult is 1.}
+\item{calCurve2}{Name of the second curve, from the same list. Default is 'marine13'.}
 
-\item{resOffsets}{Offset value for the marine reservoir effect. Default is 0.}
+\item{p}{The proportion of contribution of the first curve. Default is 1.}
 
-\item{resErrors}{Error of the marine reservoir effect offset. Default is 0.}
+\item{resOffsets}{Offset value for the marine reservoir effect to be applied to calCurve2. Default is 0.}
+
+\item{resErrors}{Error of the marine reservoir effect offset to be applied to calCurve2. Default is 0.}
 }
 \value{
 A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link{calibrate}} function.
 }
 \description{
-Function for generating a vector median calibrated dates from a \code{CalDates} class object.
+Function for generating mixed calibration curves (e.g. intcal13/marine13, intcal13/shcal13)  with user-defined proportions.
 }
 \details{
 The function is based on the \code{mix.calibrationcurves} function of the \code{clam} package.
 }
 \examples{
-myCurve <- mixCurves('intcal13',p=0.7,resOffsets=300,resErrors=20)
+myCurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=300,resErrors=20)
 x <- calibrate(4000,30,calCurves=myCurve)
 }
 \references{
 Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autorgressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
 Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
+Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 }
 \seealso{
 \code{\link{calibrate}}

@@ -751,34 +751,32 @@ return(meddates)
 
 #' @title Creates mixed calibration curves.
 #'
-#' @description Function for generating a vector median calibrated dates from a \code{CalDates} class object.
+#' @description Function for generating mixed calibration curves (e.g. intcal13/marine13, intcal13/shcal13)  with user-defined proportions.
 #' 
 #' @param calCurve1 Name of the first curve, chosen from 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13'. Default is 'intcal13'.
-#' @param calCurve2 Name of the second curve, from the same list. Default is 'shcal13'.
+#' @param calCurve2 Name of the second curve, from the same list. Default is 'marine13'.
 #' @param p The proportion of contribution of the first curve. Default is 1.
-#' @param resOffsets Offset value for the marine reservoir effect. Default is 0.
-#' @param resErrors Error of the marine reservoir effect offset. Default is 0.
+#' @param resOffsets Offset value for the marine reservoir effect to be applied to calCurve2. Default is 0.
+#' @param resErrors Error of the marine reservoir effect offset to be applied to calCurve2. Default is 0.
 #' @return A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link{calibrate}} function.
-#' @details The function is based on the \code{mix.calibrationcurves} function of the \code{clam} package. 
+#' @details The function is based on the \code{mix.calibrationcurves} function of the \code{clam} package.   
 #' @references 
 #' Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autorgressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
 #' Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
-#' Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
 #' Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 #' @examples
-#' myCurve <- mixCurves('intcal13',p=0.7,resOffsets=300,resErrors=20)
+#' myCurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=300,resErrors=20)
 #' x <- calibrate(4000,30,calCurves=myCurve)
 #' @seealso \code{\link{calibrate}}
 #' @export
 
 
+
 mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 0.5, resOffsets = 0, 
-                       resErrors = 0) 
+                       resErrors = 0)
 {
-  File1 <- paste(system.file("extdata", package = "rcarbon"), 
-                 "/", calCurve1, ".14c", sep = "")
-  File2 <- paste(system.file("extdata", package = "rcarbon"), 
-                 "/", calCurve2, ".14c", sep = "")
+  File1 <- paste(system.file("extdata", package = "rcarbon"),"/", calCurve1, ".14c", sep = "")
+  File2 <- paste(system.file("extdata", package = "rcarbon"),"/", calCurve2, ".14c", sep = "")
   options(warn = -1)
   c1 <- readLines(File1, encoding = "UTF-8")
   c2 <- readLines(File2, encoding = "UTF-8")
@@ -786,20 +784,15 @@ mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 0.5, 
   c2 <- c2[!grepl("[#]", c2)]
   c1.con <- textConnection(c1)
   c2.con <- textConnection(c2)
-  c1 <- as.matrix(read.csv(c1.con, header = FALSE, 
-                           stringsAsFactors = FALSE))[, 1:3]
-  c2 <- as.matrix(read.csv(c2.con, header = FALSE, 
-                           stringsAsFactors = FALSE))[, 1:3]
+  c1 <- as.matrix(read.csv(c1.con, header = FALSE,stringsAsFactors = FALSE))[, 1:3]
+  c2 <- as.matrix(read.csv(c2.con, header = FALSE,stringsAsFactors = FALSE))[, 1:3]
   close(c1.con)
   close(c2.con)
   options(warn = 0)
   colnames(c2) <- c("CALBP", "C14BP", "Error")
-  colnames(c1) <- c("CALBP", "C14BP", 
-                    "Error")
-  c2.mu <- approx(c2[, 1], c2[, 2], c1[, 
-                                       1], rule = 2)$y + resOffsets
-  c2.error <- approx(c2[, 1], c2[, 3], c1[, 
-                                          1], rule = 2)$y
+  colnames(c1) <- c("CALBP", "C14BP","Error")
+  c2.mu <- approx(c2[, 1], c2[, 2], c1[,1], rule = 2)$y + resOffsets
+  c2.error <- approx(c2[, 1], c2[, 3], c1[,1], rule = 2)$y
   c2.error <- sqrt(c2.error^2 + resErrors^2)
   mu <- p * c1[, 2] + (1 - p) * c2.mu
   error <- sqrt(p * c1[, 3]^2 + (1 - p) * c2.error^2)

@@ -167,7 +167,7 @@ BPtoBCAD <- function(x){
 #' @title Convert BC/AD dates to BP format
 #' @description Converts BC/AD dates to BP format while handling the absence of 'year 0' 
 #' @param x A numerical vector (currently only basic checks that these numbers are in a sensible range).
-#' @return A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
+#' @return A vector with BP dates.
 #' @examples
 #' BCADtoBP(-1268)
 #' @export

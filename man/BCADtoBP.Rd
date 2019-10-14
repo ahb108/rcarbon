@@ -10,7 +10,7 @@ BCADtoBP(x)
 \item{x}{A numerical vector (currently only basic checks that these numbers are in a sensible range).}
 }
 \value{
-A vector with BC/BCE dates expressed as negative numbers and AD/CE dates as positive ones.
+A vector with BP dates.
 }
 \description{
 Converts BC/AD dates to BP format while handling the absence of 'year 0'
