@@ -771,31 +771,32 @@ return(meddates)
 #' @export
 
 
-mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "marine13", p = 1, resOffsets = 0, 
-                       resErrors = 0) 
+
+mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 0.5, resOffsets = 0, 
+                       resErrors = 0)
 {
   File1 <- paste(system.file("extdata", package = "rcarbon"),"/", calCurve1, ".14c", sep = "")
   File2 <- paste(system.file("extdata", package = "rcarbon"),"/", calCurve2, ".14c", sep = "")
   options(warn = -1)
-  curve1 <- readLines(File1, encoding = "UTF-8")
-  curve2 <- readLines(File2, encoding = "UTF-8")
-  curve1 <- curve1[!grepl("[#]", curve1)]
-  curve2 <- curve2[!grepl("[#]", curve2)]
-  curve1.con <- textConnection(curve1)
-  curve2.con <- textConnection(curve2)
-  curve1 <- as.matrix(read.csv(curve1.con, header = FALSE, stringsAsFactors = FALSE))[, 1:3]
-  curve2 <- as.matrix(read.csv(curve2.con, header = FALSE, stringsAsFactors = FALSE))[, 1:3]
-  close(curve1.con)
-  close(curve2.con)
+  c1 <- readLines(File1, encoding = "UTF-8")
+  c2 <- readLines(File2, encoding = "UTF-8")
+  c1 <- c1[!grepl("[#]", c1)]
+  c2 <- c2[!grepl("[#]", c2)]
+  c1.con <- textConnection(c1)
+  c2.con <- textConnection(c2)
+  c1 <- as.matrix(read.csv(c1.con, header = FALSE,stringsAsFactors = FALSE))[, 1:3]
+  c2 <- as.matrix(read.csv(c2.con, header = FALSE,stringsAsFactors = FALSE))[, 1:3]
+  close(c1.con)
+  close(c2.con)
   options(warn = 0)
-  colnames(curve2) <- c("CALBP", "C14BP", "Error")
-  colnames(curve1) <- c("CALBP", "C14BP", "Error")
-  curve2.mu <- approx(curve2[, 1], curve2[, 2], curve1[,1], rule = 2)$y + resOffsets
-  curve2.error <- approx(curve2[, 1], curve2[, 3], curve1[,1], rule = 2)$y
-  curve2.error <- sqrt(curve2.error^2 + resErrors^2)
-  mu <- p * curve1[, 2] + (1 - p) * curve2.mu
-  error <- p * curve1[, 3] + (1 - p) * curve2.error
-  res = cbind(curve1[, 1], mu, error)
+  colnames(c2) <- c("CALBP", "C14BP", "Error")
+  colnames(c1) <- c("CALBP", "C14BP","Error")
+  c2.mu <- approx(c2[, 1], c2[, 2], c1[,1], rule = 2)$y + resOffsets
+  c2.error <- approx(c2[, 1], c2[, 3], c1[,1], rule = 2)$y
+  c2.error <- sqrt(c2.error^2 + resErrors^2)
+  mu <- p * c1[, 2] + (1 - p) * c2.mu
+  error <- sqrt(p * c1[, 3]^2 + (1 - p) * c2.error^2)
+  res = cbind(c1[, 1], mu, error)
   colnames(res) = c("CALBP", "C14BP", "Error")
   return(res)
 }
