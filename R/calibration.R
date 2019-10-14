@@ -772,38 +772,38 @@ return(meddates)
 #' @export
 
 
-mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 1, resOffsets = 0, 
+mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 0.5, resOffsets = 0, 
                        resErrors = 0) 
 {
   File1 <- paste(system.file("extdata", package = "rcarbon"), 
-                     "/", calCurve1, ".14c", sep = "")
+                 "/", calCurve1, ".14c", sep = "")
   File2 <- paste(system.file("extdata", package = "rcarbon"), 
-                     "/", calCurve2, ".14c", sep = "")
+                 "/", calCurve2, ".14c", sep = "")
   options(warn = -1)
-  nh <- readLines(File1, encoding = "UTF-8")
-  sh <- readLines(File2, encoding = "UTF-8")
-  nh <- nh[!grepl("[#]", nh)]
-  sh <- sh[!grepl("[#]", sh)]
-  nh.con <- textConnection(nh)
-  sh.con <- textConnection(sh)
-  nh <- as.matrix(read.csv(nh.con, header = FALSE, 
+  c1 <- readLines(File1, encoding = "UTF-8")
+  c2 <- readLines(File2, encoding = "UTF-8")
+  c1 <- c1[!grepl("[#]", c1)]
+  c2 <- c2[!grepl("[#]", c2)]
+  c1.con <- textConnection(c1)
+  c2.con <- textConnection(c2)
+  c1 <- as.matrix(read.csv(c1.con, header = FALSE, 
                            stringsAsFactors = FALSE))[, 1:3]
-  sh <- as.matrix(read.csv(sh.con, header = FALSE, 
+  c2 <- as.matrix(read.csv(c2.con, header = FALSE, 
                            stringsAsFactors = FALSE))[, 1:3]
-  close(nh.con)
-  close(sh.con)
+  close(c1.con)
+  close(c2.con)
   options(warn = 0)
-  colnames(sh) <- c("CALBP", "C14BP", "Error")
-  colnames(nh) <- c("CALBP", "C14BP", 
+  colnames(c2) <- c("CALBP", "C14BP", "Error")
+  colnames(c1) <- c("CALBP", "C14BP", 
                     "Error")
-  sh.mu <- approx(sh[, 1], sh[, 2], nh[, 
+  c2.mu <- approx(c2[, 1], c2[, 2], c1[, 
                                        1], rule = 2)$y + resOffsets
-  sh.error <- approx(sh[, 1], sh[, 3], nh[, 
+  c2.error <- approx(c2[, 1], c2[, 3], c1[, 
                                           1], rule = 2)$y
-  sh.error <- sqrt(sh.error^2 + resErrors^2)
-  mu <- p * nh[, 2] + (1 - p) * sh.mu
-  error <- p * nh[, 3] + (1 - p) * sh.error
-  res = cbind(nh[, 1], mu, error)
+  c2.error <- sqrt(c2.error^2 + resErrors^2)
+  mu <- p * c1[, 2] + (1 - p) * c2.mu
+  error <- sqrt(p * c1[, 3]^2 + (1 - p) * c2.error^2)
+  res = cbind(c1[, 1], mu, error)
   colnames(res) = c("CALBP", "C14BP", "Error")
   return(res)
 }
