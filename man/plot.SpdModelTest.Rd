@@ -14,7 +14,7 @@
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
-\item{type}{Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart.}
+\item{type}{Whether to display SPDs ('spd') or rates of change ('roc'). Default is 'spd'.}
 
 \item{ylim}{the y limits of the plot.}
 
