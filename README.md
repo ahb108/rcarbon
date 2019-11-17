@@ -51,9 +51,13 @@ Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Me
 
 Fyfe, R.M., Woodbridge, J., Palmisano, A., Bevan, A., Shennan, S., Burjachs, F., Legarra Herrero, B., García Puchol, O., Carrión, J.-S., Revelles, J., Roberts, C.N., 2019. [Prehistoric palaeodemographics and regional land cover change in eastern Iberia](https://doi.org/10.1177/0959683619826643). The Holocene 0959683619826643. doi:10.1177/0959683619826643
 
+Gretzinger, J., Molak, M., Reiter, E., Pfrengle, S., Urban, C., Neukamm, J., et al. 2019. [Large-scale mitogenomic analysis of the phylogeography of the Late Pleistocene cave bear]( https://doi.org/10.1038/s41598-019-47073-z). Scientific Reports, 9. DOI: 10.1038/s41598-019-47073-z.
+
 Jørgensen, E. K., & Riede, F. 2019. [Convergent catastrophes and the termination of the Arctic Norwegian Stone Age: A multi-proxy assessment of the demographic and adaptive responses of mid-Holocene collectors to biophysical forcing.](https://doi.org/10.1177/0959683619862036) The Holocene, 0959683619862036. 
 
 Liu, L., Chen, X., Wright, H., Xu, H., Li, Y., Chen, G., et al. 2019. [Rise and fall of complex societies in the Yiluo region, North China: The spatial and temporal changes.](https://doi.org/10.1016/j.quaint.2019.05.025) Quaternary International. 
+
+López, J. M., Neme, G., & Gil, A. F. 2019. [Resource intensification and zooarchaeological record in the southern margins of pre-Hispanic Andean agriculture.](https://doi.org/10.1007/s12520-019-00857-w) Archaeological and Anthropological Sciences, 11(10), 5287–5300. 
 
 MacInnes, D. 2019. [The impact of population dynamics on social complexity in Neolithic Orkney.](https://doi.org/10.1016/j.jasrep.2019.02.036) Journal of Archaeological Science: Reports, 24, 721–728. doi:10.1016/j.jasrep.2019.02.036
 
@@ -70,7 +74,6 @@ Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South Americ
 Roberts, N., Woodbridge, J., Palmisano, A., Bevan, A., Fyfe, R., & Shennan, S. 2019. [Mediterranean landscape change during the Holocene: Synthesis, comparison and regional trends in population, land cover and climate](https://doi.org/10.1177/0959683619826697). The Holocene, 0959683619826697. 
 
 Robinson, E., Nicholson, C., & Kelly, R. L. 2019. [The Importance of Spatial Data to Open-Access National Archaeological Databases and the Development of Paleodemography Research](https://doi.org/10.1017/aap.2019.29). Advances in Archaeological Practice, 1–14. doi:10.1017/aap.2019.29
-
 
 Saag, L., Laneman, M., Varul, L., Malve, M., Valk, H., Razzak, M. A., et al. 2019. [The Arrival of Siberian Ancestry Connecting the Eastern Baltic to Uralic Speakers further East](https://doi.org/10.1016/j.cub.2019.04.026). Current Biology,
 

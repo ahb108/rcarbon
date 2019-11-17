@@ -1,5 +1,5 @@
 
-#  Version 1.3.0 (July 2019)
+#  Version 1.3.0 (In Progress)
 * UPDATEs in `modelTest()`:
   * Added an error message and a note in the help documentation warning users to not use calibration curves not supported by `uncalibrate()`.
   * NEW argument `gridclip` to add range constrain in the simulation envelope. When set to TRUE the sampling is executed within the observed range of dates.
@@ -29,6 +29,7 @@
   *  Associated `plot()` function.
 * NEW: `subset()` and `which.CalDates()` for subsetting and extracting indices of calibrated dates based on temporal intervals described by logical conditions (e.g. between 5500 and 4500 cal BP) and user defined probability mass.
 * Bug fix: fixed display error in some `plot()` functions when calendar is set to `BC/AD'
+* Big fix: fixed error in the computation of the combined uncertainties in `mixCurves()`. 
 
 # Version 1.2.0 (1 October 2018)
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.

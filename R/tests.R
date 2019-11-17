@@ -205,9 +205,9 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 	    if (length(predgrid)!=2){
 		    stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
 	    }
-	    if (!all(colnames(predgrid)%in%c("CalBP","PrDens")))
+	    if (!all(colnames(predgrid)%in%c("calBP","PrDens")))
 	    {
-		    stop("Column names in the predgrid argument should be 'CalBP' and 'PrDens'")
+		    stop("Column names in the predgrid argument should be 'calBP' and 'PrDens'")
 	    }
     } else {
         stop("Specified model not one of current choices.")
@@ -365,8 +365,8 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
     
     ## Envelope, z-scores, global p-value
     
-    lo <- apply(sim,1,quantile,prob=0.025)
-    hi <- apply(sim,1,quantile,prob=0.975)
+    lo <- apply(sim,1,quantile,prob=0.025,na.rm=TRUE)
+    hi <- apply(sim,1,quantile,prob=0.975,na.rm=TRUE)
     lo.roc = apply(sim.roc,1,quantile,prob=0.025,na.rm=TRUE)
     hi.roc = apply(sim.roc,1,quantile,prob=0.975,na.rm=TRUE)
 
@@ -602,7 +602,7 @@ permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/
     ## Simulation Envelope
     simulatedCIlist = simulatedCIlist.roc = vector("list",length=length(unique(GroupList)))
     for (d in 1:length(unique(GroupList))){
-        simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975)))
+        simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025),na.rm=TRUE), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975),na.rm=TRUE))
         simulatedCIlist.roc[[d]] <- cbind(apply(simulatedROC[[d]],1,quantile,prob=c(0.025),na.rm=TRUE), apply(simulatedROC[[d]],1,quantile,prob=c(0.975),na.rm=TRUE))
         names(simulatedCIlist) <- unique(GroupList)
         names(simulatedCIlist.roc) <- unique(GroupList)
@@ -630,7 +630,7 @@ permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/
         tmp.obs.roc <- observedROC[[a]]
         tmp.obs.roc[,2] <- (tmp.obs.roc[,2] - zscoreMean.roc) / zscoreSD.roc
 
-        tmp.ci <- t(apply(tmp.sim,1, quantile, prob=c(0.025,0.975)))
+        tmp.ci <- t(apply(tmp.sim,1, quantile, prob=c(0.025,0.975),na.rm=TRUE))
         tmp.ci.roc <- t(apply(tmp.sim.roc,1, quantile, prob=c(0.025,0.975),na.rm=TRUE))
 
         expectedstatistic <- abs(apply(tmp.sim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=tmp.ci[,1])) + apply(tmp.sim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=tmp.ci[,2])   
