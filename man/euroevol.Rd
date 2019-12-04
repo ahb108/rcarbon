@@ -23,7 +23,7 @@ Manning, K., Colledge, S., Crema, E., Shennan, S., Timpson, A., 2016. The Cultur
 euroevol
 }
 \description{
-Radiocarbon dates (n=14,053) and site coordinates (n=4,213) from the EUROEVOL project database. Sites without radiocarbon dates (n=544), phase-codes, and other data have been omitted (the complete dataset can be found on \url{http://discovery.ucl.ac.uk/1469811/}).
+Radiocarbon dates (n=14,053) and site coordinates (n=4,213) from the EUROEVOL project database. Sites without radiocarbon dates (n=544), phase-codes, and other data have been omitted (the complete dataset can be found on \url{https://discovery.ucl.ac.uk/id/eprint/1469811/}).
 }
 \examples{
 \dontrun{
