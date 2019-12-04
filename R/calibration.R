@@ -78,7 +78,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
       warning("normalised cannot be FALSE when F14C is set to TRUE, calibrating with normalised=TRUE")
     }
     # calCurve checks and set-up
-    if (class(calCurves) %in% c("matrix","data.frame")){
+    if (any(class(calCurves) %in% c("matrix","data.frame"))){
         cctmp <- as.matrix(calCurves)
         if (ncol(cctmp)!=3 | !all(sapply(cctmp,is.numeric))){
             stop("The custom calibration curve must have just three numeric columns.")
@@ -274,7 +274,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
         } else {
             colnames(calcurve) <- c("CALBP","C14BP","Error")
         }
-    } else if (class(calCurves)=="character"){
+    } else if (any(class(calCurves)=="character")){
         calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
         options(warn=-1)
         calcurve <- readLines(calCurveFile, encoding="UTF-8")
@@ -360,7 +360,7 @@ uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves='intca
     
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
     ## calCurve checks and set-up
-    if (class(calCurves) %in% c("matrix","data.frame")){
+    if (any(class(calCurves) %in% c("matrix","data.frame","array"))){
         calcurve <- as.matrix(calCurves)
         if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
             stop("The custom calibration curve must have just three numeric columns.")
@@ -402,7 +402,7 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
     if (verbose){ print("Uncalibrating...") }
     names(x) <- c("calBP","PrDens")
     ## calCurve checks and set-up
-    if (class(calCurves) %in% c("matrix","data.frame")){
+    if (any(class(calCurves) %in% c("matrix","data.frame","array"))){
         calcurve <- as.matrix(calCurves)
         if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
             stop("The custom calibration curve must have just three numeric columns.")

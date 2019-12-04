@@ -4,7 +4,7 @@
 \alias{mixCurves}
 \title{Creates mixed calibration curves.}
 \usage{
-mixCurves(calCurve1 = "intcal13", calCurve2 = "marine13", p = 1,
+mixCurves(calCurve1 = "intcal13", calCurve2 = "intcal13", p = 0.5,
   resOffsets = 0, resErrors = 0)
 }
 \arguments{

@@ -29,7 +29,8 @@
   *  Associated `plot()` function.
 * NEW: `subset()` and `which.CalDates()` for subsetting and extracting indices of calibrated dates based on temporal intervals described by logical conditions (e.g. between 5500 and 4500 cal BP) and user defined probability mass.
 * Bug fix: fixed display error in some `plot()` functions when calendar is set to `BC/AD'
-* Big fix: fixed error in the computation of the combined uncertainties in `mixCurves()`. 
+* Bug fix: fixed error in the computation of the combined uncertainties in `mixCurves()`. 
+* Further minor bug fixes for R 4.0.0 
 
 # Version 1.2.0 (1 October 2018)
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.

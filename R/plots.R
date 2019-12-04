@@ -134,7 +134,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     }
         calcurvemetadata <- x$metadata$CalCurve[ind]
         calcurvecheck <- TRUE
-        if (calcurvemetadata == "custom" & !class(customCalCurve) %in% c("data.frame","matrix")){
+        if (calcurvemetadata == "custom" & !any(class(customCalCurve) %in% c("data.frame","matrix","array"))){
             calcurvecheck <- FALSE
         }
         if (calcurvecheck&!add){

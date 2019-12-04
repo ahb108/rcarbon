@@ -312,7 +312,7 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 	true.timeRange = c(max(x$sdates),min(x$sdates))
 	nsim = nrow(x$sdates)
 	boot = FALSE
-	if (class(x$weight)=='matrix'){boot=TRUE}
+	if (any(class(x$weight)%in%c('matrix','array'))){boot=TRUE}
 
 	if (normalised)
 	{
