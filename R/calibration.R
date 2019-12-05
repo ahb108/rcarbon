@@ -499,7 +499,7 @@ as.UncalGrid <- function(x) {
 
 #' @title Convert to a CalDates object 
 #' @description Convert other calibrated date formats to an rcarbon CalDates object. 
-#' @param x One or more calibrated dated to convert (currently only BchronCalibratedDates and oxcAARCalibratedDatesList obects are supported)
+#' @param x One or more calibrated dated to convert (currently only BchronCalibratedDates and oxcAARCalibratedDatesList objects are supported)
 #' @return A CalDates object
 #' @examples
 #' \dontrun{ 
@@ -761,8 +761,8 @@ return(meddates)
 #' @return A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link{calibrate}} function.
 #' @details The function is based on the \code{mix.calibrationcurves} function of the \code{clam} package.   
 #' @references 
-#' Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autorgressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
-#' Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
+#' Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autoregressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
+#' Blaauw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
 #' Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 #' @examples
 #' myCurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=300,resErrors=20)

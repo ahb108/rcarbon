@@ -38,7 +38,7 @@
 Plots a Composite Kernel Density Estimate of sampled radiocarbon dates.
 }
 \details{
-Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile iterval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown.
+Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile interval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown.
 }
 \seealso{
 \code{\link{ckde}};

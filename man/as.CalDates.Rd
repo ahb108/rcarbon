@@ -7,7 +7,7 @@
 as.CalDates(x)
 }
 \arguments{
-\item{x}{One or more calibrated dated to convert (currently only BchronCalibratedDates and oxcAARCalibratedDatesList obects are supported)}
+\item{x}{One or more calibrated dated to convert (currently only BchronCalibratedDates and oxcAARCalibratedDatesList objects are supported)}
 }
 \value{
 A CalDates object

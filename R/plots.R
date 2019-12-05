@@ -941,7 +941,7 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 #' @param h A vector of numbers containing values for the \code{h} parameter to be used in the \code{\link{binPrep}} function. 
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
-#' @param binning  Either \code{'CRA'} or \code{'calibrated'}. Indicate whether the binning should be carried usinig the  14C age or using the median calibrated date. Default is \code{'CRA'}.
+#' @param binning  Either \code{'CRA'} or \code{'calibrated'}. Indicate whether the binning should be carried using the 14C age or using the median calibrated date. Default is \code{'CRA'}.
 #' @param raw A logical variable indicating whether all  SPDs should be returned or not. Default is FALSE.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param legend A logical variable indicating whether the legend should be displayed. Default is TRUE
@@ -1297,7 +1297,7 @@ plot.spdRC<- function(x,calendar="BP",col.obs="black", lwd.obs=0.5, xaxs="i", ya
 #' @param multiline.alpha Alpha level for line transparency when \code{type='multiline'}. Default is 10/\code{nsim}, where \code{nsim} is the number of simulations. If \code{nsim} is smaller than 10, \code{multiline.alpha} will be set to 1.
 #' @param multiline.col Line color when \code{type='multiline'}. Default is 'black'.
 #' @param ... Additional arguments affecting the plot
-#' @details Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile iterval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown. 
+#' @details Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile interval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown. 
 #' @seealso \code{\link{ckde}}; 
 #' @import stats
 #' @import grDevices
@@ -1382,7 +1382,7 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
 #' @param main Single character string specifying a main title. "auto" implies internal default titles are used.
 #' @param col.mask The colour used to depict any areas that are being masked out.
 #' @param ncolours The maximum number of colours to use in the colour ramp. 
-#' @param ramptype What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standaridise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).
+#' @param ramptype What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standardise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).
 #' @param withpts Plot with the original sample locations shown (current options are "y" and "n").
 #' @param imdim Height and width of the plot to png in cm.
 #' @param mars Margins of the plot to png.

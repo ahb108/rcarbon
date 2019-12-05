@@ -1291,7 +1291,7 @@ p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE,plot=FALSE)
 #' @param type Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.
 #' @param ... Ignored
 #'
-#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope.
+#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global significance test, and the chronological interval of local positive and negative deviations from the simulation envelope.
 #' @seealso \code{\link{modelTest}}.
 #' @import utils
 #' @import stats
@@ -1368,14 +1368,14 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 
 	if (length(booms)==0)
 	{
-		cat(paste("No signficant positive local deviations"))
+		cat(paste("No significant positive local deviations"))
 	}
 
 	cat("\n")
 
 	if (length(busts)>0)
 	{
-		cat(paste("Signficant negative local deviations at:\n"))
+		cat(paste("Significant negative local deviations at:\n"))
 
 
 		i=1
@@ -1410,7 +1410,7 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 
 	if (length(busts)==0)
 	{
-		cat(paste("No signficant positive local deviations"))
+		cat(paste("No significant positive local deviations"))
 	}
 }
 
@@ -1423,7 +1423,7 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 #' @param type Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.
 #' @param ... Ignored
 #'
-#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
+#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global significance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
 #' @seealso  \code{\link{permTest}}.
 #' @import utils
 #' @import stats
@@ -1496,14 +1496,14 @@ summary.SpdPermTest<-function(object,type='spd',...) {
 
 		if (length(booms)==0)
 		{
-			cat(paste("No signficant positive local deviations"))
+			cat(paste("No significant positive local deviations"))
 		}
 
 		cat("\n")
 
 		if (length(busts)>0)
 		{
-			cat(paste("Signficant negative local deviations at:\n"))
+			cat(paste("Significant negative local deviations at:\n"))
 
 
 			i=1
@@ -1538,7 +1538,7 @@ summary.SpdPermTest<-function(object,type='spd',...) {
 
 		if (length(busts)==0)
 		{
-			cat(paste("No signficant positive local deviations"))
+			cat(paste("No significant positive local deviations"))
 		}
 
 		cat("\n")

@@ -18,7 +18,7 @@ binsense(x, y, h, timeRange, calendar = "BP", binning = "CRA",
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
-\item{binning}{Either \code{'CRA'} or \code{'calibrated'}. Indicate whether the binning should be carried usinig the  14C age or using the median calibrated date. Default is \code{'CRA'}.}
+\item{binning}{Either \code{'CRA'} or \code{'calibrated'}. Indicate whether the binning should be carried using the 14C age or using the median calibrated date. Default is \code{'CRA'}.}
 
 \item{raw}{A logical variable indicating whether all  SPDs should be returned or not. Default is FALSE.}
 

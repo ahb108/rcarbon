@@ -14,11 +14,11 @@ stkde(x, coords, sbw, focalyears, tbw, win, cellres, outdir = ".",
 
 \item{coords}{A two column matrix of geographical coordinates from a a projected coordinate system (no checks are made for this) and with the same number of rows as length(x).}
 
-\item{sbw}{A single numeric value for the spatial bandwith to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).}
+\item{sbw}{A single numeric value for the spatial bandwidth to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).}
 
 \item{focalyears}{A vector of numeric values for focal years, in calBP, that will be timesteps at which date intensity maps will be produced.}
 
-\item{tbw}{A single numeric value for the temporal bandwith to be applied around each focal year, expressed as the standard deviation of a continuous Gaussian kernel.}
+\item{tbw}{A single numeric value for the temporal bandwidth to be applied around each focal year, expressed as the standard deviation of a continuous Gaussian kernel.}
 
 \item{win}{The bounding polygon for the mapping (must be an object of class 'owin', see the spatstat package)}
 
@@ -36,7 +36,7 @@ stkde(x, coords, sbw, focalyears, tbw, win, cellres, outdir = ".",
 
 \item{spjitter}{Whether noise is applied to the spatial coordinates or not. Default is TRUE.}
 
-\item{amount}{Ammount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.}
+\item{amount}{Amount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 

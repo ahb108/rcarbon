@@ -33,7 +33,7 @@
 
 \item{ncolours}{The maximum number of colours to use in the colour ramp.}
 
-\item{ramptype}{What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standaridise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).}
+\item{ramptype}{What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standardise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).}
 
 \item{imdim}{Height and width of the plot to png in cm.}
 

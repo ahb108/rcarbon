@@ -11,7 +11,7 @@
 * UPDATE in `permTest()`
   * NEW arguments `backsight` and `changexpr` enabling the comparison of expected and observed rates of changes. 
 * UPDATE in `spd()`: aggregation matrix now spans beyond `timeRange` to avoid edge effects.
-* UPDATE in `calibrate()`: the new agrument `F14C` enables calibratio in F14C space.
+* UPDATE in `calibrate()`: the new argument `F14C` enables calibration in F14C space.
 * UPDATE in `SPpermTest()`: 
   * function is deprecated and renamed `sptest()`
   * function now allows user defined expression for computing the rate of change
@@ -70,5 +70,5 @@
 * minor bug fixes
 
 
-# Version 1.0.0 (9 Otober 2017)
+# Version 1.0.0 (9 October 2017)
 First official CRAN release. 

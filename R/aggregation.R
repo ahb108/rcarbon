@@ -274,9 +274,9 @@ spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE,
 #' @description Computes a Composite Kernel Density Estimate (CKDE) from multiple sets of randomly sampled calendar dates.
 #' @param x A \code{simdates} class object, generated using \code{\link{sampleDates}}.
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
-#' @param bw Kernel bandwith to be used.
+#' @param bw Kernel bandwidth to be used.
 #' @param normalised A logical variable indicating whether the contribution of individual dates should be equal (TRUE), or weighted based on the area under the curve of non-normalised calibration (FALSE). Default is TRUE.
-#' @details The function computes Kernel Density Estimates using randomly sampled calendar dates contained in a \code{simdates} class object (generated using the \code{simulate.dates()} function). The output contains \code{nsim} KDEs, where \code{nsim} is the argument used in \code{simulate.dates()}. The resulting object can be plotted to visualise a CKDE (cf Brown 2017), and if \code{boot} was set to \code{TRUE} in \code{sampleDates} its bootstraped variant (cf McLaughlin 2018 for a similar analysis). The shape of the CKDE is comparable to an SPD generated from non-normalised dates when the argument \code{normalised} is set to FALSE.
+#' @details The function computes Kernel Density Estimates using randomly sampled calendar dates contained in a \code{simdates} class object (generated using the \code{simulate.dates()} function). The output contains \code{nsim} KDEs, where \code{nsim} is the argument used in \code{simulate.dates()}. The resulting object can be plotted to visualise a CKDE (cf Brown 2017), and if \code{boot} was set to \code{TRUE} in \code{sampleDates} its bootstrapped variant (cf McLaughlin 2018 for a similar analysis). The shape of the CKDE is comparable to an SPD generated from non-normalised dates when the argument \code{normalised} is set to FALSE.
 #' @return An object of class \code{ckdeSPD} with the following elements
 #' \itemize{
 #' \item{\code{timeRange}} {The \code{timeRange} setting used.}
@@ -350,9 +350,9 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' @description Function for mapping the spatio-temporal intensity of radiocarbon dates for a given geographical region in one or more tim.
 #' @param x An object of class CalDates with calibrated radiocarbon ages.
 #' @param coords A two column matrix of geographical coordinates from a a projected coordinate system (no checks are made for this) and with the same number of rows as length(x).
-#' @param sbw A single numeric value for the spatial bandwith to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).
+#' @param sbw A single numeric value for the spatial bandwidth to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).
 #' @param focalyears A vector of numeric values for focal years, in calBP, that will be timesteps at which date intensity maps will be produced.
-#' @param tbw A single numeric value for the temporal bandwith to be applied around each focal year, expressed as the standard deviation of a continuous Gaussian kernel.
+#' @param tbw A single numeric value for the temporal bandwidth to be applied around each focal year, expressed as the standard deviation of a continuous Gaussian kernel.
 #' @param win The bounding polygon for the mapping (must be an object of class 'owin', see the spatstat package)
 #' @param cellres The cell or pixel resolution of the output raster maps.
 #' @param outdir The output directory for timeslice maps and data that are saved to file.
@@ -361,7 +361,7 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #' @param maskthresh A single numeric value for a lower-bound cut-off for all maps, based on a minimum required spatial intensity of all dates in x.
 #' @param changexpr An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.
 #' @param spjitter Whether noise is applied to the spatial coordinates or not. Default is TRUE. 
-#' @param amount Ammount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.    
+#' @param amount Amount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.    
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... ignored or passed to internal functions.
 #'
@@ -472,9 +472,9 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #'
 #' @param x An object of class CalDates with calibrated radiocarbon ages.
 #' @param coords A two column matrix of geographical coordinates from a a projected coordinate system (no checks are made for this) and with the same number of rows as length(x).
-#' @param sbw A single numeric value for the spatial bandwith to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).
+#' @param sbw A single numeric value for the spatial bandwidth to be applied around each raster cell, expressed as the standard deviation of a continuous Gaussian kernel (passed as the sigma argument to density.ppp()).
 #' @param focalyear A single numeric value for the focal year for the intensity map.
-#' @param tbw A single numeric value for the temporal bandwith to be applied around each focal year, expressed as the standard deviation of a continuous Gaussian kernel.
+#' @param tbw A single numeric value for the temporal bandwidth to be applied around each focal year, expressed as the standard deviation of a continuous Gaussian kernel.
 #' @param win The bounding polygon for the mapping (must be an object of class 'owin', see the spatstat package)
 #' @param cellres The cell or pixel resolution of the output raster maps.
 #' @param bins  A vector of labels corresponding to site names, ids, bins or phases (same length as x)
@@ -484,7 +484,7 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #' @param changexpr An expression for calculating the change in spatial intensity between the focal year and a backsight year (as defined via the backsight argument). Available input options are t1 (the spatial intensity for the focal year), t0 (the spatial intensity for the backsight year) and tk (the overall spatial intensity for all dates irrespective of year), plus any other standard constants and mathematical operators. A sensible default is provided.
 #' @param raw Whether to output the raw simulations (if nsim is set) or just the summaries (the latter is default).
 #' @param spjitter Whether noise is applied to the spatial coordinates or not. Default is TRUE. 
-#' @param amount Ammount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.   
+#' @param amount Amount of jitter applied to the spatial coordinates when \code{spjitter=TRUE}. Default is d/5, where d is difference between the closest coordinates.   
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... ignored or passed to internal functions.
 #'
