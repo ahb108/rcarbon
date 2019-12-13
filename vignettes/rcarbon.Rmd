@@ -92,9 +92,8 @@ Users can also supply their own custom calibration curves. The example below use
 
 ```{r,results='hide',fig.width=5,fig.height=5}
 #generate 70% terrestrial and 30% marine curve
-myCurve <- mixCurves('intcal13',p=0.7,resOffsets=340,resErrors=20) 
+myCurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=340,resErrors=20) 
 plot(calibrate(4000,30,calCurves=myCurve))
-
 ```
 
 ### Normalisation
@@ -118,8 +117,8 @@ plot(DK.spd,runm=200,add=TRUE,type="simple",col="darkorange",lwd=2,lty=2) #using
 It is also possible to limit the plot of the SPD to a particular window of time and/or use a 'BC/AD' timescale:
 
 ```{r,fig.height=5,fig.width=5}
-# show SPD between 6000 and 4000 BC
-plot(DK.spd,calendar='BCAD',xlim=c(-6000,-4000)) 
+# show SPD between 6000 and 3000 BC
+plot(DK.spd,calendar='BCAD',xlim=c(-6000,-3000)) 
 # show SPD between 7000 and 5000 BP
 # plot(DK.spd,calendar='BP',xlim=c(7000,5000)) 
 ```
