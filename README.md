@@ -81,6 +81,8 @@ Saag, L., Laneman, M., Varul, L., Malve, M., Valk, H., Razzak, M. A., et al. 201
 
 Schauer, P., Shennan, S., Bevan, A., Cook, G., Edinborough, K., Fyfe, R., et al. 2019. [Supply and demand in prehistory? Economics of Neolithic mining in northwest Europe](https://doi.org/10.1016/j.jaa.2019.03.001). Journal of Anthropological Archaeology, 54, 149–160. doi:10.1016/j.jaa.2019.03.001
 
+Schauer, P., Bevan, A., Shennan, S., Edinborough, K., Kerig, T., Pearson, M.P., 2019. [British Neolithic Axehead Distributions and Their Implications](https://doi.org/10.1007/s10816-019-09438-6). Journal of Archaeological Method and Theory. doi:/10.1007/s10816-019-09438-6
+
 Stoddart, S., Woodbridge, J., Palmisano, A., Mercuri, A. M., Mensing, S. A., Colombaroli, D., et al. 2019. [Tyrrhenian central Italy: Holocene population and landscape ecology.](https://doi.org/10.1177/0959683619826696) The Holocene, 0959683619826696. doi:10.1177/0959683619826696
 
 Szpak, P., Savelle, J. M., Conolly, J., & Richards, M. P. 2019. [Variation in late holocene marine environments in the Canadian Arctic Archipelago: Evidence from ringed seal bone collagen stable isotope compositions](https://doi.org/10.1016/j.quascirev.2019.03.016). Quaternary Science Reviews, 211, 136–155. doi:10.1016/j.quascirev.2019.03.016
