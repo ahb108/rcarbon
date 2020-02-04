@@ -45,6 +45,8 @@ Cheddadi, R., Palmisano, A., López-Sáez, J. A., Nourelbait, M., Zielhofer, C.,
 
 Crema, E.R., Bevan, A., Shennan, S., 2017. [Spatio-temporal approaches to archaeological radiocarbon dates](https://doi.org/10.1016/j.jas.2017.09.007). Journal of Archaeological Science 87, 1–9. doi:10.1016/j.jas.2017.09.007
 
+Crema, E.R. 2020 [Non-Stationarity and Local Spatial Analysis](https://doi.org/10.4324/9781351243858), In Gillings, M., Hacıgüzeller, P., Lock,G. (Eds.) Archaeological Spatial Analysis: A Methodological Guide, Taylor & Francis, London. 
+
 de Groot, B., 2020. [The impact of population fluctuations on the spatial spread of Neolithic ceramic traditions in West Anatolia and South-East Europe.](https://doi.org/10.1016/j.jaa.2019.101121) Journal of Anthropological Archaeology 57, 101121. doi:10.1016/j.jaa.2019.101121
 
 de Souza, J. G., Robinson, M., Maezumi, S. Y., Capriles, J., Hoggarth, J. A., Lombardo, U., et al. 2019. [Climate change and cultural resilience in late pre-Columbian Amazonia](https://doi.org/10.1038/s41559-019-0924-0). Nature Ecology & Evolution, 1. doi:10.1038/s41559-019-0924-0
