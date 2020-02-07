@@ -8,7 +8,8 @@ Description: Enables the calibration and analysis of radiocarbon dates, often bu
 Depends: R (>= 3.3.0)
 Imports: sp,stats,spatstat,graphics,grDevices,utils,doParallel,foreach,parallel,knitr
 Suggests:
-    spelling, 
+    spelling,
+    testthat (>= 2.1.0)
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
