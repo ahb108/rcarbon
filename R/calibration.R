@@ -45,211 +45,146 @@
 #' @export
 
 calibrate <- function (x, ...) {
-   UseMethod("calibrate")
+  UseMethod("calibrate")
 }
 
 #' @rdname calibrate
 #' @export
 calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
-
-    if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
-	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
-	ncores=1
-    }	
-    	
-    # age and error checks
-    if (length(x) != length(errors)){
-        stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
-    }
-    if (!is.na(ids[1]) & (length(x) != length(ids))){
-        stop("Ages and errors (and ids/details/offsets if provided) must be the same length.")
-    }
-    if (any(is.na(x))|any(is.na(errors))){
-        stop("Ages or errors contain NAs")
-    }
-    if (is.null(calCurves)|anyNA(calCurves)){
-	stop("calCurves is NULL or contain NAs")
-    }
-
   
-    if (F14C==TRUE&normalised==FALSE)
+  if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
+    warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
+    ncores=1
+  }	
+  
+  # age and error checks
+  if (length(x) != length(errors)){
+    stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
+  }
+  if (!is.na(ids[1]) & (length(x) != length(ids))){
+    stop("Ages and errors (and ids/details/offsets if provided) must be the same length.")
+  }
+  if (any(is.na(x))|any(is.na(errors))){
+    stop("Ages or errors contain NAs")
+  }
+  if (is.null(calCurves)|anyNA(calCurves)){
+    stop("calCurves is NULL or contain NAs")
+  }
+  
+  
+  if (F14C==TRUE&normalised==FALSE)
+  {
+    normalised=TRUE
+    warning("normalised cannot be FALSE when F14C is set to TRUE, calibrating with normalised=TRUE")
+  }
+  # calCurve checks and set-up
+  if (any(class(calCurves) %in% c("matrix","data.frame"))){
+    cctmp <- as.matrix(calCurves)
+    if (ncol(cctmp)!=3 | !all(sapply(cctmp,is.numeric))){
+      stop("The custom calibration curve must have just three numeric columns.")
+    } else {
+      colnames(cctmp) <- c("CALBP","C14BP","Error")
+      if (max(cctmp[,2]) < max(x) | min(cctmp[,2]) > min(x)){
+        stop("The custom calibration curve does not cover the input age range.")
+      }
+      cclist <- vector(mode="list", length=1)
+      cclist[[1]] <- cctmp
+      names(cclist) <- "custom"
+      calCurves <- rep("custom",length(x))
+    }
+  } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16","normal"))){
+    stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+  } else {
+    tmp <- unique(calCurves)
+    if (length(calCurves)==1){ calCurves <- rep(calCurves,length(x)) }
+    cclist <- vector(mode="list", length=length(tmp))
+    names(cclist) <- tmp
+    for (a in 1:length(tmp)){
+      cclist[[tmp[a]]] <- read_cal_curve_from_file(tmp[a])
+    }
+  }
+  ## container and reporting set-up
+  reslist <- vector(mode="list", length=2)
+  sublist <- vector(mode="list", length=length(x))
+  if (calMatrix){
+    calmBP <- seq(timeRange[1],timeRange[2],-1)
+    calmat <- matrix(ncol=length(x), nrow=length(calmBP))
+    rownames(calmat) <- calmBP
+    calmat[] <- 0
+  }
+  if (is.na(ids[1])){
+    ids <- as.character(1:length(x))
+  } else {
+    ids <- as.character(ids)
+    if (any(duplicated(ids))){ stop("The values in the ids argument must be unique or left as defaults.") }
+  }
+  if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(x)) }
+  if (length(resErrors)==1){ resErrors <- rep(resErrors,length(x)) }
+  names(sublist) <- ids
+  names(reslist) <- c("metadata","grids")
+  if (length(x)>1 & verbose){
+    print("Calibrating radiocarbon ages...")
+    flush.console()
+    pb <- txtProgressBar(min=1, max=length(x), style=3)
+  }
+  # calibration
+  `%dofun%` <- `%do%`
+  if (ncores>1){
+    # parallellised
+    cl <- makeCluster(ncores)
+    registerDoParallel(cl)
+    if (verbose){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
+    `%dofun%` <- `%dopar%`
+  }
+  sublist <- foreach (b=1:length(x)) %dofun% {
+    calcurve <- cclist[[calCurves[b]]]
+    calBP <- seq(max(calcurve),min(calcurve),-1)
+    age <- x[b] - resOffsets[b]
+    error <- errors[b] + resErrors[b]
+    if (F14C==FALSE)
+    {  
+      dens <- BP14C_calibration(age, error, calBP, calcurve, eps)
+    }
+    if (F14C==TRUE)
     {
-      normalised=TRUE
-      warning("normalised cannot be FALSE when F14C is set to TRUE, calibrating with normalised=TRUE")
+      dens <- F14C_calibration(age, error, calBP, calcurve)
     }
-    # calCurve checks and set-up
-    if (any(class(calCurves) %in% c("matrix","data.frame"))){
-        cctmp <- as.matrix(calCurves)
-        if (ncol(cctmp)!=3 | !all(sapply(cctmp,is.numeric))){
-            stop("The custom calibration curve must have just three numeric columns.")
-        } else {
-            colnames(cctmp) <- c("CALBP","C14BP","Error")
-            if (max(cctmp[,2]) < max(x) | min(cctmp[,2]) > min(x)){
-                stop("The custom calibration curve does not cover the input age range.")
-            }
-            cclist <- vector(mode="list", length=1)
-            cclist[[1]] <- cctmp
-            names(cclist) <- "custom"
-            calCurves <- rep("custom",length(x))
-        }
-    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16","normal"))){
-        stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
-    } else {
-        tmp <- unique(calCurves)
-        if (length(calCurves)==1){ calCurves <- rep(calCurves,length(x)) }
-        cclist <- vector(mode="list", length=length(tmp))
-        names(cclist) <- tmp
-        for (a in 1:length(tmp)){
-            calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", tmp[a],".14c", sep="")
-            options(warn=-1)
-            cctmp <- readLines(calCurveFile, encoding="UTF-8")
-            cctmp <- cctmp[!grepl("[#]",cctmp)]
-	    cctmp.con <- textConnection(cctmp)
-            cctmp <- as.matrix(read.csv(cctmp.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
-	    close(cctmp.con)
-            options(warn=0)
-            colnames(cctmp) <- c("CALBP","C14BP","Error")
-            cclist[[tmp[a]]] <- cctmp
-        }
+    if (normalised){
+      dens <- normalise_densities(dens, eps)
     }
-    ## container and reporting set-up
-    reslist <- vector(mode="list", length=2)
-    sublist <- vector(mode="list", length=length(x))
-    if (calMatrix){
-        calmBP <- seq(timeRange[1],timeRange[2],-1)
-        calmat <- matrix(ncol=length(x), nrow=length(calmBP))
-        rownames(calmat) <- calmBP
-        calmat[] <- 0
+    res <- data.frame(calBP=calBP,PrDens=dens)
+    res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
+    if (anyNA(res$PrDens))
+    {
+      stop("One or more dates are outside the calibration range")
     }
-    if (is.na(ids[1])){
-        ids <- as.character(1:length(x))
-    } else {
-        ids <- as.character(ids)
-        if (any(duplicated(ids))){ stop("The values in the ids argument must be unique or left as defaults.") }
+    res <- res[res$PrDens > 0,]
+    class(res) <- append(class(res),"calGrid")
+    return(res)
+  }
+  if (ncores>1){
+    stopCluster(cl)
+  }
+  names(sublist) <- ids
+  if (calMatrix){
+    for (a in 1:length(sublist)){
+      calmat[as.character(sublist[[a]]$calBP),a] <- sublist[[a]]$PrDens
     }
-    if (length(resOffsets)==1){ resOffsets <- rep(resOffsets,length(x)) }
-    if (length(resErrors)==1){ resErrors <- rep(resErrors,length(x)) }
-    names(sublist) <- ids
-    names(reslist) <- c("metadata","grids")
-    if (length(x)>1 & verbose){
-        print("Calibrating radiocarbon ages...")
-        flush.console()
-        pb <- txtProgressBar(min=1, max=length(x), style=3)
-    }
-    # calibration
-    if (ncores>1){
-        # parallellised
-        cl <- makeCluster(ncores)
-        registerDoParallel(cl)
-        if (verbose){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
-        sublist <- foreach (b=1:length(x)) %dopar% {
-            calcurve <- cclist[[calCurves[b]]]
-            calBP <- seq(max(calcurve),min(calcurve),-1)
-            age <- x[b] - resOffsets[b]
-            error <- errors[b] + resErrors[b]
-            if (F14C==FALSE)
-            {  
-            mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-            tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
-            dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-            dens[dens < eps] <- 0
-            }
-            if (F14C==TRUE)
-            {
-              F14 <- exp(calcurve[,2]/-8033) 
-              F14Error <-  F14*calcurve[,3]/8033 
-              calf14 <- approx(calcurve[,1], F14, xout=calBP)$y 
-              calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y 
-              f14age <- exp(age/-8033) 
-              f14err <- f14age*error/8033 
-              p1 <- (f14age - calf14)^2 
-              p2 <- 2 * (f14err^2 + calf14error^2) 
-              p3 <- sqrt(f14err^2 + calf14error^2) 
-              dens <- exp(-p1/p2)/p3 
-              dens[dens < eps] <- 0	
-            }
-            if (normalised){
-                dens <- dens/sum(dens)
-                dens[dens < eps] <- 0
-                dens <- dens/sum(dens)
-            }
-            res <- data.frame(calBP=calBP,PrDens=dens)
-            res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-	    if (anyNA(res$PrDens))
-	    {
-		    stop("One or more dates are outside the calibration range")
-	    }
-            res <- res[res$PrDens > 0,]
-            class(res) <- append(class(res),"calGrid")
-            return(res)
-        }
-        stopCluster(cl)
-        names(sublist) <- ids
-        if (calMatrix){
-            for (a in 1:length(sublist)){
-                calmat[as.character(sublist[[a]]$calBP),a] <- sublist[[a]]$PrDens
-            }
-        }
-    } else {
-        ## single core
-        for (b in 1:length(x)){
-            if (length(x)>1 & verbose){ setTxtProgressBar(pb, b) }
-            calcurve <- cclist[[calCurves[b]]]
-            calBP <- seq(max(calcurve),min(calcurve),-1)
-            age <- x[b] - resOffsets[b]
-            error <- errors[b] + resErrors[b]
-            if (F14C==FALSE)
-            {
-            mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-            tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
-            dens <- dnorm(age, mean=mu, sd=sqrt(tau))
-            dens[dens < eps] <- 0
-            }
-            if (F14C==TRUE)
-            {
-              F14 <- exp(calcurve[,2]/-8033) 
-              F14Error <-  F14*calcurve[,3]/8033 
-              calf14 <- approx(calcurve[,1], F14, xout=calBP)$y 
-              calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y 
-              f14age <- exp(age/-8033)
-              f14err <- f14age*error/8033 
-              p1 <- (f14age - calf14)^2 
-              p2 <- 2 * (f14err^2 + calf14error^2) 
-              p3 <- sqrt(f14err^2 + calf14error^2) 
-              dens <- exp(-p1/p2)/p3 
-              dens[dens < eps] <- 0	
-            }
-            if (normalised){
-                dens <- dens/sum(dens)
-                dens[dens < eps] <- 0
-                dens <- dens/sum(dens)
-            }
-            res <- data.frame(calBP=calBP,PrDens=dens)
-            res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-	    if (anyNA(res$PrDens))
-	    {
-		    stop("One or more dates are outside the calibration range")
-	    }
-            if (calMatrix){ calmat[,b] <- res$PrDens }
-            res <- res[res$PrDens > 0,]
-            class(res) <- append(class(res),"calGrid")
-            sublist[[ids[b]]] <- res
-        }
-    }
-    ## clean-up and results
-    if (length(x)>1 & verbose){ close(pb) }
-    df <- data.frame(DateID=ids, CRA=x, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, F14C=F14C, CalEPS=eps, stringsAsFactors=FALSE)
-    reslist[["metadata"]] <- df
-    if (calMatrix){
-        reslist[["grids"]] <- NA
-        reslist[["calmatrix"]] <- calmat
-    } else {
-        reslist[["grids"]] <- sublist
-        reslist[["calmatrix"]] <- NA
-    }
-    class(reslist) <- c("CalDates",class(reslist))
-    if (verbose){ print("Done.") }
-    return(reslist)
+  }
+  ## clean-up and results
+  if (length(x)>1 & verbose){ close(pb) }
+  df <- data.frame(DateID=ids, CRA=x, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, F14C=F14C, CalEPS=eps, stringsAsFactors=FALSE)
+  reslist[["metadata"]] <- df
+  if (calMatrix){
+    reslist[["grids"]] <- NA
+    reslist[["calmatrix"]] <- calmat
+  } else {
+    reslist[["grids"]] <- sublist
+    reslist[["calmatrix"]] <- NA
+  }
+  class(reslist) <- c("CalDates",class(reslist))
+  if (verbose){ print("Done.") }
+  return(reslist)
 }
 
 
@@ -263,61 +198,53 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
 #' @rdname calibrate
 #' @export
 calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(50000,0), eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE,...){
-
-    if (length(errors)==1){
-        errors <- rep(errors,length(x$CRA))
-    }
-    if (class(calCurves) %in% c("matrix","data.frame")){
-        calcurve <- as.matrix(calCurves)
-        if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
-            stop("The custom calibration curve must have just three numeric columns.")
-        } else {
-            colnames(calcurve) <- c("CALBP","C14BP","Error")
-        }
-    } else if (any(class(calCurves)=="character")){
-        calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
-        options(warn=-1)
-        calcurve <- readLines(calCurveFile, encoding="UTF-8")
-        calcurve <- calcurve[!grepl("[#]",calcurve)]
-	calcurve.con <- textConnection(calcurve)
-        calcurve <- as.matrix(read.csv(calcurve.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
-	close(calcurve.con)
-        options(warn=0)
-        colnames(calcurve) <- c("CALBP","C14BP","Error")
+  
+  if (length(errors)==1){
+    errors <- rep(errors,length(x$CRA))
+  }
+  if (class(calCurves) %in% c("matrix","data.frame")){
+    calcurve <- as.matrix(calCurves)
+    if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
+      stop("The custom calibration curve must have just three numeric columns.")
     } else {
-        stop("calCurves must be a character vector specifying a known curve or a custom three-column matrix/data.frame (see ?calibrate.default).")
+      colnames(calcurve) <- c("CALBP","C14BP","Error")
     }
-    if (type=="full"){
-        caleach <- calibrate(x=x$CRA, errors=errors, normalised=datenormalised, calMatrix=TRUE, ...)
-        for (d in 1:ncol(caleach$calmatrix)){
-            caleach$calmatrix[,d] <- caleach$calmatrix[,d] *  x$PrDens[d]
-        }
-        res <- data.frame(calBP=50000:0, PrDens=rowSums(caleach$calmatrix))
-    } else if (type=="fast"){
-        if (datenormalised){
-            warning('Cannot normalise dates using fast method, so leaving unnormalised.')
-        }
-        if (verbose){ print("Calibrating...") }
-        CRAdates <- data.frame(approx(calcurve[,1:2], xout=seq(max(calcurve[,1]),min(calcurve[,1]),-1)))
-        names(CRAdates) <- c("calBP","CRA")
-        CRAdates$CRA <- round(CRAdates$CRA,0)
-        res <- merge(CRAdates, x, by="CRA",all.x=TRUE, sort=FALSE)
-        res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
-        res$PrDens[is.na(res$PrDens)] <- 0
-    } else {
-        stop("Type must be 'full' or 'fast'.")
+  } else if (any(class(calCurves)=="character")){
+    calcurve <- read_cal_curve_from_file(calCurves)
+  } else {
+    stop("calCurves must be a character vector specifying a known curve or a custom three-column matrix/data.frame (see ?calibrate.default).")
+  }
+  if (type=="full"){
+    caleach <- calibrate(x=x$CRA, errors=errors, normalised=datenormalised, calMatrix=TRUE, ...)
+    for (d in 1:ncol(caleach$calmatrix)){
+      caleach$calmatrix[,d] <- caleach$calmatrix[,d] *  x$PrDens[d]
     }
-    res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
-    if (spdnormalised){
-        res[res$PrDens < eps,"PrDens"] <- 0
-        res$PrDens <- res$PrDens/sum(res$PrDens)
-    } else {
-        res[res$PrDens < eps,"PrDens"] <- 0
+    res <- data.frame(calBP=50000:0, PrDens=rowSums(caleach$calmatrix))
+  } else if (type=="fast"){
+    if (datenormalised){
+      warning('Cannot normalise dates using fast method, so leaving unnormalised.')
     }
-    res <- res[res$PrDens > 0,]
-    class(res) <- c("CalGrid", class(res))   
-    if (verbose){ print("Done.") }
-    return(res)
+    if (verbose){ print("Calibrating...") }
+    CRAdates <- data.frame(approx(calcurve[,1:2], xout=seq(max(calcurve[,1]),min(calcurve[,1]),-1)))
+    names(CRAdates) <- c("calBP","CRA")
+    CRAdates$CRA <- round(CRAdates$CRA,0)
+    res <- merge(CRAdates, x, by="CRA",all.x=TRUE, sort=FALSE)
+    res <- res[with(res, order(-calBP)), c("calBP","PrDens")]
+    res$PrDens[is.na(res$PrDens)] <- 0
+  } else {
+    stop("Type must be 'full' or 'fast'.")
+  }
+  res <- res[which(res$calBP<=timeRange[1] & res$calBP>=timeRange[2]),]
+  if (spdnormalised){
+    res[res$PrDens < eps,"PrDens"] <- 0
+    res$PrDens <- res$PrDens/sum(res$PrDens)
+  } else {
+    res[res$PrDens < eps,"PrDens"] <- 0
+  }
+  res <- res[res$PrDens > 0,]
+  class(res) <- c("CalGrid", class(res))   
+  if (verbose){ print("Done.") }
+  return(res)
 }
 
 
@@ -350,101 +277,85 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #' @export
 
 uncalibrate <- function (x, ...) {
-   UseMethod("uncalibrate", x)
+  UseMethod("uncalibrate", x)
 }
 
 #' @rdname uncalibrate
 #' @export
 
 uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves='intcal13', ...){
-    
-    if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
-    ## calCurve checks and set-up
-    if (any(class(calCurves) %in% c("matrix","data.frame","array"))){
-        calcurve <- as.matrix(calCurves)
-        if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
-            stop("The custom calibration curve must have just three numeric columns.")
-        } else {
-            colnames(calcurve) <- c("CALBP","C14BP","Error")
-            if (max(calcurve[,1]) < max(x) | min(calcurve[,1]) > min(x)){
-                stop("The custom calibration curve does not cover the input age range.")
-            }
-        }
-    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
-        stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+  
+  if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
+  ## calCurve checks and set-up
+  if (any(class(calCurves) %in% c("matrix","data.frame","array"))){
+    calcurve <- as.matrix(calCurves)
+    if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
+      stop("The custom calibration curve must have just three numeric columns.")
     } else {
-        calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
-        options(warn=-1)
-        calcurve <- readLines(calCurveFile, encoding="UTF-8")
-        calcurve <- calcurve[!grepl("[#]",calcurve)]
-	calcurve.con <- textConnection(calcurve)
-        calcurve <- as.matrix(read.csv(calcurve.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
-	close(calcurve.con)
-        options(warn=0)
-        colnames(calcurve) <- c("CALBP","C14BP","Error")
+      colnames(calcurve) <- c("CALBP","C14BP","Error")
+      if (max(calcurve[,1]) < max(x) | min(calcurve[,1]) > min(x)){
+        stop("The custom calibration curve does not cover the input age range.")
+      }
     }
-    dates <- data.frame(approx(calcurve, xout=x))
-    colnames(dates) <- c("calBP", "ccCRA")
-    calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$calBP)$y
-    dates$ccError <- calcurve.error
-#     dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=dates$ccError)
-    dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=sqrt(dates$ccError^2+CRAerrors^2))
-    dates$rError <- CRAerrors
-    if (roundyear){ dates$rCRA <- round(dates$rCRA) }
-    return(dates)
+  } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+    stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+  } else {
+    calcurve <- read_cal_curve_from_file(calCurves)
+  }
+  dates <- data.frame(approx(calcurve, xout=x))
+  colnames(dates) <- c("calBP", "ccCRA")
+  calcurve.error <- approx(calcurve[,c(1,3)], xout=dates$calBP)$y
+  dates$ccError <- calcurve.error
+  #     dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=dates$ccError)
+  dates$rCRA <- rnorm(nrow(dates), mean=dates$ccCRA, sd=sqrt(dates$ccError^2+CRAerrors^2))
+  dates$rError <- CRAerrors
+  if (roundyear){ dates$rCRA <- round(dates$rCRA) }
+  return(dates)
 }
 
 #' @rdname uncalibrate
 #' @export
 
 uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE, verbose=TRUE, ...){
-
-    if (verbose){ print("Uncalibrating...") }
-    names(x) <- c("calBP","PrDens")
-    ## calCurve checks and set-up
-    if (any(class(calCurves) %in% c("matrix","data.frame","array"))){
-        calcurve <- as.matrix(calCurves)
-        if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
-            stop("The custom calibration curve must have just three numeric columns.")
-        } else {
-            colnames(calcurve) <- c("CALBP","C14BP","Error")
-            if (max(calcurve[,1]) < max(x$calBP) | min(calcurve[,1]) > min(x$calBP)){
-                stop("The custom calibration curve does not cover the input age range.")
-            }
-        }
-    } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
-        stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+  
+  if (verbose){ print("Uncalibrating...") }
+  names(x) <- c("calBP","PrDens")
+  ## calCurve checks and set-up
+  if (any(class(calCurves) %in% c("matrix","data.frame","array"))){
+    calcurve <- as.matrix(calCurves)
+    if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
+      stop("The custom calibration curve must have just three numeric columns.")
     } else {
-        calCurveFile <- paste(system.file("extdata", package="rcarbon"), "/", calCurves,".14c", sep="")
-        options(warn=-1)
-        calcurve <- readLines(calCurveFile, encoding="UTF-8")
-        calcurve <- calcurve[!grepl("[#]",calcurve)]
-	calcurve.con <- textConnection(calcurve)
-        calcurve <- as.matrix(read.csv(calcurve.con, header=FALSE, stringsAsFactors=FALSE))[,1:3]
-	close(calcurve.con)
-        options(warn=0)
-        colnames(calcurve) <- c("CALBP","C14BP","Error")
+      colnames(calcurve) <- c("CALBP","C14BP","Error")
+      if (max(calcurve[,1]) < max(x$calBP) | min(calcurve[,1]) > min(x$calBP)){
+        stop("The custom calibration curve does not cover the input age range.")
+      }
     }
-    mycras <- uncalibrate(x$calBP,calCurves=calCurves)
-    res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=0)
-    
-    h = x$PrDens/sum(x$PrDens)
-    mu = mycras$ccCRA
-    s = mycras$ccError
-    k = res$CRA
-
-    res$Raw=unlist(sapply(k,function(x,mu,s,h){return(sum(dnorm(x,mu,s)*h))},h=h,mu=mu,s=s))
-    res$Base=unlist(sapply(k,function(x,mu,s){return(sum(dnorm(x,mu,s)))},mu=mu,s=s))
-
-    res$Raw=res$Raw/sum(res$Raw)
-	
-    res$Raw[res$Raw < eps] <- 0
-    res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
-    if (compact){ res <- res[res$PrDens > 0,] }
-    res$PrDens=res$PrDens/sum(res$PrDens)
-    class(res) <- c("UncalGrid", class(res)) 
-    if (verbose){ print("Done.") }
-    return(res)
+  } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+    stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
+  } else {
+    calcurve <- read_cal_curve_from_file(calCurves)
+  }
+  mycras <- uncalibrate(x$calBP,calCurves=calCurves)
+  res <- data.frame(CRA=max(calcurve[,2]):min(calcurve[,2]), PrDens=0)
+  
+  h = x$PrDens/sum(x$PrDens)
+  mu = mycras$ccCRA
+  s = mycras$ccError
+  k = res$CRA
+  
+  res$Raw=unlist(sapply(k,function(x,mu,s,h){return(sum(dnorm(x,mu,s)*h))},h=h,mu=mu,s=s))
+  res$Base=unlist(sapply(k,function(x,mu,s){return(sum(dnorm(x,mu,s)))},mu=mu,s=s))
+  
+  res$Raw=res$Raw/sum(res$Raw)
+  
+  res$Raw[res$Raw < eps] <- 0
+  res$PrDens[res$Base>0] <- res$Raw[res$Base>0] / res$Base[res$Base>0]
+  if (compact){ res <- res[res$PrDens > 0,] }
+  res$PrDens=res$PrDens/sum(res$PrDens)
+  class(res) <- c("UncalGrid", class(res)) 
+  if (verbose){ print("Done.") }
+  return(res)
 }
 
 
@@ -462,14 +373,14 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal13', eps=1e-5, compact=TRUE,
 #' @export
 #' 
 as.CalGrid <- function(x) {
-    df <- as.data.frame(x)
-    if (ncol(x) == 2){
-        names(df) <- c("calBP", "PrDens")
-    } else {
-        stop("Input must be 2 columns.")
-    }
-    class(df) <- c("CalGrid", class(df)) 
-    return(df)
+  df <- as.data.frame(x)
+  if (ncol(x) == 2){
+    names(df) <- c("calBP", "PrDens")
+  } else {
+    stop("Input must be 2 columns.")
+  }
+  class(df) <- c("CalGrid", class(df)) 
+  return(df)
 }
 
 #' @title Convert data to class UncalGrid. 
@@ -483,16 +394,16 @@ as.CalGrid <- function(x) {
 #' df <- data.frame(CRA=5000:2000,PrDens=runif(length(5000:2000)))
 #' mycalgrid <- as.UncalGrid(df)
 #' @export
- 
+
 as.UncalGrid <- function(x) {
-    df <- as.data.frame(x)
-    if (ncol(x) == 2){
-        names(df) <- c("CRA", "PrDens")
-    } else {
-        stop("Input must be 2 columns.")
-    }
-    class(df) <- c("UncalGrid", class(df)) 
-    return(df)
+  df <- as.data.frame(x)
+  if (ncol(x) == 2){
+    names(df) <- c("CRA", "PrDens")
+  } else {
+    stop("Input must be 2 columns.")
+  }
+  class(df) <- c("UncalGrid", class(df)) 
+  return(df)
 }
 
 
@@ -524,99 +435,99 @@ as.UncalGrid <- function(x) {
 #' @export
 #' 
 as.CalDates <- function(x){
-    if (!any(class(x)%in%c("BchronCalibratedDates","oxcAARCalibratedDatesList"))){
-        stop("Currently, x must be of class BchronCalibratedDates or oxcAARCalibratedDatesList")
+  if (!any(class(x)%in%c("BchronCalibratedDates","oxcAARCalibratedDatesList"))){
+    stop("Currently, x must be of class BchronCalibratedDates or oxcAARCalibratedDatesList")
+  }
+  if (any(class(x)=="BchronCalibratedDates")){	    
+    methods <- "Bchron"
+    reslist <- vector(mode="list", length=2)
+    sublist <- vector(mode="list", length=length(x))
+    names(sublist) <- names(x)
+    names(reslist) <- c("metadata","grids")
+    ## metadata
+    df <- as.data.frame(matrix(ncol=11, nrow=length(x)), stringsAFactors=FALSE)
+    names(df) <- c("DateID","CRA","Error","Details","CalCurve","ResOffsets","ResErrors","StartBP","EndBP","Normalised","CalEPS")
+    df$DateID <- names(x)
+    df$CRA <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "ages")))
+    df$Error <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "ageSds")))
+    df$CalCurve <- as.character(unlist(lapply(X=x, FUN=`[[`, "calCurves")))
+    df$ResOffsets <- NA
+    df$ResErrors <- NA
+    df$StartBP <- NA
+    df$EndBP <- NA
+    df$Normalised <- TRUE
+    reslist[["metadata"]] <- df
+    ## grids
+    for (i in 1:length(x)){
+      tmp <- x[[i]]
+      res <- data.frame(calBP=rev(tmp$ageGrid),PrDens=rev(tmp$densities))
+      class(res) <- append(class(res),"calGrid")        
+      sublist[[i]] <- res
     }
-    if (any(class(x)=="BchronCalibratedDates")){	    
-        methods <- "Bchron"
-        reslist <- vector(mode="list", length=2)
-        sublist <- vector(mode="list", length=length(x))
-        names(sublist) <- names(x)
-        names(reslist) <- c("metadata","grids")
-        ## metadata
-        df <- as.data.frame(matrix(ncol=11, nrow=length(x)), stringsAFactors=FALSE)
-        names(df) <- c("DateID","CRA","Error","Details","CalCurve","ResOffsets","ResErrors","StartBP","EndBP","Normalised","CalEPS")
-        df$DateID <- names(x)
-        df$CRA <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "ages")))
-        df$Error <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "ageSds")))
-        df$CalCurve <- as.character(unlist(lapply(X=x, FUN=`[[`, "calCurves")))
-        df$ResOffsets <- NA
-        df$ResErrors <- NA
-        df$StartBP <- NA
-        df$EndBP <- NA
-        df$Normalised <- TRUE
-        reslist[["metadata"]] <- df
-        ## grids
-        for (i in 1:length(x)){
-            tmp <- x[[i]]
-            res <- data.frame(calBP=rev(tmp$ageGrid),PrDens=rev(tmp$densities))
-            class(res) <- append(class(res),"calGrid")        
-            sublist[[i]] <- res
-        }
-        reslist[["grids"]] <- sublist
-        reslist[["calmatrix"]] <- NA
-        class(reslist) <- c("CalDates",class(reslist))
-        return(reslist)
+    reslist[["grids"]] <- sublist
+    reslist[["calmatrix"]] <- NA
+    class(reslist) <- c("CalDates",class(reslist))
+    return(reslist)
+  }
+  if (any(class(x)=="oxcAARCalibratedDatesList")){
+    reslist <- vector(mode="list", length=2)
+    sublist <- vector(mode="list", length=length(x))
+    names(sublist) <- names(x)
+    names(reslist) <- c("metadata","grids")
+    ## metadata
+    df <- as.data.frame(matrix(ncol=11, nrow=length(x)), stringsAFactors=FALSE)
+    names(df) <- c("DateID","CRA","Error","Details","CalCurve","ResOffsets","ResErrors","StartBP","EndBP","Normalised","CalEPS")
+    df$DateID <- names(x)
+    df$CRA <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "bp")))
+    df$Error <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "std")))
+    df$CalCurve=lapply(lapply(lapply(lapply(lapply(x,FUN=`[[`,"cal_curve"),FUN=`[[`,"name"),strsplit," "),unlist),FUN=`[[`,2)
+    df$CalCurve=tolower(df$CalCurve)
+    df$ResOffsets <- NA
+    df$ResErrors <- NA
+    df$StartBP <- NA
+    df$EndBP <- NA
+    df$Normalised <- TRUE
+    df$CalEPS <- 0
+    reslist[["metadata"]] <- df
+    ## grids
+    for (i in 1:length(x)){
+      tmp <- x[[i]]$raw_probabilities  
+      rr <- range(tmp$dates)
+      res <- 	approx(x=tmp$dates,y=tmp$probabilities,xout=ceiling(rr[1]):floor(rr[2]))
+      res$x <- abs(res$x-1950)
+      res <- data.frame(calBP=res$x,PrDens=res$y)
+      res$PrDens <- res$PrDens/sum(res$PrDens)
+      class(res) <- append(class(res),"calGrid")        
+      sublist[[i]] <- res
     }
-    if (any(class(x)=="oxcAARCalibratedDatesList")){
-        reslist <- vector(mode="list", length=2)
-        sublist <- vector(mode="list", length=length(x))
-        names(sublist) <- names(x)
-        names(reslist) <- c("metadata","grids")
-        ## metadata
-        df <- as.data.frame(matrix(ncol=11, nrow=length(x)), stringsAFactors=FALSE)
-        names(df) <- c("DateID","CRA","Error","Details","CalCurve","ResOffsets","ResErrors","StartBP","EndBP","Normalised","CalEPS")
-        df$DateID <- names(x)
-        df$CRA <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "bp")))
-        df$Error <- as.numeric(unlist(lapply(X=x, FUN=`[[`, "std")))
-        df$CalCurve=lapply(lapply(lapply(lapply(lapply(x,FUN=`[[`,"cal_curve"),FUN=`[[`,"name"),strsplit," "),unlist),FUN=`[[`,2)
-        df$CalCurve=tolower(df$CalCurve)
-        df$ResOffsets <- NA
-        df$ResErrors <- NA
-        df$StartBP <- NA
-        df$EndBP <- NA
-        df$Normalised <- TRUE
-        df$CalEPS <- 0
-        reslist[["metadata"]] <- df
-        ## grids
-        for (i in 1:length(x)){
-            tmp <- x[[i]]$raw_probabilities  
-            rr <- range(tmp$dates)
-            res <- 	approx(x=tmp$dates,y=tmp$probabilities,xout=ceiling(rr[1]):floor(rr[2]))
-            res$x <- abs(res$x-1950)
-            res <- data.frame(calBP=res$x,PrDens=res$y)
-            res$PrDens <- res$PrDens/sum(res$PrDens)
-            class(res) <- append(class(res),"calGrid")        
-            sublist[[i]] <- res
-        }
-        reslist[["grids"]] <- sublist
-        reslist[["calmatrix"]] <- NA
-        class(reslist) <- c("CalDates",class(reslist))
-        return(reslist)
-    }       
+    reslist[["grids"]] <- sublist
+    reslist[["calmatrix"]] <- NA
+    class(reslist) <- c("CalDates",class(reslist))
+    return(reslist)
+  }       
 }
 
 
 #' @export
 
 "[.CalDates" <- function(x,i){
-    
-    if (nrow(x$metadata)==0){
-        stop("No data to extract")
+  
+  if (nrow(x$metadata)==0){
+    stop("No data to extract")
+  }
+  if(!missing(i)) {
+    if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
+      if (length(x$calmatrix)>1){
+        res <- list(metadata=x$metadata[i,], grids=NA, calmatrix=x$calmatrix[,i])
+      } else {
+        res <- list(metadata=x$metadata[i,], grids=x$grids[i], calmatrix=NA)
+      }
+      class(res) <- c("CalDates", class(res))        
+    } else {
+      stop("i must be a numeric, character or logical vector of length(x)")
     }
-    if(!missing(i)) {
-        if (all(is.numeric(i)) | all(is.character(i)) | all(is.logical(i))){
-            if (length(x$calmatrix)>1){
-                res <- list(metadata=x$metadata[i,], grids=NA, calmatrix=x$calmatrix[,i])
-            } else {
-                res <- list(metadata=x$metadata[i,], grids=x$grids[i], calmatrix=NA)
-            }
-            class(res) <- c("CalDates", class(res))        
-        } else {
-            stop("i must be a numeric, character or logical vector of length(x)")
-        }
-        return(res)
-    }           
+    return(res)
+  }           
 }
 
 
@@ -624,34 +535,34 @@ as.CalDates <- function(x){
 
 length.CalDates <- function(x,...)
 {
- return(nrow(x$metadata))
+  return(nrow(x$metadata))
 }
 
 hpdi <- function(x, credMass=0.95){
-
-    cl <- class(x)
-    if (!"CalDates"%in%cl){
-        stop("x must be of class CalDates")
+  
+  cl <- class(x)
+  if (!"CalDates"%in%cl){
+    stop("x must be of class CalDates")
+  }
+  n <- nrow(x$metadata)
+  result <- vector("list",length=n)
+  for (i in 1:n){
+    if (length(x$calmatrix)>1){
+      grd <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,i])
+      grd <- grd[grd$PrDens >0,]
+    } else {
+      grd <- x$grids[[i]]
     }
-    n <- nrow(x$metadata)
-    result <- vector("list",length=n)
-    for (i in 1:n){
-        if (length(x$calmatrix)>1){
-            grd <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,i])
-            grd <- grd[grd$PrDens >0,]
-        } else {
-            grd <- x$grids[[i]]
-        }
-        sorted <- sort(grd$PrDens , decreasing=TRUE)
-        heightIdx = min( which( cumsum( sorted) >= sum(grd$PrDens) * credMass ) )
-        height = sorted[heightIdx]
-        indices = which( grd$PrDens >= height )
-        gaps <- which(diff(indices) > 1)
-        starts <- indices[c(1, gaps + 1)]
-        ends <- indices[c(gaps, length(indices))]
-        result[[i]] <- cbind(startCalBP = grd$calBP[starts], endCalBP = grd$calBP[ends]) 
-    }  
-    return(result)
+    sorted <- sort(grd$PrDens , decreasing=TRUE)
+    heightIdx = min( which( cumsum( sorted) >= sum(grd$PrDens) * credMass ) )
+    height = sorted[heightIdx]
+    indices = which( grd$PrDens >= height )
+    gaps <- which(diff(indices) > 1)
+    starts <- indices[c(1, gaps + 1)]
+    ends <- indices[c(gaps, length(indices))]
+    result[[i]] <- cbind(startCalBP = grd$calBP[starts], endCalBP = grd$calBP[ends]) 
+  }  
+  return(result)
 }
 
 #' @title Summarise a \code{CalDates} class object
@@ -667,48 +578,48 @@ hpdi <- function(x, credMass=0.95){
 #' @export 
 
 summary.CalDates<-function(object,prob=NA,calendar="BP",...) {
-	
-	foo = function(x,i){if(nrow(x)>=i){return(x[i,])}else{return(c(NA,NA))}}
-	if (is.na(prob)) 
-		{
-		prob = c(0.683,0.954)
-		pnames = c("OneSigma","TwoSigma")
-		} else {
-		pnames = paste("p",prob,sep="_")
-		}	
-	pnames=paste(pnames,calendar,sep="_")
-	probMats = vector("list",length=length(prob))
-	for (i in 1:length(prob))
-		{
-		cols = max(unlist(lapply(hpdi(object,prob[i]),nrow)))
-		tmpMatrix=matrix(NA,ncol=cols,nrow=nrow(object$metadata))
-
-		for (j in 1:cols)
-		{
-		tmp=t(sapply(hpdi(object,prob[i]),foo,i=j))
-		if (calendar=="BCAD")
-		{
-			tmp = t(apply(tmp,1,BPtoBCAD))
-			
-		}
-                tmpMatrix[,j]=apply(tmp,1,paste,collapse=" to ")
-		}
-		colnames(tmpMatrix)=paste(pnames[i],1:cols,sep="_")
-		probMats[[i]]=tmpMatrix
-		}
-      
-        med.dates=medCal(object)
-
-	if (calendar=="BP")
-	{res=data.frame(DateID=object$metadata$DateID,MedianBP=med.dates)}
-	else
-	{res=data.frame(DateID=object$metadata$DateID,BPtoBCAD(med.dates))
-	colnames(res)[2]="MedianBC/AD"}
-	for (k in 1:length(probMats))
-	{
-	res=cbind.data.frame(res,probMats[[k]])
-	}
-return(res)
+  
+  foo = function(x,i){if(nrow(x)>=i){return(x[i,])}else{return(c(NA,NA))}}
+  if (is.na(prob)) 
+  {
+    prob = c(0.683,0.954)
+    pnames = c("OneSigma","TwoSigma")
+  } else {
+    pnames = paste("p",prob,sep="_")
+  }	
+  pnames=paste(pnames,calendar,sep="_")
+  probMats = vector("list",length=length(prob))
+  for (i in 1:length(prob))
+  {
+    cols = max(unlist(lapply(hpdi(object,prob[i]),nrow)))
+    tmpMatrix=matrix(NA,ncol=cols,nrow=nrow(object$metadata))
+    
+    for (j in 1:cols)
+    {
+      tmp=t(sapply(hpdi(object,prob[i]),foo,i=j))
+      if (calendar=="BCAD")
+      {
+        tmp = t(apply(tmp,1,BPtoBCAD))
+        
+      }
+      tmpMatrix[,j]=apply(tmp,1,paste,collapse=" to ")
+    }
+    colnames(tmpMatrix)=paste(pnames[i],1:cols,sep="_")
+    probMats[[i]]=tmpMatrix
+  }
+  
+  med.dates=medCal(object)
+  
+  if (calendar=="BP")
+  {res=data.frame(DateID=object$metadata$DateID,MedianBP=med.dates)}
+  else
+  {res=data.frame(DateID=object$metadata$DateID,BPtoBCAD(med.dates))
+  colnames(res)[2]="MedianBC/AD"}
+  for (k in 1:length(probMats))
+  {
+    res=cbind.data.frame(res,probMats[[k]])
+  }
+  return(res)
 }
 
 
@@ -726,27 +637,27 @@ return(res)
 #' @export
 medCal <- function(x)
 {
-	ndates=nrow(x$metadata)
-	meddates=numeric()
-	if (is.na(x$calmatrix[1]))
-	{
-		for (i in 1:ndates)
-		{
-      		tmp=x$grids[[i]]
-      		tmp$Cumul=cumsum(tmp$PrDens)	 
-		meddates[i]=tmp[which.min(abs(tmp$Cumul-max(tmp$Cumul)/2)),1]
-		}		
-	} else
-	
-	{
-		cumcal=apply(x$calmatrix,2,cumsum)
-		for (i in 1:ndates)
-		{
-		index = which.min(abs(cumcal[,i]-max(cumcal[,i])/2))
-		meddates[i]=as.numeric(rownames(cumcal)[index])
-		}
-	}
-return(meddates)
+  ndates=nrow(x$metadata)
+  meddates=numeric()
+  if (is.na(x$calmatrix[1]))
+  {
+    for (i in 1:ndates)
+    {
+      tmp=x$grids[[i]]
+      tmp$Cumul=cumsum(tmp$PrDens)	 
+      meddates[i]=tmp[which.min(abs(tmp$Cumul-max(tmp$Cumul)/2)),1]
+    }		
+  } else
+    
+  {
+    cumcal=apply(x$calmatrix,2,cumsum)
+    for (i in 1:ndates)
+    {
+      index = which.min(abs(cumcal[,i]-max(cumcal[,i])/2))
+      meddates[i]=as.numeric(rownames(cumcal)[index])
+    }
+  }
+  return(meddates)
 }
 
 #' @title Creates mixed calibration curves.
