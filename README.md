@@ -65,6 +65,8 @@ Gretzinger, J., Molak, M., Reiter, E., Pfrengle, S., Urban, C., Neukamm, J., et 
 
 Jørgensen, E. K., & Riede, F. 2019. [Convergent catastrophes and the termination of the Arctic Norwegian Stone Age: A multi-proxy assessment of the demographic and adaptive responses of mid-Holocene collectors to biophysical forcing.](https://doi.org/10.1177/0959683619862036) The Holocene, 0959683619862036. 
 
+Jorgeson, I.A., Breslawski, R.P., Fisher, A.E., 2020. [Radiocarbon simulation fails to support the temporal synchroneity requirement of the Younger Dryas impact hypothesis](https://doi.org/10.1017/qua.2019.83). Quaternary Research 1–17. 
+
 Liu, L., Chen, X., Wright, H., Xu, H., Li, Y., Chen, G., et al. 2019. [Rise and fall of complex societies in the Yiluo region, North China: The spatial and temporal changes.](https://doi.org/10.1016/j.quaint.2019.05.025) Quaternary International. 
 
 López, J. M., Neme, G., & Gil, A. F. 2019. [Resource intensification and zooarchaeological record in the southern margins of pre-Hispanic Andean agriculture.](https://doi.org/10.1007/s12520-019-00857-w) Archaeological and Anthropological Sciences, 11(10), 5287–5300. 
