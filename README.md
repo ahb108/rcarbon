@@ -57,6 +57,8 @@ Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Me
 
 Fyfe, R.M., Woodbridge, J., Palmisano, A., Bevan, A., Shennan, S., Burjachs, F., Legarra Herrero, B., García Puchol, O., Carrión, J.-S., Revelles, J., Roberts, C.N., 2019. [Prehistoric palaeodemographics and regional land cover change in eastern Iberia](https://doi.org/10.1177/0959683619826643). The Holocene 0959683619826643. doi:10.1177/0959683619826643
 
+Gjesfjeld, E., Etnier, M.A., Takase, K., Brown, W.A., Fitzhugh, B., 2020. [Biogeography and adaptation in the Kuril Islands, Northeast Asia.](https://doi.org/10.1080/00438243.2019.1715248) World Archaeology, 1–25. 
+
 Gjesfjeld, E., Silvestro, D., Chang, J., Koch, B., Foster, J.G., Alfaro, M.E., 2020. [A quantitative workflow for modeling diversification in material culture.](https://doi.org/10.1371/journal.pone.0227579) PLOS ONE 15, e0227579. 
 
 Gretzinger, J., Molak, M., Reiter, E., Pfrengle, S., Urban, C., Neukamm, J., et al. 2019. [Large-scale mitogenomic analysis of the phylogeography of the Late Pleistocene cave bear]( https://doi.org/10.1038/s41598-019-47073-z). Scientific Reports, 9. DOI: 10.1038/s41598-019-47073-z.
