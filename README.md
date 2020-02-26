@@ -93,6 +93,8 @@ Schauer, P., Shennan, S., Bevan, A., Cook, G., Edinborough, K., Fyfe, R., et al.
 
 Schauer, P., Bevan, A., Shennan, S., Edinborough, K., Kerig, T., Pearson, M.P., 2019. [British Neolithic Axehead Distributions and Their Implications](https://doi.org/10.1007/s10816-019-09438-6). Journal of Archaeological Method and Theory. doi:/10.1007/s10816-019-09438-6
 
+Schirrmacher, J., Kneisel, J., Knitter, D., Hamer, W., Hinz, M., Schneider, R.R., Weinelt, M., 2020. [Spatial patterns of temperature, precipitation, and settlement dynamics on the Iberian Peninsula during the Chalcolithic and the Bronze Age.](https://doi.org/10.1016/j.quascirev.2020.106220) Quaternary Science Reviews 233, 106220. 
+
 Stoddart, S., Woodbridge, J., Palmisano, A., Mercuri, A. M., Mensing, S. A., Colombaroli, D., et al. 2019. [Tyrrhenian central Italy: Holocene population and landscape ecology.](https://doi.org/10.1177/0959683619826696) The Holocene, 0959683619826696. doi:10.1177/0959683619826696
 
 Szpak, P., Savelle, J. M., Conolly, J., & Richards, M. P. 2019. [Variation in late holocene marine environments in the Canadian Arctic Archipelago: Evidence from ringed seal bone collagen stable isotope compositions](https://doi.org/10.1016/j.quascirev.2019.03.016). Quaternary Science Reviews, 211, 136–155. doi:10.1016/j.quascirev.2019.03.016
