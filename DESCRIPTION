@@ -1,8 +1,9 @@
 Package: rcarbon
 Title: Calibration and Analysis of Radiocarbon Dates
-Version: 1.3.0
+Version: 1.3.1
 Authors@R: c(person("Andrew","Bevan", role=c("aut"),email="andrew.bevan@gmail.com"),
 	     person("Enrico","Crema", role=c("aut","cre"),email="enrico.crema@gmail.com"),
+	     person("R. Kyle","Boncinsky",role=c("ctb"),email="bocinsky@gmail.com"),
 	     person("Martin","Hinz", role=c("ctb"),email="martin.hinz@iaw.unibe.ch"),
 	     person("Philip","Riris", role=c("ctb"),email="priris@bournemouth.ac.uk"),
 	     person("Fabio","Silva", role=c("ctb"),email="fabio.silva@ucl.ac.uk"))
