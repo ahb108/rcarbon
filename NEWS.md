@@ -1,3 +1,7 @@
+#  Version 1.3.1 (in progress)
+* `binPrep()` now accepts alternative clustering algorithms
+* Refactoring of calibration related functions to increase readability
+* Minor bug fixes
 
 #  Version 1.3.0 (12 December 2019)
 * UPDATEs in `modelTest()`:
