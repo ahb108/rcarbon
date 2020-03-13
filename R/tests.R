@@ -1452,18 +1452,25 @@ summary.SpdPermTest<-function(object,type='spd',...) {
 		cat(paste("Number of radiocarbon dates:",object$metadata[[i]][1],"\n",sep=""))
 		cat(paste("Number of bins:",object$metadata[[i]][2],"\n",sep=""))
 		cat("\n")
-		if(type=='spd'){cat(paste("Global p-value: ",round(object$pValueList[i],5),"\n",sep=""))}
-		if(type=='roc'){cat(paste("Global p-value (rate of change): ",round(object$pValueList.roc[i],5),"\n",sep=""))}
+		if(type=='spd'){
+			cat(paste("Global p-value: ",round(object$pValueList[i],5),"\n",sep=""))
+			obs <- object$observed[[i]]
+			envelope <-object$envelope[[i]]
+			booms <- which(obs[,2]>envelope[,2])
+			busts <- which(obs[,2]<envelope[,1])
+		}
+		if(type=='roc'){
+			cat(paste("Global p-value (rate of change): ",round(object$pValueList.roc[i],5),"\n",sep=""))
+			obs <- object$observed.roc[[i]]
+			envelope <-object$envelope.roc[[i]]
+			booms <- which(obs[,2]>envelope[,2])
+			busts <- which(obs[,2]<envelope[,1])
+		}
 		cat("\n")
-
-		obs <- object$observed.roc[[i]]
-		envelope <-object$envelope.roc[[i]]
-		booms <- which(obs[,2]>envelope[,2])
-		busts <- which(obs[,2]<envelope[,1])
 
 		if (length(booms)>0)
 		{
-			cat(paste("Signficant positive local deviations at:\n"))
+			cat(paste("Significant positive local deviations at:\n"))
 			i=1
 			while (i < length(obs[,1]))
 			{	
