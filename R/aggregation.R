@@ -8,7 +8,8 @@
 #' 
 #' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases. If character strings are used these should not contain underscores (see also below)
 #' @param ages a vector of uncalibrated conventional radiocarbon ages or a \code{CalDates} class object obtained using the \code{\link{calibrate}} function.
-#' @param h a single numeric value passed to \code{\link{hclust}} control degree of grouping of similar ages in a phase site.
+#' @param h a single numeric value passed to \code{\link{cutree}} control degree of grouping of similar ages in a phase site.
+#' @param method the agglomeration method to be used, passed on to \code{\link{hclust}}. Defaults to "complete" as in \code{\link{hclust}}.
 #'
 #' @details If \code{ages} is a \code{CalDates} class object, median dates are used for the clustering.
 #'
@@ -18,7 +19,7 @@
 #' @import stats
 #' @import utils
 #' @export
-binPrep <- function(sites, ages, h){
+binPrep <- function(sites, ages, h, method = "complete"){
     
     if(any(grepl("_", sites)))
     {
@@ -35,7 +36,7 @@ binPrep <- function(sites, ages, h){
     for  (x in 1:length(unique(sites))){
         index <- which(sites==unique(sites)[x])
         if (length(index)>1){
-            clusters[index] <- paste(unique(sites)[x],cutree(hclust(dist(ages[index])),h=h),sep="_")
+            clusters[index] <- paste(unique(sites)[x],cutree(hclust(dist(ages[index]), method = method),h=h),sep="_")
         }
         if (length(index)==1){
             clusters[index] <- paste(unique(sites)[x],"1",sep="_")
