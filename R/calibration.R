@@ -136,6 +136,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     if (verbose){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
     `%dofun%` <- `%dopar%`
   }
+  b <- NULL # Added to solve No Visible Binding for Global Variable NOTE
   sublist <- foreach (b=1:length(x)) %dofun% {
     calcurve <- cclist[[calCurves[b]]]
     calBP <- seq(max(calcurve),min(calcurve),-1)
