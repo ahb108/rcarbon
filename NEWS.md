@@ -1,4 +1,4 @@
-#  Version 1.3.1 (in progress)
+#  Version 1.3.1 (current)
 * `binPrep()` now accepts alternative clustering algorithms
 * Refactoring of calibration related functions to increase readability
 * Minor bug fixes
