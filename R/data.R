@@ -1,5 +1,5 @@
 #' @title Radiocarbon dates from the EUROEVOL database
-#' @description Radiocarbon dates (n=14,053) and site coordinates (n=4,213) from the EUROEVOL project database. Sites without radiocarbon dates (n=544), phase-codes, and other data have been omitted (the complete dataset can be found on \url{https://discovery.ucl.ac.uk/id/eprint/1469811/}).  
+#' @description Radiocarbon dates (n=14,053) and site coordinates (n=4,213) from the EUROEVOL project database. Sites without radiocarbon dates (n=544), phase-codes, and other data have been omitted.
 
 #' @format A data.frame with the following variables:
 #' \describe{
