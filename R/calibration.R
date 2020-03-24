@@ -148,7 +148,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     }
     if (F14C==TRUE)
     {
-      dens <- F14C_calibration(age, error, calBP, calcurve)
+      dens <- F14C_calibration(age, error, calBP, calcurve, eps)
     }
     if (normalised){
       dens <- normalise_densities(dens, eps)
