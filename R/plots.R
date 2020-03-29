@@ -939,7 +939,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 
 #' @title Plot a stack of SPDs
 #'
-#' @description Visualises multiple SPDs organised as \code{stackCalSPD} object.
+#' @description Visualises multiple SPDs grouped as a \code{stackCalSPD} object.
 #' 
 #' @param x A \code{stackCalSPD] class object. Result of \code{\link{stackspd}} function.
 #' @param type How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}. 
@@ -974,7 +974,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'}
 #' @export
 
-plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.obs=NA, lwd.obs=NA, lty.obs=NA, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA,ymargin=1.1)
+plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.obs=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA,ymargin=1.1)
 {
   # Based on Dark2 of RcolorBrewer
   colpal=c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666")
@@ -1055,8 +1055,17 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	
 	if (any(is.na(lwd.obs))){lwd.obs=rep(1,nsets)}
 	if (any(is.na(lty.obs))){lty.obs=rep(1,nsets)}
+
+	#if only single values are provided
+	if (length(lwd.obs)==1){lwd.obs=rep(lwd.obs,nsets)}
+	if (length(lty.obs)==1){lty.obs=rep(lty.obs,nsets)}
+	if (length(col.obs)==1){col.obs=rep(col.obs,nsets)}
+	if (length(col.fill)==1){col.fill=rep(col.fill,nsets)}
 	
-	
+
+
+
+
 	#Plot
 
 	#lines 
@@ -1100,7 +1109,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	  
 	  for (i in 2:(nsets+1))
 	  {
-	    polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs)
+	    polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs[i-1],border=col.obs[i-1],lty=lty.obs[i-1])
 	  }
 	  if (legend)
 	  {
@@ -1130,7 +1139,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 
 		for (i in 2:(nsets+1))
 		{
-			polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs)
+			polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs[i-1],lty=lty.obs[i-1],border=col.fill[i-1])
 		}
 		if (legend)
 		{
@@ -1169,7 +1178,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
       tmpYlim= YLIMs[[i]]
       axis(2,at=c(tmpYlim[1],median(tmpYlim),max(tmpYlim)),labels=round(c(min(ylim),median(ylim),max(ylim)),2),las=2,cex.axis=cex.axis)
       
-      polygon(c(plotyears,rev(plotyears)),c(PrDens[,i]+tmpYlim[1],rep(0,length(plotyears))+tmpYlim[1]),col=col.fill[i],lwd=lwd.obs)
+      polygon(c(plotyears,rev(plotyears)),c(PrDens[,i]+tmpYlim[1],rep(0,length(plotyears))+tmpYlim[1]),col=col.fill[i],lwd=lwd.obs[i],border=col.obs[i],lty=lty.obs[i])
     }
     
     if (legend)
