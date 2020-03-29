@@ -7,11 +7,13 @@
 plot.stackCalSPD(x, type = "stacked", calendar = "BP",
   spdnormalised = FALSE, rescale = FALSE, runm = NA, xlim = NA,
   ylim = NA, xaxt = "s", yaxt = "s", gapFactor = 0.2,
-  col.fill = NA, col.obs = NA, lwd.obs = 1, lty.obs = 1,
+  col.fill = NA, col.line = NA, lwd.obs = 1, lty.obs = 1,
   cex.lab = 1, cex.axis = cex.lab, legend = TRUE,
   legend.arg = NULL, ylab = NA, ymargin = 1.1)
 }
 \arguments{
+\item{x}{A \code{stackCalSPD} class object. Result of \code{\link{stackspd}} function.}
+
 \item{type}{How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
@@ -34,13 +36,15 @@ plot.stackCalSPD(x, type = "stacked", calendar = "BP",
 
 \item{col.fill}{Vector of fill color for the observed SPDs. The default color scheme is based on the Dark2 pallette of RColorBrewer package.}
 
-\item{col.obs}{Line colour for the observed SPDs.The default color scheme is based on the Dark2 pallette of RColorBrewer package.}
+\item{col.line}{Line colour for the observed SPDs.The default color scheme is based on the Dark2 pallette of RColorBrewer package.}
 
 \item{lwd.obs}{Line width for the observed SPDs. Default is 1.}
 
 \item{lty.obs}{Line type for the observed SPDs. Default is 1.}
 
 \item{legend}{Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.}
+
+\item{legend.arg}{list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.}
 }
 \description{
 Visualises multiple SPDs grouped as a \code{stackCalSPD} object.

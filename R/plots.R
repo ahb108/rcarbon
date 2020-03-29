@@ -948,7 +948,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'
 #' @description Visualises multiple SPDs grouped as a \code{stackCalSPD} object.
 #' 
-#' @param x A \code{stackCalSPD] class object. Result of \code{\link{stackspd}} function.
+#' @param x A \code{stackCalSPD} class object. Result of \code{\link{stackspd}} function.
 #' @param type How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}. 
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPDs are normalised to sum to unity. Default is FALSE. 
@@ -960,11 +960,11 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
 #' @param gapFactor Defines spacing between SPDs as proportion of the y-axis range for multipanel plots. Default is 0.2.
 #' @param col.fill Vector of fill color for the observed SPDs. The default color scheme is based on the Dark2 pallette of RColorBrewer package.
-#' @param col.obs Line colour for the observed SPDs.The default color scheme is based on the Dark2 pallette of RColorBrewer package.
+#' @param col.line Line colour for the observed SPDs.The default color scheme is based on the Dark2 pallette of RColorBrewer package.
 #' @param lwd.obs Line width for the observed SPDs. Default is 1.
 #' @param lty.obs Line type for the observed SPDs. Default is 1.
 #' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.
-#' @param legend.arg list of additional arguments to pass to \code\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.
+#' @param legend.arg list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.
 #' @references 
 #' Erich Neuwirth (2014). RColorBrewer: ColorBrewer Palettes. R package version 1.1-2. \url{https://CRAN.R-project.org/package=RColorBrewer}.
 #' @examples
@@ -981,7 +981,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'}
 #' @export
 
-plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.obs=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA,ymargin=1.1)
+plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.line=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA,ymargin=1.1)
 {
   # Based on Dark2 of RcolorBrewer
   colpal=c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666")
@@ -1047,15 +1047,15 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	  }
 	}
 	
-	if (any(is.na(col.obs)))
+	if (any(is.na(col.line)))
 	{
 	  if (nsets<=8)
 	  {
-	    col.obs=colpal[1:nsets]
+	    col.line=colpal[1:nsets]
 	  }
 	  if (nsets > 8)
 	  {
-	    col.obs=sample(colors(),size=nsets,replace=TRUE)
+	    col.line=sample(colors(),size=nsets,replace=TRUE)
 	  warning("Color sequence randomised due to a large number of SPDs (>8). Consider selecting an appropriate color sequence manually")
 	  }
 	}
@@ -1066,7 +1066,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	#if only single values are provided
 	if (length(lwd.obs)==1){lwd.obs=rep(lwd.obs,nsets)}
 	if (length(lty.obs)==1){lty.obs=rep(lty.obs,nsets)}
-	if (length(col.obs)==1){col.obs=rep(col.obs,nsets)}
+	if (length(col.line)==1){col.line=rep(col.line,nsets)}
 	if (length(col.fill)==1){col.fill=rep(col.fill,nsets)}
 	
 
@@ -1084,16 +1084,16 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	  
 	  for (i in 1:nsets)
 	  {
-	    lines(plotyears,PrDens[,i],col=col.obs[i],lty=lty.obs[i],lwd=lwd.obs[i])
+	    lines(plotyears,PrDens[,i],col=col.line[i],lty=lty.obs[i],lwd=lwd.obs[i])
 	  }
 	  
 	  if (legend)
 	  {
 	    if (is.null(legend.arg))
 	    {
-	      legend("topleft",legend=names(x$spds),col=col.obs,lty=lty.obs,lwd=lwd.obs)
+	      legend("topleft",legend=names(x$spds),col=col.line,lty=lty.obs,lwd=lwd.obs)
 	    } else {
-	      args.legend1 <- list("topleft", legend = names(x$spds),col=col.obs,lty=lty.obs,lwd=lwd.obs)
+	      args.legend1 <- list("topleft", legend = names(x$spds),col=col.line,lty=lty.obs,lwd=lwd.obs)
 	      args.legend1[names(legend.arg)] <- legend.arg
 	      do.call("legend", args.legend1)
 	    }
@@ -1116,7 +1116,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	  
 	  for (i in 2:(nsets+1))
 	  {
-	    polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs[i-1],border=col.obs[i-1],lty=lty.obs[i-1])
+	    polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs[i-1],border=col.line[i-1],lty=lty.obs[i-1])
 	  }
 	  if (legend)
 	  {
@@ -1185,7 +1185,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
       tmpYlim= YLIMs[[i]]
       axis(2,at=c(tmpYlim[1],median(tmpYlim),max(tmpYlim)),labels=round(c(min(ylim),median(ylim),max(ylim)),2),las=2,cex.axis=cex.axis)
       
-      polygon(c(plotyears,rev(plotyears)),c(PrDens[,i]+tmpYlim[1],rep(0,length(plotyears))+tmpYlim[1]),col=col.fill[i],lwd=lwd.obs[i],border=col.obs[i],lty=lty.obs[i])
+      polygon(c(plotyears,rev(plotyears)),c(PrDens[,i]+tmpYlim[1],rep(0,length(plotyears))+tmpYlim[1]),col=col.fill[i],lwd=lwd.obs[i],border=col.line[i],lty=lty.obs[i])
     }
     
     if (legend)
