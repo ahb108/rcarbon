@@ -184,8 +184,9 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param label Whether the ID of each date should be displayed. Default is TRUE.
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").
-#' @param col The primary fill color for the calibrated date distribution. 
-#' @param col2 The secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}.
+#' @param col.fill A vector of primary fill color for the calibrated date distribution. Default is 'grey50'.
+#' @param col.fill2 A vector of secondary secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}. Default is 'grey82'.
+#' @param col.line A vector of line color (ignored when \code{type} is set to \code{'d'}. Default is 1.
 #' @param lwd Line width (ignored when \code{type} is set to \code{'d'}). Default is 1.
 #' @param cex.lab The magnification to be used for x and y  labels relative to the current setting of cex. Default is adjusted to 1.
 #' @param cex.id The magnification to be used the date labels relative to the current setting of cex. Default is adjusted to 1.
@@ -207,8 +208,14 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @export  
 
 
-multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,xlim=NULL,xlab=NA,ylab=NA,col='grey50',col2='grey82',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2)
+multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,xlim=NULL,xlab=NA,ylab=NA,col.fill='grey50',col.fill2='grey82',col.line='black',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2)
 {
+
+	if(length(lwd)==1){lwd=rep(lwd,length(x))}
+	if(length(col.line)==1){col.line=rep(col.line,length(x))}
+	if(length(col.fill)==1){col.fill=rep(col.fill,length(x))}
+	if(length(col.fill2)==1){col.fill2=rep(col.fill2,length(x))}
+
 
 	if (!is.null(decreasing))
 	{
@@ -273,12 +280,12 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 			tmp = bse[[i]]
 			if (calendar=='BP')
 			{
-				apply(tmp,1,function(x,y,lwd){lines(c(x),c(y,y),lwd=lwd)},y=i,lwd=lwd)
+				apply(tmp,1,function(x,y,lwd,col){lines(c(x),c(y,y),lwd=lwd,col=col)},y=i,lwd=lwd[i],col=col.line[i])
 				if(label){text(x=medDates[i],y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
 			}
 			if (calendar=='BCAD')
 			{
-				apply(tmp,1,function(x,y,lwd){lines(BPtoBCAD(c(x)),c(y,y),lwd=lwd)},y=i,lwd=lwd)
+				apply(tmp,1,function(x,y,lwd,col){lines(BPtoBCAD(c(x)),c(y,y),lwd=lwd,col=col)},y=i,lwd=lwd[i],col=col.line[i])
 				if(label){text(x=BPtoBCAD(medDates[i]),y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
 			}
 		}
@@ -340,9 +347,9 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 
 
 			if (!HPD){
-				polygon(xvals,yvals, col=col, border=col)
+				polygon(xvals,yvals, col=col.fill[i], border=col.fill[i])
 			} else {
-				polygon(xvals,yvals, col=col2, border=col2)
+				polygon(xvals,yvals, col=col.fill2[i], border=col.fill2[i])
 				hdres <- hpdi(x,credMass=credMass)[[i]]
 				for (j in 1:nrow(hdres))
 				{
@@ -352,7 +359,7 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 					} else {
 						index <- which(xvals%in%hdres[j,1]:hdres[j,2])
 					}
-					polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],min(tmpYlim),min(tmpYlim)), col=col, border=col)
+					polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],min(tmpYlim),min(tmpYlim)), col=col.fill[i], border=col.fill[i])
 				}
 			}
 
