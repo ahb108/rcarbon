@@ -6,9 +6,9 @@
 \usage{
 multiplot(x, type = "d", calendar = "BP", HPD = FALSE,
   credMass = 0.95, decreasing = NULL, label = TRUE, xlim = NULL,
-  xlab = NA, ylab = NA, col = "grey50", col2 = "grey82", lwd = 1,
-  cex.id = 1, cex.lab = 1, cex.axis = 1, ydisp = FALSE,
-  gapFactor = 0.2)
+  xlab = NA, ylab = NA, col.fill = "grey50", col.fill2 = "grey82",
+  col.line = "black", lwd = 1, cex.id = 1, cex.lab = 1,
+  cex.axis = 1, ydisp = FALSE, gapFactor = 0.2)
 }
 \arguments{
 \item{x}{A CalDates class object with length > 1.}
@@ -29,9 +29,11 @@ multiplot(x, type = "d", calendar = "BP", HPD = FALSE,
 
 \item{xlab}{(optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").}
 
-\item{col}{The primary fill color for the calibrated date distribution.}
+\item{col.fill}{A vector of primary fill color for the calibrated date distribution. Default is 'grey50'.}
 
-\item{col2}{The secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}.}
+\item{col.fill2}{A vector of secondary secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}. Default is 'grey82'.}
+
+\item{col.line}{A vector of line color (ignored when \code{type} is set to \code{'d'}. Default is 1.}
 
 \item{lwd}{Line width (ignored when \code{type} is set to \code{'d'}). Default is 1.}
 

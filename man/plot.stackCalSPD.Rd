@@ -7,9 +7,9 @@
 plot.stackCalSPD(x, type = "stacked", calendar = "BP",
   spdnormalised = FALSE, rescale = FALSE, runm = NA, xlim = NA,
   ylim = NA, xaxt = "s", yaxt = "s", gapFactor = 0.2,
-  col.fill = NA, col.obs = NA, lwd.obs = NA, lty.obs = NA,
+  col.fill = NA, col.obs = NA, lwd.obs = 1, lty.obs = 1,
   cex.lab = 1, cex.axis = cex.lab, legend = TRUE,
-  legend.arg = NULL, ylab = NA)
+  legend.arg = NULL, ylab = NA, ymargin = 1.1)
 }
 \arguments{
 \item{type}{How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}.}
@@ -43,15 +43,18 @@ plot.stackCalSPD(x, type = "stacked", calendar = "BP",
 \item{legend}{Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.}
 }
 \description{
-Visualises multiple SPDs organised as \code{stackCalSPD} object.
+Visualises multiple SPDs grouped as a \code{stackCalSPD} object.
 }
 \examples{
 \dontrun{
 data(emedyd)
+emedyd = subset(emedyd,Region==1)
 x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
 bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
 res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
 plot(res,type='stacked')
+plot(res,type='lines')
+plot(res,type='proportion')
 plot(res,type='multipanel')
 }
 }
