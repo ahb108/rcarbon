@@ -172,6 +172,248 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     }
 }
 
+#' @title Plot multiple dates
+#' 
+#' @description Plot multiple radiocarbon dates.
+#' @param x A CalDates class object with length > 1.
+#' @param type Whether the calibrated dates are displayed as distributions (\code{'d'}) or as horizontal bars (\code{'b'}) spanning the HPD interval. Default is \code{'d'}.
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
+#' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95.
+#' @param decreasing Whether dates should be plotted with decreasing order of median calibrated date (i.e. old to new; TRUE) or increasing order (i.e. new to old; FALSE). If set to NULL the dates plotted in the supplied order. Default is NULL 
+#' @param label Whether the ID of each date should be displayed. Default is TRUE.
+#' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
+#' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").
+#' @param col.fill A vector of primary fill color for the calibrated date distribution. Default is 'grey50'.
+#' @param col.fill2 A vector of secondary secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}. Default is 'grey82'.
+#' @param col.line A vector of line color (ignored when \code{type} is set to \code{'d'}. Default is 1.
+#' @param lwd Line width (ignored when \code{type} is set to \code{'d'}). Default is 1.
+#' @param cex.lab The magnification to be used for x and y  labels relative to the current setting of cex. Default is adjusted to 1.
+#' @param cex.id The magnification to be used the date labels relative to the current setting of cex. Default is adjusted to 1.
+#' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.
+#' @param ydisp Whether the y axis should be displayed. Ignored when \code{type} is set to \cod{'b'}. Default is FALSE
+#' @param gapFactor Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of individual y-axis ranges. Default is 0.2.
+#' @seealso \code{\link{calibrate}}
+#'
+#' @examples
+#' data("emedyd")
+#' tellaswad = subset(emedyd,SiteName=='Tell Aswad')
+#' x = calibrate(tellaswad$CRA,tellaswad$Error,ids=tellaswad$LabID)
+#' multiplot(x,HPD=TRUE,decreasing=TRUE,label=FALSE,gapFactor = 0.1)
+#' multiplot(x,type='b',calendar='BCAD',cex.id = 0.5,lwd=2,gapFactor = 0.5)
+#' @import stats
+#' @import grDevices
+#' @import graphics
+#' @import utils
+#' @export  
+
+
+multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,xlim=NULL,xlab=NA,ylab=NA,col.fill='grey50',col.fill2='grey82',col.line='black',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2)
+{
+
+	if(length(lwd)==1){lwd=rep(lwd,length(x))}
+	if(length(col.line)==1){col.line=rep(col.line,length(x))}
+	if(length(col.fill)==1){col.fill=rep(col.fill,length(x))}
+	if(length(col.fill2)==1){col.fill2=rep(col.fill2,length(x))}
+
+
+	if (!is.null(decreasing))
+	{
+		x = x[order(medCal(x),decreasing=decreasing)]
+	}
+
+	medDates = medCal(x)
+
+
+	calendars <- c("BP","BCAD")
+	if (!calendar %in% calendars){
+		stop("The calendar you have chosen is not currently an option.")
+	}        
+
+
+	# Estimate general xlim
+	if (is.null(xlim))
+	{
+		if(anyNA(x$grids))
+		{
+			tmp = apply(x$calmatrix,1,sum)
+			st = as.numeric(names(tmp[which(tmp>0)[1]-1]))
+			en = as.numeric(names(tmp[which(tmp>0)[length(which(tmp>0))]+1]))
+		} else {
+			st = max(unlist(lapply(x$grids,function(x){max(x$calBP)})))
+			en = min(unlist(lapply(x$grids,function(x){min(x$calBP)})))
+		}
+		edge = 0.1*abs(st-en)
+		xlim = c(st+edge,en-edge)
+	}
+
+	yearsBP = xlim[1]:xlim[2]
+
+
+
+	if (calendar=="BP"){
+		plotyears <- yearsBP
+		xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
+		if (is.na(xlab)){ xlabel <- "Years cal BP" } else { xlabel <- xlab } 
+	} else if (calendar=="BCAD"){
+		plotyears <- BPtoBCAD(yearsBP)
+		xlim <- BPtoBCAD(xlim)
+		xvals <- c(plotyears[1],plotyears,plotyears[length(plotyears)], plotyears[1])
+		if (is.na(xlab)){ 
+			xlabel <- "Years BC/AD"
+			if (all(range(plotyears)<0)) {xlabel <- "Years BC"}
+			if (all(range(plotyears)>0)) {xlabel <- "Years AD"}
+		} else { xlabel <- xlab }       
+	} else {
+		stop("Unknown calendar type")
+	}
+
+
+
+	# Plot 
+	if (type=='b')
+	{
+		bse = hpdi(x,credMass=credMass)
+		plot(0,0,xlim=xlim,ylim=c(0,length(bse)+1),axes=F,xlab=xlabel,ylab="",type='n')
+		for (i in 1:length(bse))
+		{
+			tmp = bse[[i]]
+			if (calendar=='BP')
+			{
+				apply(tmp,1,function(x,y,lwd,col){lines(c(x),c(y,y),lwd=lwd,col=col)},y=i,lwd=lwd[i],col=col.line[i])
+				if(label){text(x=medDates[i],y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
+			}
+			if (calendar=='BCAD')
+			{
+				apply(tmp,1,function(x,y,lwd,col){lines(BPtoBCAD(c(x)),c(y,y),lwd=lwd,col=col)},y=i,lwd=lwd[i],col=col.line[i])
+				if(label){text(x=BPtoBCAD(medDates[i]),y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
+			}
+		}
+	}
+
+	if (type=='d')
+	{
+
+
+		if(anyNA(x$grids))
+		{
+			tmp = apply(x$calmatrix,1,max)
+			ylim = as.numeric(c(0,tmp[which.max(tmp)]))
+		} else {
+			ylim = c(0,max(unlist(lapply(x$grids,function(x){max(x$PrDens)}))))
+		}
+
+		
+
+		# max ylim: combine ylim giving as a space 1/7 of the original distance
+		gap = abs(diff(ylim))*gapFactor
+		# generate ylim sequences:
+		YLIMs = vector("list",length=length(x))
+		YLIMs[[1]] = ylim
+		for (i in 2:length(x))
+		{
+			YLIMs[[i]]=c(YLIMs[[i-1]][2]+gap,YLIMs[[i-1]][2]+gap+abs(diff(ylim)))
+		}
+
+
+		plot(0, 0, xlim=xlim, ylim=c(min(unlist(YLIMs)),max(unlist(YLIMs))+gap), type="n", ylab=ylab, xlab=xlabel, axes=F,cex.lab=cex.lab)
+
+
+
+		for (i in 1:length(x))
+		{
+			tmpYlim= YLIMs[[i]]
+			if (ydisp)
+			{axis(2,at=c(tmpYlim[1],median(tmpYlim),max(tmpYlim)),labels=round(c(min(ylim),median(ylim),max(ylim)),2),las=2,cex.axis=cex.axis)}
+
+			if(anyNA(x$grid))
+			{
+ 				years = as.numeric(rownames(x$calmatrix))
+				PrDens = x$calmatrix[,i]
+				ii = which(PrDens>0)[1]-1
+				jj = max(which(PrDens>0))+1
+				years = years[ii:jj]
+				PrDens = PrDens[ii:jj]
+			} else {
+				years=x$grid[[i]]$calBP
+				PrDens = x$grid[[i]]$PrDens
+			}
+
+			if (calendar=='BCAD'){years=BPtoBCAD(years)}
+
+			xvals = c(years,rev(years))
+			yvals = c(PrDens+tmpYlim[1],rep(0,length(years))+tmpYlim[1])
+
+
+
+			if (!HPD){
+				polygon(xvals,yvals, col=col.fill[i], border=col.fill[i])
+			} else {
+				polygon(xvals,yvals, col=col.fill2[i], border=col.fill2[i])
+				hdres <- hpdi(x,credMass=credMass)[[i]]
+				for (j in 1:nrow(hdres))
+				{
+					if (calendar=='BCAD')
+					{
+						index <- which(xvals%in%BPtoBCAD(hdres[j,1]:hdres[j,2]))
+					} else {
+						index <- which(xvals%in%hdres[j,1]:hdres[j,2])
+					}
+					polygon(c(xvals[index],xvals[index[length(index)]],xvals[index[1]]),c(yvals[index],min(tmpYlim),min(tmpYlim)), col=col.fill[i], border=col.fill[i])
+				}
+			}
+
+
+			if (label)
+			{
+				xx = medDates[i]
+				if (calendar=='BCAD'){xx = BPtoBCAD(xx)}
+				text(x=xx,y=max(yvals)+gap/2,labels=x$metadata$DateID[i],cex=cex.id)
+			}
+
+		}
+
+	}
+
+
+	# draw x-axis
+	if (calendar=="BP"){
+		rr <- range(pretty(plotyears))    
+		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01,cex.axis=cex.axis)
+		axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)),cex.axis=cex.axis)
+	} else if (calendar=="BCAD"){
+		yy <-  plotyears
+		rr <- range(pretty(yy))    
+		prettyTicks <- seq(rr[1],rr[2],100)
+		prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+		axis(side=1,at=prettyTicks, labels=NA,tck = -.01,cex.axis=cex.axis)
+		py <- pretty(yy)
+		pyShown <- py
+		if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+		py[which(py>1)] <-  py[which(py>1)]-1
+		axis(side=1,at=py,labels=abs(pyShown),cex.axis=cex.axis)
+	}
+
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #' @title Plot result of Monte-Carlo simulation of observed versus modelled SPDs
@@ -702,6 +944,283 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 
 
 
+#' @title Plot a stack of SPDs
+#'
+#' @description Visualises multiple SPDs grouped as a \code{stackCalSPD} object.
+#' 
+#' @param x A \code{stackCalSPD} class object. Result of \code{\link{stackspd}} function.
+#' @param type How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}. 
+#' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
+#' @param spdnormalised A logical variable indicating whether the total probability mass of the SPDs are normalised to sum to unity. Default is FALSE. 
+#' @param rescale  A logical variable indicating whether the SPDs should be rescaled to range 0 to 1. Default is FALSE.
+#' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
+#' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
+#' @param ylim the y limits of the plot.
+#' @param xaxt Whether the x-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
+#' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
+#' @param gapFactor Defines spacing between SPDs as proportion of the y-axis range for multipanel plots. Default is 0.2.
+#' @param col.fill Vector of fill color for the observed SPDs. The default color scheme is based on the Dark2 pallette of RColorBrewer package.
+#' @param col.line Line colour for the observed SPDs.The default color scheme is based on the Dark2 palette of RColorBrewer package.
+#' @param lwd.obs Line width for the observed SPDs. Default is 1.
+#' @param lty.obs Line type for the observed SPDs. Default is 1.
+#' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.
+#' @param legend.arg list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.
+#' @references 
+#' Erich Neuwirth (2014). RColorBrewer: ColorBrewer Palettes. R package version 1.1-2. \url{https://CRAN.R-project.org/package=RColorBrewer}.
+#' @examples
+#' \dontrun{
+#'data(emedyd)
+#'emedyd = subset(emedyd,Region==1)
+#'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
+#'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
+#'res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
+#'plot(res,type='stacked')
+#'plot(res,type='lines')
+#'plot(res,type='proportion')
+#'plot(res,type='multipanel')
+#'}
+#' @export
+
+plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.line=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA,ymargin=1.1)
+{
+  # Based on Dark2 of RcolorBrewer
+  colpal=c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666")
+  
+
+	#issue error messages
+	if (!'stackCalSPD'%in%class(x))
+	{
+	 stop("The argument x should be a 'stackCalSPD' class object")
+	}
+
+	if (!type%in%c('multipanel','lines','stacked','proportion'))
+	{
+	 stop("The argument 'type' should be one between 'multipanel', 'lines', 'stacked'  or 'proportion'.")
+	}
+  
+  # Calendar Setting
+  if (!calendar %in% c("BP","BCAD")){
+    stop("The calendar you have chosen is not currently an option.")
+  }
+
+  if (calendar=="BP"){
+    plotyears <- x$metadata$timeRange[1]:x$metadata$timeRange[2]
+    xlabel <- "Years cal BP"
+    if (any(is.na(xlim))){ xlim <- c(max(plotyears),min(plotyears)) }
+  } else if (calendar=="BCAD"){
+    plotyears <- BPtoBCAD(x$metadata$timeRange[1]:x$metadata$timeRange[2])
+    xlabel <- "Years BC/AD"
+    if (all(range(plotyears)<0)){xlabel <- "Years BC"}
+    if (all(range(plotyears)>0)){xlabel <- "Years AD"}
+    if (any(is.na(xlim))){ xlim <- c(min(plotyears),max(plotyears)) }
+  } else {
+    stop("Unknown calendar type")
+  }
+  if (xaxt=='n'){ xlabel <- "" }
+  if (yaxt=='n'){ ylabel <- "" } else { ylabel <- ylab }
+
+  #pre-processing (create a single matrix for plotting)
+  nsets = length(x$spds)
+  if (nsets==1 & type=='multipanel') {type='stacked'}
+  PrDens = matrix(NA,ncol=nsets,nrow=length(plotyears))
+	
+	for (i in 1:nsets)
+	{
+	  PrDens[,i]=x$spds[[i]][[2]][[2]]
+	  if (!is.na(runm)){ PrDens[,i] <- runMean(PrDens[,i], runm, edge="fill") }
+	}
+	
+	if (spdnormalised) {PrDens=apply(PrDens,2,function(x){x/sum(x)})}
+	if (rescale){PrDens = apply(PrDens,2,reScale)}
+	
+	#Assign Colours and Line Types
+	if (any(is.na(col.fill)))
+	{
+	  if (nsets<=8)
+	  {
+	    col.fill=colpal[1:nsets]
+	  }
+	  if (nsets > 8)
+	  {
+	    col.fill=sample(colors(),size=nsets,replace=TRUE)
+	  warning("Color sequence randomised due to a large number of SPDs (>8). Consider selecting an appropriate color sequence manually")
+	  }
+	}
+	
+	if (any(is.na(col.line)))
+	{
+	  if (nsets<=8)
+	  {
+	    col.line=colpal[1:nsets]
+	  }
+	  if (nsets > 8)
+	  {
+	    col.line=sample(colors(),size=nsets,replace=TRUE)
+	  warning("Color sequence randomised due to a large number of SPDs (>8). Consider selecting an appropriate color sequence manually")
+	  }
+	}
+	
+	if (any(is.na(lwd.obs))){lwd.obs=rep(1,nsets)}
+	if (any(is.na(lty.obs))){lty.obs=rep(1,nsets)}
+
+	#if only single values are provided
+	if (length(lwd.obs)==1){lwd.obs=rep(lwd.obs,nsets)}
+	if (length(lty.obs)==1){lty.obs=rep(lty.obs,nsets)}
+	if (length(col.line)==1){col.line=rep(col.line,nsets)}
+	if (length(col.fill)==1){col.fill=rep(col.fill,nsets)}
+	
+
+
+
+
+	#Plot
+
+	#lines 
+	if (type=='lines')
+	{
+	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*ymargin) }
+	  if (is.na(ylab)){ylab='Summed Probability'}
+	  plot(0, 0, xlim=xlim, ylim=ylim, type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
+	  
+	  for (i in 1:nsets)
+	  {
+	    lines(plotyears,PrDens[,i],col=col.line[i],lty=lty.obs[i],lwd=lwd.obs[i])
+	  }
+	  
+	  if (legend)
+	  {
+	    if (is.null(legend.arg))
+	    {
+	      legend("topleft",legend=names(x$spds),col=col.line,lty=lty.obs,lwd=lwd.obs)
+	    } else {
+	      args.legend1 <- list("topleft", legend = names(x$spds),col=col.line,lty=lty.obs,lwd=lwd.obs)
+	      args.legend1[names(legend.arg)] <- legend.arg
+	      do.call("legend", args.legend1)
+	    }
+	  }
+	}
+
+	#stacked
+	if (type=='stacked')
+	{
+		if (nsets>1)
+		{	  
+			PrDens = t(apply(PrDens,1,cumsum))
+		}
+		PrDens = cbind(0,PrDens)
+	  
+	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*ymargin) }
+	  if (is.na(ylab)){ylab='Summed Probability'}
+	  
+	  plot(0, 0, xlim=xlim, ylim=ylim, type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
+	  
+	  for (i in 2:(nsets+1))
+	  {
+	    polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs[i-1],border=col.line[i-1],lty=lty.obs[i-1])
+	  }
+	  if (legend)
+	  {
+	    if (is.null(legend.arg))
+	    {
+	      legend("topleft",legend=names(x$spds),fill=col.fill)
+	    } else {
+	      args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+	      args.legend1[names(legend.arg)] <- legend.arg
+	      do.call("legend", args.legend1)
+	    }
+	  }
+	}
+
+	#proportion
+	if (type=='proportion')
+	{
+
+		PrDens=prop.table(PrDens,1)
+		if (nsets>1)
+		{
+			PrDens = t(apply(PrDens,1,cumsum))
+		}
+		PrDens = cbind(0,PrDens)
+		if (is.na(ylab)){ylab='Relative Proportion'}
+		plot(0, 0, xlim=xlim, ylim=c(0,1), type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
+
+		for (i in 2:(nsets+1))
+		{
+			polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs[i-1],lty=lty.obs[i-1],border=col.fill[i-1])
+		}
+		if (legend)
+		{
+			if (is.null(legend.arg))
+			{
+				legend("topleft",legend=names(x$spds),fill=col.fill)
+			} else {
+				args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+				args.legend1[names(legend.arg)] <- legend.arg
+				do.call("legend", args.legend1)
+			}
+		}
+	}
+
+	#multipanel
+  if (type=='multipanel')
+  {
+    # individual ylim
+    if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*ymargin) }
+    if (is.na(ylab)){ylab='Summed Probability'}
+    
+    # max ylim: combine ylim giving as a space 1/7 of the original distance
+    gap = abs(diff(ylim))*gapFactor
+    # generate ylim sequences:
+    YLIMs = vector("list",length=nsets)
+    YLIMs[[1]] = ylim
+    for (i in 2:nsets)
+    {
+      YLIMs[[i]]=c(YLIMs[[i-1]][2]+gap,YLIMs[[i-1]][2]+gap+abs(diff(ylim)))
+    }
+    
+    plot(0, 0, xlim=xlim, ylim=c(min(unlist(YLIMs)),max(unlist(YLIMs))+gap), type="l", ylab=ylab, xlab=xlabel, axes=F,cex.lab=cex.lab)
+    
+    for (i in 1:nsets)
+    {
+      tmpYlim= YLIMs[[i]]
+      axis(2,at=c(tmpYlim[1],median(tmpYlim),max(tmpYlim)),labels=round(c(min(ylim),median(ylim),max(ylim)),2),las=2,cex.axis=cex.axis)
+      
+      polygon(c(plotyears,rev(plotyears)),c(PrDens[,i]+tmpYlim[1],rep(0,length(plotyears))+tmpYlim[1]),col=col.fill[i],lwd=lwd.obs[i],border=col.line[i],lty=lty.obs[i])
+    }
+    
+    if (legend)
+    {
+      if (is.null(legend.arg))
+      {
+        legend("topleft",legend=names(x$spds),fill=col.fill)
+      } else {
+        args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+        args.legend1[names(args.legend)] <- args.legend
+        do.call("legend", args.legend1)
+      }
+    }
+    
+}
+
+
+	# draw x-axis
+	if (calendar=="BP" & xaxt!="n"){
+	  rr <- range(pretty(plotyears))    
+	  axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01,cex.axis=cex.axis)
+	  axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)),cex.axis=cex.axis)
+	} else if (calendar=="BCAD" & xaxt!="n"){
+	  yy <-  plotyears
+	  rr <- range(pretty(yy))    
+	  prettyTicks <- seq(rr[1],rr[2],+100)
+	  prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+	  axis(side=1,at=prettyTicks, labels=NA,tck = -.01,cex.axis=cex.axis)
+	  py <- pretty(yy)
+	  pyShown <- py
+	  if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
+	  py[which(py>1)] <-  py[which(py>1)]-1
+	  axis(side=1,at=py,labels=abs(pyShown),cex.axis=cex.axis)
+	}
+}
 
 #' @title Plot result of mark permutation test of SPDs
 #'
@@ -768,7 +1287,7 @@ plot.SpdPermTest <- function(x, focalm=1, type='spd', calendar="BP", xlim=NA, yl
 
 	if (any(is.na(ylim)))
 		{
-		       	ylim <- c(0, max(envelope[,2], obs$PrDens,na.rm=TRUE)*1.1) 
+		       	ylim <- c(0, max(envelope[,2], obs$PrDens,na.rm=TRUE)*ymargin) 
 			if (type=='roc') {ylim[1] <- min(c(envelope[,1],obs$PrDens),na.rm=TRUE)}
 		}
 
