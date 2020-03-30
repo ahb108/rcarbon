@@ -13,7 +13,7 @@ multiplot(x, type = "d", calendar = "BP", HPD = FALSE,
 \arguments{
 \item{x}{A CalDates class object with length > 1.}
 
-\item{type}{Whether the calibrated dates are displayed as distributions (\code{'d'}) or as horizzontal bars (\code{'b'}) spanning the HPD interal. Default is \code{'d'}.}
+\item{type}{Whether the calibrated dates are displayed as distributions (\code{'d'}) or as horizontal bars (\code{'b'}) spanning the HPD interval. Default is \code{'d'}.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
@@ -45,7 +45,7 @@ multiplot(x, type = "d", calendar = "BP", HPD = FALSE,
 
 \item{ydisp}{Whether the y axis should be displayed. Ignored when \code{type} is set to \cod{'b'}. Default is FALSE}
 
-\item{gapFactor}{Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of indivial y-axis ranges. Default is 0.2.}
+\item{gapFactor}{Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of individual y-axis ranges. Default is 0.2.}
 }
 \description{
 Plot multiple radiocarbon dates.

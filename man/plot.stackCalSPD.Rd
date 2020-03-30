@@ -36,7 +36,7 @@ plot.stackCalSPD(x, type = "stacked", calendar = "BP",
 
 \item{col.fill}{Vector of fill color for the observed SPDs. The default color scheme is based on the Dark2 pallette of RColorBrewer package.}
 
-\item{col.line}{Line colour for the observed SPDs.The default color scheme is based on the Dark2 pallette of RColorBrewer package.}
+\item{col.line}{Line colour for the observed SPDs.The default color scheme is based on the Dark2 palette of RColorBrewer package.}
 
 \item{lwd.obs}{Line width for the observed SPDs. Default is 1.}
 

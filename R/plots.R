@@ -176,7 +176,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' 
 #' @description Plot multiple radiocarbon dates.
 #' @param x A CalDates class object with length > 1.
-#' @param type Whether the calibrated dates are displayed as distributions (\code{'d'}) or as horizzontal bars (\code{'b'}) spanning the HPD interal. Default is \code{'d'}.
+#' @param type Whether the calibrated dates are displayed as distributions (\code{'d'}) or as horizontal bars (\code{'b'}) spanning the HPD interval. Default is \code{'d'}.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param HPD Logical value indicating whether intervals of higher posterior density should be displayed. Default is FALSE.
 #' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95.
@@ -192,7 +192,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param cex.id The magnification to be used the date labels relative to the current setting of cex. Default is adjusted to 1.
 #' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.
 #' @param ydisp Whether the y axis should be displayed. Ignored when \code{type} is set to \cod{'b'}. Default is FALSE
-#' @param gapFactor Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of indivial y-axis ranges. Default is 0.2.
+#' @param gapFactor Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of individual y-axis ranges. Default is 0.2.
 #' @seealso \code{\link{calibrate}}
 #'
 #' @examples
@@ -960,7 +960,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param yaxt Whether the y-axis tick marks should be displayed (\code{xaxt='s'}, default) or not (\code{xaxt='n'}).
 #' @param gapFactor Defines spacing between SPDs as proportion of the y-axis range for multipanel plots. Default is 0.2.
 #' @param col.fill Vector of fill color for the observed SPDs. The default color scheme is based on the Dark2 pallette of RColorBrewer package.
-#' @param col.line Line colour for the observed SPDs.The default color scheme is based on the Dark2 pallette of RColorBrewer package.
+#' @param col.line Line colour for the observed SPDs.The default color scheme is based on the Dark2 palette of RColorBrewer package.
 #' @param lwd.obs Line width for the observed SPDs. Default is 1.
 #' @param lty.obs Line type for the observed SPDs. Default is 1.
 #' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.
