@@ -45,7 +45,9 @@ Cheddadi, R., Palmisano, A., López-Sáez, J. A., Nourelbait, M., Zielhofer, C.,
 
 Crema, E.R., Bevan, A., Shennan, S., 2017. [Spatio-temporal approaches to archaeological radiocarbon dates](https://doi.org/10.1016/j.jas.2017.09.007). Journal of Archaeological Science 87, 1–9. doi:10.1016/j.jas.2017.09.007
 
-Crema, E.R. 2020 [Non-Stationarity and Local Spatial Analysis](https://doi.org/10.4324/9781351243858), In Gillings, M., Hacıgüzeller, P., Lock,G. (Eds.) Archaeological Spatial Analysis: A Methodological Guide, Taylor & Francis, London. 
+Crema, E.R. 2020 [Non-Stationarity and Local Spatial Analysis](https://doi.org/10.4324/9781351243858), In Gillings, M., Hacıgüzeller, P., Lock,G. (Eds.) Archaeological Spatial Analysis: A Methodological Guide, Taylor & Francis, London.
+
+Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
 
 de Groot, B., 2020. [The impact of population fluctuations on the spatial spread of Neolithic ceramic traditions in West Anatolia and South-East Europe.](https://doi.org/10.1016/j.jaa.2019.101121) Journal of Anthropological Archaeology 57, 101121. doi:10.1016/j.jaa.2019.101121
 
