@@ -35,6 +35,8 @@ Aubán, J.B., Jiménez-Puerto, J., Ruiz, P.E., Gordo, S.P., 2018. [C14 y poblami
 
 Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holocene fluctuations in human population demonstrate repeated links to food production and climate](https://doi.org/10.1073/pnas.1709190114). Proceedings of the National Academy of Sciences of the United States of America, 114 (49) E10524-E10531. doi:10.1073/pnas.1709190114  
 
+Bird, D., Freeman, J., Robinson, E., Maughan, G., Finley, J.B., Lambert, P.M., Kelly, R.L., 2020. [A first empirical analysis of population stability in North America using radiocarbon records](https://doi.org/10.1177/0959683620919975). The Holocene. 
+
 Broodbank, C., Lucarini, G. 2019. [The Dynamics of Mediterranean Africa, ca. 9600–1000 bc: An Interpretative Synthesis of Knowns and Unknowns](https://doi.org/10.1558/jma.40581), Journal of Mediterranean Archaeology, 32(2), 195-267.
 
 Broughton,J.M., Weitzel,E.M. 2018. [Population reconstructions for humans and megafauna suggest mixed causes for North American Pleistocene extinctions](https://doi.org/10.1038/s41467-018-07897-1).Nature Communications, 9, 5441. doi:10.1038/s41467-018-07897-1
