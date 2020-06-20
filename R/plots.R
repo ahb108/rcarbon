@@ -191,7 +191,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param cex.lab The magnification to be used for x and y  labels relative to the current setting of cex. Default is adjusted to 1.
 #' @param cex.id The magnification to be used the date labels relative to the current setting of cex. Default is adjusted to 1.
 #' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.
-#' @param ydisp Whether the y axis should be displayed. Ignored when \code{type} is set to \cod{'b'}. Default is FALSE
+#' @param ydisp Whether the y axis should be displayed. Ignored when \code{type} is set to \code{'b'}. Default is FALSE
 #' @param gapFactor Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of individual y-axis ranges. Default is 0.2.
 #' @seealso \code{\link{calibrate}}
 #'

@@ -43,7 +43,7 @@ multiplot(x, type = "d", calendar = "BP", HPD = FALSE,
 
 \item{cex.axis}{The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.}
 
-\item{ydisp}{Whether the y axis should be displayed. Ignored when \code{type} is set to \cod{'b'}. Default is FALSE}
+\item{ydisp}{Whether the y axis should be displayed. Ignored when \code{type} is set to \code{'b'}. Default is FALSE}
 
 \item{gapFactor}{Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of individual y-axis ranges. Default is 0.2.}
 }
