@@ -539,6 +539,19 @@ length.CalDates <- function(x,...)
   return(nrow(x$metadata))
 }
 
+#' @title Computes the highest posterior density interval (HPDI) for calibrated dates 
+#' 
+#' @param x A \code{CalDates} class object.
+#' @param credMass Interval probability mass
+#' 
+#' @return A list of matrices with HPDI ranges in cal BP
+#' @examples
+#' x <- calibrate(c(3050,2950),c(20,20))
+#' hpdi(x)
+#' @seealso \code{\link{calibrate}}
+#' @export
+
+
 hpdi <- function(x, credMass=0.95){
   
   cl <- class(x)

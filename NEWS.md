@@ -2,6 +2,7 @@
 * Bug fix : `F14C=TRUE` was producting an error message in `calibrate()` after refactoring in version 1.3.1. 
 * NEW: `stackspd()` creates a set of multiple SPDs as an object of class `stackCalSPD` with a dedicated plot function.
 * NEW: `multiplot()` function for displaying multiple calibrated dates.
+* NEW: `hpdi()` function for computing highest probability density intervals of calibrated dates.
 
 #  Version 1.3.1 (18 March 2020)
 * `binPrep()` now accepts alternative clustering algorithms
