@@ -35,6 +35,8 @@ Aubán, J.B., Jiménez-Puerto, J., Ruiz, P.E., Gordo, S.P., 2018. [C14 y poblami
 
 Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holocene fluctuations in human population demonstrate repeated links to food production and climate](https://doi.org/10.1073/pnas.1709190114). Proceedings of the National Academy of Sciences of the United States of America, 114 (49) E10524-E10531. doi:10.1073/pnas.1709190114  
 
+Bird, D., Freeman, J., Robinson, E., Maughan, G., Finley, J.B., Lambert, P.M., Kelly, R.L., 2020. [A first empirical analysis of population stability in North America using radiocarbon records](https://doi.org/10.1177/0959683620919975). The Holocene. 
+
 Broodbank, C., Lucarini, G. 2019. [The Dynamics of Mediterranean Africa, ca. 9600–1000 bc: An Interpretative Synthesis of Knowns and Unknowns](https://doi.org/10.1558/jma.40581), Journal of Mediterranean Archaeology, 32(2), 195-267.
 
 Broughton,J.M., Weitzel,E.M. 2018. [Population reconstructions for humans and megafauna suggest mixed causes for North American Pleistocene extinctions](https://doi.org/10.1038/s41467-018-07897-1).Nature Communications, 9, 5441. doi:10.1038/s41467-018-07897-1
@@ -45,7 +47,9 @@ Cheddadi, R., Palmisano, A., López-Sáez, J. A., Nourelbait, M., Zielhofer, C.,
 
 Crema, E.R., Bevan, A., Shennan, S., 2017. [Spatio-temporal approaches to archaeological radiocarbon dates](https://doi.org/10.1016/j.jas.2017.09.007). Journal of Archaeological Science 87, 1–9. doi:10.1016/j.jas.2017.09.007
 
-Crema, E.R. 2020 [Non-Stationarity and Local Spatial Analysis](https://doi.org/10.4324/9781351243858), In Gillings, M., Hacıgüzeller, P., Lock,G. (Eds.) Archaeological Spatial Analysis: A Methodological Guide, Taylor & Francis, London. 
+Crema, E.R. 2020 [Non-Stationarity and Local Spatial Analysis](https://doi.org/10.4324/9781351243858), In Gillings, M., Hacıgüzeller, P., Lock,G. (Eds.) Archaeological Spatial Analysis: A Methodological Guide, Taylor & Francis, London.
+
+Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
 
 de Groot, B., 2020. [The impact of population fluctuations on the spatial spread of Neolithic ceramic traditions in West Anatolia and South-East Europe.](https://doi.org/10.1016/j.jaa.2019.101121) Journal of Anthropological Archaeology 57, 101121. doi:10.1016/j.jaa.2019.101121
 
@@ -80,6 +84,8 @@ Nielsen, S.V., Persson, P., Solheim, S., 2019. [De-Neolithisation in southern No
 Palmisano, A., Bevan, A., Shennan, S. 2017. [Comparing archaeological proxies for long-term population patterns: An example from central Italy](https://doi.org/10.1016/j.jas.2017.10.001). Journal of Archaeological Science, 87, 59-72. doi:10.1016/j.jas.2017.10.001
 
 Palmisano, A., Woodbridge, J., Roberts, N., Bevan, A., Fyfe, R., Shennan, S., et al. 2019. [Holocene landscape dynamics and long-term population trends in the Levant.](https://doi.org/10.1177/0959683619826642) The Holocene, 0959683619826642. doi:10.1177/0959683619826642
+
+Porčić, M., 2020. [Observations on the origin and demography of the Vinča culture](https://doi.org/10.1016/j.quaint.2020.04.012). Quaternary International. 
 
 Riris, P. 2018 [Dates as data revisited: A statistical examination of the Peruvian preceramic radiocarbon record](https://doi.org/10.1016/j.jas.2018.06.008). Journal of Archaeological Science, 97, 67-76. doi:10.1016/j.jas.2018.06.008
 
