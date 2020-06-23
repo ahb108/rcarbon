@@ -61,6 +61,8 @@ Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Me
 
 Fyfe, R.M., Woodbridge, J., Palmisano, A., Bevan, A., Shennan, S., Burjachs, F., Legarra Herrero, B., García Puchol, O., Carrión, J.-S., Revelles, J., Roberts, C.N., 2019. [Prehistoric palaeodemographics and regional land cover change in eastern Iberia](https://doi.org/10.1177/0959683619826643). The Holocene 0959683619826643. doi:10.1177/0959683619826643
 
+Gil, A.F., Villalba, R., Franchetti, F.R., Otaola, C., Abbona, C.C., Peralta, E.A., Neme, G., 2020. [Between Foragers and Farmers: Climate Change and Human Strategies in Northwestern Patagonia](https://doi.org/10.3390/quat3020017). Quaternary 3, 17. 
+
 Gjesfjeld, E., Etnier, M.A., Takase, K., Brown, W.A., Fitzhugh, B., 2020. [Biogeography and adaptation in the Kuril Islands, Northeast Asia.](https://doi.org/10.1080/00438243.2019.1715248) World Archaeology, 1–25. 
 
 Gjesfjeld, E., Silvestro, D., Chang, J., Koch, B., Foster, J.G., Alfaro, M.E., 2020. [A quantitative workflow for modeling diversification in material culture.](https://doi.org/10.1371/journal.pone.0227579) PLOS ONE 15, e0227579. 
