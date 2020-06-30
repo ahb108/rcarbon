@@ -138,6 +138,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
   }
   b <- NULL # Added to solve No Visible Binding for Global Variable NOTE
   sublist <- foreach (b=1:length(x)) %dofun% {
+    if (verbose & ncores==1) {setTxtProgressBar(pb, b)}
     calcurve <- cclist[[calCurves[b]]]
     calBP <- seq(max(calcurve),min(calcurve),-1)
     age <- x[b] - resOffsets[b]
