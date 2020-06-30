@@ -717,3 +717,66 @@ which.CalDates=function(x,s,p)
 	return(which(index))
 }
 
+#' @title Combine multiple CalDates Class Objects into one.
+#'
+#' @param x \code{CalDates} class objects to be concatenated.
+#' @param fixIDs logical. If set to TRUE, each date is given a new ID based on sequential integer. Default is FALSE
+#' @return An object of class CalDates   
+#' @examples  
+#' x1 = calibrate(c(2000,3400),c(20,20),ids=1:2)
+#' x2 = calibrate(c(4000,3000),c(30,30),calCurves=c('intcal13','marine13'),resOffsets=c(0,30),resErrors=c(0,20),ids=3:4)
+#' mcurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=300,resErrors=20)
+#' x3 = calibrate(5300,20,calCurves=mcurve,ids=5)
+#' x = combine(x1,x2,x3)
+#' ## x$metadata
+#' @seealso \code{\link{calibrate}}
+#' @export
+combine = function(...,fixIDs=FALSE)
+{
+	x=c(...)
+	n = length(x)/3
+	metadata.index=seq(from=1,length.out=n,by=3)
+    grids.index = seq(from=2,length.out=n,by=3)
+	calmatrices.index = seq(from=3,length.out=n,by=3)
+	
+	if (sum(is.na(x[calmatrices.index]))!=n&(sum(is.na(x[grids.index]))!=n))
+	{
+		stop('CalDates class object can be combined only if all elements were created with calMatrix=TRUE or calMatrix=FALSE')
+	}
+	
+	if (all(!is.na(x[calmatrices.index])))
+	{
+		cmat=TRUE
+	} else {cmat=FALSE}
+	
+	metadata=x[[metadata.index[1]]]
+	grids=x[[grids.index[1]]]
+	calmatrix=x[[calmatrices.index[1]]]
+	
+	for (i in 2:n)
+	{
+		metadata = rbind.data.frame(metadata,x[[metadata.index[i]]])
+		if (cmat)
+		{
+			grids=NA
+			calmatrix=cbind(calmatrix,x[[calmatrices.index[i]]])
+		}
+		
+		if (!cmat)
+		{
+			calmatrix=NA
+			grids = c(grids,x[[grids.index[i]]])
+		}		
+	}
+	
+	res=list(metadata=metadata,grids=grids,calmatrix=calmatrix)
+	class(res)=c('CalDates','list')
+	if (fixIDs){metadata$DateID=1:nrow(metadata)}
+	if (any(duplicated(metadata$DateID)))
+	{
+	  stop('Date IDs must be unique. Consider setting ids explicitly when using calibrate() or set fixIDs to TRUE')
+	}
+	return(res)
+}
+
+
