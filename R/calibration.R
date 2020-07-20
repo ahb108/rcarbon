@@ -52,6 +52,11 @@ calibrate <- function (x, ...) {
 #' @export
 calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
   
+  if (ncores>1&!requireNamespace('doSNOW',quietly = TRUE)){
+    warning("the doSNOW package is required for multi-core processing; ncores has been set to 1")
+    ncores=1
+  }
+  
   # age and error checks
   if (length(x) != length(errors)){
     stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
@@ -271,9 +276,6 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #' uncalibrate(c(3050,2950))
 #' @import stats 
 #' @import utils 
-#' @import doSNOW 
-#' @import foreach 
-#' @import iterators 
 #' @export
 
 uncalibrate <- function (x, ...) {

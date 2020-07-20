@@ -82,7 +82,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
    
 
     if (fitonly == TRUE) {nsim <- 1}
-    if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
+    if (ncores>1&!requireNamespace("doSNOW", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
     } else {
@@ -804,6 +804,15 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 
+  #######################
+  #### Load Packages ####
+  #######################
+  
+  if (ncores>1&!requireNamespace('doSNOW',quietly = TRUE)){
+    warning("the doSNOW package is required for multi-core processing; ncores has been set to 1")
+    ncores=1
+  }
+  
 	##################################
 	#### Initial warning messages ####
 	##################################
