@@ -4,12 +4,30 @@
 \alias{modelTest}
 \title{Monte-Carlo simulation test for SPDs}
 \usage{
-modelTest(x, errors, nsim, bins = NA, runm = NA, timeRange = NA,
-  backsight = 50, changexpr = expression((t1/t0)^(1/d) - 1),
-  gridclip = TRUE, raw = FALSE, model = c("exponential"),
-  method = c("uncalsample"), predgrid = NA, normalised = NA,
-  datenormalised = NA, spdnormalised = FALSE, ncores = 1,
-  fitonly = FALSE, a = 0, b = 0, edgeSize = 500, verbose = TRUE)
+modelTest(
+  x,
+  errors,
+  nsim,
+  bins = NA,
+  runm = NA,
+  timeRange = NA,
+  backsight = 50,
+  changexpr = expression((t1/t0)^(1/d) - 1),
+  gridclip = TRUE,
+  raw = FALSE,
+  model = c("exponential"),
+  method = c("uncalsample"),
+  predgrid = NA,
+  normalised = NA,
+  datenormalised = NA,
+  spdnormalised = FALSE,
+  ncores = 1,
+  fitonly = FALSE,
+  a = 0,
+  b = 0,
+  edgeSize = 500,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{A \code{CalDates} object containing calibrated radiocarbon ages}

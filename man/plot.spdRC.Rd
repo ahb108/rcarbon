@@ -4,8 +4,16 @@
 \alias{plot.spdRC}
 \title{Plot \code{spdRC} class objects}
 \usage{
-\method{plot}{spdRC}(x, calendar = "BP", col.obs = "black",
-  lwd.obs = 0.5, xaxs = "i", yaxs = "i", xlim = NA, ...)
+\method{plot}{spdRC}(
+  x,
+  calendar = "BP",
+  col.obs = "black",
+  lwd.obs = 0.5,
+  xaxs = "i",
+  yaxs = "i",
+  xlim = NA,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{spdRC} class object containing geometric growth rates.}

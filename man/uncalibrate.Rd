@@ -8,11 +8,16 @@
 \usage{
 uncalibrate(x, ...)
 
-\method{uncalibrate}{default}(x, CRAerrors = 0, roundyear = TRUE,
-  calCurves = "intcal13", ...)
+\method{uncalibrate}{default}(x, CRAerrors = 0, roundyear = TRUE, calCurves = "intcal13", ...)
 
-\method{uncalibrate}{CalGrid}(x, calCurves = "intcal13", eps = 1e-05,
-  compact = TRUE, verbose = TRUE, ...)
+\method{uncalibrate}{CalGrid}(
+  x,
+  calCurves = "intcal13",
+  eps = 1e-05,
+  compact = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{Either a vector of calibrated radiocarbon ages or an object of class CalGrid.}

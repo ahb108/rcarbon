@@ -4,10 +4,20 @@
 \alias{plot.CalGrid}
 \title{Plot a summed probability distribution (from a CalGrid object)}
 \usage{
-\method{plot}{CalGrid}(x, runm = NA, calendar = "BP",
-  fill.p = "grey50", border.p = NA, xlim = NA, ylim = NA,
-  cex.lab = 0.75, cex.axis = cex.lab, mar = c(4, 4, 1, 3),
-  add = FALSE, ...)
+\method{plot}{CalGrid}(
+  x,
+  runm = NA,
+  calendar = "BP",
+  fill.p = "grey50",
+  border.p = NA,
+  xlim = NA,
+  ylim = NA,
+  cex.lab = 0.75,
+  cex.axis = cex.lab,
+  mar = c(4, 4, 1, 3),
+  add = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{A "CalGrid" class object of summed probabilities per calendar year BP.}
@@ -41,7 +51,7 @@ Plot a summed radiocarbon probability distribution. This is a basic function for
 data(euroevol)
 mycaldates <- calibrate(euroevol[1:10,"C14Age"], euroevol[1:10,"C14SD"], normalised=FALSE)
 myspd <- spd(mycaldates, timeRange=c(8000,2000))
-plot(myspd) #ordinary plot using \\code{plot.CalSPD}
+plot(myspd) #ordinary plot using \code{plot.CalSPD}
 plot(myspd$grid) #working plot using the internal CalGrid object
 }
 \seealso{

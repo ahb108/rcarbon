@@ -4,11 +4,27 @@
 \alias{multiplot}
 \title{Plot multiple dates}
 \usage{
-multiplot(x, type = "d", calendar = "BP", HPD = FALSE,
-  credMass = 0.95, decreasing = NULL, label = TRUE, xlim = NULL,
-  xlab = NA, ylab = NA, col.fill = "grey50", col.fill2 = "grey82",
-  col.line = "black", lwd = 1, cex.id = 1, cex.lab = 1,
-  cex.axis = 1, ydisp = FALSE, gapFactor = 0.2)
+multiplot(
+  x,
+  type = "d",
+  calendar = "BP",
+  HPD = FALSE,
+  credMass = 0.95,
+  decreasing = NULL,
+  label = TRUE,
+  xlim = NULL,
+  xlab = NA,
+  ylab = NA,
+  col.fill = "grey50",
+  col.fill2 = "grey82",
+  col.line = "black",
+  lwd = 1,
+  cex.id = 1,
+  cex.lab = 1,
+  cex.axis = 1,
+  ydisp = FALSE,
+  gapFactor = 0.2
+)
 }
 \arguments{
 \item{x}{A CalDates class object with length > 1.}

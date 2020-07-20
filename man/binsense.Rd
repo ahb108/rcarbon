@@ -4,8 +4,18 @@
 \alias{binsense}
 \title{Bin sensitivity Plot}
 \usage{
-binsense(x, y, h, timeRange, calendar = "BP", binning = "CRA",
-  raw = F, verbose = T, legend = T, ...)
+binsense(
+  x,
+  y,
+  h,
+  timeRange,
+  calendar = "BP",
+  binning = "CRA",
+  raw = F,
+  verbose = T,
+  legend = T,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{CalDates} class object containing calibrated radiocarbon dates.}
