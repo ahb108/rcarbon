@@ -39,9 +39,9 @@
 #' plot(x2)
 #' @import stats 
 #' @import utils 
+#' @import doSNOW 
 #' @import foreach 
-#' @import parallel  
-#' @import doParallel 
+#' @import iterators 
 #' @export
 
 calibrate <- function (x, ...) {
@@ -51,11 +51,6 @@ calibrate <- function (x, ...) {
 #' @rdname calibrate
 #' @export
 calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal13', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
-  
-  if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
-    warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
-    ncores=1
-  }	
   
   # age and error checks
   if (length(x) != length(errors)){
@@ -122,23 +117,26 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
   if (length(resErrors)==1){ resErrors <- rep(resErrors,length(x)) }
   names(sublist) <- ids
   names(reslist) <- c("metadata","grids")
-  if (length(x)>1 & verbose){
+  opts = NULL
+  if (verbose){
     print("Calibrating radiocarbon ages...")
     flush.console()
-    pb <- txtProgressBar(min=1, max=length(x), style=3)
+    if (ncores>1){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
+    pb <- txtProgressBar(min=0, max=length(x), style=3)
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
   }
   # calibration
   `%dofun%` <- `%do%`
   if (ncores>1){
     # parallellised
     cl <- makeCluster(ncores)
-    registerDoParallel(cl)
-    if (verbose){ print(paste("Running in parallel (standard calibration only) on ",getDoParWorkers()," workers...",sep=""))}
+    registerDoSNOW(cl)
     `%dofun%` <- `%dopar%`
   }
   b <- NULL # Added to solve No Visible Binding for Global Variable NOTE
-  sublist <- foreach (b=1:length(x)) %dofun% {
-    if (length(x)>1 & verbose & ncores==1) {setTxtProgressBar(pb, b)}
+  sublist <- foreach (b=1:length(x),.options.snow = opts) %dofun% {
+    if (verbose & ncores==1) {setTxtProgressBar(pb, b)}
     calcurve <- cclist[[calCurves[b]]]
     calBP <- seq(max(calcurve),min(calcurve),-1)
     age <- x[b] - resOffsets[b]
@@ -273,9 +271,9 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal13', timeRange=c(5
 #' uncalibrate(c(3050,2950))
 #' @import stats 
 #' @import utils 
+#' @import doSNOW 
 #' @import foreach 
-#' @import parallel  
-#' @import doParallel 
+#' @import iterators 
 #' @export
 
 uncalibrate <- function (x, ...) {
