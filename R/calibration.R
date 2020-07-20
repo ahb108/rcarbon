@@ -56,7 +56,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     warning("the doSNOW package is required for multi-core processing; ncores has been set to 1")
     ncores=1
   }
-  
+
   # age and error checks
   if (length(x) != length(errors)){
     stop("Ages and errors (and ids/date details/offsets if provided) must be the same length.")
@@ -135,7 +135,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
   `%dofun%` <- `%do%`
   if (ncores>1){
     # parallellised
-    cl <- makeCluster(ncores)
+    cl <- snow::makeCluster(ncores)
     registerDoSNOW(cl)
     `%dofun%` <- `%dopar%`
   }
@@ -168,7 +168,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     return(res)
   }
   if (ncores>1){
-    stopCluster(cl)
+    snow::stopCluster(cl)
   }
   names(sublist) <- ids
   if (calMatrix){

@@ -86,9 +86,9 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
     } else {
-      cl <- makeCluster(ncores)
+      cl <- snow::makeCluster(ncores)
       registerDoSNOW(cl)
-      on.exit(stopCluster(cl))	
+      on.exit(snow::stopCluster(cl))	
     }
     if (!any(method%in%c("uncalsample","calsample")))
     {
@@ -960,7 +960,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 	opts = NULL
 	if (ncores>1)
 	{
-	  cl <- makeCluster(ncores)
+	  cl <- snow::makeCluster(ncores)
 	  registerDoSNOW(cl)
 	  if (verbose)
 	  {
@@ -1045,7 +1045,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 			return(list(hi,lo,eq))
 		}
-		stopCluster(cl)
+		snow::stopCluster(cl)
 
 		hi=resultHiLoEq[[1]]
 		lo=resultHiLoEq[[2]]
