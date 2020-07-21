@@ -3,7 +3,6 @@
 \docType{package}
 \name{rcarbon}
 \alias{rcarbon}
-\alias{rcarbon-package}
 \title{rcarbon:Calibration and analysis of radiocarbon dates}
 \description{
 The \pkg{rcarbon} package handles the calibration and analysis of radiocarbon, often but not exclusively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists.

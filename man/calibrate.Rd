@@ -8,14 +8,36 @@
 \usage{
 calibrate(x, ...)
 
-\method{calibrate}{default}(x, errors, ids = NA, dateDetails = NA,
-  calCurves = "intcal13", resOffsets = 0, resErrors = 0,
-  timeRange = c(50000, 0), normalised = TRUE, F14C = FALSE,
-  calMatrix = FALSE, eps = 1e-05, ncores = 1, verbose = TRUE, ...)
+\method{calibrate}{default}(
+  x,
+  errors,
+  ids = NA,
+  dateDetails = NA,
+  calCurves = "intcal13",
+  resOffsets = 0,
+  resErrors = 0,
+  timeRange = c(50000, 0),
+  normalised = TRUE,
+  F14C = FALSE,
+  calMatrix = FALSE,
+  eps = 1e-05,
+  ncores = 1,
+  verbose = TRUE,
+  ...
+)
 
-\method{calibrate}{UncalGrid}(x, errors = 0, calCurves = "intcal13",
-  timeRange = c(50000, 0), eps = 1e-05, type = "fast",
-  datenormalised = FALSE, spdnormalised = FALSE, verbose = TRUE, ...)
+\method{calibrate}{UncalGrid}(
+  x,
+  errors = 0,
+  calCurves = "intcal13",
+  timeRange = c(50000, 0),
+  eps = 1e-05,
+  type = "fast",
+  datenormalised = FALSE,
+  spdnormalised = FALSE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A vector of uncalibrated radiocarbon ages or a UncalGrid class object.}

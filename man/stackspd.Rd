@@ -4,9 +4,16 @@
 \alias{stackspd}
 \title{Stacked Summed Probability Distribution}
 \usage{
-stackspd(x, timeRange, bins = NA, group = NULL,
-  datenormalised = FALSE, runm = NA, verbose = TRUE,
-  edgeSize = 500)
+stackspd(
+  x,
+  timeRange,
+  bins = NA,
+  group = NULL,
+  datenormalised = FALSE,
+  runm = NA,
+  verbose = TRUE,
+  edgeSize = 500
+)
 }
 \arguments{
 \item{x}{A \code{CalDates} class object containing the calibrated radiocarbon dates.}

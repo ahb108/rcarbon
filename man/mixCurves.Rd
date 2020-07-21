@@ -4,8 +4,13 @@
 \alias{mixCurves}
 \title{Creates mixed calibration curves.}
 \usage{
-mixCurves(calCurve1 = "intcal13", calCurve2 = "intcal13", p = 0.5,
-  resOffsets = 0, resErrors = 0)
+mixCurves(
+  calCurve1 = "intcal13",
+  calCurve2 = "intcal13",
+  p = 0.5,
+  resOffsets = 0,
+  resErrors = 0
+)
 }
 \arguments{
 \item{calCurve1}{Name of the first curve, chosen from 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13'. Default is 'intcal13'.}

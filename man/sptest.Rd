@@ -4,10 +4,22 @@
 \alias{sptest}
 \title{Spatial Permutation Test of summed probability distributions.}
 \usage{
-sptest(calDates, timeRange, bins, locations, breaks, spatialweights,
-  rate = expression((t2/t1)^(1/d) - 1), nsim = 1000, runm = NA,
-  permute = "locations", ncores = 1, datenormalised = FALSE,
-  verbose = TRUE, raw = FALSE)
+sptest(
+  calDates,
+  timeRange,
+  bins,
+  locations,
+  breaks,
+  spatialweights,
+  rate = expression((t2/t1)^(1/d) - 1),
+  nsim = 1000,
+  runm = NA,
+  permute = "locations",
+  ncores = 1,
+  datenormalised = FALSE,
+  verbose = TRUE,
+  raw = FALSE
+)
 }
 \arguments{
 \item{calDates}{A \code{CalDates} class object.}

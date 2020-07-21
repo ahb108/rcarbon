@@ -4,6 +4,7 @@
 * NEW: `multiplot()` function for displaying multiple calibrated dates.
 * NEW: `hpdi()` function for computing highest probability density intervals of calibrated dates.
 * NEW: `combine()` function for concatenating multiple `calDates` class objects.
+* UPDATE: `calibrate()`, `modelTest()`, and `sptest()` are now parallelised using the *doSNOW* package, enabling progress bar when running over multiple cores.
 
 #  Version 1.3.1 (18 March 2020)
 * `binPrep()` now accepts alternative clustering algorithms

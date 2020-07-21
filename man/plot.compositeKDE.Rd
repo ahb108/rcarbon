@@ -4,10 +4,20 @@
 \alias{plot.compositeKDE}
 \title{Plots a Composite Kernel Density Estimate of sampled radiocarbon dates.}
 \usage{
-\method{plot}{compositeKDE}(x, calendar = "BP", type = "envelope",
-  ylim = NA, xlim = NA, fill.col = "lightgrey", interval = 0.95,
-  line.col = "black", line.type = 2, multiline.alpha = NA,
-  multiline.col = "black", ...)
+\method{plot}{compositeKDE}(
+  x,
+  calendar = "BP",
+  type = "envelope",
+  ylim = NA,
+  xlim = NA,
+  fill.col = "lightgrey",
+  interval = 0.95,
+  line.col = "black",
+  line.type = 2,
+  multiline.alpha = NA,
+  multiline.col = "black",
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{compositeKDE} class object generated using the \code{\link{ckde}} function.}
