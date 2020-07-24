@@ -979,6 +979,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'plot(res,type='proportion')
 #'plot(res,type='multipanel')
 #'}
+#' @method plot stackCalSPD
 #' @export
 
 plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.line=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA,ymargin=1.1)

@@ -4,7 +4,7 @@
 \alias{plot.stackCalSPD}
 \title{Plot a stack of SPDs}
 \usage{
-plot.stackCalSPD(
+\method{plot}{stackCalSPD}(
   x,
   type = "stacked",
   calendar = "BP",
