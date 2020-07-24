@@ -4,11 +4,26 @@
 \alias{plot.CalDates}
 \title{Plot calibrated dates}
 \usage{
-\method{plot}{CalDates}(x, ind = 1, label = NA, calendar = "BP",
-  type = "standard", xlab = NA, ylab = NA, axis4 = TRUE,
-  HPD = FALSE, credMass = 0.95, customCalCurve = NA, add = FALSE,
-  col = "grey50", col2 = "grey82", cex.axis = 0.75,
-  cex.xylab = 0.75, cex.label = 0.75, ...)
+\method{plot}{CalDates}(
+  x,
+  ind = 1,
+  label = NA,
+  calendar = "BP",
+  type = "standard",
+  xlab = NA,
+  ylab = NA,
+  axis4 = TRUE,
+  HPD = FALSE,
+  credMass = 0.95,
+  customCalCurve = NA,
+  add = FALSE,
+  col = "grey50",
+  col2 = "grey82",
+  cex.axis = 0.75,
+  cex.xylab = 0.75,
+  cex.label = 0.75,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{CalDates} class object containing calibrated radiocarbon dates.}

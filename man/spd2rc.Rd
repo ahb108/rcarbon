@@ -4,8 +4,12 @@
 \alias{spd2rc}
 \title{Computes rates of change from SPDs}
 \usage{
-spd2rc(spd, breaks = NULL, backsight = NULL,
-  changexpr = expression((t1/t0)^(1/d) - 1))
+spd2rc(
+  spd,
+  breaks = NULL,
+  backsight = NULL,
+  changexpr = expression((t1/t0)^(1/d) - 1)
+)
 }
 \arguments{
 \item{spd}{Summed Probability Distribution obtained using the \code{\link{spd}} function.}

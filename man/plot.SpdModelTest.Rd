@@ -4,10 +4,21 @@
 \alias{plot.SpdModelTest}
 \title{Plot result of Monte-Carlo simulation of observed versus modelled SPDs}
 \usage{
-\method{plot}{SpdModelTest}(x, calendar = "BP", type = "spd",
-  ylim = NA, xlim = NA, col.obs = "black", lwd.obs = 0.5,
-  xaxs = "i", yaxs = "i", bbty = "f", bbtyRet = TRUE,
-  drawaxes = TRUE, ...)
+\method{plot}{SpdModelTest}(
+  x,
+  calendar = "BP",
+  type = "spd",
+  ylim = NA,
+  xlim = NA,
+  col.obs = "black",
+  lwd.obs = 0.5,
+  xaxs = "i",
+  yaxs = "i",
+  bbty = "f",
+  bbtyRet = TRUE,
+  drawaxes = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.}

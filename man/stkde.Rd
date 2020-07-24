@@ -4,10 +4,24 @@
 \alias{stkde}
 \title{Map the spatio-temporal intensity of a set of radiocarbon dates}
 \usage{
-stkde(x, coords, sbw, focalyears, tbw, win, cellres, outdir = ".",
-  bins = NA, backsight = NA, maskthresh = 0,
-  changexpr = expression((t1 - t0)/tk), spjitter = TRUE,
-  amount = NULL, verbose = TRUE, ...)
+stkde(
+  x,
+  coords,
+  sbw,
+  focalyears,
+  tbw,
+  win,
+  cellres,
+  outdir = ".",
+  bins = NA,
+  backsight = NA,
+  maskthresh = 0,
+  changexpr = expression((t1 - t0)/tk),
+  spjitter = TRUE,
+  amount = NULL,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class CalDates with calibrated radiocarbon ages.}

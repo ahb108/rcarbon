@@ -73,22 +73,22 @@
 #' }
 #' @import utils
 #' @import stats
-#' @import foreach
-#' @import parallel
-#' @import doParallel
+#' @import doSNOW 
+#' @import foreach 
+#' @import iterators 
 #' @export
 
 modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=50,changexpr=expression((t1/t0)^(1/d)-1),gridclip=TRUE, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, normalised=NA,datenormalised=NA, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, edgeSize=500,verbose=TRUE){
    
 
     if (fitonly == TRUE) {nsim <- 1}
-    if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
+    if (ncores>1&!requireNamespace("doSNOW", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
     } else {
-      cl <- parallel::makeCluster(ncores)
-      doParallel::registerDoParallel(cl)
-      on.exit(stopCluster(cl))	
+      cl <- snow::makeCluster(ncores)
+      registerDoSNOW(cl)
+      on.exit(snow::stopCluster(cl))	
     }
     if (!any(method%in%c("uncalsample","calsample")))
     {
@@ -179,7 +179,6 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
     if (verbose & !fitonly){
 	    print("Monte-Carlo test...")
 	    flush.console()
-	    pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
     fit.time <- seq(timeRange[1],timeRange[2],-1)
     pred.time <- fit.time
@@ -251,6 +250,14 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 
 # Actual Method
 
+    opts = NULL
+    if (verbose)
+    {
+    if (ncores>1){ print(paste("Running in parallel on ",getDoParWorkers()," workers...",sep=""))}
+    pb <- txtProgressBar(min=0, max=nsim, style=3)
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
+    }
 
     if (ncores==1)
     {
@@ -297,8 +304,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 
     if (ncores>1)
     {	     
-	    print("Progress bar disabled for multi-core processing")
-	    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
+	    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon',.options.snow = opts) %dopar% {
 		    
 		    randomDates <- vector("list",length=ncc)
 		    ccurve.tmp <- numeric()
@@ -458,9 +464,6 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 #' }
 #' @import utils
 #' @import stats
-#' @import foreach
-#' @import parallel
-#' @import doParallel
 #' @export
 
 permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/t0)^(1/d)-1),nsim, bins=NA, runm=NA, datenormalised=FALSE, spdnormalised=FALSE, raw=FALSE, verbose=TRUE){
@@ -791,9 +794,9 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' }
 #' @import utils
 #' @import stats
-#' @import foreach
-#' @import parallel
-#' @import doParallel
+#' @import doSNOW 
+#' @import foreach 
+#' @import iterators 
 #' @import sp
 #' @export
  
@@ -801,14 +804,15 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 
-	###################################
-	#### Load Dependency Libraries ####
-	###################################
-	if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
-		warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
-		ncores=1
-	}	
-
+  #######################
+  #### Load Packages ####
+  #######################
+  
+  if (ncores>1&!requireNamespace('doSNOW',quietly = TRUE)){
+    warning("the doSNOW package is required for multi-core processing; ncores has been set to 1")
+    ncores=1
+  }
+  
 	##################################
 	#### Initial warning messages ####
 	##################################
@@ -953,17 +957,23 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 	##############################
 	### Permutation Subroutine ###
 	############################## 
-
+	opts = NULL
 	if (ncores>1)
 	{
-		cl <- makeCluster(ncores)
-		registerDoParallel(cl)
+	  cl <- snow::makeCluster(ncores)
+	  registerDoSNOW(cl)
+	  if (verbose)
+	  {
 		print(paste("Running permutation test in parallel on ",getDoParWorkers()," workers...",sep=""))
+		pb <- txtProgressBar(min=0, max=length(x), style=3)
+		progress <- function(n) setTxtProgressBar(pb, n)
+		opts <- list(progress = progress)
+	  }
 		sumcombine<-function(a,b)
 		{
 			list(a[[1]]+b[[1]],a[[2]]+b[[2]],a[[3]]+b[[3]])
 		}
-		resultHiLoEq<-foreach (x=1:nsim,.combine= sumcombine) %dopar% {
+		resultHiLoEq<-foreach (x=1:nsim,.combine= sumcombine,.options.snow = opts) %dopar% {
 
 			simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
 
@@ -1035,7 +1045,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 			return(list(hi,lo,eq))
 		}
-		stopCluster(cl)
+		snow::stopCluster(cl)
 
 		hi=resultHiLoEq[[1]]
 		lo=resultHiLoEq[[2]]

@@ -75,6 +75,9 @@ Jørgensen, E. K., & Riede, F. 2019. [Convergent catastrophes and the terminatio
 
 Jorgeson, I.A., Breslawski, R.P., Fisher, A.E., 2020. [Radiocarbon simulation fails to support the temporal synchroneity requirement of the Younger Dryas impact hypothesis](https://doi.org/10.1017/qua.2019.83). Quaternary Research 1–17. 
 
+Kwak, S., Obata, H., Lee, G.-A., 2020. [Broad-spectrum foodways in southern coastal Korea in the Holocene: Isotopic and archaeobotanical signatures in Neolithic shell middens.](https://doi.org/10.1080/15564894.2020.1776427) The Journal of Island and Coastal Archaeology 0, 1–29. 
+
+
 Lima, M., Gayo, E.M., Latorre, C., Santoro, C.M., Estay, S.A., Cañellas-Boltà, N., Margalef, O., Giralt, S., Sáez, A., Pla-Rabes, S., Chr. Stenseth, N., 2020. [Ecology of the collapse of Rapa Nui society](https://doi.org/10.1098/rspb.2020.0662). Proceedings of the Royal Society B: Biological Sciences 287, 20200662. 
 
 Liu, L., Chen, X., Wright, H., Xu, H., Li, Y., Chen, G., et al. 2019. [Rise and fall of complex societies in the Yiluo region, North China: The spatial and temporal changes.](https://doi.org/10.1016/j.quaint.2019.05.025) Quaternary International. 

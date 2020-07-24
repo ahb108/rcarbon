@@ -4,12 +4,29 @@
 \alias{plot.stackCalSPD}
 \title{Plot a stack of SPDs}
 \usage{
-plot.stackCalSPD(x, type = "stacked", calendar = "BP",
-  spdnormalised = FALSE, rescale = FALSE, runm = NA, xlim = NA,
-  ylim = NA, xaxt = "s", yaxt = "s", gapFactor = 0.2,
-  col.fill = NA, col.line = NA, lwd.obs = 1, lty.obs = 1,
-  cex.lab = 1, cex.axis = cex.lab, legend = TRUE,
-  legend.arg = NULL, ylab = NA, ymargin = 1.1)
+plot.stackCalSPD(
+  x,
+  type = "stacked",
+  calendar = "BP",
+  spdnormalised = FALSE,
+  rescale = FALSE,
+  runm = NA,
+  xlim = NA,
+  ylim = NA,
+  xaxt = "s",
+  yaxt = "s",
+  gapFactor = 0.2,
+  col.fill = NA,
+  col.line = NA,
+  lwd.obs = 1,
+  lty.obs = 1,
+  cex.lab = 1,
+  cex.axis = cex.lab,
+  legend = TRUE,
+  legend.arg = NULL,
+  ylab = NA,
+  ymargin = 1.1
+)
 }
 \arguments{
 \item{x}{A \code{stackCalSPD} class object. Result of \code{\link{stackspd}} function.}

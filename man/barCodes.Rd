@@ -4,8 +4,14 @@
 \alias{barCodes}
 \title{Plot the median values of calibrated radiocarbon dates or bins}
 \usage{
-barCodes(x, yrng = c(0, 0.03), width = 20, col = rgb(0, 0, 0, 25,
-  maxColorValue = 255), border = NA, ...)
+barCodes(
+  x,
+  yrng = c(0, 0.03),
+  width = 20,
+  col = rgb(0, 0, 0, 25, maxColorValue = 255),
+  border = NA,
+  ...
+)
 }
 \arguments{
 \item{x}{A vector containing median values obtained from \code{\link{medCal}} or \code{\link{binMed}}}

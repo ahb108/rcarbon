@@ -4,10 +4,25 @@
 \alias{spkde}
 \title{Map the spatial intensity of a set of radiocarbon dates for a given focal year.}
 \usage{
-spkde(x, coords, sbw, focalyear, tbw, win, cellres, bins = NA,
-  backsight = NA, nsim = NULL, maskthresh = 0,
-  changexpr = expression((t1 - t0)/tk), raw = FALSE, spjitter = TRUE,
-  amount = NULL, verbose = TRUE, ...)
+spkde(
+  x,
+  coords,
+  sbw,
+  focalyear,
+  tbw,
+  win,
+  cellres,
+  bins = NA,
+  backsight = NA,
+  nsim = NULL,
+  maskthresh = 0,
+  changexpr = expression((t1 - t0)/tk),
+  raw = FALSE,
+  spjitter = TRUE,
+  amount = NULL,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class CalDates with calibrated radiocarbon ages.}

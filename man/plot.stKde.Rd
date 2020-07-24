@@ -4,13 +4,32 @@
 \alias{plot.stKde}
 \title{Plot map(s) of the spatio-temporal intensity of radiocarbon dates.}
 \usage{
-\method{plot}{stKde}(x, focalyears = NULL, type = "focal",
-  plotdir = NULL, imnames = "byyear", zlim = NULL, box = FALSE,
-  main = "auto", col.mask = "grey75", ncolours = 256,
-  ramptype = "raw", imdim = c(10, 10), mars = c(0.5, 0.5, 2.5, 2),
-  ribbon = TRUE, ribargs = list(), cex.ribbon = 0.5, withpts = "n",
-  cex.main = 0.8, pch.pts = 19, col.pts = "grey50", cex.pts = 0.1,
-  tidydevs = TRUE, verbose = TRUE, ...)
+\method{plot}{stKde}(
+  x,
+  focalyears = NULL,
+  type = "focal",
+  plotdir = NULL,
+  imnames = "byyear",
+  zlim = NULL,
+  box = FALSE,
+  main = "auto",
+  col.mask = "grey75",
+  ncolours = 256,
+  ramptype = "raw",
+  imdim = c(10, 10),
+  mars = c(0.5, 0.5, 2.5, 2),
+  ribbon = TRUE,
+  ribargs = list(),
+  cex.ribbon = 0.5,
+  withpts = "n",
+  cex.main = 0.8,
+  pch.pts = 19,
+  col.pts = "grey50",
+  cex.pts = 0.1,
+  tidydevs = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class stKde.}

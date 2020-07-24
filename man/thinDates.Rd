@@ -4,8 +4,7 @@
 \alias{thinDates}
 \title{Sampling function to select a maximum number of dates per site, bin or phase.}
 \usage{
-thinDates(ages, errors, bins, size, thresh = 0.5, method = "random",
-  seed = NA)
+thinDates(ages, errors, bins, size, thresh = 0.5, method = "random", seed = NA)
 }
 \arguments{
 \item{ages}{A vector of uncalibrated radiocarbon ages}
