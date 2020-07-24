@@ -62,6 +62,10 @@
 \item{legend}{Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.}
 
 \item{legend.arg}{list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.}
+
+\item{ylab}{a title for the y axis}
+
+\item{ymargin}{multiplier for the maximum value on ylim range. Default is 1.1.}
 }
 \description{
 Visualises multiple SPDs grouped as a \code{stackCalSPD} object.

@@ -965,6 +965,8 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param lty.obs Line type for the observed SPDs. Default is 1.
 #' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.
 #' @param legend.arg list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.
+#' @param ylab a title for the y axis
+#' @param ymargin multiplier for the maximum value on ylim range. Default is 1.1.
 #' @references 
 #' Erich Neuwirth (2014). RColorBrewer: ColorBrewer Palettes. R package version 1.1-2. \url{https://CRAN.R-project.org/package=RColorBrewer}.
 #' @examples
@@ -1240,6 +1242,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 #' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
 #' @param bbty Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details in \code{\link{plot.SpdModelTest}}.
 #' @param drawaxes A logical value determining whether the axes should be displayed or not. Default is TRUE.
+
 #' @param ... Additional arguments affecting the plot
 #'
 #' @seealso \code{\link{permTest}}; \code{\link{plot.SpdModelTest}};
@@ -1288,7 +1291,7 @@ plot.SpdPermTest <- function(x, focalm=1, type='spd', calendar="BP", xlim=NA, yl
 
 	if (any(is.na(ylim)))
 		{
-		       	ylim <- c(0, max(envelope[,2], obs$PrDens,na.rm=TRUE)*ymargin) 
+		       	ylim <- c(0, max(envelope[,2], obs$PrDens,na.rm=TRUE)) 
 			if (type=='roc') {ylim[1] <- min(c(envelope[,1],obs$PrDens),na.rm=TRUE)}
 		}
 
