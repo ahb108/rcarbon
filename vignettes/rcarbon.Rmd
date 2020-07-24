@@ -32,7 +32,7 @@ _rcarbon_ is an *R* package for the analysis of large collections of radiocarbon
 
 ## Installing and loading the _rcarbon_ package
 
-Stable versions of the _rcarbon_ package can be directly installed from CRAN (using the command `install.packages("rcabon")`), whilst the development version can be installed from the [github repository](https://github.com/ahb108/rcarbon) using the following command (the function requires the *devtools* package):
+Stable versions of the _rcarbon_ package can be directly installed from CRAN (using the command `install.packages("rcarbon")`), whilst the development version can be installed from the [github repository](https://github.com/ahb108/rcarbon) using the following command (the function requires the *devtools* package):
 
 ```{r,eval=FALSE}
 devtools::install_github("ahb108/rcarbon")
