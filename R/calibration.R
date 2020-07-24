@@ -142,7 +142,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     calcurve <- cclist[[calCurves[b]]]
     calBP <- seq(max(calcurve),min(calcurve),-1)
     age <- x[b] - resOffsets[b]
-    error <- errors[b] + resErrors[b]
+    error <- sqrt(errors[b]^2 + resErrors[b]^2)
     if (F14C==FALSE)
     {  
       dens <- BP14C_calibration(age, error, calBP, calcurve, eps)
