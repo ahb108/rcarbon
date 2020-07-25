@@ -184,6 +184,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param label Whether the ID of each date should be displayed. Default is TRUE.
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").
+#' @param ylab (optional) Label for the y axis.
 #' @param col.fill A vector of primary fill color for the calibrated date distribution. Default is 'grey50'.
 #' @param col.fill2 A vector of secondary secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}. Default is 'grey82'.
 #' @param col.line A vector of line color (ignored when \code{type} is set to \code{'d'}. Default is 1.
@@ -963,10 +964,14 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param col.line Line colour for the observed SPDs.The default color scheme is based on the Dark2 palette of RColorBrewer package.
 #' @param lwd.obs Line width for the observed SPDs. Default is 1.
 #' @param lty.obs Line type for the observed SPDs. Default is 1.
+#' @param cex.lab The magnification to be used for x and y  labels relative to the current setting of cex. Default is adjusted to 1.
+#' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.
 #' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.
 #' @param legend.arg list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.
 #' @param ylab a title for the y axis
 #' @param ymargin multiplier for the maximum value on ylim range. Default is 1.1.
+#' @param ... Additional arguments affecting the plot. 
+
 #' @references 
 #' Erich Neuwirth (2014). RColorBrewer: ColorBrewer Palettes. R package version 1.1-2. \url{https://CRAN.R-project.org/package=RColorBrewer}.
 #' @examples
@@ -984,7 +989,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @method plot stackCalSPD
 #' @export
 
-plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.line=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA,ymargin=1.1)
+plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.line=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA, ymargin=1.1, ...)
 {
   # Based on Dark2 of RcolorBrewer
   colpal=c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666")
@@ -1098,7 +1103,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	    } else {
 	      args.legend1 <- list("topleft", legend = names(x$spds),col=col.line,lty=lty.obs,lwd=lwd.obs)
 	      args.legend1[names(legend.arg)] <- legend.arg
-	      do.call("legend", args.legend1)
+	      do.call("legend", args=args.legend1)
 	    }
 	  }
 	}
@@ -1127,9 +1132,10 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	    {
 	      legend("topleft",legend=names(x$spds),fill=col.fill)
 	    } else {
+	      
 	      args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
 	      args.legend1[names(legend.arg)] <- legend.arg
-	      do.call("legend", args.legend1)
+	      do.call("legend", args=args.legend1)
 	    }
 	  }
 	}
@@ -1198,7 +1204,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
         legend("topleft",legend=names(x$spds),fill=col.fill)
       } else {
         args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
-        args.legend1[names(args.legend)] <- args.legend
+        args.legend1[names(legend.arg)] <- legend.arg
         do.call("legend", args.legend1)
       }
     }
