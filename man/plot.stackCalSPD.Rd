@@ -25,7 +25,8 @@
   legend = TRUE,
   legend.arg = NULL,
   ylab = NA,
-  ymargin = 1.1
+  ymargin = 1.1,
+  ...
 )
 }
 \arguments{
@@ -59,6 +60,10 @@
 
 \item{lty.obs}{Line type for the observed SPDs. Default is 1.}
 
+\item{cex.lab}{The magnification to be used for x and y  labels relative to the current setting of cex. Default is adjusted to 1.}
+
+\item{cex.axis}{The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.}
+
 \item{legend}{Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.}
 
 \item{legend.arg}{list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.}
@@ -66,6 +71,8 @@
 \item{ylab}{a title for the y axis}
 
 \item{ymargin}{multiplier for the maximum value on ylim range. Default is 1.1.}
+
+\item{...}{Additional arguments affecting the plot.}
 }
 \description{
 Visualises multiple SPDs grouped as a \code{stackCalSPD} object.

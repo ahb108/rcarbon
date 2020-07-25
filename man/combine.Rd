@@ -7,9 +7,9 @@
 combine(..., fixIDs = FALSE)
 }
 \arguments{
-\item{fixIDs}{logical. If set to TRUE, each date is given a new ID based on sequential integer. Default is FALSE}
+\item{...}{\code{CalDates} class objects to be concatenated.}
 
-\item{x}{\code{CalDates} class objects to be concatenated.}
+\item{fixIDs}{logical. If set to TRUE, each date is given a new ID based on sequential integer. Default is FALSE}
 }
 \value{
 An object of class CalDates

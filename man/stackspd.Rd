@@ -39,8 +39,10 @@ An object of class \code{stackCalSPD}
 Generates and combines multiple SPDs based on a user defined grouping.
 }
 \examples{
+\dontrun{
 data(emedyd)
 x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
 bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
 res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
+}
 }

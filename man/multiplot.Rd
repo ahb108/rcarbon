@@ -45,6 +45,8 @@ multiplot(
 
 \item{xlab}{(optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").}
 
+\item{ylab}{(optional) Label for the y axis.}
+
 \item{col.fill}{A vector of primary fill color for the calibrated date distribution. Default is 'grey50'.}
 
 \item{col.fill2}{A vector of secondary secondary colour fill color for the calibrated date distribution, used for regions outside the higher posterior interval. Ignored when \code{HPD=FALSE}. Default is 'grey82'.}
