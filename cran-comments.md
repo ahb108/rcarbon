@@ -1,5 +1,6 @@
 ## Test environments
-* local ubuntu 18.04 install, R 4.0.2
+* Local ubuntu 18.04 install, R 4.0.2
+* Windows Server 2008 (64-bit) via https://win-builder.r-project.org/ 
 
 ## R CMD check results
 
