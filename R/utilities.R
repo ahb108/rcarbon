@@ -719,7 +719,7 @@ which.CalDates=function(x,s,p)
 
 #' @title Combine multiple CalDates Class Objects into one.
 #'
-#' @param x \code{CalDates} class objects to be concatenated.
+#' @param ... \code{CalDates} class objects to be concatenated.
 #' @param fixIDs logical. If set to TRUE, each date is given a new ID based on sequential integer. Default is FALSE
 #' @return An object of class CalDates   
 #' @examples  
