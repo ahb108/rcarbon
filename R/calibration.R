@@ -40,6 +40,7 @@
 #' @import stats 
 #' @import utils 
 #' @import doSNOW 
+#' @import snow
 #' @import foreach 
 #' @import iterators 
 #' @export

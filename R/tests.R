@@ -74,6 +74,7 @@
 #' @import utils
 #' @import stats
 #' @import doSNOW 
+#' @import snow
 #' @import foreach 
 #' @import iterators 
 #' @export
@@ -795,6 +796,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @import utils
 #' @import stats
 #' @import doSNOW 
+#' @import snow
 #' @import foreach 
 #' @import iterators 
 #' @import sp
