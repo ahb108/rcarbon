@@ -282,10 +282,12 @@ spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE,
 #'
 #' @return An object of class \code{stackCalSPD} 
 #' @examples
+#' \dontrun{
 #'data(emedyd)
 #'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
 #'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
 #'res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
+#'}
 #' @import utils
 #' @export
 
