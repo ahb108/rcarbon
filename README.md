@@ -77,7 +77,6 @@ Jorgeson, I.A., Breslawski, R.P., Fisher, A.E., 2020. [Radiocarbon simulation fa
 
 Kwak, S., Obata, H., Lee, G.-A., 2020. [Broad-spectrum foodways in southern coastal Korea in the Holocene: Isotopic and archaeobotanical signatures in Neolithic shell middens.](https://doi.org/10.1080/15564894.2020.1776427) The Journal of Island and Coastal Archaeology 0, 1–29. 
 
-
 Lima, M., Gayo, E.M., Latorre, C., Santoro, C.M., Estay, S.A., Cañellas-Boltà, N., Margalef, O., Giralt, S., Sáez, A., Pla-Rabes, S., Chr. Stenseth, N., 2020. [Ecology of the collapse of Rapa Nui society](https://doi.org/10.1098/rspb.2020.0662). Proceedings of the Royal Society B: Biological Sciences 287, 20200662. 
 
 Liu, L., Chen, X., Wright, H., Xu, H., Li, Y., Chen, G., et al. 2019. [Rise and fall of complex societies in the Yiluo region, North China: The spatial and temporal changes.](https://doi.org/10.1016/j.quaint.2019.05.025) Quaternary International. 
@@ -118,9 +117,15 @@ Szpak, P., Savelle, J. M., Conolly, J., & Richards, M. P. 2019. [Variation in la
 
 Tallavara, M., Personen, P. 2018. [Human ecodynamics in the north-west coast of Finland 10,000–2000 years ago](https://doi.org/10.1016/j.quaint.2018.06.032).Quaternary International,doi:/10.1016/j.quaint.2018.06.032
 
+Thomson, M.J., MacDonald, G.M., 2020. [Climate and growing season variability impacted the intensity and distribution of Fremont maize farmers during and after the Medieval Climate Anomaly based on a statistically downscaled climate model](https://doi.org/10.1088/1748-9326/aba57e). Environ. Res. Lett.
+
 van der Bilt, W. G. M., Born, A., & Haaga, K. A. 2019. [Was Common Era glacier expansion in the Arctic Atlantic region triggered by unforced atmospheric cooling?](https://doi.org/10.1016/j.quascirev.2019.07.042) Quaternary Science Reviews, 105860. doi:10.1016/j.quascirev.2019.07.042
 
+Vogels, O., Fäder, E., Lenssen-Erz, T., 2020. [A matter of diversity? Identifying past hunter-gatherer aggregation camps through data driven analyses of rock art sites.](https://doi.org/10.1016/j.quaint.2020.05.057) Quaternary International. 
+
 Weiberg, E., Bevan, A., Kouli, K., Katsianis, M., Woodbridge, J., Bonnier, A., et al. 2019. [Long-term trends of land use and demography in Greece: A comparative study](https://doi.org/10.1177/0959683619826641) The Holocene, 0959683619826641. doi:10.1177/0959683619826641
+
+Weitzel, E.M., Codding, B.F., Carmody, S.B., Zeanah, D.W., 2020. [Food Production and Domestication Produced Both Cooperative and Competitive Social Dynamics in Eastern North America.](https://doi.org/10.1080/14614103.2020.1737394) Environmental Archaeology 0, 1–14. 
 
 Woodbridge, J., Roberts, C. N., Palmisano, A., Bevan, A., Shennan, S., Fyfe, R., et al. 2019. [Pollen-inferred regional vegetation patterns and demographic change in Southern Anatolia through the Holocene.](https://doi.org/10.1177/0959683619826635) The Holocene, 0959683619826635. doi:10.1177/0959683619826635
 
