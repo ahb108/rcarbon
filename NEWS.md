@@ -1,4 +1,4 @@
-#  Verson 1.3.2 (ongoing)
+#  Verson 1.3.2 (25 July 2020)
 * Bug fix : `F14C=TRUE` was producting an error message in `calibrate()` after refactoring in version 1.3.1. 
 * Bug fix : fixed error in the handling of `resErrors` (Delta R error) for  marine reservoir effect.
 * NEW: `stackspd()` creates a set of multiple SPDs as an object of class `stackCalSPD` with a dedicated plot function.
