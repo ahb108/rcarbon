@@ -1,6 +1,9 @@
 ## Test environments
 * Local ubuntu 18.04 install, R 4.0.2
-* Windows Server 2008 (64-bit) via https://win-builder.r-project.org/ 
+* Windows Server 2008 R2 SP1, R-devel, 32/64 bit (via rhub)
+* Ubuntu Linux 16.04 LTS, R-release, GCC (via rhub)
+* Fedora Linux, R-devel, clang, gfortran (via rhub)
+
 
 ## R CMD check results
 
