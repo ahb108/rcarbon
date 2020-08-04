@@ -95,6 +95,8 @@ Palmisano, A., Woodbridge, J., Roberts, N., Bevan, A., Fyfe, R., Shennan, S., et
 
 Porčić, M., 2020. [Observations on the origin and demography of the Vinča culture](https://doi.org/10.1016/j.quaint.2020.04.012). Quaternary International. 
 
+Prates, L., Politis, G.G., Perez, S.I., 2020. [Rapid radiation of humans in South America after the last glacial maximum: A radiocarbon-based study.](https://doi.org/10.1371/journal.pone.0236023) PLOS ONE 15, e0236023. 
+
 Riris, P. 2018 [Dates as data revisited: A statistical examination of the Peruvian preceramic radiocarbon record](https://doi.org/10.1016/j.jas.2018.06.008). Journal of Archaeological Science, 97, 67-76. doi:10.1016/j.jas.2018.06.008
 
 Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South America Correlates with Mid-holocene Climate Change](https://doi.org/10.1038/s41598-019-43086-w) Scientific Reports, 9, Article number: 6850 (2019). doi:10.1038/s41598-019-43086-w.
