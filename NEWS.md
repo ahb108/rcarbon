@@ -1,3 +1,6 @@
+# Version 1.3.3 (4 August 2020)
+* Minor changes on NAMESPACE and test environment to ensure CRAN checks for all operating systems
+
 #  Verson 1.3.2 (25 July 2020)
 * Bug fix : `F14C=TRUE` was producting an error message in `calibrate()` after refactoring in version 1.3.1. 
 * Bug fix : fixed error in the handling of `resErrors` (Delta R error) for  marine reservoir effect.
