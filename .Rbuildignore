@@ -1,3 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^\.DS_Store$
+^logo/rcarbon_logo\.png$
+^cran-comments\.md$
+^README\.md$
+^NEWS\.md$

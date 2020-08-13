@@ -4,13 +4,32 @@
 \alias{plot.stKde}
 \title{Plot map(s) of the spatio-temporal intensity of radiocarbon dates.}
 \usage{
-\method{plot}{stKde}(x, focalyears = NULL, type = "focal",
-  plotdir = NULL, imnames = "byyear", zlim = NULL, box = FALSE,
-  main = "auto", col.mask = "grey75", ncolours = 256,
-  ramptype = "raw", imdim = c(10, 10), mars = c(0.5, 0.5, 2.5, 2),
-  ribbon = TRUE, ribargs = list(), cex.ribbon = 0.5, withpts = "n",
-  cex.main = 0.8, pch.pts = 19, col.pts = "grey50", cex.pts = 0.1,
-  tidydevs = TRUE, verbose = TRUE, ...)
+\method{plot}{stKde}(
+  x,
+  focalyears = NULL,
+  type = "focal",
+  plotdir = NULL,
+  imnames = "byyear",
+  zlim = NULL,
+  box = FALSE,
+  main = "auto",
+  col.mask = "grey75",
+  ncolours = 256,
+  ramptype = "raw",
+  imdim = c(10, 10),
+  mars = c(0.5, 0.5, 2.5, 2),
+  ribbon = TRUE,
+  ribargs = list(),
+  cex.ribbon = 0.5,
+  withpts = "n",
+  cex.main = 0.8,
+  pch.pts = 19,
+  col.pts = "grey50",
+  cex.pts = 0.1,
+  tidydevs = TRUE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class stKde.}
@@ -33,7 +52,7 @@
 
 \item{ncolours}{The maximum number of colours to use in the colour ramp.}
 
-\item{ramptype}{What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standaridise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).}
+\item{ramptype}{What kind of treatment for the colour ramp. Current options are "raw" (do not try to standardise the ramps across timeslices),"std" (standardise each plot, typically by capturing the first 3sd in the main colour ramp and then outliers beyond that with the extreme colours of the ramp),"unl" (do not standardise but plot generalised high/low ramp labels) and "mmx" (scale to the minimum and maximum values across all timeslices).}
 
 \item{imdim}{Height and width of the plot to png in cm.}
 

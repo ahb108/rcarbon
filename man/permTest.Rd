@@ -4,10 +4,20 @@
 \alias{permTest}
 \title{Random mark permutation test for SPDs}
 \usage{
-permTest(x, marks, timeRange, backsight = 10,
-  changexpr = expression((t1/t0)^(1/d) - 1), nsim, bins = NA,
-  runm = NA, datenormalised = FALSE, spdnormalised = FALSE,
-  raw = FALSE, verbose = TRUE)
+permTest(
+  x,
+  marks,
+  timeRange,
+  backsight = 10,
+  changexpr = expression((t1/t0)^(1/d) - 1),
+  nsim,
+  bins = NA,
+  runm = NA,
+  datenormalised = FALSE,
+  spdnormalised = FALSE,
+  raw = FALSE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{x}{A \code{CalDates} class object containing the calibrated radiocarbon dates.}

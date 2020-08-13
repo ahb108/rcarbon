@@ -4,7 +4,8 @@
 \name{emedyd}
 \alias{emedyd}
 \title{Radiocarbon dates for the Eastern Mediterranean around the Younger Dryas}
-\format{A data.frame with the following variables:
+\format{
+A data.frame with the following variables:
 \describe{
 \item{\code{LabID}}{Laboratory ID assigned to each radiocarbon date (where known)}
 \item{\code{CRA}}{Radiocarbon age in 14C years BP}
@@ -16,7 +17,8 @@
 \item{\code{Longitude}}{Longitude of the sampling site in decimal degrees}
 \item{\code{Latitude}}{Latitude of the sampling site in decimal degrees}
 \item{\code{Region}}{One of three analytical regions (1=southern Levant, 2=Northern Levant, 3= South-central Anatolia}
-}}
+}
+}
 \source{
 Palmisano, A., Bevan, A. and S. Shennan 2017. Data and code for demographic trends in the paper "Human responses and non-responses to climatic variations during the Last Glacial-Interglacial transition in the eastern Mediterranean", UCL Discovery Archive 1570274. doi:10.14324/000.ds.1570274.
 }

@@ -73,22 +73,23 @@
 #' }
 #' @import utils
 #' @import stats
-#' @import foreach
-#' @import parallel
-#' @import doParallel
+#' @import doSNOW 
+#' @import snow
+#' @import foreach 
+#' @import iterators 
 #' @export
 
 modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=50,changexpr=expression((t1/t0)^(1/d)-1),gridclip=TRUE, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, normalised=NA,datenormalised=NA, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, edgeSize=500,verbose=TRUE){
    
 
     if (fitonly == TRUE) {nsim <- 1}
-    if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
+    if (ncores>1&!requireNamespace("doSNOW", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
     } else {
-      cl <- parallel::makeCluster(ncores)
-      doParallel::registerDoParallel(cl)
-      on.exit(stopCluster(cl))	
+      cl <- snow::makeCluster(ncores)
+      registerDoSNOW(cl)
+      on.exit(snow::stopCluster(cl))	
     }
     if (!any(method%in%c("uncalsample","calsample")))
     {
@@ -179,7 +180,6 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
     if (verbose & !fitonly){
 	    print("Monte-Carlo test...")
 	    flush.console()
-	    pb <- txtProgressBar(min=1, max=nsim, style=3)
     }
     fit.time <- seq(timeRange[1],timeRange[2],-1)
     pred.time <- fit.time
@@ -205,9 +205,9 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 	    if (length(predgrid)!=2){
 		    stop("If you choose a custom model, you must provide a proper predgrid argument (two-column data.frame of calBP and predicted densities).")
 	    }
-	    if (!all(colnames(predgrid)%in%c("CalBP","PrDens")))
+	    if (!all(colnames(predgrid)%in%c("calBP","PrDens")))
 	    {
-		    stop("Column names in the predgrid argument should be 'CalBP' and 'PrDens'")
+		    stop("Column names in the predgrid argument should be 'calBP' and 'PrDens'")
 	    }
     } else {
         stop("Specified model not one of current choices.")
@@ -251,6 +251,14 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 
 # Actual Method
 
+    opts = NULL
+    if (verbose)
+    {
+    if (ncores>1){ print(paste("Running in parallel on ",getDoParWorkers()," workers...",sep=""))}
+    pb <- txtProgressBar(min=0, max=nsim, style=3)
+    progress <- function(n) setTxtProgressBar(pb, n)
+    opts <- list(progress = progress)
+    }
 
     if (ncores==1)
     {
@@ -297,8 +305,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 
     if (ncores>1)
     {	     
-	    print("Progress bar disabled for multi-core processing")
-	    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon') %dopar% {
+	    sim <- foreach (s = 1:nsim, .combine='cbind', .packages='rcarbon',.options.snow = opts) %dopar% {
 		    
 		    randomDates <- vector("list",length=ncc)
 		    ccurve.tmp <- numeric()
@@ -365,8 +372,8 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
     
     ## Envelope, z-scores, global p-value
     
-    lo <- apply(sim,1,quantile,prob=0.025)
-    hi <- apply(sim,1,quantile,prob=0.975)
+    lo <- apply(sim,1,quantile,prob=0.025,na.rm=TRUE)
+    hi <- apply(sim,1,quantile,prob=0.975,na.rm=TRUE)
     lo.roc = apply(sim.roc,1,quantile,prob=0.025,na.rm=TRUE)
     hi.roc = apply(sim.roc,1,quantile,prob=0.975,na.rm=TRUE)
 
@@ -458,9 +465,6 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 #' }
 #' @import utils
 #' @import stats
-#' @import foreach
-#' @import parallel
-#' @import doParallel
 #' @export
 
 permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/t0)^(1/d)-1),nsim, bins=NA, runm=NA, datenormalised=FALSE, spdnormalised=FALSE, raw=FALSE, verbose=TRUE){
@@ -602,7 +606,7 @@ permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/
     ## Simulation Envelope
     simulatedCIlist = simulatedCIlist.roc = vector("list",length=length(unique(GroupList)))
     for (d in 1:length(unique(GroupList))){
-        simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025)), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975)))
+        simulatedCIlist[[d]] <- cbind(apply(simulatedSPD[[d]],1,quantile,prob=c(0.025),na.rm=TRUE), apply(simulatedSPD[[d]],1,quantile,prob=c(0.975),na.rm=TRUE))
         simulatedCIlist.roc[[d]] <- cbind(apply(simulatedROC[[d]],1,quantile,prob=c(0.025),na.rm=TRUE), apply(simulatedROC[[d]],1,quantile,prob=c(0.975),na.rm=TRUE))
         names(simulatedCIlist) <- unique(GroupList)
         names(simulatedCIlist.roc) <- unique(GroupList)
@@ -630,7 +634,7 @@ permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/
         tmp.obs.roc <- observedROC[[a]]
         tmp.obs.roc[,2] <- (tmp.obs.roc[,2] - zscoreMean.roc) / zscoreSD.roc
 
-        tmp.ci <- t(apply(tmp.sim,1, quantile, prob=c(0.025,0.975)))
+        tmp.ci <- t(apply(tmp.sim,1, quantile, prob=c(0.025,0.975),na.rm=TRUE))
         tmp.ci.roc <- t(apply(tmp.sim.roc,1, quantile, prob=c(0.025,0.975),na.rm=TRUE))
 
         expectedstatistic <- abs(apply(tmp.sim,2,function(x,y){a=x-y;i=which(a<0);return(sum(a[i]))},y=tmp.ci[,1])) + apply(tmp.sim,2,function(x,y){a=x-y;i=which(a>0);return(sum(a[i]))},y=tmp.ci[,2])   
@@ -791,9 +795,10 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' }
 #' @import utils
 #' @import stats
-#' @import foreach
-#' @import parallel
-#' @import doParallel
+#' @import doSNOW 
+#' @import snow
+#' @import foreach 
+#' @import iterators 
 #' @import sp
 #' @export
  
@@ -801,14 +806,15 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 
-	###################################
-	#### Load Dependency Libraries ####
-	###################################
-	if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
-		warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
-		ncores=1
-	}	
-
+  #######################
+  #### Load Packages ####
+  #######################
+  
+  if (ncores>1&!requireNamespace('doSNOW',quietly = TRUE)){
+    warning("the doSNOW package is required for multi-core processing; ncores has been set to 1")
+    ncores=1
+  }
+  
 	##################################
 	#### Initial warning messages ####
 	##################################
@@ -953,17 +959,23 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 	##############################
 	### Permutation Subroutine ###
 	############################## 
-
+	opts = NULL
 	if (ncores>1)
 	{
-		cl <- makeCluster(ncores)
-		registerDoParallel(cl)
+	  cl <- snow::makeCluster(ncores)
+	  registerDoSNOW(cl)
+	  if (verbose)
+	  {
 		print(paste("Running permutation test in parallel on ",getDoParWorkers()," workers...",sep=""))
+		pb <- txtProgressBar(min=0, max=length(x), style=3)
+		progress <- function(n) setTxtProgressBar(pb, n)
+		opts <- list(progress = progress)
+	  }
 		sumcombine<-function(a,b)
 		{
 			list(a[[1]]+b[[1]],a[[2]]+b[[2]],a[[3]]+b[[3]])
 		}
-		resultHiLoEq<-foreach (x=1:nsim,.combine= sumcombine) %dopar% {
+		resultHiLoEq<-foreach (x=1:nsim,.combine= sumcombine,.options.snow = opts) %dopar% {
 
 			simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
 
@@ -1035,7 +1047,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 			return(list(hi,lo,eq))
 		}
-		stopCluster(cl)
+		snow::stopCluster(cl)
 
 		hi=resultHiLoEq[[1]]
 		lo=resultHiLoEq[[2]]
@@ -1291,7 +1303,7 @@ p2pTest <- function(x,p1=NA,p2=NA,interactive=TRUE,plot=FALSE)
 #' @param type Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.
 #' @param ... Ignored
 #'
-#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope.
+#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global significance test, and the chronological interval of local positive and negative deviations from the simulation envelope.
 #' @seealso \code{\link{modelTest}}.
 #' @import utils
 #' @import stats
@@ -1368,14 +1380,14 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 
 	if (length(booms)==0)
 	{
-		cat(paste("No signficant positive local deviations"))
+		cat(paste("No significant positive local deviations"))
 	}
 
 	cat("\n")
 
 	if (length(busts)>0)
 	{
-		cat(paste("Signficant negative local deviations at:\n"))
+		cat(paste("Significant negative local deviations at:\n"))
 
 
 		i=1
@@ -1410,7 +1422,7 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 
 	if (length(busts)==0)
 	{
-		cat(paste("No signficant positive local deviations"))
+		cat(paste("No significant positive local deviations"))
 	}
 }
 
@@ -1423,7 +1435,7 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 #' @param type Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.
 #' @param ... Ignored
 #'
-#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
+#' @details The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global significance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
 #' @seealso  \code{\link{permTest}}.
 #' @import utils
 #' @import stats
@@ -1452,18 +1464,25 @@ summary.SpdPermTest<-function(object,type='spd',...) {
 		cat(paste("Number of radiocarbon dates:",object$metadata[[i]][1],"\n",sep=""))
 		cat(paste("Number of bins:",object$metadata[[i]][2],"\n",sep=""))
 		cat("\n")
-		if(type=='spd'){cat(paste("Global p-value: ",round(object$pValueList[i],5),"\n",sep=""))}
-		if(type=='roc'){cat(paste("Global p-value (rate of change): ",round(object$pValueList.roc[i],5),"\n",sep=""))}
+		if(type=='spd'){
+			cat(paste("Global p-value: ",round(object$pValueList[i],5),"\n",sep=""))
+			obs <- object$observed[[i]]
+			envelope <-object$envelope[[i]]
+			booms <- which(obs[,2]>envelope[,2])
+			busts <- which(obs[,2]<envelope[,1])
+		}
+		if(type=='roc'){
+			cat(paste("Global p-value (rate of change): ",round(object$pValueList.roc[i],5),"\n",sep=""))
+			obs <- object$observed.roc[[i]]
+			envelope <-object$envelope.roc[[i]]
+			booms <- which(obs[,2]>envelope[,2])
+			busts <- which(obs[,2]<envelope[,1])
+		}
 		cat("\n")
-
-		obs <- object$observed.roc[[i]]
-		envelope <-object$envelope.roc[[i]]
-		booms <- which(obs[,2]>envelope[,2])
-		busts <- which(obs[,2]<envelope[,1])
 
 		if (length(booms)>0)
 		{
-			cat(paste("Signficant positive local deviations at:\n"))
+			cat(paste("Significant positive local deviations at:\n"))
 			i=1
 			while (i < length(obs[,1]))
 			{	
@@ -1496,14 +1515,14 @@ summary.SpdPermTest<-function(object,type='spd',...) {
 
 		if (length(booms)==0)
 		{
-			cat(paste("No signficant positive local deviations"))
+			cat(paste("No significant positive local deviations"))
 		}
 
 		cat("\n")
 
 		if (length(busts)>0)
 		{
-			cat(paste("Signficant negative local deviations at:\n"))
+			cat(paste("Significant negative local deviations at:\n"))
 
 
 			i=1
@@ -1538,7 +1557,7 @@ summary.SpdPermTest<-function(object,type='spd',...) {
 
 		if (length(busts)==0)
 		{
-			cat(paste("No signficant positive local deviations"))
+			cat(paste("No significant positive local deviations"))
 		}
 
 		cat("\n")

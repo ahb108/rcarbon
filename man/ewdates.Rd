@@ -4,7 +4,8 @@
 \name{ewdates}
 \alias{ewdates}
 \title{Subset of EUROEVOL radiocarbon dates from Great Britain}
-\format{A data.frame with the following variables:
+\format{
+A data.frame with the following variables:
 \describe{
 \item{\code{C14ID}}{ID of each radiocarbon date}
 \item{\code{C14Age}}{Radiocarbon age in 14C years BP}
@@ -14,7 +15,8 @@
 \item{\code{SiteID}}{ID of the site from which the sample has been recovered}
 \item{\code{Eastings}}{Easting coordinates of the sampling site in meters (OSGB 1936 epsg:27700) }
 \item{\code{Northings}}{Northing coordinates of the sampling site in meters (OSGB 1936 epsg:27700)}
-}}
+}
+}
 \source{
 Manning, K., Colledge, S., Crema, E., Shennan, S., Timpson, A., 2016. The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data. Journal of Open Archaeology Data 5. doi:10.5334/joad.40
 }

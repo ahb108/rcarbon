@@ -4,7 +4,8 @@
 \name{euroevol}
 \alias{euroevol}
 \title{Radiocarbon dates from the EUROEVOL database}
-\format{A data.frame with the following variables:
+\format{
+A data.frame with the following variables:
 \describe{
 \item{\code{C14ID}}{ID of each radiocarbon date}
 \item{\code{C14Age}}{Radiocarbon age in 14C years BP}
@@ -15,7 +16,8 @@
 \item{\code{Latitude}}{Latitude of the sampling site in decimal degrees}
 \item{\code{Longitude}}{Longitude of the sampling site in decimal degrees}
 \item{\code{Country}}{Country where the sampling site is located}
-}}
+}
+}
 \source{
 Manning, K., Colledge, S., Crema, E., Shennan, S., Timpson, A., 2016. The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data. Journal of Open Archaeology Data 5. doi:10.5334/joad.40
 }
@@ -23,7 +25,7 @@ Manning, K., Colledge, S., Crema, E., Shennan, S., Timpson, A., 2016. The Cultur
 euroevol
 }
 \description{
-Radiocarbon dates (n=14,053) and site coordinates (n=4,213) from the EUROEVOL project database. Sites without radiocarbon dates (n=544), phase-codes, and other data have been omitted (the complete dataset can be found on \url{http://discovery.ucl.ac.uk/1469811/}).
+Radiocarbon dates (n=14,053) and site coordinates (n=4,213) from the EUROEVOL project database. Sites without radiocarbon dates (n=544), phase-codes, and other data have been omitted.
 }
 \examples{
 \dontrun{

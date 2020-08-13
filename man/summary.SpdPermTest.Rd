@@ -17,7 +17,7 @@
 \code{summary} method for class "\code{SpdPermTest}"
 }
 \details{
-The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global signficance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
+The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global significance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
 }
 \seealso{
 \code{\link{permTest}}.

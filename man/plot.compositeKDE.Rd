@@ -4,10 +4,20 @@
 \alias{plot.compositeKDE}
 \title{Plots a Composite Kernel Density Estimate of sampled radiocarbon dates.}
 \usage{
-\method{plot}{compositeKDE}(x, calendar = "BP", type = "envelope",
-  ylim = NA, xlim = NA, fill.col = "lightgrey", interval = 0.95,
-  line.col = "black", line.type = 2, multiline.alpha = NA,
-  multiline.col = "black", ...)
+\method{plot}{compositeKDE}(
+  x,
+  calendar = "BP",
+  type = "envelope",
+  ylim = NA,
+  xlim = NA,
+  fill.col = "lightgrey",
+  interval = 0.95,
+  line.col = "black",
+  line.type = 2,
+  multiline.alpha = NA,
+  multiline.col = "black",
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{compositeKDE} class object generated using the \code{\link{ckde}} function.}
@@ -38,7 +48,7 @@
 Plots a Composite Kernel Density Estimate of sampled radiocarbon dates.
 }
 \details{
-Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile iterval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown.
+Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile interval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown.
 }
 \seealso{
 \code{\link{ckde}};

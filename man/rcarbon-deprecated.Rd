@@ -5,10 +5,22 @@
 \alias{SPpermTest}
 \title{Deprecated functions.}
 \usage{
-SPpermTest(calDates, timeRange, bins, locations, breaks, spatialweights,
-  rate = expression((t2/t1)^(1/d) - 1), nsim = 1000, runm = NA,
-  permute = "locations", ncores = 1, datenormalised = FALSE,
-  verbose = TRUE, raw = FALSE)
+SPpermTest(
+  calDates,
+  timeRange,
+  bins,
+  locations,
+  breaks,
+  spatialweights,
+  rate = expression((t2/t1)^(1/d) - 1),
+  nsim = 1000,
+  runm = NA,
+  permute = "locations",
+  ncores = 1,
+  datenormalised = FALSE,
+  verbose = TRUE,
+  raw = FALSE
+)
 }
 \description{
 The functions listed below are deprecated and will be defunct in

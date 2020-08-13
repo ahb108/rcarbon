@@ -4,8 +4,13 @@
 \alias{mixCurves}
 \title{Creates mixed calibration curves.}
 \usage{
-mixCurves(calCurve1 = "intcal13", calCurve2 = "marine13", p = 1,
-  resOffsets = 0, resErrors = 0)
+mixCurves(
+  calCurve1 = "intcal13",
+  calCurve2 = "intcal13",
+  p = 0.5,
+  resOffsets = 0,
+  resErrors = 0
+)
 }
 \arguments{
 \item{calCurve1}{Name of the first curve, chosen from 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13'. Default is 'intcal13'.}
@@ -32,8 +37,8 @@ myCurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=300,resErrors=20)
 x <- calibrate(4000,30,calCurves=myCurve)
 }
 \references{
-Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autorgressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
-Blaaw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
+Blaauw, M. and Christen, J.A.. 2011. Flexible paleoclimate age-depth models using an autoregressive gamma process. \emph{Bayesian Analysis}, 6, 457-474.
+Blaauw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
 Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 }
 \seealso{

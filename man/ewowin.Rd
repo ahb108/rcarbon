@@ -4,7 +4,9 @@
 \name{ewowin}
 \alias{ewowin}
 \title{Polygonal window of England and Wales}
-\format{An \code{owin} class object.}
+\format{
+An \code{owin} class object.
+}
 \source{
 South,A.2011.rworldmap: A New R package for Mapping Global Data. The R Journal Vol. 3/1 : 35-43.
 }

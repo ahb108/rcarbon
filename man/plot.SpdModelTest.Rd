@@ -4,17 +4,28 @@
 \alias{plot.SpdModelTest}
 \title{Plot result of Monte-Carlo simulation of observed versus modelled SPDs}
 \usage{
-\method{plot}{SpdModelTest}(x, calendar = "BP", type = "spd",
-  ylim = NA, xlim = NA, col.obs = "black", lwd.obs = 0.5,
-  xaxs = "i", yaxs = "i", bbty = "f", bbtyRet = TRUE,
-  drawaxes = TRUE, ...)
+\method{plot}{SpdModelTest}(
+  x,
+  calendar = "BP",
+  type = "spd",
+  ylim = NA,
+  xlim = NA,
+  col.obs = "black",
+  lwd.obs = 0.5,
+  xaxs = "i",
+  yaxs = "i",
+  bbty = "f",
+  bbtyRet = TRUE,
+  drawaxes = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
-\item{type}{Either \code{'standard'} or \code{'simple'}. The former visualise the SPD as an area graph, while the latter as line chart.}
+\item{type}{Whether to display SPDs ('spd') or rates of change ('roc'). Default is 'spd'.}
 
 \item{ylim}{the y limits of the plot.}
 

@@ -1,5 +1,21 @@
+# Version 1.3.3 (4 August 2020)
+* Minor changes on NAMESPACE and test environment to ensure CRAN checks for all operating systems
 
-#  Version 1.3.0 (July 2019)
+#  Verson 1.3.2 (25 July 2020)
+* Bug fix : `F14C=TRUE` was producting an error message in `calibrate()` after refactoring in version 1.3.1. 
+* Bug fix : fixed error in the handling of `resErrors` (Delta R error) for  marine reservoir effect.
+* NEW: `stackspd()` creates a set of multiple SPDs as an object of class `stackCalSPD` with a dedicated plot function.
+* NEW: `multiplot()` function for displaying multiple calibrated dates.
+* NEW: `hpdi()` function for computing highest probability density intervals of calibrated dates.
+* NEW: `combine()` function for concatenating multiple `calDates` class objects.
+* UPDATE: `calibrate()`, `modelTest()`, and `sptest()` are now parallelised using the *doSNOW* package, enabling progress bar when running over multiple cores.
+
+#  Version 1.3.1 (18 March 2020)
+* `binPrep()` now accepts alternative clustering algorithms
+* Refactoring of calibration related functions to increase readability
+* Minor bug fixes
+
+#  Version 1.3.0 (12 December 2019)
 * UPDATEs in `modelTest()`:
   * Added an error message and a note in the help documentation warning users to not use calibration curves not supported by `uncalibrate()`.
   * NEW argument `gridclip` to add range constrain in the simulation envelope. When set to TRUE the sampling is executed within the observed range of dates.
@@ -11,7 +27,7 @@
 * UPDATE in `permTest()`
   * NEW arguments `backsight` and `changexpr` enabling the comparison of expected and observed rates of changes. 
 * UPDATE in `spd()`: aggregation matrix now spans beyond `timeRange` to avoid edge effects.
-* UPDATE in `calibrate()`: the new agrument `F14C` enables calibratio in F14C space.
+* UPDATE in `calibrate()`: the new argument `F14C` enables calibration in F14C space.
 * UPDATE in `SPpermTest()`: 
   * function is deprecated and renamed `sptest()`
   * function now allows user defined expression for computing the rate of change
@@ -29,6 +45,8 @@
   *  Associated `plot()` function.
 * NEW: `subset()` and `which.CalDates()` for subsetting and extracting indices of calibrated dates based on temporal intervals described by logical conditions (e.g. between 5500 and 4500 cal BP) and user defined probability mass.
 * Bug fix: fixed display error in some `plot()` functions when calendar is set to `BC/AD'
+* Bug fix: fixed error in the computation of the combined uncertainties in `mixCurves()`. 
+* Further minor bug fixes for R 4.0.0 
 
 # Version 1.2.0 (1 October 2018)
 * Bug fix in `SPpermTest()`: Functions was not working when not running when `raw=FALSE` and `ncores=1`.
@@ -68,5 +86,5 @@
 * minor bug fixes
 
 
-# Version 1.0.0 (9 Otober 2017)
+# Version 1.0.0 (9 October 2017)
 First official CRAN release. 
