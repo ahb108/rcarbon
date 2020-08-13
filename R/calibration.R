@@ -52,7 +52,7 @@ calibrate <- function (x, ...) {
 #' @rdname calibrate
 #' @export
 
-calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves=‘intcal20’, resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
+calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal20', resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
 
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -205,7 +205,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves=‘in
 #' @rdname calibrate
 #' @export
 
-calibrate.UncalGrid <- function(x, errors=0, calCurves=‘intcal20’, timeRange=c(50000,0), eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE,...){
+calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal20', timeRange=c(50000,0), eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE,...){
 
     if (length(errors)==1){
         errors <- rep(errors,length(x$CRA))
@@ -288,7 +288,7 @@ uncalibrate <- function (x, ...) {
 #' @rdname uncalibrate
 #' @export
 
-uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves=‘intcal20’, ...){
+uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves='intcal20', ...){
     
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
     ## calCurve checks and set-up
@@ -302,7 +302,7 @@ uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves=‘int
         stop("The custom calibration curve does not cover the input age range.")
       }
     }
-  } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+  } else if (!all(calCurves %in% c("intcal20","shcal20","marine20","intcal13", "shcal13", "marine13", "intcal13nhpine16","shcal13shkauri16"))){
     stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
   } else {
     calcurve <- read_cal_curve_from_file(calCurves)
@@ -321,7 +321,7 @@ uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves=‘int
 #' @rdname uncalibrate
 #' @export
 
-uncalibrate.CalGrid <- function(x, calCurves=‘intcal20’, eps=1e-5, compact=TRUE, verbose=TRUE, ...){
+uncalibrate.CalGrid <- function(x, calCurves='intcal20', eps=1e-5, compact=TRUE, verbose=TRUE, ...){
 
     if (verbose){ print("Uncalibrating...") }
     names(x) <- c("calBP","PrDens")
@@ -336,7 +336,7 @@ uncalibrate.CalGrid <- function(x, calCurves=‘intcal20’, eps=1e-5, compact=T
         stop("The custom calibration curve does not cover the input age range.")
       }
     }
-  } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+  } else if (!all(calCurves %in% c("intcal20","shcal20","marine20","intcal13", "shcal13", "marine13", "intcal13nhpine16","shcal13shkauri16"))){
     stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
   } else {
     calcurve <- read_cal_curve_from_file(calCurves)
@@ -680,7 +680,7 @@ medCal <- function(x)
 
 #' @title Creates mixed calibration curves.
 #'
-#' @description Function for generating mixed calibration curves (e.g. intcal13/marine13, intcal13/shcal13)  with user-defined proportions.
+#' @description Function for generating mixed calibration curves (e.g. intcal13/marine13, intcal13/shcal13) with user-defined proportions.
 #' 
 #' @param calCurve1 Name of the first curve, chosen from ‘intcal20’,'intcal13nhpine16',’shcal20’,'shcal13shkauri16',’marine20’. Default is ‘intcal20’.
 #' @param calCurve2 Name of the second curve, from the same list. Default is ‘marine20’.
@@ -694,14 +694,14 @@ medCal <- function(x)
 #' Blaauw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
 #' Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 #' @examples
-#' myCurve <- mixCurves(‘intcal20’,’marine20’,p=0.7,resOffsets=300,resErrors=20)
+#' myCurve <- mixCurves("intcal20","marine20",p=0.7,resOffsets=300,resErrors=20)
 #' x <- calibrate(4000,30,calCurves=myCurve)
 #' @seealso \code{\link{calibrate}}
 #' @export
 
 
 
-mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 0.5, resOffsets = 0, 
+mixCurves <- function (calCurve1 = "intcal20", calCurve2 = "marine20", p = 0.5, resOffsets = 0, 
                        resErrors = 0)
 {
   File1 <- paste(system.file("extdata", package = "rcarbon"),"/", calCurve1, ".14c", sep = "")
