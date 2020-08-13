@@ -37,6 +37,11 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     if (!type %in% types){
         stop("The plot type you have chosen is not currently an option.")
     }
+    caltimeRange =c(55000,0)
+    if (any(x$metadata$CalCurve %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16")))
+    {
+      caltimeRange =c(50000,0)
+    }
     if (length(x$calmatrix)>1){
         grd <- data.frame(calBP=as.numeric(row.names(x$calmatrix)),PrDens=x$calmatrix[,ind])
         grd <- grd[grd$PrDens >0,]
@@ -117,7 +122,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
     if(!add)
     {
 	    par(new=TRUE)
-	    cradf1 <- data.frame(CRA=50000:0,Prob=dnorm(50000:0, mean=cra, sd=error))
+	    cradf1 <- data.frame(CRA=caltimeRange[1]:0,Prob=dnorm(caltimeRange[1]:0, mean=cra, sd=error))
 	    cradf1 <- cradf1[cradf1$Prob>0.0001,]
 	    ylim <- c(cra-(12*error),cra+(8*error))    
 	    cradf1$RX <- reScale(cradf1$Prob, to=c(xlim[1],(xlim[1]+diff(xlim)*0.33)))

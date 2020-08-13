@@ -224,7 +224,12 @@ binMed <- function(x,bins,verbose=TRUE){
         bins <- rep("0_0",nrow(x$metadata))
     }
     binNames <- unique(bins)
-    calyears <- data.frame(calBP=seq(50000, 0,-1))
+    caltimeRange =c(55000,0)
+    if (any(x$metadata$CalCurve %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16")))
+    {
+      caltimeRange =c(50000,0)
+    }    
+    calyears <- data.frame(calBP=seq(caltimeRange[1], 0,-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
     if (verbose){
         if (length(x$calmatrix)>1){
@@ -239,7 +244,7 @@ binMed <- function(x,bins,verbose=TRUE){
     }
     caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
     caldateyears <- seq(caldateTR[1],caldateTR[2],-1)
-    check <- caldateTR[1] >= 50000 & caldateTR[2] <= 0
+    check <- caldateTR[1] >= caltimeRange[1] & caldateTR[2] <= 0
     for (b in 1:length(binNames)){
         if (verbose & length(binNames)>1){ setTxtProgressBar(pb, b) }
         index <- which(bins==binNames[b])
@@ -252,7 +257,7 @@ binMed <- function(x,bins,verbose=TRUE){
                 if (length(binNames)>1){
                     spdtmp <- spdtmp / length(index)
                 }
-                binnedMatrix[,b] <- spdtmp[caldateyears<=50000 & caldateyears>=0]
+                binnedMatrix[,b] <- spdtmp[caldateyears<=caltimeRange[1] & caldateyears>=0]
             }
         } else {
             slist <- x$grids[index]

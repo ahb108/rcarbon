@@ -81,7 +81,11 @@
 
 modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=50,changexpr=expression((t1/t0)^(1/d)-1),gridclip=TRUE, raw=FALSE, model=c("exponential"),method=c("uncalsample"),predgrid=NA, normalised=NA,datenormalised=NA, spdnormalised=FALSE, ncores=1, fitonly=FALSE, a=0, b=0, edgeSize=500,verbose=TRUE){
    
-
+  caltimeRange =c(55000,0)
+  if (any(x$metadata$CalCurve %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16")))
+  {
+    caltimeRange =c(50000,0)
+  }
     if (fitonly == TRUE) {nsim <- 1}
     if (ncores>1&!requireNamespace("doSNOW", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -225,10 +229,10 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
     {
 	predgrid = rbind.data.frame(data.frame(calBP=(max(predgrid$calBP)+edgeSize):c(predgrid$calBP[1]+1),PrDens=0),predgrid)
     	predgrid = rbind.data.frame(predgrid,data.frame(calBP=min(predgrid$calBP):(min(predgrid$calBP)-edgeSize),PrDens=0))
-	if (any(predgrid$calBP<=0|predgrid$calBP>=50000))
+	if (any(predgrid$calBP<=0|predgrid$calBP>=caltimeRange[1]))
 	    {
 		    warning("edgeSize reduced")
-		    predgrid = subset(predgrid, calBP<=50000&calBP>=0)
+		    predgrid = subset(predgrid, calBP<=caltimeRange[1]&calBP>=0)
 	    }
     }
 

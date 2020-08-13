@@ -161,6 +161,13 @@ spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE,
     if (!"CalDates" %in% class(x)){
         stop("x must be an object of class 'CalDates'.")
     }
+    caltimeRange =c(55000,0)
+    if (any(x$metadata$CalCurve %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16")))
+    {
+      caltimeRange =c(50000,0)
+    }
+    
+    
     if (length(bins)>1){
         speccall$nbins <- length(unique(bins))
         if (any(is.na(bins))){
@@ -180,9 +187,9 @@ spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE,
 	    ccrange=range(medCal(x))
 	    ccrange[2]=ccrange[2]+edgeSize
 	    ccrange[1]=ccrange[1]-edgeSize
-	    if (ccrange[1]<0|ccrange[2]>50000)
+	    if (ccrange[1]<0|ccrange[2]>caltimeRange[1])
 	    {
-		stop("timeRange beyond calibration curve. Ensure that timeRange[1]+edgeSize is smaller than 50000 and timeRange[2]-edgeSize is larger than 0")
+		stop(paste0("timeRange beyond calibration curve. Ensure that timeRange[1]+edgeSize is smaller than ", caltimeRange[1]," and timeRange[2]-edgeSize is larger than 0"))
 	    }
 	    timeRange[1]=ccrange[2]
 	    timeRange[2]=ccrange[1]
