@@ -6,7 +6,7 @@
 #' @param errors A vector of standard deviations corresponding to each estimated radiocarbon age.
 #' @param ids An optional vector of IDs for each date.
 #' @param dateDetails An optional vector of details for each date which will be returned in the output metadata. 
-#' @param calCurves Either a character string naming a calibration curve already provided with the rcarbon package (currently ‘intcal20’,'intcal13nhpine16',’shcal20’,'shcal13shkauri16',’marine20’ and 'normal'(i.e. no calibration) are possible; default is ‘intcal20’) or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.
+#' @param calCurves Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal20','intcal13','intcal13nhpine16','shcal20','shcal13','shcal13shkauri16',''marine13','marine20' and 'normal'(i.e. no calibration) are possible; default is 'intcal20') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.
 #' @param resOffsets A vector of offset values for any marine reservoir effect (default is no offset).
 #' @param resErrors A vector of offset value errors for any marine reservoir effect (default is no offset).
 #' @param timeRange Earliest and latest data to calibrate for, in calendar years. Posterior probabilities beyond this range will be excluded (the default is sensible in most cases).
@@ -35,7 +35,7 @@
 #' plot(x1)
 #' summary(x1)
 #' # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
-#' x2 <- calibrate(x=4000, errors=30, calCurves=‘marine20’, resOffsets=300, resErrors=30)
+#' x2 <- calibrate(x=4000, errors=30, calCurves='marine20', resOffsets=300, resErrors=30)
 #' plot(x2)
 #' @import stats 
 #' @import utils 
@@ -52,7 +52,7 @@ calibrate <- function (x, ...) {
 #' @rdname calibrate
 #' @export
 
-calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves=‘intcal20’, resOffsets=0 , resErrors=0, timeRange=c(50000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
+calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal20', resOffsets=0 , resErrors=0, timeRange=c(55000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
 
     if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
 	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
@@ -72,8 +72,13 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves=‘in
     if (is.null(calCurves)|anyNA(calCurves)){
 	stop("calCurves is NULL or contain NAs")
     }
-
   
+    if (any(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16")) & (max(timeRange) > 50000 | min(timeRange)<0))
+    {
+      timeRange=c(50000,0)
+      warning("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(50000,0)")
+    }
+
     if (F14C==TRUE&normalised==FALSE)
     {
       normalised=TRUE
@@ -94,7 +99,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves=‘in
             names(cclist) <- "custom"
             calCurves <- rep("custom",length(x))
         }
-    } else if (!all(calCurves %in% c("intcal20","shcal13","marine13","intcal13nhpine16","shcal13shkauri16","normal"))){
+    } else if (!all(calCurves %in% c("intcal13","intcal20","shcal13","shcal20","marine13","marine20","intcal13nhpine16","shcal13shkauri16"))){
         stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
   } else {
     tmp <- unique(calCurves)
@@ -205,11 +210,16 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves=‘in
 #' @rdname calibrate
 #' @export
 
-calibrate.UncalGrid <- function(x, errors=0, calCurves=‘intcal20’, timeRange=c(50000,0), eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE,...){
+calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal20', timeRange=c(55000,0), eps=1e-5, type="fast", datenormalised=FALSE, spdnormalised=FALSE, verbose=TRUE,...){
 
-    if (length(errors)==1){
-        errors <- rep(errors,length(x$CRA))
-    }
+  if (length(errors)==1){
+    errors <- rep(errors,length(x$CRA))
+  }
+  if (any(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16")) & (max(timeRange) > 50000 | min(timeRange)<0))
+  {
+    timeRange=c(50000,0)
+    warning("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(50000,0)")
+  }
     if (class(calCurves) %in% c("matrix","data.frame")){
         calcurve <- as.matrix(calCurves)
         if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
@@ -227,7 +237,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves=‘intcal20’, timeRange
     for (d in 1:ncol(caleach$calmatrix)){
       caleach$calmatrix[,d] <- caleach$calmatrix[,d] *  x$PrDens[d]
     }
-    res <- data.frame(calBP=50000:0, PrDens=rowSums(caleach$calmatrix))
+    res <- data.frame(calBP=timeRange[1]:timeRange[2], PrDens=rowSums(caleach$calmatrix))
   } else if (type=="fast"){
     if (datenormalised){
       warning('Cannot normalise dates using fast method, so leaving unnormalised.')
@@ -264,7 +274,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves=‘intcal20’, timeRange
 #' @param x Either a vector of calibrated radiocarbon ages or an object of class CalGrid.
 #' @param CRAerrors A vector of standard deviations corresponding to each estimated radiocarbon age (ignored if x is a CalGrid object).
 #' @param roundyear An optional vector of IDs for each date (ignored if x is a CalGrid object).
-#' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently ‘intcal20’,'intcal13nhpine16',’shcal20’,"shcal13shkauri16', and ‘marine20’ are possible) or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the ‘intcal20’ curve and only one curve can currently be specified for all dates. 
+#' @param  calCurves A string naming a calibration curve already provided with the rcarbon package (currently 'intcal20','intcal13','intcal13nhpine16','shcal20','shcal13','shcal13shkauri16',''marine13','marine20' and 'normal') or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the 'intcal20' curve and only one curve can currently be specified for all dates. 
 #' @param  eps Cut-off value for density calculation (for CalGrid objects only).
 #' @param  compact A logical variable indicating whether only uncalibrated ages with non-zero probabilities should be returned (for CalGrid objects only).
 #' @param  verbose A logical variable indicating whether extra information on progress should be reported (for CalGrid objects only).
@@ -288,7 +298,7 @@ uncalibrate <- function (x, ...) {
 #' @rdname uncalibrate
 #' @export
 
-uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves=‘intcal20’, ...){
+uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves='intcal20', ...){
     
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
     ## calCurve checks and set-up
@@ -302,7 +312,7 @@ uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves=‘int
         stop("The custom calibration curve does not cover the input age range.")
       }
     }
-  } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+  } else if (!all(calCurves %in% c("intcal13","intcal20","shcal13","shcal20","marine13","marine20","intcal13nhpine16","shcal13shkauri16"))){
     stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
   } else {
     calcurve <- read_cal_curve_from_file(calCurves)
@@ -321,7 +331,7 @@ uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves=‘int
 #' @rdname uncalibrate
 #' @export
 
-uncalibrate.CalGrid <- function(x, calCurves=‘intcal20’, eps=1e-5, compact=TRUE, verbose=TRUE, ...){
+uncalibrate.CalGrid <- function(x, calCurves='intcal20', eps=1e-5, compact=TRUE, verbose=TRUE, ...){
 
     if (verbose){ print("Uncalibrating...") }
     names(x) <- c("calBP","PrDens")
@@ -336,7 +346,7 @@ uncalibrate.CalGrid <- function(x, calCurves=‘intcal20’, eps=1e-5, compact=T
         stop("The custom calibration curve does not cover the input age range.")
       }
     }
-  } else if (!all(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16"))){
+  } else if (!all(calCurves %in% c("intcal13","intcal20","shcal13","shcal20","marine13","marine20","intcal13nhpine16","shcal13shkauri16"))){
     stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
   } else {
     calcurve <- read_cal_curve_from_file(calCurves)
@@ -680,10 +690,10 @@ medCal <- function(x)
 
 #' @title Creates mixed calibration curves.
 #'
-#' @description Function for generating mixed calibration curves (e.g. intcal13/marine13, intcal13/shcal13)  with user-defined proportions.
+#' @description Function for generating mixed calibration curves (e.g. intcal20/marine20, intcal20/shcal20)  with user-defined proportions.
 #' 
-#' @param calCurve1 Name of the first curve, chosen from ‘intcal20’,'intcal13nhpine16',’shcal20’,'shcal13shkauri16',’marine20’. Default is ‘intcal20’.
-#' @param calCurve2 Name of the second curve, from the same list. Default is ‘marine20’.
+#' @param calCurve1 Name of the first curve, chosen from 'intcal20','intcal13','intcal13nhpine16','shcal20','shcal13','shcal13shkauri16',''marine13','marine20'. Default is 'intcal20'.
+#' @param calCurve2 Name of the second curve, from the same list. Default is 'marine20'.
 #' @param p The proportion of contribution of the first curve. Default is 1.
 #' @param resOffsets Offset value for the marine reservoir effect to be applied to calCurve2. Default is 0.
 #' @param resErrors Error of the marine reservoir effect offset to be applied to calCurve2. Default is 0.
@@ -694,14 +704,14 @@ medCal <- function(x)
 #' Blaauw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R package version 2.3.1. https://CRAN.R-project.org/packacge=clam
 #' Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 #' @examples
-#' myCurve <- mixCurves(‘intcal20’,’marine20’,p=0.7,resOffsets=300,resErrors=20)
+#' myCurve <- mixCurves('intcal20','marine20',p=0.7,resOffsets=300,resErrors=20)
 #' x <- calibrate(4000,30,calCurves=myCurve)
 #' @seealso \code{\link{calibrate}}
 #' @export
 
 
 
-mixCurves <- function (calCurve1 = "intcal13", calCurve2 = "intcal13", p = 0.5, resOffsets = 0, 
+mixCurves <- function (calCurve1 = "intcal20", calCurve2 = "marine20", p = 0.5, resOffsets = 0, 
                        resErrors = 0)
 {
   File1 <- paste(system.file("extdata", package = "rcarbon"),"/", calCurve1, ".14c", sep = "")
