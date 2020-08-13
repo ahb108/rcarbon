@@ -5,17 +5,17 @@
 \title{Creates mixed calibration curves.}
 \usage{
 mixCurves(
-  calCurve1 = "intcal13",
-  calCurve2 = "intcal13",
+  calCurve1 = "intcal20",
+  calCurve2 = "marine20",
   p = 0.5,
   resOffsets = 0,
   resErrors = 0
 )
 }
 \arguments{
-\item{calCurve1}{Name of the first curve, chosen from 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13'. Default is 'intcal13'.}
+\item{calCurve1}{Name of the first curve, chosen from 'intcal20','intcal13','intcal13nhpine16','shcal20','shcal13','shcal13shkauri16',''marine13','marine20'. Default is 'intcal20'.}
 
-\item{calCurve2}{Name of the second curve, from the same list. Default is 'marine13'.}
+\item{calCurve2}{Name of the second curve, from the same list. Default is 'marine20'.}
 
 \item{p}{The proportion of contribution of the first curve. Default is 1.}
 
@@ -27,13 +27,13 @@ mixCurves(
 A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link{calibrate}} function.
 }
 \description{
-Function for generating mixed calibration curves (e.g. intcal13/marine13, intcal13/shcal13)  with user-defined proportions.
+Function for generating mixed calibration curves (e.g. intcal20/marine20, intcal20/shcal20)  with user-defined proportions.
 }
 \details{
 The function is based on the \code{mix.calibrationcurves} function of the \code{clam} package.
 }
 \examples{
-myCurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=300,resErrors=20)
+myCurve <- mixCurves('intcal20','marine20',p=0.7,resOffsets=300,resErrors=20)
 x <- calibrate(4000,30,calCurves=myCurve)
 }
 \references{

@@ -13,10 +13,10 @@ calibrate(x, ...)
   errors,
   ids = NA,
   dateDetails = NA,
-  calCurves = "intcal13",
+  calCurves = "intcal20",
   resOffsets = 0,
   resErrors = 0,
-  timeRange = c(50000, 0),
+  timeRange = c(55000, 0),
   normalised = TRUE,
   F14C = FALSE,
   calMatrix = FALSE,
@@ -29,8 +29,8 @@ calibrate(x, ...)
 \method{calibrate}{UncalGrid}(
   x,
   errors = 0,
-  calCurves = "intcal13",
-  timeRange = c(50000, 0),
+  calCurves = "intcal20",
+  timeRange = c(55000, 0),
   eps = 1e-05,
   type = "fast",
   datenormalised = FALSE,
@@ -50,7 +50,7 @@ calibrate(x, ...)
 
 \item{dateDetails}{An optional vector of details for each date which will be returned in the output metadata.}
 
-\item{calCurves}{Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal13','intcal13nhpine16','shcal13','shcal13shkauri16','marine13' and 'normal'(i.e. no calibration) are possible; default is 'intcal13') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.}
+\item{calCurves}{Either a character string naming a calibration curve already provided with the rcarbon package (currently 'intcal20','intcal13','intcal13nhpine16','shcal20','shcal13','shcal13shkauri16',''marine13','marine20' and 'normal'(i.e. no calibration) are possible; default is 'intcal20') or a custom calibration curve as three-column matrix or data.frame (calibrated year BP, uncalibrated age bp, standard deviation). Different existing curves can be specified per dated sample, but only one custom curve can be provided for all dates.}
 
 \item{resOffsets}{A vector of offset values for any marine reservoir effect (default is no offset).}
 
@@ -97,7 +97,7 @@ x1 <- calibrate(x=4000, errors=30)
 plot(x1)
 summary(x1)
 # Example with a Marine Date, using a DeltaR of 300 and a DeltaR error of 30
-x2 <- calibrate(x=4000, errors=30, calCurves='marine13', resOffsets=300, resErrors=30)
+x2 <- calibrate(x=4000, errors=30, calCurves='marine20', resOffsets=300, resErrors=30)
 plot(x2)
 }
 \references{
