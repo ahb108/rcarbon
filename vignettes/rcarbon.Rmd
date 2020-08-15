@@ -409,7 +409,7 @@ The two figures show significant spatial heterogeneity in growth rates. Southern
 
 # References
 
-Baddeley, A., Rubak, R., Turner, R. 2015. [Spatial Point Patterns: Methodology and Applications with R].(http://www.crcpress.com/Spatial-Point-Patterns-Methodology-and-Applications-with-R/Baddeley-Rubak-Turner/9781482210200/) London: Chapman and Hall/CRC Press, 2015.
+Baddeley, A., Rubak, R., Turner, R. 2015. Spatial Point Patterns: Methodology and Applications with R. London: Chapman and Hall/CRC Press, 2015.
 
 Bevan, A., S. Colledge., D. Fuller., R. Fyfe., S. Shennan. & C. Stevens. 2017. [Holocene fluctuations in human population demonstrate repeated links to food production and climate.](https://doi.org/10.1073/pnas.1709190114) Proceedings of the National Academy of Sciences 114: E10524–31.
 
@@ -431,7 +431,7 @@ Edinborough, K., M. Porčić, A. Martindale, T.J. Brown, K. Supernant & K.M. Ame
 
 Kelsall, J. E., & Diggle, P. J. 1995. [Non-parametric estimation of spatial variation in relative risk.](https://doi.org/10.1002/sim.4780142106) Statistics in Medicine, 14(21–22), 2335–2342.
 
-Manning, K., S. Colledge, E. Crema, S. Shennan & A. Timpson 2016. [The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data.](http://openarchaeologydata.metajnl.com/articles/10.5334/joad.40/) Journal of Open Archaeology Data 5.
+Manning, K., S. Colledge, E. Crema, S. Shennan & A. Timpson 2016. [The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data.](http://doi.org/10.5334/joad.40) Journal of Open Archaeology Data 5.
 
 Rick, J.W. 1987.Dates as Data: An Examination of the Peruvian Preceramic Radiocarbon Record.  American Antiquity 52: 55–73
 
@@ -439,9 +439,9 @@ Reimer, P.J., Austin, W.E.N., Bard, E., Bayliss, A., Blackwell, P.G., Ramsey, C.
 
 Roberts, N., J. Woodbridge, A. Bevan, A. Palmisano, S. Shennan & E. Asouti 2018. [Human responses and non-responses to climatic variations during the last Glacial-Interglacial transition in the eastern Mediterranean.](https://doi.org/10.1016/j.quascirev.2017.09.011) Quaternary Science Reviews 184. Late Glacial to Early Holocene Socio-Ecological Responses to Climatic Instability within the Mediterranean Basin: 47–67.
 
-Shennan, S., S.S. Downey., A. Timpson., K. Edinborough., S. Colledge., T. Kerig., K. Manning. & M.G. Thomas. 2013. [Regional population collapse followed initial agriculture booms in mid-Holocene Europe.](https://doi.org/10.1038/ncomms3486) Nature Communications 4: ncomms3486.
+Shennan, S., S.S. Downey., A. Timpson., K. Edinborough., S. Colledge., T. Kerig., K. Manning. & M.G. Thomas. 2013. [Regional population collapse followed initial agriculture booms in mid-Holocene Europe](https://doi.org/10.1038/ncomms3486). Nature Communications 4: ncomms3486.
 
-Stevens, C.J. & D.Q. Fuller 2012. [Did Neolithic farming fail? The case for a Bronze Age agricultural revolution in the British Isles.](http://antiquity.ac.uk/ant/086/ant0860707.htm) Antiquity 86: 707–22.
+Stevens, C.J. & D.Q. Fuller 2012. [Did Neolithic farming fail? The case for a Bronze Age agricultural revolution in the British Isles](https://doi.org/10.1017/S0003598X00047864). Antiquity 86: 707–22.
 
 Timpson, A., S. Colledge, E. Crema, K. Edinborough, T. Kerig, K. Manning, M.G. Thomas & S. Shennan. 2014. [Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method.](https://doi.org/10.1016/j.jas.2014.08.011) Journal of Archaeological Science 52: 549–57
 
