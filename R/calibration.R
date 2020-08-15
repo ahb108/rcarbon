@@ -54,8 +54,8 @@ calibrate <- function (x, ...) {
 
 calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intcal20', resOffsets=0 , resErrors=0, timeRange=c(55000,0), normalised=TRUE, F14C=FALSE, calMatrix=FALSE, eps=1e-5, ncores=1, verbose=TRUE, ...){
 
-    if (ncores>1&!requireNamespace("doParallel", quietly=TRUE)){	
-	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
+    if (ncores>1&!requireNamespace("doSNOW", quietly=TRUE)){	
+	warning("the doSNOW package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
     }	
     	
