@@ -50,10 +50,10 @@ library(rcarbon)
 
 Single or multiple radiocarbon dates can be calibrated using the `calibrate()` function, which uses the probability density approach (see Bronk Ramsey 2008) implemented in most calibration software (e.g. [OxCal](https://c14.arch.ox.ac.uk/oxcal.html)) as well as in other R packages (especially [Bchron](https://CRAN.R-project.org/package=Bchron). Note that the latter R package also provides age-depth modelling for environmental cores and experimental options for aggregating dates via Gaussian mixtures. 
 
-The example below calibrates a sample with a $^{14}$C Age of 4200 BP and an error of 30 years using the *intcal13* calibration curve:
+The example below calibrates a sample with a $^{14}$C Age of 4200 BP and an error of 30 years using the *intcal20* calibration curve (Reimer et al 2020):
 
 ```{r,results='hide',message=FALSE}
-x <- calibrate(x=4200,errors=30,calCurves='intcal13')
+x <- calibrate(x=4200,errors=30,calCurves='intcal20')
 ```
 
 The resulting object of class `CalDates` can then be plotted using the basic `plot()` function (in this case highlighting the 95% higher posterior density interval):
@@ -65,7 +65,7 @@ plot(x,HPD=TRUE,credMass=0.95)
 Multiple dates can be calibrated by supplying a vector of numerical values, and the `summary()` function can be used to retrieve one and the two sigma ranges as well as the median calibrated date:
 
 ```{r,results='hide'}
-xx <- calibrate(x=c(5700,4820,6450,7200),errors=c(30,40,40,30),calCurves='intcal13')
+xx <- calibrate(x=c(5700,4820,6450,7200),errors=c(30,40,40,30),calCurves='intcal20')
 ```
 ```{r}
 summary(xx)
@@ -92,7 +92,7 @@ Users can also supply their own custom calibration curves. The example below use
 
 ```{r,results='hide',fig.width=5,fig.height=5}
 #generate 70% terrestrial and 30% marine curve
-myCurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=340,resErrors=20) 
+myCurve <- mixCurves('intcal20','marine20',p=0.7,resOffsets=340,resErrors=20) 
 plot(calibrate(4000,30,calCurves=myCurve))
 ```
 
@@ -108,7 +108,7 @@ The function `spd()` aggregates (sums) calibrated radiocarbon dates within a def
 ```{r,results='hide',fig.height=5,fig.width=5}
 data(euroevol)
 DK=subset(euroevol,Country=="Denmark") #subset of Danish dates
-DK.caldates=calibrate(x=DK$C14Age,errors=DK$C14SD,calCurves='intcal13',ncores=3) #running calibration over 3 cores
+DK.caldates=calibrate(x=DK$C14Age,errors=DK$C14SD,calCurves='intcal20',ncores=3) #running calibration over 3 cores
 DK.spd = spd(DK.caldates,timeRange=c(8000,4000)) 
 plot(DK.spd) 
 plot(DK.spd,runm=200,add=TRUE,type="simple",col="darkorange",lwd=2,lty=2) #using a rolling average of 200 years for smoothing
@@ -223,7 +223,7 @@ summary(expnull)
 
 ### Testing against custom growth models
 
-The `modelTest()` function can also be used to test user-defined theoretical growth models. The example below fits a logistic growth model (using the `nls()` function).
+The `modelTest()` function can also be used to test user-defined growth models. The example below compares the observed SPD against a fitted logistic growth model (using the `nls()` function). Other applications may include theoretical models that are independent to the observed data (i.e. not fitted to the observed SPD) or based on alternative proxy time-series (see for example Crema and Kobayashi 2020 for a comparison between SPDs and residential count data). 
 
 ```{r,results='hide'}
 # Generate a smoothed SPD
@@ -425,6 +425,8 @@ Crema, E.R., J. Habu, K. Kobayashi & M. Madella 2016. [Summed Probability Distri
 
 Crema, E.R., A. Bevan. & S. Shennan. 2017. [Spatio-temporal approaches to archaeological radiocarbon dates.](https://doi.org/10.1016/j.jas.2017.09.007) Journal of Archaeological Science 87: 1–9.
 
+Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
+
 Edinborough, K., M. Porčić, A. Martindale, T.J. Brown, K. Supernant & K.M. Ames 2017. [Radiocarbon test for demographic events in written and oral history.](https://doi.org/10.1073/pnas.1713012114) Proceedings of the National Academy of Sciences 114: 12436–41.
 
 Kelsall, J. E., & Diggle, P. J. 1995. [Non-parametric estimation of spatial variation in relative risk.](https://doi.org/10.1002/sim.4780142106) Statistics in Medicine, 14(21–22), 2335–2342.
@@ -432,6 +434,8 @@ Kelsall, J. E., & Diggle, P. J. 1995. [Non-parametric estimation of spatial vari
 Manning, K., S. Colledge, E. Crema, S. Shennan & A. Timpson 2016. [The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data.](http://openarchaeologydata.metajnl.com/articles/10.5334/joad.40/) Journal of Open Archaeology Data 5.
 
 Rick, J.W. 1987.Dates as Data: An Examination of the Peruvian Preceramic Radiocarbon Record.  American Antiquity 52: 55–73
+
+Reimer, P.J., Austin, W.E.N., Bard, E., Bayliss, A., Blackwell, P.G., Ramsey, C.B., Butzin, M., Cheng, H., Edwards, R.L., Friedrich, M., Grootes, P.M., Guilderson, T.P., Hajdas, I., Heaton, T.J., Hogg, A.G., Hughen, K.A., Kromer, B., Manning, S.W., Muscheler, R., Palmer, J.G., Pearson, C., Plicht, J. van der, Reimer, R.W., Richards, D.A., Scott, E.M., Southon, J.R., Turney, C.S.M., Wacker, L., Adolphi, F., Büntgen, U., Capano, M., Fahrni, S.M., Fogtmann-Schulz, A., Friedrich, R., Köhler, P., Kudsk, S., Miyake, F., Olsen, J., Reinig, F., Sakamoto, M., Sookdeo, A., Talamo, S., 2020. [The IntCal Northern Hemisphere Radiocarbon Age Calibration Curve (0-55 Cal kBP)](https://doi.org/10.1017/RDC.2020.41). Radiocarbon: 1–33. 
 
 Roberts, N., J. Woodbridge, A. Bevan, A. Palmisano, S. Shennan & E. Asouti 2018. [Human responses and non-responses to climatic variations during the last Glacial-Interglacial transition in the eastern Mediterranean.](https://doi.org/10.1016/j.quascirev.2017.09.011) Quaternary Science Reviews 184. Late Glacial to Early Holocene Socio-Ecological Responses to Climatic Instability within the Mediterranean Basin: 47–67.
 
