@@ -90,7 +90,7 @@ bins=binPrep(sites=euroevol2$SiteID,ages=euroevol2$C14Age,h=200)
 calDates=calibrate(x=euroevol2$C14Age,errors=euroevol2$C14SD,
 timeRange=timeRange,normalised=FALSE)
 
-## Main Analysis (over 2 cores; requires doParallel package) 
+## Main Analysis (over 2 cores; requires doSnow package) 
 ## NOTE: the number of simulations should be ideally larger 
 ## to ensure a better resolution of the p/q-values.
 res.locations=sptest(calDates,timeRange=timeRange,bins=bins,locations=locations,

@@ -66,7 +66,7 @@ calibrate(x, ...)
 
 \item{eps}{Cut-off value for density calculation. Default is 1e-5.}
 
-\item{ncores}{Number of cores/workers used for parallel execution. Default is 1 (>1 requires doParallel package).}
+\item{ncores}{Number of cores/workers used for parallel execution. Default is 1 (>1 requires doSnow package).}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 

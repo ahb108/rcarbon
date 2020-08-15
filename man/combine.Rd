@@ -20,9 +20,9 @@ Combine multiple CalDates Class Objects into one.
 \examples{
  
 x1 = calibrate(c(2000,3400),c(20,20),ids=1:2)
-x2 = calibrate(c(4000,3000),c(30,30),calCurves=c('intcal13','marine13'),
+x2 = calibrate(c(4000,3000),c(30,30),calCurves=c('intcal20','marine20'),
 resOffsets=c(0,30),resErrors=c(0,20),ids=3:4)
-mcurve <- mixCurves('intcal13','marine13',p=0.7,resOffsets=300,resErrors=20)
+mcurve <- mixCurves('intcal20','marine20',p=0.7,resOffsets=300,resErrors=20)
 x3 = calibrate(5300,20,calCurves=mcurve,ids=5)
 x = combine(x1,x2,x3)
 ## x$metadata
