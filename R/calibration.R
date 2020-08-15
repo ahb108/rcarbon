@@ -73,10 +73,19 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
 	stop("calCurves is NULL or contain NAs")
     }
   
-    if (any(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16")) & (max(timeRange) > 50000 | min(timeRange)<0))
+    if (!any(class(calCurves) %in% c("matrix","data.frame"))& any(calCurves %in% c("intcal13","shcal13","marine13","intcal13nhpine16","shcal13shkauri16")) & (max(timeRange) > 50000 | min(timeRange)<0))
     {
       timeRange=c(50000,0)
       warning("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(50000,0)")
+    }
+  
+    if (any(class(calCurves) %in% c("matrix","data.frame")))
+    {
+      if (max(calCurves[,1])<timeRange[1] | min(calCurves[,1]) < timeRange[2] )
+      {
+        timeRange=c(max(calCurves[,1]),min(calCurves[,1]))
+        warning(paste0("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(",timeRange[1],",",timeRange[1],")"))
+      }
     }
 
     if (F14C==TRUE&normalised==FALSE)
@@ -85,7 +94,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
       warning("normalised cannot be FALSE when F14C is set to TRUE, calibrating with normalised=TRUE")
     }
     # calCurve checks and set-up
-    if (class(calCurves) %in% c("matrix","data.frame")){
+    if (any(class(calCurves) %in% c("matrix","data.frame"))){
         cctmp <- as.matrix(calCurves)
         if (ncol(cctmp)!=3 | !all(sapply(cctmp,is.numeric))){
             stop("The custom calibration curve must have just three numeric columns.")
