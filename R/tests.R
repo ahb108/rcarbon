@@ -88,7 +88,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
   }
     if (fitonly == TRUE) {nsim <- 1}
     if (ncores>1&!requireNamespace("doSNOW", quietly=TRUE)){	
-	warning("the doParallel package is required for multi-core processing; ncores has been set to 1")
+	warning("the doSnow package is required for multi-core processing; ncores has been set to 1")
 	ncores=1
     } else {
       cl <- snow::makeCluster(ncores)
@@ -775,7 +775,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' calDates=calibrate(x=euroevol2$C14Age,errors=euroevol2$C14SD,
 #' timeRange=timeRange,normalised=FALSE)
 #'
-#' ## Main Analysis (over 2 cores; requires doParallel package) 
+#' ## Main Analysis (over 2 cores; requires doSnow package) 
 #' ## NOTE: the number of simulations should be ideally larger 
 #' ## to ensure a better resolution of the p/q-values.
 #' res.locations=sptest(calDates,timeRange=timeRange,bins=bins,locations=locations,

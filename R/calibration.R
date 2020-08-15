@@ -14,7 +14,7 @@
 #' @param F14C A logical variable indicating whether calibration should be carried out in F14C space or not. Default is FALSE.
 #' @param eps Cut-off value for density calculation. Default is 1e-5.
 #' @param calMatrix a logical variable indicating whether the age grid should be limited to probabilities higher than \code{eps}
-#' @param ncores Number of cores/workers used for parallel execution. Default is 1 (>1 requires doParallel package).
+#' @param ncores Number of cores/workers used for parallel execution. Default is 1 (>1 requires doSnow package).
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param ... ignored
 #'
