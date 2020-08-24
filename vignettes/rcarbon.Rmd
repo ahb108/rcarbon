@@ -431,7 +431,7 @@ Edinborough, K., M. Porčić, A. Martindale, T.J. Brown, K. Supernant & K.M. Ame
 
 Kelsall, J. E., & Diggle, P. J. 1995. [Non-parametric estimation of spatial variation in relative risk.](https://doi.org/10.1002/sim.4780142106) Statistics in Medicine, 14(21–22), 2335–2342.
 
-Manning, K., S. Colledge, E. Crema, S. Shennan & A. Timpson 2016. [The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data.](http://doi.org/10.5334/joad.40) Journal of Open Archaeology Data 5.
+Manning, K., S. Colledge, E. Crema, S. Shennan & A. Timpson 2016. [The Cultural Evolution of Neolithic Europe. EUROEVOL Dataset 1: Sites, Phases and Radiocarbon Data.](https://doi.org/10.5334/joad.40) Journal of Open Archaeology Data 5.
 
 Rick, J.W. 1987.Dates as Data: An Examination of the Peruvian Preceramic Radiocarbon Record.  American Antiquity 52: 55–73
 
