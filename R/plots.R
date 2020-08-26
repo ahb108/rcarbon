@@ -386,7 +386,8 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 			{
 				xx = medDates[i]
 				if (calendar=='BCAD'){xx = BPtoBCAD(xx)}
-				text(x=xx,y=max(yvals)+gap/2,labels=x$metadata$DateID[i],cex=cex.id)
+				ylabel=ifelse(rescale,max(yvals)-0.5,max(yvals)+gap/2) 
+				text(x=xx,y=ylabel,labels=x$metadata$DateID[i],cex=cex.id)
 			}
 
 		}
