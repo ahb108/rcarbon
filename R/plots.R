@@ -199,6 +199,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.
 #' @param ydisp Whether the y axis should be displayed. Ignored when \code{type} is set to \code{'b'}. Default is FALSE
 #' @param gapFactor Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of individual y-axis ranges. Default is 0.2.
+#' @param rescale Whether probability distributions should be rescaled (applicable only when \code{type} is set to \code{'d'}, default is FALSE).
 #' @seealso \code{\link{calibrate}}
 #'
 #' @examples
@@ -214,7 +215,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @export  
 
 
-multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,xlim=NULL,xlab=NA,ylab=NA,col.fill='grey50',col.fill2='grey82',col.line='black',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2)
+multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,xlim=NULL,xlab=NA,ylab=NA,col.fill='grey50',col.fill2='grey82',col.line='black',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2,rescale=FALSE)
 {
 
 	if(length(lwd)==1){lwd=rep(lwd,length(x))}
@@ -225,7 +226,11 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 
 	if (!is.null(decreasing))
 	{
-		x = x[order(medCal(x),decreasing=decreasing)]
+	  ord = order(medCal(x),decreasing=decreasing)
+		x = x[ord]
+		col.line = col.line[ord]
+		col.fill = col.fill[ord]
+		col.fill2 = col.fill2[ord]
 	}
 
 	medDates = medCal(x)
@@ -299,17 +304,24 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 
 	if (type=='d')
 	{
-
-
 		if(anyNA(x$grids))
 		{
+		  if (rescale)
+		  {
+		    x$calmatrix=apply(x$calmatrix,2,reScale)
+		  }
 			tmp = apply(x$calmatrix,1,max)
 			ylim = as.numeric(c(0,tmp[which.max(tmp)]))
 		} else {
+		  if (rescale) 
+		  {
+		    for (i in 1:length(x))
+		    {
+		      x$grids[[i]]$PrDens = reScale(x$grids[[i]]$PrDens)
+		    }
+		  }
 			ylim = c(0,max(unlist(lapply(x$grids,function(x){max(x$PrDens)}))))
 		}
-
-		
 
 		# max ylim: combine ylim giving as a space 1/7 of the original distance
 		gap = abs(diff(ylim))*gapFactor

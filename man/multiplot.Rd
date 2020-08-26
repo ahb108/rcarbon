@@ -23,7 +23,8 @@ multiplot(
   cex.lab = 1,
   cex.axis = 1,
   ydisp = FALSE,
-  gapFactor = 0.2
+  gapFactor = 0.2,
+  rescale = FALSE
 )
 }
 \arguments{
@@ -64,6 +65,8 @@ multiplot(
 \item{ydisp}{Whether the y axis should be displayed. Ignored when \code{type} is set to \code{'b'}. Default is FALSE}
 
 \item{gapFactor}{Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of individual y-axis ranges. Default is 0.2.}
+
+\item{rescale}{Whether probability distributions should be rescaled (applicable only when \code{type} is set to \code{'d'}, default is FALSE).}
 }
 \description{
 Plot multiple radiocarbon dates.
