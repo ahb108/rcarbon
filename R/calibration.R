@@ -116,7 +116,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
               F14Error <-  F14*cctmp[,3]/8033 
               calf14 <- approx(cctmp[,1], F14, xout=calBPrange)$y 
               calf14error <-  approx(cctmp[,1], F14Error, xout=calBPrange)$y 
-              cclist2[[tmp[a]]] - list(calf14=calf14,calf14error=calf14error)
+              cclist2[[tmp[a]]] <- list(calf14=calf14,calf14error=calf14error)
             } else {
             cclist2[[1]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = )$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange)
             } 
@@ -140,7 +140,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
         F14Error <-  F14*cctmp[,3]/8033 
         calf14 <- approx(cctmp[,1], F14, xout=calBPrange)$y 
         calf14error <-  approx(cctmp[,1], F14Error, xout=calBPrange)$y 
-        cclist2[[tmp[a]]] - list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange)
+        cclist2[[tmp[a]]] <- list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange)
       } else {
       cclist2[[tmp[a]]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange)}
     }
@@ -201,6 +201,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     }
     #res <- data.frame(calBP=calBPrange,PrDens=dens)
     #res <- res[which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]),]
+    calBPrange = cclist2[[calCurves[b]]]$calBPrange
     calBP = calBPrange[which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2])]
     PrDens = dens[which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2])]
     # if (anyNA(res$PrDens))
