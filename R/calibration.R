@@ -109,7 +109,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             calCurves <- rep("custom",length(x))
             cclist2 <- vector(mode="list", length=1)
             names(cclist2) <- "custom"
-            calBPrange = seq(max(cctmp$CALBP),min(cctmp$CALBP),-1)
+            calBPrange = seq(max(cctmp[,1]),min(cctmp[,1]),-1)
             if (F14C)
             {
               F14 <- exp(cctmp[,2]/-8033) 
@@ -223,7 +223,6 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
       calmat[as.character(sublist[[a]]$calBP),a] <- sublist[[a]]$PrDens
     }
   }
-  
   ## clean-up and results
   if (length(x)>1 & verbose){ close(pb) }
   df <- data.frame(DateID=ids, CRA=x, Error=errors, Details=dateDetails, CalCurve=calCurves,ResOffsets=resOffsets, ResErrors=resErrors, StartBP=timeRange[1], EndBP=timeRange[2], Normalised=normalised, F14C=F14C, CalEPS=eps, stringsAsFactors=FALSE)
