@@ -116,9 +116,9 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
               F14Error <-  F14*cctmp[,3]/8033 
               calf14 <- approx(cctmp[,1], F14, xout=calBPrange)$y 
               calf14error <-  approx(cctmp[,1], F14Error, xout=calBPrange)$y 
-              cclist2[[1]] <- list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange)
+              cclist2[[1]] <- list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))
             } else {
-              cclist2[[1]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange)
+              cclist2[[1]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))
             } 
         } 
     } else if (!all(calCurves %in% c("intcal13","intcal20","shcal13","shcal20","marine13","marine20","intcal13nhpine16","shcal13shkauri16"))){
@@ -140,9 +140,9 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
         F14Error <-  F14*cctmp[,3]/8033 
         calf14 <- approx(cctmp[,1], F14, xout=calBPrange)$y 
         calf14error <-  approx(cctmp[,1], F14Error, xout=calBPrange)$y 
-        cclist2[[tmp[a]]] <- list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange)
+        cclist2[[tmp[a]]] <- list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))
       } else {
-      cclist2[[tmp[a]]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange)}
+      cclist2[[tmp[a]]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))}
     }
   }
   ## container and reporting set-up
@@ -182,34 +182,27 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     `%dofun%` <- `%dopar%`
   }
   b <- NULL # Added to solve No Visible Binding for Global Variable NOTE
+  age = x - resOffsets
+  error = sqrt(errors^2 + resErrors^2)
+  
   sublist <- foreach (b=1:length(x),.options.snow = opts) %dofun% {
     if (verbose & ncores==1) {setTxtProgressBar(pb, b)}
-    #calcurve <- cclist[[calCurves[b]]]
-    #calBP <- seq(max(calcurve),min(calcurve),-1)
-    age <- x[b] - resOffsets[b]
-    error <- sqrt(errors[b]^2 + resErrors[b]^2)
+    #age <- x[b] - resOffsets[b]
+    #error <- sqrt(errors[b]^2 + resErrors[b]^2)
     if (F14C==FALSE)
     {  
-      dens <- BP14C_calibration(age, error, cclist2[[calCurves[b]]]$mu, cclist2[[calCurves[b]]]$tau2, eps)
+      dens <- BP14C_calibration(age[b], error[b], cclist2[[calCurves[b]]]$mu, cclist2[[calCurves[b]]]$tau2, eps)
     }
     if (F14C==TRUE)
     {
-      dens <- F14C_calibration(age, error, cclist2[[calCurves[b]]]$calf14, cclist2[[calCurves[b]]]$calf14error, eps)
+      dens <- F14C_calibration(age[b], error[b], cclist2[[calCurves[b]]]$calf14, cclist2[[calCurves[b]]]$calf14error, eps)
     }
     if (normalised){
       dens <- normalise_densities(dens, eps)
     }
-    #res <- data.frame(calBP=calBPrange,PrDens=dens)
-    #res <- res[which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]),]
     calBPrange = cclist2[[calCurves[b]]]$calBPrange
-    calBP = calBPrange[which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2])]
-    PrDens = dens[which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2])]
-    # if (anyNA(res$PrDens))
-    # {
-    #   stop("One or more dates are outside the calibration range")
-    # }
-    # res <- res[res$PrDens > 0,]
-    # class(res) <- append(class(res),"calGrid")
+    calBP = calBPrange[cclist2[[calCurves[b]]]$calBPindex]
+    PrDens = dens[cclist2[[calCurves[b]]]$calBPindex]
     if (anyNA(PrDens)){stop("One or more dates are outside the calibration range")}
     res = list(calBP = calBP[PrDens > 0],PrDens = PrDens[PrDens > 0])
     return(res)
