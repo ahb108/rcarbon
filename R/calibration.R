@@ -116,9 +116,9 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
               F14Error <-  F14*cctmp[,3]/8033 
               calf14 <- approx(cctmp[,1], F14, xout=calBPrange)$y 
               calf14error <-  approx(cctmp[,1], F14Error, xout=calBPrange)$y 
-              cclist2[[tmp[a]]] <- list(calf14=calf14,calf14error=calf14error)
+              cclist2[[1]] <- list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange)
             } else {
-            cclist2[[1]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = )$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange)
+              cclist2[[1]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange)
             } 
         } 
     } else if (!all(calCurves %in% c("intcal13","intcal20","shcal13","shcal20","marine13","marine20","intcal13nhpine16","shcal13shkauri16"))){
