@@ -103,20 +103,46 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
             if (max(cctmp[,2]) < max(x) | min(cctmp[,2]) > min(x)){
                 stop("The custom calibration curve does not cover the input age range.")
             }
-            cclist <- vector(mode="list", length=1)
-            cclist[[1]] <- cctmp
-            names(cclist) <- "custom"
+            #cclist <- vector(mode="list", length=1)
+            #cclist[[1]] <- cctmp
+            #names(cclist) <- "custom"
             calCurves <- rep("custom",length(x))
-        }
+            cclist2 <- vector(mode="list", length=1)
+            names(cclist2) <- "custom"
+            calBPrange = seq(max(cctmp[,1]),min(cctmp[,1]),-1)
+            if (F14C)
+            {
+              F14 <- exp(cctmp[,2]/-8033) 
+              F14Error <-  F14*cctmp[,3]/8033 
+              calf14 <- approx(cctmp[,1], F14, xout=calBPrange)$y 
+              calf14error <-  approx(cctmp[,1], F14Error, xout=calBPrange)$y 
+              cclist2[[1]] <- list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))
+            } else {
+              cclist2[[1]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))
+            } 
+        } 
     } else if (!all(calCurves %in% c("intcal13","intcal20","shcal13","shcal20","marine13","marine20","intcal13nhpine16","shcal13shkauri16"))){
         stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
   } else {
     tmp <- unique(calCurves)
     if (length(calCurves)==1){ calCurves <- rep(calCurves,length(x)) }
-    cclist <- vector(mode="list", length=length(tmp))
-    names(cclist) <- tmp
+    #cclist <- vector(mode="list", length=length(tmp))
+    #names(cclist) <- tmp
+    cclist2 <- vector(mode="list", length=length(tmp))
+    names(cclist2) <- tmp
     for (a in 1:length(tmp)){
-      cclist[[tmp[a]]] <- read_cal_curve_from_file(tmp[a])
+      cctmp <- read_cal_curve_from_file(tmp[a])
+      #cclist[[tmp[a]]] <- cctmp
+      calBPrange = seq(max(cctmp[,1]),min(cctmp[,1]),-1)
+      if (F14C)
+      {
+        F14 <- exp(cctmp[,2]/-8033) 
+        F14Error <-  F14*cctmp[,3]/8033 
+        calf14 <- approx(cctmp[,1], F14, xout=calBPrange)$y 
+        calf14error <-  approx(cctmp[,1], F14Error, xout=calBPrange)$y 
+        cclist2[[tmp[a]]] <- list(calf14=calf14,calf14error=calf14error,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))
+      } else {
+      cclist2[[tmp[a]]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))}
     }
   }
   ## container and reporting set-up
@@ -156,31 +182,29 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     `%dofun%` <- `%dopar%`
   }
   b <- NULL # Added to solve No Visible Binding for Global Variable NOTE
+  age = x - resOffsets
+  error = sqrt(errors^2 + resErrors^2)
+  
   sublist <- foreach (b=1:length(x),.options.snow = opts) %dofun% {
     if (verbose & ncores==1) {setTxtProgressBar(pb, b)}
-    calcurve <- cclist[[calCurves[b]]]
-    calBP <- seq(max(calcurve),min(calcurve),-1)
-    age <- x[b] - resOffsets[b]
-    error <- sqrt(errors[b]^2 + resErrors[b]^2)
+    #age <- x[b] - resOffsets[b]
+    #error <- sqrt(errors[b]^2 + resErrors[b]^2)
     if (F14C==FALSE)
     {  
-      dens <- BP14C_calibration(age, error, calBP, calcurve, eps)
+      dens <- BP14C_calibration(age[b], error[b], cclist2[[calCurves[b]]]$mu, cclist2[[calCurves[b]]]$tau2, eps)
     }
     if (F14C==TRUE)
     {
-      dens <- F14C_calibration(age, error, calBP, calcurve, eps)
+      dens <- F14C_calibration(age[b], error[b], cclist2[[calCurves[b]]]$calf14, cclist2[[calCurves[b]]]$calf14error, eps)
     }
     if (normalised){
       dens <- normalise_densities(dens, eps)
     }
-    res <- data.frame(calBP=calBP,PrDens=dens)
-    res <- res[which(calBP<=timeRange[1]&calBP>=timeRange[2]),]
-    if (anyNA(res$PrDens))
-    {
-      stop("One or more dates are outside the calibration range")
-    }
-    res <- res[res$PrDens > 0,]
-    class(res) <- append(class(res),"calGrid")
+    calBPrange = cclist2[[calCurves[b]]]$calBPrange
+    calBP = calBPrange[cclist2[[calCurves[b]]]$calBPindex]
+    PrDens = dens[cclist2[[calCurves[b]]]$calBPindex]
+    if (anyNA(PrDens)){stop("One or more dates are outside the calibration range")}
+    res = list(calBP = calBP[PrDens > 0],PrDens = PrDens[PrDens > 0])
     return(res)
   }
   if (ncores>1){
@@ -200,7 +224,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     reslist[["grids"]] <- NA
     reslist[["calmatrix"]] <- calmat
   } else {
-    reslist[["grids"]] <- sublist
+    reslist[["grids"]] <- lapply(sublist,function(x){tmp=data.frame(calBP=x[[1]],PrDens=x[[2]]);class(tmp)=append(class(tmp),"calGrid");return(tmp)})
     reslist[["calmatrix"]] <- NA
   }
   class(reslist) <- c("CalDates",class(reslist))

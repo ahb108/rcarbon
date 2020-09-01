@@ -1,10 +1,14 @@
+# Version 1.4.1 (ongoing)
+* UPDATE: Improved performance of the `calibrate()` function (c.a 300-400% faster)
+* Bug fix: Fixed color matching and improved label placing  in the `multiplot` function.
+
 # Version 1.4.0 (15 August 2020)
 * IntCal20, ShCal20, and Marine20 curves added, with IntCal20 as default calibration curve for `calibrate()`.
 
 # Version 1.3.3 (4 August 2020)
 * Minor changes on NAMESPACE and test environment to ensure CRAN checks for all operating systems
 
-#  Verson 1.3.2 (25 July 2020)zo
+#  Verson 1.3.2 (25 July 2020)
 * Bug fix : `F14C=TRUE` was producting an error message in `calibrate()` after refactoring in version 1.3.1. 
 * Bug fix : fixed error in the handling of `resErrors` (Delta R error) for  marine reservoir effect.
 * NEW: `stackspd()` creates a set of multiple SPDs as an object of class `stackCalSPD` with a dedicated plot function.

@@ -7,11 +7,11 @@ normalise_densities <- function(dens,eps) {
 }
 
 # calibrates in F14C space
-F14C_calibration <- function(age, error, calBP, calcurve, eps) {
-  F14 <- exp(calcurve[,2]/-8033) 
-  F14Error <-  F14*calcurve[,3]/8033 
-  calf14 <- approx(calcurve[,1], F14, xout=calBP)$y 
-  calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y 
+F14C_calibration <- function(age, error, calf14,calf14error, eps) {
+  # F14 <- exp(calcurve[,2]/-8033) 
+  # F14Error <-  F14*calcurve[,3]/8033 
+  # calf14 <- approx(calcurve[,1], F14, xout=calBP)$y 
+  # calf14error <-  approx(calcurve[,1], F14Error, xout=calBP)$y 
   f14age <- exp(age/-8033) 
   f14err <- f14age*error/8033 
   p1 <- (f14age - calf14)^2 
@@ -23,9 +23,8 @@ F14C_calibration <- function(age, error, calBP, calcurve, eps) {
 }
 
 # calibrates in 14C BP space
-BP14C_calibration <- function(age, error, calBP, calcurve, eps) {
-  mu <- approx(calcurve[,1], calcurve[,2], xout=calBP)$y
-  tau <- error^2 + approx(calcurve[,1], calcurve[,3], xout=calBP)$y^2
+BP14C_calibration <- function(age, error, mu, tau2, eps) {
+  tau <- error^2 + tau2
   dens <- dnorm(age, mean=mu, sd=sqrt(tau))
   dens[dens < eps] <- 0
   return(dens)
