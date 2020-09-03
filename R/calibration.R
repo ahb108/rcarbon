@@ -121,7 +121,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
               cclist2[[1]] = list(mu=stats::approx(cctmp[,1], cctmp[,2], xout = calBPrange)$y,tau2 = stats::approx(cctmp[,1], cctmp[,3], xout = calBPrange)$y^2,calBPrange=calBPrange,calBPindex=which(calBPrange<=timeRange[1]&calBPrange>=timeRange[2]))
             } 
         } 
-    } else if (!all(calCurves %in% c("intcal13","intcal20","shcal13","shcal20","marine13","marine20","intcal13nhpine16","shcal13shkauri16"))){
+    } else if (!all(calCurves %in% c("intcal13","intcal20","shcal13","shcal20","marine13","marine20","intcal13nhpine16","shcal13shkauri16","normal"))){
         stop("calCurves must be a character vector specifying one or more known curves or a custom three-column matrix/data.frame (see ?calibrate.default).")
   } else {
     tmp <- unique(calCurves)
