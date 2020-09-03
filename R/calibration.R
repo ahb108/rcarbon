@@ -224,7 +224,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     reslist[["grids"]] <- NA
     reslist[["calmatrix"]] <- calmat
   } else {
-    reslist[["grids"]] <- lapply(sublist,function(x){tmp=data.frame(calBP=x[[1]],PrDens=x[[2]]);class(tmp)=append(class(tmp),"calGrid");return(tmp)})
+    reslist[["grids"]] <- lapply(sublist,function(x){tmp=data.frame(calBP=x[[1]],PrDens=x[[2]]);class(tmp)=append("calGrid",class(tmp));return(tmp)})
     reslist[["calmatrix"]] <- NA
   }
   class(reslist) <- c("CalDates",class(reslist))
