@@ -1,12 +1,14 @@
 # Version 1.4.1 (ongoing)
-* UPDATE: Improved performance of the `calibrate()` function (c.a 300-400% faster)
+* UPDATE: Improved performance of the `calibrate()` function (c.a 400% faster)
+* UPDATE: `multiplot` allows for rescaled calibrated probability distribution (new argument `rescale`) for improved readability.
 * Bug fix: Fixed color matching and improved label placing  in the `multiplot` function.
+* Bug fix: calCurve='normal' no longer causing error in `calibrate()`
 
 # Version 1.4.0 (15 August 2020)
 * IntCal20, ShCal20, and Marine20 curves added, with IntCal20 as default calibration curve for `calibrate()`.
 
 # Version 1.3.3 (4 August 2020)
-* Minor changes on NAMESPACE and test environment to ensure CRAN checks for all operating systems
+* Minor changes on NAMESPACE and test environment to ensure workable CRAN checks for all operating systems.
 
 #  Verson 1.3.2 (25 July 2020)
 * Bug fix : `F14C=TRUE` was producting an error message in `calibrate()` after refactoring in version 1.3.1. 
