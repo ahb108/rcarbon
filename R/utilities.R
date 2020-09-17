@@ -786,3 +786,60 @@ combine = function(...,fixIDs=FALSE)
 }
 
 
+
+#' @title Apply taphonomic corrections or other transformations to an SPD.
+#'
+#' @param x An object of class \code{CalSPD}, \code{compositeKDE} or \code{stackCalSPD}.
+#' @param correction An expression for transforming the SPD. Available input terms include: CalBP, the vector of \code{calBP} year within the time range; and \code{PrDens}, a matching vector of summed probability. The default expression is the taphonomic correction formula proposed by Surovell et al 2009.
+#' 
+#' @return An object of the same class as x   
+#' @examples  
+#' \dontrun{
+#'data(emedyd)
+#'region1 = subset(emedyd,Region==1)
+#'x = calibrate(x=region1$CRA, errors=region1$Error,normalised=FALSE)
+#'bins = binPrep(sites=region1$SiteName, ages=region1$CRA,h=50)
+#'region1.spd = spd(x=x,bins=bins,timeRange=c(16000,8000))
+#'region1.spd.corrected = transformSPD(region1.spd)
+#'}
+#' @references 
+#' Surovell, T.A., Finley, J.B., Smith, G.M., Brantingham, P.J., Kelly, R., 2009. Correcting temporal frequency distributions for taphonomic bias. Journal of Archaeological Science 36, 1715–1724.
+#' @export
+
+transformSPD = function(x,correction=expression(PrDens / (5.726442 * 10^6 * (CalBP+2176.4)^-1.3925309)))
+{
+  if (!any(class(x)%in%c('compositeKDE','CalSPD','stackCalSPD')))
+  {
+    stop("x must be of class 'CalSPD', 'compositeKDE', or 'stackCalSPD'")
+  }
+  
+  if (any(class(x)%in%c('compositeKDE')))
+  {
+    x$res.matrix=apply(x$res.matrix,2,function(x,CalBP,expr){PrDens=x;return(eval(expr))},CalBP=x$timeRange[1]:x$timeRange[2],expr=correction)
+  }
+  
+  if (any(class(x)%in%c('CalSPD')))
+  {
+    CalBP = x$grid$calBP
+    PrDens=x$grid$PrDens
+    x$grid$PrDens=eval(correction)
+  }
+  
+  if (any(class(x)%in%c('stackCalSPD')))
+  {
+    for (i in 1:length(x$spds))
+    {
+    CalBP = x$spds[[i]]$grid$calBP
+    PrDens= x$spds[[i]]$grid$PrDens
+    x$spds[[i]]$grid$PrDens=eval(correction)
+    }
+  }
+  
+  return(x)
+}
+
+
+
+
+
+
