@@ -1852,7 +1852,6 @@ plot.spdRC<- function(x,calendar="BP",col.obs="black", lwd.obs=0.5, xaxs="i", ya
 #' @import utils
 #' @method plot compositeKDE
 #' @export 
-
 plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=NA, fill.col='lightgrey',interval=0.95,line.col='black',line.type=2, multiline.alpha=NA, multiline.col='black',...){
 
     types <- c("envelope","multiline")
@@ -1895,18 +1894,26 @@ plot.compositeKDE <- function(x, calendar="BP", type='envelope', ylim=NA, xlim=N
         polygon(x=c(plotyears[index],rev(plotyears[index])),y=c(lo[index],rev(hi[index])),border=NA,col=fill.col)
 	lines(plotyears,avg,lty=line.type,col=line.col,lwd=2)
     }
+    
+    if(abs(diff(range(plotyears)))>10000){smallTickBreak=1000}
+    if(abs(diff(range(plotyears)))<10000){smallTickBreak=100}
+    if(abs(diff(range(plotyears)))<1000){smallTickBreak=10}
+    
     if (calendar=="BP"){
-	rr <- range(pretty(plotyears))    
-        axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)
-        axis(side=1,at=pretty(plotyears),labels=abs(pretty(plotyears)))
+	      rr <- range(pretty(plotyears))
+	      rrSeq = seq(rr[2],rr[1],-smallTickBreak)
+	      rrSeq = rrSeq[which(rrSeq>=min(plotyears)&rrSeq<=max(plotyears))]
+        axis(side=1,at=rrSeq,labels=NA,tck = -.01)
+        axis(side=1,at=axTicks(1),labels=axTicks(1))
     } else if (calendar=="BCAD"){
-	yy <-  plotyears
+	      yy <-  plotyears
         rr <- range(pretty(yy))    
-        prettyTicks <- seq(rr[1],rr[2],+100)
-	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+        prettyTicks <- seq(rr[1],rr[2],+smallTickBreak)
+      	prettyTicks[which(prettyTicks>=0)] <-  prettyTicks[which(prettyTicks>=0)]-1
+      	prettyTicks = prettyTicks[which(prettyTicks>=min(yy)&prettyTicks<=max(yy))]
         axis(side=1,at=prettyTicks, labels=NA,tck = -.01)
-        py <- pretty(yy)
-	pyShown <- py
+        py <- axTicks(1)
+      	pyShown <- py
 	if (any(pyShown==0)){pyShown[which(pyShown==0)]=1}
 	py[which(py>1)] <-  py[which(py>1)]-1
 	axis(side=1,at=py,labels=abs(pyShown))
