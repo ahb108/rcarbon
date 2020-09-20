@@ -50,7 +50,7 @@ library(rcarbon)
 
 Single or multiple radiocarbon dates can be calibrated using the `calibrate()` function, which uses the probability density approach (see Bronk Ramsey 2008) implemented in most calibration software (e.g. [OxCal](https://c14.arch.ox.ac.uk/oxcal.html)) as well as in other R packages (especially [Bchron](https://CRAN.R-project.org/package=Bchron). Note that the latter R package also provides age-depth modelling for environmental cores and experimental options for aggregating dates via Gaussian mixtures. 
 
-The example below calibrates a sample with a $^{14}$C Age of 4200 BP and an error of 30 years using the *intcal20* calibration curve (Reimer et al 2020):
+The example below calibrates a sample with a $^{14}$C Age of 4200 BP and an error of 30 years using the *IntCal20* calibration curve (Reimer et al 2020):
 
 ```{r,results='hide',message=FALSE}
 x <- calibrate(x=4200,errors=30,calCurves='intcal20')
@@ -62,16 +62,23 @@ The resulting object of class `CalDates` can then be plotted using the basic `pl
 plot(x,HPD=TRUE,credMass=0.95)
 ```
 
-Multiple dates can be calibrated by supplying a vector of numerical values, and the `summary()` function can be used to retrieve one and the two sigma ranges as well as the median calibrated date:
+Multiple dates can be calibrated by supplying a vector of numerical values (as well as other arguments, e.g. different calibration curves), and the `summary()` function can be used to retrieve one and the two sigma ranges as well as the median calibrated date:
 
 ```{r,results='hide'}
-xx <- calibrate(x=c(5700,4820,6450,7200),errors=c(30,40,40,30),calCurves='intcal20')
+xx <- calibrate(x=c(5700,4820,6450,7200),errors=c(30,40,40,30),calCurves='intcal20',ids=c('D001','D002','D003','D004'))
 ```
 ```{r}
 summary(xx)
 ```
 
-The `calibrate()` function can also be executed in parallel by specifying the number of cores using the argument `ncores`. 
+`CalDates` comprising multiple radiocarbon dates can be plotted using the `plot()` function specifying the index number, or more conveniently using the `multiplot()` function:
+
+```{r}
+plot(xx,2) #plot the second date
+multiplot(xx,decreasing=TRUE,rescale=TRUE,HPD=TRUE) #see help documentation for alternative options
+```
+
+With most common machines, the `calibrate()` function is capable of calibrating 10,000 dates in less than a minute; the function can also be executed in parallel for improved performance by specifying the number of cores using the argument `ncores`. 
 
 Individual calibrated dates stored in the `CalDates` class objects can be extracted using square brackets (e.g. `xx[2]` to extract the second date). The package also provides a `subset()` method and a `which.CalDates()` function to subset or identify specific dates with a given probability mass within a given interval. The example below extracts all dates from the object `xx` with a cumulative probability mass of 0.5 or over between 7000 and 5500 cal BP:
 
@@ -84,7 +91,7 @@ summary(xx2)
 Calibration can be done using different calibration curves. The following example is for a marine sample with $\Delta R = 340\pm20$:
 
 ```{r,results='hide',fig.width=5,fig.height=5}
-x <- calibrate(4000,30,calCurves='marine13',resOffsets=340,resErrors=20)
+x <- calibrate(4000,30,calCurves='marine20',resOffsets=340,resErrors=20)
 plot(x,HPD=TRUE,calendar="BCAD") #using BC/AD instead of BP
 ```
 
@@ -108,10 +115,10 @@ The function `spd()` aggregates (sums) calibrated radiocarbon dates within a def
 ```{r,results='hide',fig.height=5,fig.width=5}
 data(euroevol)
 DK=subset(euroevol,Country=="Denmark") #subset of Danish dates
-DK.caldates=calibrate(x=DK$C14Age,errors=DK$C14SD,calCurves='intcal20',ncores=3) #running calibration over 3 cores
+DK.caldates=calibrate(x=DK$C14Age,errors=DK$C14SD,calCurves='intcal20')
 DK.spd = spd(DK.caldates,timeRange=c(8000,4000)) 
 plot(DK.spd) 
-plot(DK.spd,runm=200,add=TRUE,type="simple",col="darkorange",lwd=2,lty=2) #using a rolling average of 200 years for smoothing
+plot(DK.spd,runm=200,add=TRUE,type="simple",col="darkorange",lwd=1.5,lty=2) #using a rolling average of 200 years for smoothing
 ```
 
 It is also possible to limit the plot of the SPD to a particular window of time and/or use a 'BC/AD' timescale:
@@ -141,7 +148,7 @@ DK.spd.bins = spd(DK.caldates,bins=DK.bins,timeRange=c(8000,4000))
 plot(DK.spd.bins)
 ```
 
-The selection of appropriate cut-off values for binning has not been discussed in the literature (Shennan et al 2013 uses a value of 200 years but their method is slightly different). From a practical point of view, a “bin” represents a “phase” or episode of occupation (at an archaeological site, for example), but clearly, this is a problematic definition in the case of continuous occupation. The binning process should hence be used with caution, and its implications should be explored via a sensitivity analysis. The function `binsense()` enables a visual assessment of how different cut-off values can modify the shape of the SPD. The example below explores six different values and show how the highest peak in the SPD changes as a function of `h` but the overall dynamics remains essentially the same.
+The selection of appropriate cut-off values for binning has not been discussed in the literature (Shennan et al 2013 uses a value of 200 years but their method is slightly different). From a practical point of view, a “bin” could represent a “phase” or episode of occupation (at an archaeological site, for example), but clearly this is a problematic definition in the case of a continuous occupation. The binning process should hence be used with caution, and its implications should be explored via a sensitivity analysis. The function `binsense()` enables a visual assessment of how different cut-off values can modify the shape of the SPD. The example below explores six different values and show how the highest peak in the SPD changes as a function of `h` but the overall dynamics remains essentially the same.
 
 
 ```{r,results="hide",fig.height=5,fig.width=5}
@@ -274,13 +281,13 @@ Note that when the arguments `p1` and `p2` are not supplied `p2pTest()` displays
 
 ## Comparing empirical SPDs against each other
 
-SPDs are often compared against each other to evaluate regional variations in population trends (e.g.Timpson et al 2015) or to determine whether the relative proportion of different dated materials changes across time. Collard et al (2010) for instance demonstrates that the relative frequencies of different kinds of archaeological site have varied over time in Britain, whilst Stevens and Fuller (2012) argue that the proportion of wild versus domesticated crops fluctuated during the Neolithic (see also Bevan et al. 2017). The `permTest()` function provides a permutation test for comparing two or more SPDs, returning both global and local p-values using similar procedures to `modelTest()` (first introduced by Crema et al. 2016).
+SPDs are often compared against each other to evaluate regional variations in population trends (e.g.Timpson et al 2015) or to determine whether the relative proportion of different dated materials changes across time. Collard et al (2010) for instance demonstrates that the relative frequencies of different kinds of archaeological site have varied over time in Britain, whilst Stevens and Fuller (2012) argue that the proportion of wild versus domesticated crops fluctuated during the Neolithic (see also Bevan et al. 2017). The `permTest()` function provides a permutation test (Crema et al. 2016) for comparing two or more SPDs, returning both global and local p-values using similar procedures to `modelTest()`.
 
 The example below reproduces the analyses of Eastern Mediterranean dates by Roberts et al (2018):
 
 ```{r,results='hide',fig.width=5,fig.height=10}
 data(emedyd) # load data
-cal.emedyd = calibrate(emedyd$CRA,emedyd$Error,ncores=3,normalised=FALSE)
+cal.emedyd = calibrate(emedyd$CRA,emedyd$Error,normalised=FALSE)
 bins.emedyd = binPrep(ages = emedyd$CRA,sites = emedyd$SiteName,h=50)
 perm.emedyd=permTest(x=cal.emedyd,marks=emedyd$Region,timeRange=c(16000,9000),bins=bins.emedyd,nsim=nsim,runm=50)
 summary(perm.emedyd)
@@ -297,6 +304,17 @@ par(mfrow=c(3,1))
 plot(perm.emedyd,focalm = 1,main="Southern Levant", type='roc')
 plot(perm.emedyd,focalm = 2,main="Northern Levant/Upper Mesopotamia", type='roc')
 plot(perm.emedyd,focalm = 3,main="South-Central Anatolia", type='roc')
+```
+
+It is also possible to visually compare SPDs by creating `stackCalSPD` class objects using the `stackspd()` function. These can be plotted in a vatiety of ways to the ease the visual comparison of SPDs across different groups:
+
+```{r,fig.width=7,fig.height=7}
+emedyd.spd=stackspd(x=cal.emedyd,group=emedyd$Region,timeRange=c(16000,9000),bins=bins.emedyd,runm=50)
+par(mfrow=c(2,2))
+plot(emedyd.spd,type='stacked')
+plot(emedyd.spd,type='lines')
+plot(emedyd.spd,type='multipanel')
+plot(emedyd.spd,type='proportion')
 ```
 
 ## Spatial Analysis
