@@ -1,6 +1,8 @@
 # Version 1.4.1 (ongoing)
 * UPDATE: Improved performance of the `calibrate()` function (c.a 400% faster)
 * UPDATE: `multiplot` allows for rescaled calibrated probability distribution (new argument `rescale`) for improved readability.
+* UPDATE: The package vignette now includes examples from new functions such as `multiplot()` and `stackspd()`.
+* NEW: `transformSPD()` allows for taphonomic (and other user-defined) corrections to SPDs.
 * Bug fix: Fixed color matching and improved label placing  in the `multiplot` function.
 * Bug fix: calCurve='normal' no longer causing error in `calibrate()`
 
