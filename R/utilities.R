@@ -339,7 +339,7 @@ spweights<-function(distmat,h=NULL,kernel="gaussian")
 #' @param spd Summed Probability Distribution obtained using the \code{\link{spd}} function. 
 #' @param breaks A vector giving the breakpoints between the time-blocks.
 #' @param backsight A single numeric value defining the distance in time between the focal year and the backsight year for computing the rate of change.
-#' @param changexpr An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block or year, \code{t0} is the summed probability for previous block or backsight year, and \code{d} is the duration of the block or the length of the backsight. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).
+#' @param changexpr An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block or year, \code{t0} is the summed probability for previous block or backsight year, and \code{d} is the duration of the block or the length of the backsight. Default is a geometric growth rate (i.e \code{expression((t1/t0)^(1/d)-1)}).
 #' @details When the argument \code{breaks} is supplied the function aggregates the summed probability within each time-block and compared them across abutting blocks using the expression defined by \code{changexpr}. When the argument \code{backsight} is provided he expression is based on the comparison between the summed probability of each year and the associated backsight year.  
 #'
 #' @return An object of class \code{spdRC}.

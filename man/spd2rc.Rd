@@ -18,7 +18,7 @@ spd2rc(
 
 \item{backsight}{A single numeric value defining the distance in time between the focal year and the backsight year for computing the rate of change.}
 
-\item{changexpr}{An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block or year, \code{t0} is the summed probability for previous block or backsight year, and \code{d} is the duration of the block or the length of the backsight. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).}
+\item{changexpr}{An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block or year, \code{t0} is the summed probability for previous block or backsight year, and \code{d} is the duration of the block or the length of the backsight. Default is a geometric growth rate (i.e \code{expression((t1/t0)^(1/d)-1)}).}
 }
 \value{
 An object of class \code{spdRC}.
