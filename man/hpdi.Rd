@@ -12,7 +12,7 @@ hpdi(x, credMass = 0.95)
 \item{credMass}{Interval probability mass}
 }
 \value{
-A list of matrices with HPDI ranges in cal BP
+A list of matrices with HPDI ranges and associated probabilities in cal BP. Note that the sum of the probability mass will be only approximately equal to the argument \code{credMass}.
 }
 \description{
 Computes the highest posterior density interval (HPDI) for calibrated dates

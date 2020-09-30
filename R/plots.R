@@ -284,11 +284,11 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 	# Plot 
 	if (type=='b')
 	{
-		bse = hpdi(x,credMass=credMass)
+  		bse = hpdi(x,credMass=credMass)
 		plot(0,0,xlim=xlim,ylim=c(0,length(bse)+1),axes=F,xlab=xlabel,ylab="",type='n')
 		for (i in 1:length(bse))
 		{
-			tmp = bse[[i]]
+			tmp = matrix(bse[[i]][,-3],ncol=2)
 			if (calendar=='BP')
 			{
 				apply(tmp,1,function(x,y,lwd,col){lines(c(x),c(y,y),lwd=lwd,col=col)},y=i,lwd=lwd[i],col=col.line[i])

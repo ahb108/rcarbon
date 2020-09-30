@@ -591,7 +591,7 @@ length.CalDates <- function(x,...)
 #' @param x A \code{CalDates} class object.
 #' @param credMass Interval probability mass
 #' 
-#' @return A list of matrices with HPDI ranges in cal BP
+#' @return A list of matrices with HPDI ranges and associated probabilities in cal BP. Note that the sum of the probability mass will be only approximately equal to the argument \code{credMass}.
 #' @examples
 #' x <- calibrate(c(3050,2950),c(20,20))
 #' hpdi(x)
@@ -621,7 +621,12 @@ hpdi <- function(x, credMass=0.95){
     gaps <- which(diff(indices) > 1)
     starts <- indices[c(1, gaps + 1)]
     ends <- indices[c(gaps, length(indices))]
-    result[[i]] <- cbind(startCalBP = grd$calBP[starts], endCalBP = grd$calBP[ends]) 
+    p_interval <- as.integer(length(starts))
+    for (j in 1:length(starts))
+      {
+        p_interval[j] <- sum(grd$PrDens[starts[j]:ends[j]])
+      }
+    result[[i]] <- cbind(startCalBP = grd$calBP[starts], endCalBP = grd$calBP[ends],prob = p_interval) 
   }  
   return(result)
 }
@@ -640,7 +645,7 @@ hpdi <- function(x, credMass=0.95){
 
 summary.CalDates<-function(object,prob=NA,calendar="BP",...) {
   
-  foo = function(x,i){if(nrow(x)>=i){return(x[i,])}else{return(c(NA,NA))}}
+  foo = function(x,i){if(nrow(x)>=i){return(x[i,1:2])}else{return(c(NA,NA))}}
   if (is.na(prob)) 
   {
     prob = c(0.683,0.954)
@@ -661,7 +666,6 @@ summary.CalDates<-function(object,prob=NA,calendar="BP",...) {
       if (calendar=="BCAD")
       {
         tmp = t(apply(tmp,1,BPtoBCAD))
-        
       }
       tmpMatrix[,j]=apply(tmp,1,paste,collapse=" to ")
     }
