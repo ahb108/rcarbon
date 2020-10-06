@@ -27,7 +27,7 @@ knitr::opts_chunk$set(fig.align = "center", eval = !is_check)
 
 A seminal paper by John Rick some 30 years ago (1987) first introduced the idea of using the frequency of archaeological radiocarbon dates through time as a proxy for highs and lows in human population. The increased availability of large collections of archaeological (especially anthropogenic) radiocarbon dates has dramatically pushed this research agenda forward in recent years. New case studies from across the globe are regularly being published, stimulating the development of new techniques to tackle specific methodological and interpretative issues.
 
-_rcarbon_ is an *R* package for the analysis of large collections of radiocarbon dates, with particular emphasis on this “date as data” approach. It offers basic calibration functions as well as a suite of statistical tests for examining aggregated calibrated dates, using the method commonly referred to as summed probability distributions of radiocarbon dates (SPDs).
+_rcarbon_ (Crema and Bevan 2020) is an *R* package for the analysis of large collections of radiocarbon dates, with particular emphasis on this “date as data” approach. It offers basic calibration functions as well as a suite of statistical tests for examining aggregated calibrated dates, using the method commonly referred to as summed probability distributions of radiocarbon dates (SPDs).
 
 
 ## Installing and loading the _rcarbon_ package
@@ -226,7 +226,7 @@ The grey shaded region depicts the critical envelope that encompasses the middle
 summary(expnull)
 ```
 
-
+Please note also that _rcarbon_ employs two different methods for generating 14C samples ( _uncalsample_ and _calsample_), see help documentation and Crema and Bevan 2020 for detailed discussion on the differences between the two. 
 
 ### Testing against custom growth models
 
@@ -442,6 +442,8 @@ Collard, M., K. Edinborough, S. Shennan & M.G. Thomas 2010. [Radiocarbon evidenc
 Crema, E.R., J. Habu, K. Kobayashi & M. Madella 2016. [Summed Probability Distribution of 14 C Dates Suggests Regional Divergences in the Population Dynamics of the Jomon Period in Eastern Japan.](https://doi.org/10.1371/journal.pone.0154809) PLOS ONE 11: e0154809.
 
 Crema, E.R., A. Bevan. & S. Shennan. 2017. [Spatio-temporal approaches to archaeological radiocarbon dates.](https://doi.org/10.1016/j.jas.2017.09.007) Journal of Archaeological Science 87: 1–9.
+
+Crema, E.R., Bevan, A. 2020 [Inference from Large Sets of Radiocarbon Dates: Software and Methods](https://doi.org/10.1017/RDC.2020.95) Radiocarbon, doi:10.1017/RDC.2020.95
 
 Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
 
