@@ -1,12 +1,16 @@
 citHeader("To cite rcarbon in publications use:")
-citEntry(entry = "Manual",
-    title = "rcarbon: Methods for calibrating and analysing radiocarbon dates",
-    author = personList(as.person("Andrew Bevan"),
-			as.person("Enrico R. Crema")),
+citEntry(entry = "Article",
+    title = "Inference from large sets of radiocarbon dates: software and methods",
+    author = personList(as.person("Enrico R. Crema"),
+			as.person("Andrew Bevan")),
     year = "2020",
-    url = "https://github.com/ahb108/rcarbon",
+    journal = "Radiocarbon"
+    volume = "",
+    pages = "",
+    url = "https://dx.doi.org/10.1017/RDC.2020.95",
     textVersion =
-    paste("Bevan, A. and Crema, E.R. (2020)",
-    "rcarbon v1.4.0: Methods for calibrating and analysing radiocarbon dates",
-    "URL: https://CRAN.R-project.org/package=rcarbon") 		
+    paste("Crema, E.R. and Bevan, A. (2020)",
+    "Inference from large sets of radiocarbon dates: software and methods",
+    "Radiocarbon",
+    "DOI:10.1017/RDC.2020.95") 		
   )
