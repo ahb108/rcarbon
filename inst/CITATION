@@ -4,7 +4,7 @@ citEntry(entry = "Article",
     author = personList(as.person("Enrico R. Crema"),
 			as.person("Andrew Bevan")),
     year = "2020",
-    journal = "Radiocarbon"
+    journal = "Radiocarbon",
     volume = "",
     pages = "",
     url = "https://dx.doi.org/10.1017/RDC.2020.95",
@@ -12,5 +12,5 @@ citEntry(entry = "Article",
     paste("Crema, E.R. and Bevan, A. (2020)",
     "Inference from large sets of radiocarbon dates: software and methods",
     "Radiocarbon",
-    "DOI:10.1017/RDC.2020.95") 		
+    "URL https://dx.doi.org/10.1017/RDC.2020.9") 		
   )

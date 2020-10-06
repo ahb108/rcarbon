@@ -443,7 +443,7 @@ Crema, E.R., J. Habu, K. Kobayashi & M. Madella 2016. [Summed Probability Distri
 
 Crema, E.R., A. Bevan. & S. Shennan. 2017. [Spatio-temporal approaches to archaeological radiocarbon dates.](https://doi.org/10.1016/j.jas.2017.09.007) Journal of Archaeological Science 87: 1–9.
 
-Crema, E.R., Bevan, A. 2020 [Inference from Large Sets of Radiocarbon Dates: Software and Methods](https://doi.org/10.1017/RDC.2020.95) Radiocarbon, doi:10.1017/RDC.2020.95
+Crema, E.R., Bevan, A. 2020 [Inference from Large Sets of Radiocarbon Dates: Software and Methods](https://doi.org/10.1017/RDC.2020.95) Radiocarbon.
 
 Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
 
