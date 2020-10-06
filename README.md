@@ -143,6 +143,8 @@ Weiberg, E., Bevan, A., Kouli, K., Katsianis, M., Woodbridge, J., Bonnier, A., e
 
 Weitzel, E.M., Codding, B.F., Carmody, S.B., Zeanah, D.W., 2020. [Food Production and Domestication Produced Both Cooperative and Competitive Social Dynamics in Eastern North America.](https://doi.org/10.1080/14614103.2020.1737394) Environmental Archaeology 0, 1–14. 
 
+Wilson, K. M., & Hill, M. G. (2020). [Synthesis and assessment of the flat-headed peccary record in North America](https://doi.org/10.1016/j.quascirev.2020.106601). Quaternary Science Reviews, 248, 106601. 
+
 Woodbridge, J., Roberts, C. N., Palmisano, A., Bevan, A., Shennan, S., Fyfe, R., et al. 2019. [Pollen-inferred regional vegetation patterns and demographic change in Southern Anatolia through the Holocene.](https://doi.org/10.1177/0959683619826635) The Holocene, 0959683619826635. doi:10.1177/0959683619826635
 
 
