@@ -17,6 +17,10 @@ To install the latest development version:
 # "devtools" package required 
 devtools::install_github('ahb108/rcarbon')
 ```
+### Citation
+To cite _rcarbon_ in pubblications use:
+
+Crema, E.R., Bevan, A. 2020 [Inference from Large Sets of Radiocarbon Dates: Software and Methods](https://doi.org/10.1017/RDC.2020.95) Radiocarbon, doi:10.1017/RDC.2020.95
 
 ### References
 Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holocene fluctuations in human population demonstrate repeated links to food production and climate](https://doi.org/10.1073/pnas.1709190114). Proceedings of the National Academy of Sciences of the United States of America. doi:10.1073/pnas.1709190114  
