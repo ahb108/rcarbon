@@ -1,4 +1,4 @@
-# Version 1.4.1 (ongoing)
+# Version 1.4.1 (6 October 2020)
 * UPDATE: Improved performance of the `calibrate()` function (c.a 400% faster)
 * UPDATE: `multiplot` allows for rescaled calibrated probability distribution (new argument `rescale`) for improved readability.
 * UPDATE: The package vignette now includes examples from new functions such as `multiplot()` and `stackspd()`.
