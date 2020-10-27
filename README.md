@@ -63,6 +63,8 @@ Crema, E.R. 2020 [Non-Stationarity and Local Spatial Analysis](https://doi.org/1
 
 Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
 
+Deforce K., Groenewoudt B., Haneca K. 2020. [2500 years of charcoal production in the Low Countries: The chronology and typology of charcoal kilns and their relation with early iron production.](https://doi.org/10.1016/j.quaint.2020.10.020). Quaternary International.
+
 de Groot, B., 2020. [The impact of population fluctuations on the spatial spread of Neolithic ceramic traditions in West Anatolia and South-East Europe.](https://doi.org/10.1016/j.jaa.2019.101121) Journal of Anthropological Archaeology 57, 101121. doi:10.1016/j.jaa.2019.101121
 
 de Souza, J. G., Robinson, M., Maezumi, S. Y., Capriles, J., Hoggarth, J. A., Lombardo, U., et al. 2019. [Climate change and cultural resilience in late pre-Columbian Amazonia](https://doi.org/10.1038/s41559-019-0924-0). Nature Ecology & Evolution, 1. doi:10.1038/s41559-019-0924-0
