@@ -369,7 +369,7 @@ uncalibrate.CalGrid <- function(x, calCurves='intcal20', eps=1e-5, compact=TRUE,
     if (verbose){ print("Uncalibrating...") }
     names(x) <- c("calBP","PrDens")
     ## calCurve checks and set-up
-    if (class(calCurves) %in% c("matrix","data.frame")){
+    if (any(class(calCurves) %in% c("matrix","data.frame"))){
         calcurve <- as.matrix(calCurves)
         if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
             stop("The custom calibration curve must have just three numeric columns.")
