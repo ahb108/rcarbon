@@ -335,7 +335,7 @@ uncalibrate.default <- function(x, CRAerrors=0, roundyear=TRUE, calCurves='intca
     
     if (length(CRAerrors)==1){ CRAerrors <- rep(CRAerrors,length(x)) } 
     ## calCurve checks and set-up
-    if (class(calCurves) %in% c("matrix","data.frame")){
+    if (any(class(calCurves) %in% c("matrix","data.frame"))){
         calcurve <- as.matrix(calCurves)
         if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
             stop("The custom calibration curve must have just three numeric columns.")
