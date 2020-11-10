@@ -26,7 +26,7 @@ uncalibrate(x, ...)
 
 \item{CRAerrors}{A vector of standard deviations corresponding to each estimated radiocarbon age (ignored if x is a CalGrid object).}
 
-\item{roundyear}{An optional vector of IDs for each date (ignored if x is a CalGrid object).}
+\item{roundyear}{Whether the randomised estimate is rounded or not. Default is TRUE.}
 
 \item{calCurves}{A string naming a calibration curve already provided with the rcarbon package (currently 'intcal20','intcal13','intcal13nhpine16','shcal20','shcal13','shcal13shkauri16',''marine13','marine20' and 'normal') or a custom curve provided as matrix/data.frame in three columns ("CALBP","C14BP","Error"). The default is the 'intcal20' curve and only one curve can currently be specified for all dates.}
 
