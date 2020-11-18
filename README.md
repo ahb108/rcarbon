@@ -39,6 +39,8 @@ Timpson, A., Colledge, S., Crema, E., Edinborough, K., Kerig, T., Manning, K., T
 
 Aubán, J.B., Jiménez-Puerto, J., Ruiz, P.E., Gordo, S.P., 2018. [C14 y poblamiento en las comarcas centro-meridionales del País Valenciano (c. 7000-1500 cal BC)](https://www.raco.cat/index.php/RecerquesMuseuAlcoi/article/view/348376). Recerques del Museu d’Alcoi 0, 35-48–48.
 
+Barnett, R. L., Charman, D. J., Johns, C., Ward, S. L., Bevan, A., Bradley, S. L., et al. 2020. [Nonlinear landscape and cultural response to sea-level rise.](https://doi.org/10.1126/sciadv.abb637) Science Advances, 6(45), eabb6376. 6
+
 Becker, F., Knitter, D., Nykamp, M., Schütt, B., 2020. [Meta-Analysis of Geomorphodynamics in the Western Lower Bakırçay Plain (Aegean Region, Turkey)](https://doi.org/10.3390/land9090338). Land 9, 338. 
 
 Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holocene fluctuations in human population demonstrate repeated links to food production and climate](https://doi.org/10.1073/pnas.1709190114). Proceedings of the National Academy of Sciences of the United States of America, 114 (49) E10524-E10531. doi:10.1073/pnas.1709190114  
