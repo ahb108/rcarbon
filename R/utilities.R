@@ -275,7 +275,7 @@ binMed <- function(x,bins,verbose=TRUE){
      spdtmp = spdtmp[,1]
     }
       cumcal=cumsum(spdtmp)
-      medbins[b]=calyears[which.min(abs(cumcal-max(cumcal)/2)),1]
+      medbins[b]=caldateyears[which.min(abs(cumcal-max(cumcal)/2))]
   }
   if (verbose & length(binNames)>1){close(pb);print("Done")}
   
