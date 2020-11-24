@@ -240,6 +240,9 @@ binMed <- function(x,bins,verbose=TRUE){
     }
   }
   
+  caldateTR <- as.numeric(x$metadata[1,c("StartBP","EndBP")])
+  caldateyears <- seq(caldateTR[1],caldateTR[2],-1)
+  
   if (verbose & length(binNames)>1){
     flush.console()
     pb <- txtProgressBar(min=1, max=length(binNames), style=3)
@@ -274,8 +277,8 @@ binMed <- function(x,bins,verbose=TRUE){
       cumcal=cumsum(spdtmp)
       medbins[b]=calyears[which.min(abs(cumcal-max(cumcal)/2)),1]
   }
-  close(pb)
-  print("Done")
+  if (verbose & length(binNames)>1){close(pb);print("Done")}
+  
   return(medbins)
 }
 
