@@ -37,6 +37,8 @@ Timpson, A., Colledge, S., Crema, E., Edinborough, K., Kerig, T., Manning, K., T
 
 ### Case Studies Using _rcarbon_
 
+Arroyo-Kalin, M., & Riris, P. (2021). [Did pre-Columbian populations of the Amazonian biome reach carrying capacity during the Late Holocene?](https://doi.org/10.1098/rstb.2019.0715) Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190715. 
+
 Aubán, J.B., Jiménez-Puerto, J., Ruiz, P.E., Gordo, S.P., 2018. [C14 y poblamiento en las comarcas centro-meridionales del País Valenciano (c. 7000-1500 cal BC)](https://www.raco.cat/index.php/RecerquesMuseuAlcoi/article/view/348376). Recerques del Museu d’Alcoi 0, 35-48–48.
 
 Barnett, R. L., Charman, D. J., Johns, C., Ward, S. L., Bevan, A., Bradley, S. L., et al. 2020. [Nonlinear landscape and cultural response to sea-level rise.](https://doi.org/10.1126/sciadv.abb637) Science Advances, 6(45), eabb6376. 6
@@ -44,6 +46,8 @@ Barnett, R. L., Charman, D. J., Johns, C., Ward, S. L., Bevan, A., Bradley, S. L
 Becker, F., Knitter, D., Nykamp, M., Schütt, B., 2020. [Meta-Analysis of Geomorphodynamics in the Western Lower Bakırçay Plain (Aegean Region, Turkey)](https://doi.org/10.3390/land9090338). Land 9, 338. 
 
 Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holocene fluctuations in human population demonstrate repeated links to food production and climate](https://doi.org/10.1073/pnas.1709190114). Proceedings of the National Academy of Sciences of the United States of America, 114 (49) E10524-E10531. doi:10.1073/pnas.1709190114  
+
+Bevan, A., & Crema, E. R. 2021. [Modifiable reporting unit problems and time series of long-term human activity](https://doi.org/10.1098/rstb.2019.0726). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190726. 
 
 Bird, D., Freeman, J., Robinson, E., Maughan, G., Finley, J.B., Lambert, P.M., Kelly, R.L., 2020. [A first empirical analysis of population stability in North America using radiocarbon records](https://doi.org/10.1177/0959683620919975). The Holocene. 
 
@@ -111,6 +115,8 @@ Palmisano, A., Woodbridge, J., Roberts, N., Bevan, A., Fyfe, R., Shennan, S., et
 
 Porčić, M., 2020. [Observations on the origin and demography of the Vinča culture](https://doi.org/10.1016/j.quaint.2020.04.012). Quaternary International. 
 
+Porčić, M., Blagojević, T., Pendić, J., & Stefanović, S. 2021. [The Neolithic Demographic Transition in the Central Balkans: population dynamics reconstruction based on new radiocarbon evidence](https://doi.org/10.1098/rstb.2019.0712). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190712. 
+
 Prates, L., Politis, G.G., Perez, S.I., 2020. [Rapid radiation of humans in South America after the last glacial maximum: A radiocarbon-based study.](https://doi.org/10.1371/journal.pone.0236023) PLOS ONE 15, e0236023. 
 
 Riris, P. 2018 [Dates as data revisited: A statistical examination of the Peruvian preceramic radiocarbon record](https://doi.org/10.1016/j.jas.2018.06.008). Journal of Archaeological Science, 97, 67-76. doi:10.1016/j.jas.2018.06.008
@@ -120,6 +126,10 @@ Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South Americ
 Roberts, N., Woodbridge, J., Palmisano, A., Bevan, A., Fyfe, R., & Shennan, S. 2019. [Mediterranean landscape change during the Holocene: Synthesis, comparison and regional trends in population, land cover and climate](https://doi.org/10.1177/0959683619826697). The Holocene, 0959683619826697. 
 
 Robinson, E., Nicholson, C., & Kelly, R. L. 2019. [The Importance of Spatial Data to Open-Access National Archaeological Databases and the Development of Paleodemography Research](https://doi.org/10.1017/aap.2019.29). Advances in Archaeological Practice, 1–14. doi:10.1017/aap.2019.29
+
+Robinson, E., Bocinsky, R. K., Bird, D., Freeman, J., & Kelly, R. L. (2021). [Dendrochronological dates confirm a Late Prehistoric population decline in the American Southwest derived from radiocarbon dates](https://doi.org/10.1098/rstb.2019.0718). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190718. 
+
+Roscoe, P., Sandweiss, D. H., & Robinson, E. 2021. [Population density and size facilitate interactive capacity and the rise of the state](https://doi.org/10.1098/rstb.2019.0725). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190725. 
 
 Saag, L., Laneman, M., Varul, L., Malve, M., Valk, H., Razzak, M. A., et al. 2019. [The Arrival of Siberian Ancestry Connecting the Eastern Baltic to Uralic Speakers further East](https://doi.org/10.1016/j.cub.2019.04.026). Current Biology,
 
@@ -137,9 +147,13 @@ Szpak, P., Savelle, J. M., Conolly, J., & Richards, M. P. 2019. [Variation in la
 
 Tallavara, M., Personen, P. 2018. [Human ecodynamics in the north-west coast of Finland 10,000–2000 years ago](https://doi.org/10.1016/j.quaint.2018.06.032).Quaternary International,doi:/10.1016/j.quaint.2018.06.032
 
+Tallavaara, M., & Jørgensen, E. K. 2021. [Why are population growth rate estimates of past and present hunter–gatherers so different?](https://doi.org/10.1098/rstb.2019.0708) Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190708. 
+
 Thomson, M.J., MacDonald, G.M., 2020. [Climate and growing season variability impacted the intensity and distribution of Fremont maize farmers during and after the Medieval Climate Anomaly based on a statistically downscaled climate model](https://doi.org/10.1088/1748-9326/aba57e). Environ. Res. Lett.
 
-van der Bilt, W. G. M., Born, A., & Haaga, K. A. 2019. [Was Common Era glacier expansion in the Arctic Atlantic region triggered by unforced atmospheric cooling?](https://doi.org/10.1016/j.quascirev.2019.07.042) Quaternary Science Reviews, 105860. doi:10.1016/j.quascirev.2019.07.042
+Van der Bilt, W. G. M., Born, A., & Haaga, K. A. 2019. [Was Common Era glacier expansion in the Arctic Atlantic region triggered by unforced atmospheric cooling?](https://doi.org/10.1016/j.quascirev.2019.07.042) Quaternary Science Reviews, 105860. doi:10.1016/j.quascirev.2019.07.042
+
+Vander Linden, M., & Silva, F. 2021. [Dispersals as demographic processes: testing and describing the spread of the Neolithic in the Balkans](https://doi.org/10.1098/rstb.2020.0231). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20200231. 
 
 Vogels, O., Fäder, E., Lenssen-Erz, T., 2020. [A matter of diversity? Identifying past hunter-gatherer aggregation camps through data driven analyses of rock art sites.](https://doi.org/10.1016/j.quaint.2020.05.057) Quaternary International. 
 
