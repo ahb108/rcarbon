@@ -1427,7 +1427,7 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 
 	if (length(busts)==0)
 	{
-		cat(paste("No significant positive local deviations"))
+		cat(paste("No significant negative local deviations"))
 	}
 }
 
