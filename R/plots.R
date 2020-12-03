@@ -473,8 +473,10 @@ plot.SpdModelTest <- function(x, calendar="BP", type='spd', ylim=NA, xlim=NA, co
 	 stop("The argument 'type' should be either 'spd' or 'roc'.")
 	}
 
+	naindex = numeric()
 	if (type=='roc')
 	{
+	  naindex = which(is.na(x$result.roc$roc))
 		obs <- x$result.roc[,1:2]
 		envelope <- x$result.roc[,3:4]
 		colnames(obs)<-c("calBP","PrDens")
@@ -611,7 +613,12 @@ plot.SpdModelTest <- function(x, calendar="BP", type='spd', ylim=NA, xlim=NA, co
 		}
 	}
 
-	polygon(x=c(obs[,"Years"],rev(obs[,"Years"])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
+	if (length(naindex)>0)
+	{polygon(x=c(obs[-naindex,"Years"],rev(obs[-naindex,"Years"])),y=c(envelope[-naindex,1],rev(envelope[-naindex,2])),col=rgb(0,0,0,0.2),border=NA)
+	} else
+	{
+	  polygon(x=c(obs[,"Years"],rev(obs[,"Years"])),y=c(envelope[,1],rev(envelope[,2])),col=rgb(0,0,0,0.2),border=NA)
+	}
 	if (drawaxes & bbty != "n" & calendar=="BP"){
 		rr <- range(pretty(obs[,"Years"]))    
 		axis(side=1,at=seq(rr[2],rr[1],-100),labels=NA,tck = -.01)

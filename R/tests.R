@@ -1342,8 +1342,9 @@ summary.SpdModelTest<-function(object,type='spd',...) {
 
 	if (type=='roc')
 	{
-	obs <- object$result.roc[,1:2]
-	envelope <- object$result.roc[,3:4]
+	naindex = which(is.na(object$result.roc$roc))
+	obs <- object$result.roc[-naindex,1:2]
+	envelope <- object$result.roc[-naindex,3:4]
 	booms <- which(obs$roc>envelope[,2])
 	busts <- which(obs$roc<envelope[,1])
 	}
