@@ -1170,6 +1170,12 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	{
 
 		PrDens=prop.table(PrDens,1)
+		NAyears = numeric(length=0)
+		if (any(is.nan(apply(PrDens,1,sum))))
+		{
+		  NAyears = which(is.nan(apply(PrDens,1,sum)))
+		  PrDens[NAyears,]=0
+		}
 		if (nsets>1)
 		{
 			PrDens = t(apply(PrDens,1,cumsum))
@@ -1182,6 +1188,18 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 		{
 			polygon(c(plotyears,rev(plotyears)),c(PrDens[,i],rev(PrDens[,i-1])),col=col.fill[i-1],lwd=lwd.obs[i-1],lty=lty.obs[i-1],border=col.fill[i-1])
 		}
+		
+		if(length(NAyears>0))
+		{
+		  ii = which(diff(NAyears)>1)
+		  ii = c(0,ii)
+		  for (k in 1:c(length(ii)-1))
+		  {
+		    index = (ii[k]+1):ii[k+1]
+		  polygon(c(plotyears[NAyears[index]],rev(plotyears[NAyears[index]])),c(rep(-0.02,length(index)),rep(1.02,length(index))),col='white',border='white')
+		  }
+		}
+		
 		if (legend)
 		{
 			if (is.null(legend.arg))
