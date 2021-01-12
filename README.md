@@ -97,7 +97,7 @@ Jorgeson, I.A., Breslawski, R.P., Fisher, A.E., 2020. [Radiocarbon simulation fa
 
 Kwak, S., Obata, H., Lee, G.-A., 2020. [Broad-spectrum foodways in southern coastal Korea in the Holocene: Isotopic and archaeobotanical signatures in Neolithic shell middens.](https://doi.org/10.1080/15564894.2020.1776427) The Journal of Island and Coastal Archaeology 0, 1–29. 
 
-Lawrence, D., Palmisano, A., & Gruchy, M. W. de. (2021). [Collapse and continuity: A multi-proxy reconstruction of settlement organization and population trajectories in the Northern Fertile Crescent during the 4.2kya Rapid Climate Change event](https://doi.org/10.1371/journal.pone.0244871). PLOS ONE, 16(1), e0244871. 
+Lawrence, D., Palmisano, A., & Gruchy, M. W. de. 2021. [Collapse and continuity: A multi-proxy reconstruction of settlement organization and population trajectories in the Northern Fertile Crescent during the 4.2kya Rapid Climate Change event](https://doi.org/10.1371/journal.pone.0244871). PLOS ONE, 16(1), e0244871. 
 
 Lima, M., Gayo, E.M., Latorre, C., Santoro, C.M., Estay, S.A., Cañellas-Boltà, N., Margalef, O., Giralt, S., Sáez, A., Pla-Rabes, S., Chr. Stenseth, N., 2020. [Ecology of the collapse of Rapa Nui society](https://doi.org/10.1098/rspb.2020.0662). Proceedings of the Royal Society B: Biological Sciences 287, 20200662. 
 
