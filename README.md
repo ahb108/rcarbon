@@ -75,6 +75,8 @@ de Groot, B., 2020. [The impact of population fluctuations on the spatial spread
 
 de Souza, J. G., Robinson, M., Maezumi, S. Y., Capriles, J., Hoggarth, J. A., Lombardo, U., et al. 2019. [Climate change and cultural resilience in late pre-Columbian Amazonia](https://doi.org/10.1038/s41559-019-0924-0). Nature Ecology & Evolution, 1. doi:10.1038/s41559-019-0924-0
 
+Ekholm, T. 2021. [Hunter-gatherer adaptions during the Early Holocene in Northern Sweden](https://doi.org/10.1177/0959683620961482). The Holocene, 31(1), 83–94. 
+
 Feeser, I., Dörfler, W., Kneisel, J., Hinz, M., & Dreibrodt, S. 2019. [Human impact and population dynamics in the Neolithic and Bronze Age: Multi-proxy evidence from north-western Central Europe](https://doi.org/10.1177/0959683619857223). The Holocene, 0959683619857223. doi:10.1177/0959683619857223
 
 Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Meyer, J.A., Kelly, R.L., Anderies, J.M., 2018. [Synchronization of energy consumption by human societies throughout the Holocene](https://doi.org/10.1073/pnas.1802859115). Proceedings of the National Academy of Sciences of the United States of America, 115 (40) 9962-9967. doi:10.1073/pnas.1802859115
@@ -123,9 +125,13 @@ Porčić, M., Blagojević, T., Pendić, J., & Stefanović, S. 2021. [The Neolith
 
 Prates, L., Politis, G.G., Perez, S.I., 2020. [Rapid radiation of humans in South America after the last glacial maximum: A radiocarbon-based study.](https://doi.org/10.1371/journal.pone.0236023) PLOS ONE 15, e0236023. 
 
+Ren, X., Xu, J., Wang, H., Storozum, M., Lu, P., Mo, D., et al. 2021. [Holocene fluctuations in vegetation and human population demonstrate social resilience in the prehistory of the Central Plains of China](https://doi.org/10.1088/1748-9326/abdf0a). Environmental Research Letters. 
+
 Riris, P. 2018 [Dates as data revisited: A statistical examination of the Peruvian preceramic radiocarbon record](https://doi.org/10.1016/j.jas.2018.06.008). Journal of Archaeological Science, 97, 67-76. doi:10.1016/j.jas.2018.06.008
 
 Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South America Correlates with Mid-holocene Climate Change](https://doi.org/10.1038/s41598-019-43086-w) Scientific Reports, 9, Article number: 6850 (2019). doi:10.1038/s41598-019-43086-w.
+
+Riris, P., & Silva, F. 2021. [Resolution and the detection of cultural dispersals: development and application of spatiotemporal methods in Lowland South America.](https://doi.org/10.1057/s41599-021-00717-w) Humanities and Social Sciences Communications, 8(1), 1–13. 
 
 Roberts, N., Woodbridge, J., Palmisano, A., Bevan, A., Fyfe, R., & Shennan, S. 2019. [Mediterranean landscape change during the Holocene: Synthesis, comparison and regional trends in population, land cover and climate](https://doi.org/10.1177/0959683619826697). The Holocene, 0959683619826697. 
 
