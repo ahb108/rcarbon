@@ -81,6 +81,8 @@ Feeser, I., Dörfler, W., Kneisel, J., Hinz, M., & Dreibrodt, S. 2019. [Human im
 
 Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Meyer, J.A., Kelly, R.L., Anderies, J.M., 2018. [Synchronization of energy consumption by human societies throughout the Holocene](https://doi.org/10.1073/pnas.1802859115). Proceedings of the National Academy of Sciences of the United States of America, 115 (40) 9962-9967. doi:10.1073/pnas.1802859115
 
+Fritz, C., Tosello, G., Fleury, G., Kasarhérou, E., Walter, P., Duranthon, F., et al. 2021. [First record of the sound produced by the oldest Upper Paleolithic seashell horn](https://doi.org/10.1126/sciadv.abe9510). Science Advances, 7(7), eabe9510. 
+
 Fyfe, R.M., Woodbridge, J., Palmisano, A., Bevan, A., Shennan, S., Burjachs, F., Legarra Herrero, B., García Puchol, O., Carrión, J.-S., Revelles, J., Roberts, C.N., 2019. [Prehistoric palaeodemographics and regional land cover change in eastern Iberia](https://doi.org/10.1177/0959683619826643). The Holocene 0959683619826643. doi:10.1177/0959683619826643
 
 Gil, A.F., Villalba, R., Franchetti, F.R., Otaola, C., Abbona, C.C., Peralta, E.A., Neme, G., 2020. [Between Foragers and Farmers: Climate Change and Human Strategies in Northwestern Patagonia](https://doi.org/10.3390/quat3020017). Quaternary 3, 17. 
