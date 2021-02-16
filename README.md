@@ -151,6 +151,8 @@ Schauer, P., Bevan, A., Shennan, S., Edinborough, K., Kerig, T., Pearson, M.P., 
 
 Schirrmacher, J., Kneisel, J., Knitter, D., Hamer, W., Hinz, M., Schneider, R.R., Weinelt, M., 2020. [Spatial patterns of temperature, precipitation, and settlement dynamics on the Iberian Peninsula during the Chalcolithic and the Bronze Age.](https://doi.org/10.1016/j.quascirev.2020.106220) Quaternary Science Reviews 233, 106220. 
 
+Seidensticker, D., Hubau, W., Verschuren, D., Fortes-Lima, C., Maret, P. de, Schlebusch, C. M., & Bostoen, K. 2021. [Population collapse in Congo rainforest from 400 CE urges reassessment of the Bantu Expansion](https://doi.org/10.1126/sciadv.abd8352). Science Advances, 7(7), eabd8352. 
+
 Solheim, S., 2020. [Mesolithic coastal landscapes : Demography, settlement patterns and subsistence economy in southeastern Norway](https://doi.org/10.4324/9780203730942-4). In Schülke. A (Eds.) ,Coastal Landscapes of the Mesolithic, Taylor and Francis.
 
 Stoddart, S., Woodbridge, J., Palmisano, A., Mercuri, A. M., Mensing, S. A., Colombaroli, D., et al. 2019. [Tyrrhenian central Italy: Holocene population and landscape ecology.](https://doi.org/10.1177/0959683619826696) The Holocene, 0959683619826696. doi:10.1177/0959683619826696
