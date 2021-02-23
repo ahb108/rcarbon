@@ -1,3 +1,14 @@
+# Version 1.4.2
+* Bug fix: Fixed a number of minor bugs and errors caused when the summed probability vector contains zero. Functions affected by this bugs were:
+  * proportion plots in `plot.stackCalSPD()`
+  * `summary()` and `plot()` functions for `SpdModelTest` class objects
+`plot.stackCalSPD()` proportion plot to handle instances with 0 summed probability in the time Range of analysis.
+* UPDATE: `binMed()` function can now handle larger `caldates` objects.
+* Minor bug fixes.
+* Minor typos and errors in the help documentation.
+* Updated dependencies for `spatastat(>= 2.0-0)`. 
+
+
 # Version 1.4.1 (6 October 2020)
 * UPDATE: Improved performance of the `calibrate()` function (c.a 400% faster)
 * UPDATE: `multiplot` allows for rescaled calibrated probability distribution (new argument `rescale`) for improved readability.

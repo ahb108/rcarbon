@@ -81,6 +81,8 @@ Feeser, I., Dörfler, W., Kneisel, J., Hinz, M., & Dreibrodt, S. 2019. [Human im
 
 Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Meyer, J.A., Kelly, R.L., Anderies, J.M., 2018. [Synchronization of energy consumption by human societies throughout the Holocene](https://doi.org/10.1073/pnas.1802859115). Proceedings of the National Academy of Sciences of the United States of America, 115 (40) 9962-9967. doi:10.1073/pnas.1802859115
 
+Fritz, C., Tosello, G., Fleury, G., Kasarhérou, E., Walter, P., Duranthon, F., et al. 2021. [First record of the sound produced by the oldest Upper Paleolithic seashell horn](https://doi.org/10.1126/sciadv.abe9510). Science Advances, 7(7), eabe9510. 
+
 Fyfe, R.M., Woodbridge, J., Palmisano, A., Bevan, A., Shennan, S., Burjachs, F., Legarra Herrero, B., García Puchol, O., Carrión, J.-S., Revelles, J., Roberts, C.N., 2019. [Prehistoric palaeodemographics and regional land cover change in eastern Iberia](https://doi.org/10.1177/0959683619826643). The Holocene 0959683619826643. doi:10.1177/0959683619826643
 
 Gil, A.F., Villalba, R., Franchetti, F.R., Otaola, C., Abbona, C.C., Peralta, E.A., Neme, G., 2020. [Between Foragers and Farmers: Climate Change and Human Strategies in Northwestern Patagonia](https://doi.org/10.3390/quat3020017). Quaternary 3, 17. 
@@ -150,6 +152,8 @@ Schauer, P., Shennan, S., Bevan, A., College, S., Edinborough, K., Kerig, T., & 
 Schauer, P., Bevan, A., Shennan, S., Edinborough, K., Kerig, T., Pearson, M.P., 2019. [British Neolithic Axehead Distributions and Their Implications](https://doi.org/10.1007/s10816-019-09438-6). Journal of Archaeological Method and Theory. doi:/10.1007/s10816-019-09438-6
 
 Schirrmacher, J., Kneisel, J., Knitter, D., Hamer, W., Hinz, M., Schneider, R.R., Weinelt, M., 2020. [Spatial patterns of temperature, precipitation, and settlement dynamics on the Iberian Peninsula during the Chalcolithic and the Bronze Age.](https://doi.org/10.1016/j.quascirev.2020.106220) Quaternary Science Reviews 233, 106220. 
+
+Seidensticker, D., Hubau, W., Verschuren, D., Fortes-Lima, C., Maret, P. de, Schlebusch, C. M., & Bostoen, K. 2021. [Population collapse in Congo rainforest from 400 CE urges reassessment of the Bantu Expansion](https://doi.org/10.1126/sciadv.abd8352). Science Advances, 7(7), eabd8352. 
 
 Solheim, S., 2020. [Mesolithic coastal landscapes : Demography, settlement patterns and subsistence economy in southeastern Norway](https://doi.org/10.4324/9780203730942-4). In Schülke. A (Eds.) ,Coastal Landscapes of the Mesolithic, Taylor and Francis.
 
