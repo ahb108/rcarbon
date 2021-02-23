@@ -157,10 +157,11 @@ rangecheck <- function(x, bins, timeRange, datenormalised=FALSE){
 #' @export
 
 BPtoBCAD <- function(x){
-    if (any(x < 0)){ stop("Post-bomb dates (<0 BP) are not currently supported.") }
+    index <- !is.na(x)
+    if (any(x[index] < 0)){ stop("Post-bomb dates (<0 BP) are not currently supported.") }
     res <- matrix(c(x, rep(NA,length(x))), ncol=2)
-    res[x < 1950,2] <- 1950-res[x < 1950,1]
-    res[x >= 1950,2] <- 1949-res[x >= 1950,1]
+    res[index & x < 1950,2] <- 1950-res[index & x < 1950,1]
+    res[index & x >= 1950,2] <- 1949-res[index & x >= 1950,1]
     return(res[,2])
 }
 
@@ -173,11 +174,12 @@ BPtoBCAD <- function(x){
 #' @export
 
 BCADtoBP <- function(x){
-    if (any(x == 0)){ stop("0 BC/AD is not a valid year.") }
-    if (any(x > 1950)){ stop("Post-bomb dates (> AD 1950) are not currently supported.") }
+    index <- !is.na(x)
+    if (any(x[index] == 0)){ stop("0 BC/AD is not a valid year.") }
+    if (any(x[index] > 1950)){ stop("Post-bomb dates (> AD 1950) are not currently supported.") }
     res <- matrix(c(x, rep(NA,length(x))), ncol=2)
-    res[x > 0,2] <- abs(res[x > 0,1] - 1950)
-    res[x < 0,2] <- abs(res[x < 0,1] - 1949)
+    res[index & x > 0,2] <- abs(res[index & x > 0,1] - 1950)
+    res[index & x < 0,2] <- abs(res[index & x < 0,1] - 1949)
     return(res[,2])
 }
 
