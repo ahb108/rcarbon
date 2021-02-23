@@ -722,3 +722,54 @@ spkde <- function(x, coords, sbw, focalyear, tbw, win, cellres, bins=NA, backsig
         return(res)
     }
 }
+
+
+#' @title Combine radiocarbon ages from the same event.
+#'
+#' @description Computes a combined weighted mean and error and carries out a statistical test for internal consistency.
+#' 
+#' @param x A vector of uncalibrated radiocarbon ages
+#' @param errors A vector of standard deviations corresponding to each estimated radiocarbon age
+#' @param id A vector of event/object identifiers to be matched with radiocarbon ages. If not supplied all radiocarbon ages are assumed to be from the same event/object. 
+#' @param F14C Whether calculations are carried out in F14C space or not. Default is TRUE.
+#'
+#' @details The function calculates combined weighted error mean and standard error for each set of radiocarbon ages associated with the same event or object and computes a significance test for evaluating internal consistency following Ward and Wilson's method (1978). This is equivalent to OxCal's R_Combine routine.
+#'
+#' @return  A data.frame containing the weighted radiocarbon ages and errors for each event and the associated T-values and P-values. 
+#' @examples 
+#' x = c(4300,4330,5600,5603,5620)
+#' errors = c(20,30,30,30,45)
+#' id = c(1,1,2,2,2)
+#' poolDates(x,errors,id)
+#' @references 
+#' Ward, G. K., & Wilson, S. R. (1978). Procedures for Comparing and Combining Radiocarbon Age Determinations: A Critique. Archaeometry, 20(1), 19–31. https://doi.org/10.1111/j.1475-4754.1978.tb00208.x
+#' @import stats
+#' @import utils
+#' @export
+
+poolDates = function(x,errors,id=NULL,F14C=TRUE)
+{
+  if (length(x)!=length(errors)){print("The vectors 'x' and 'errors' shoould have the same length"); stop()}
+  if(is.null(id)){id = rep(1,length(x))}
+  pval = rc = sc = tval = numeric()
+  
+  for (i in 1:length(unique(id)))
+  {
+    index = which(id==unique(id)[i])
+    n = length(index)
+    r = x[index]
+    s = errors[index]
+    if (F14C==TRUE){r =exp(r/-8033);s=r*s/8033}
+    rc[i] = sum(r/s^2)/sum(1/s^2)
+    sc[i] = sum(1/s^2)^(-1/2)
+    tval[i]  = sum((r-rc[i])^2/s^2)
+    pval[i] = 1-pchisq(tval[i],df=n-1)
+    if(F14C==TRUE){sc[i] = sc[i]/rc[i]*8033; rc[i]=log(rc[i])*-8033}
+    rc[i] = round(rc[i])
+    sc[i] = round(sc[i])
+  }
+  
+  df = data.frame(id=unique(id),wCRA=rc,wCRAerrors=sc,Tval=tval,pval=pval)
+  return(df)
+}
+
