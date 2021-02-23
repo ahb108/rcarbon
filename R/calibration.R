@@ -646,7 +646,7 @@ hpdi <- function(x, credMass=0.95){
 summary.CalDates<-function(object,prob=NA,calendar="BP",...) {
   
   foo = function(x,i){if(nrow(x)>=i){return(x[i,1:2])}else{return(c(NA,NA))}}
-  if (is.na(prob)) 
+  if (anyNA(prob)) 
   {
     prob = c(0.683,0.954)
     pnames = c("OneSigma","TwoSigma")
