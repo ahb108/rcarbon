@@ -4,9 +4,10 @@
   * `summary()` and `plot()` functions for `SpdModelTest` class objects
 `plot.stackCalSPD()` proportion plot to handle instances with 0 summed probability in the time Range of analysis.
 * UPDATE: `binMed()` function can now handle larger `caldates` objects.
+* NEW: `poolDates()` function allows combination of 14C ages associated with the same event using Ward and Wilson 1978 method.
 * Minor bug fixes.
 * Minor typos and errors in the help documentation.
-* Updated dependencies for `spatastat(>= 2.0-0)`. 
+* Updated dependencies for `spatstat(>= 2.0-0)`. 
 
 
 # Version 1.4.1 (6 October 2020)
