@@ -2,6 +2,8 @@
 * Bug fix: Fixed a number of minor bugs and errors caused when the summed probability vector contains zero. Functions affected by this bugs were:
   * proportion plots in `plot.stackCalSPD()`
   * `summary()` and `plot()` functions for `SpdModelTest` class objects
+ 
+* Bug Fix: Fixed issues with `summary()` function on `CalDates` class object with multiple dates (thanks to [nferebau](https://github.com/nfrerebeau) for the bug report and fix)
 `plot.stackCalSPD()` proportion plot to handle instances with 0 summed probability in the time Range of analysis.
 * UPDATE: `binMed()` function can now handle larger `caldates` objects.
 * NEW: `poolDates()` function allows combination of 14C ages associated with the same event using Ward and Wilson 1978 method.
