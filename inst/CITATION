@@ -5,12 +5,13 @@ citEntry(entry = "Article",
 			as.person("Andrew Bevan")),
     year = "2020",
     journal = "Radiocarbon",
-    volume = "",
-    pages = "",
+    volume = "63",
+    issue = "1",
+    pages = "23-39",
     url = "https://dx.doi.org/10.1017/RDC.2020.95",
     textVersion =
-    paste("Crema, E.R. and Bevan, A. (2020)",
+    paste("Crema, E.R. and Bevan, A. (2021)",
     "Inference from large sets of radiocarbon dates: software and methods",
-    "Radiocarbon",
-    "URL https://dx.doi.org/10.1017/RDC.2020.9") 		
+    "Radiocarbon, 63(1), 23-39",
+    "URL https://dx.doi.org/10.1017/RDC.2020.95") 		
   )
