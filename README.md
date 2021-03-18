@@ -75,7 +75,9 @@ de Groot, B., 2020. [The impact of population fluctuations on the spatial spread
 
 de Souza, J. G., Robinson, M., Maezumi, S. Y., Capriles, J., Hoggarth, J. A., Lombardo, U., et al. 2019. [Climate change and cultural resilience in late pre-Columbian Amazonia](https://doi.org/10.1038/s41559-019-0924-0). Nature Ecology & Evolution, 1. doi:10.1038/s41559-019-0924-0
 
-dr Souza, P., Cartajena, I., Riquelme, R., Maldonado, A., Porras, M. E. de, Santander, B., et al. (2021). [Late Pleistocene–Early Holocene human settlement and environmental dynamics in the southern Atacama Desert highlands (24.0°S–24.5°S, Northern Chile)](https://doi.org/10.1002/gea.21849). Geoarchaeology. 
+dr Souza, P., Cartajena, I., Riquelme, R., Maldonado, A., Porras, M. E. de, Santander, B., et al. (2021). [Late Pleistocene–Early Holocene human settlement and environmental dynamics in the southern Atacama Desert highlands (24.0°S–24.5°S, Northern Chile)](https://doi.org/10.1002/gea.21849). Geoarchaeology.
+
+Edinborough, K., Martineau, R., Dufraisse, A., Shennan, S., Imbeaux, M., Dumontet, A., et al. (2021). [A Neolithic population model based on new radiocarbon dates from mining, funerary and population scaled activity in the Saint-Gond Marshes region of North East France](https://doi.org/10.1016/j.quaint.2021.03.001). Quaternary International. 
 
 Ekholm, T. 2021. [Hunter-gatherer adaptions during the Early Holocene in Northern Sweden](https://doi.org/10.1177/0959683620961482). The Holocene, 31(1), 83–94. 
 
