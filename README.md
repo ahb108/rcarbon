@@ -45,6 +45,8 @@ Barnett, R. L., Charman, D. J., Johns, C., Ward, S. L., Bevan, A., Bradley, S. L
 
 Becker, F., Knitter, D., Nykamp, M., Schütt, B., 2020. [Meta-Analysis of Geomorphodynamics in the Western Lower Bakırçay Plain (Aegean Region, Turkey)](https://doi.org/10.3390/land9090338). Land 9, 338. 
 
+Bergsvik, K. A., Darmark, K., Hjelle, K. L., Aksdal, J., & Åstveit, L. I. (2021). [Demographic developments in Stone Age coastal western Norway by proxy of radiocarbon dates, stray finds and palynological data](https://doi.org/10.1016/j.quascirev.2021.106898). Quaternary Science Reviews, 259, 106898. 
+
 Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holocene fluctuations in human population demonstrate repeated links to food production and climate](https://doi.org/10.1073/pnas.1709190114). Proceedings of the National Academy of Sciences of the United States of America, 114 (49) E10524-E10531. doi:10.1073/pnas.1709190114  
 
 Bevan, A., & Crema, E. R. 2021. [Modifiable reporting unit problems and time series of long-term human activity](https://doi.org/10.1098/rstb.2019.0726). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190726. 
