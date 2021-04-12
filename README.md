@@ -127,11 +127,11 @@ Palmisano, A., Lawrence, D., de Gruchy, M. W., Bevan, A., & Shennan, S. 2021. [H
 
 Palmisano, A., Woodbridge, J., Roberts, N., Bevan, A., Fyfe, R., Shennan, S., et al. 2019. [Holocene landscape dynamics and long-term population trends in the Levant.](https://doi.org/10.1177/0959683619826642) The Holocene, 0959683619826642. doi:10.1177/0959683619826642
 
-Prates, L., & Perez, S. I. (2021). [Late Pleistocene South American megafaunal extinctions associated with rise of Fishtail points and human population](https://doi.org/10.1038/s41467-021-22506-4). Nature Communications, 12(1), 2175. 
-
 Porčić, M., 2020. [Observations on the origin and demography of the Vinča culture](https://doi.org/10.1016/j.quaint.2020.04.012). Quaternary International. 
 
 Porčić, M., Blagojević, T., Pendić, J., & Stefanović, S. 2021. [The Neolithic Demographic Transition in the Central Balkans: population dynamics reconstruction based on new radiocarbon evidence](https://doi.org/10.1098/rstb.2019.0712). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190712. 
+
+Prates, L., & Perez, S. I. (2021). [Late Pleistocene South American megafaunal extinctions associated with rise of Fishtail points and human population](https://doi.org/10.1038/s41467-021-22506-4). Nature Communications, 12(1), 2175. 
 
 Prates, L., Politis, G.G., Perez, S.I., 2020. [Rapid radiation of humans in South America after the last glacial maximum: A radiocarbon-based study.](https://doi.org/10.1371/journal.pone.0236023) PLOS ONE 15, e0236023. 
 
