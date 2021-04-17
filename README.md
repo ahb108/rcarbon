@@ -59,6 +59,8 @@ Broughton,J.M., Weitzel,E.M. 2018. [Population reconstructions for humans and me
 
 Brown, A. A., Crema, E. R. 2019. [Māori Population Growth in Pre-contact New Zealand: Regional Population Dynamics Inferred From Summed Probability Distributions of Radiocarbon Dates](https://doi.org/10.1080/15564894.2019.1605429). The Journal of Island and Coastal Archaeology, 1–19. 
 
+Carter, V. A., Brunelle, A., Power, M. J., DeRose, R. J., Bekker, M. F., Hart, I., et al. (2021). [Legacies of Indigenous land use shaped past wildfire regimes in the Basin-Plateau Region, USA](https://doi.org/10.1038/s43247-021-00137-3). Communications Earth & Environment, 2(1), 1–9. 
+
 Cascalheira, J., Alcaraz-Castaño, M., Alcolea-González, J., de Andrés-Herrero, M., Arrizabalaga, A., Aura Tortosa, J.E., Garcia-Ibaibarriaga, N., Iriarte-Chiapusso, M.-J., 2020. [Paleoenvironments and human adaptations during the Last Glacial Maximum in the Iberian Peninsula: A review.](https://doi.org/10.1016/j.quaint.2020.08.005) Quaternary International. 
 
 Cheddadi, R., Palmisano, A., López-Sáez, J. A., Nourelbait, M., Zielhofer, C., Tabel, J., et al. 2019. [Human demography changes in Morocco and environmental imprint during the Holocene](https://doi.org/10.1177/0959683619826657) The Holocene, 0959683619826657. doi:10.1177/0959683619826657
@@ -100,6 +102,8 @@ Gjesfjeld, E., Silvestro, D., Chang, J., Koch, B., Foster, J.G., Alfaro, M.E., 2
 Gretzinger, J., Molak, M., Reiter, E., Pfrengle, S., Urban, C., Neukamm, J., et al. 2019. [Large-scale mitogenomic analysis of the phylogeography of the Late Pleistocene cave bear]( https://doi.org/10.1038/s41598-019-47073-z). Scientific Reports, 9. DOI: 10.1038/s41598-019-47073-z.
 
 Harrison, S.P., Gaillard, M.-J., Stocker, B.D., Vander Linden, M., Klein Goldewijk, K., Boles, O., Braconnot, P., Dawson, A., Fluet-Chouinard, E., Kaplan, J.O., Kastner, T., Pausata, F.S.R., Robinson, E., Whitehouse, N.J., Madella, M., Morrison, K.D., 2020. [Development and testing scenarios for implementing land use and land cover changes during the Holocene in Earth system model experiments](https://doi.org/10.5194/gmd-13-805-2020). Geoscientific Model Development 13, 805–824. 
+
+Jones, T. L., Coltrain, J. B., Jacobs, D. K., Porcasi, J., Brewer, S. C., Buckner, J. C., et al. (2021). [Causes and consequences of the late Holocene extinction of the marine flightless duck (Chendytes lawi) in the northeastern Pacific](https://doi.org/10.1016/j.quascirev.2021.106914). Quaternary Science Reviews, 260, 106914. 
 
 Jørgensen, E. K., & Riede, F. 2019. [Convergent catastrophes and the termination of the Arctic Norwegian Stone Age: A multi-proxy assessment of the demographic and adaptive responses of mid-Holocene collectors to biophysical forcing.](https://doi.org/10.1177/0959683619862036) The Holocene, 0959683619862036. 
 
