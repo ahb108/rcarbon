@@ -125,6 +125,8 @@ MacInnes, D. 2019. [The impact of population dynamics on social complexity in Ne
 
 Nielsen, S.V., Persson, P., Solheim, S., 2019. [De-Neolithisation in southern Norway inferred from statistical modelling of radiocarbon dates](https://doi.org/10.1016/j.jaa.2018.11.004). Journal of Anthropological Archaeology 53, 82–91. doi:10.1016/j.jaa.2018.11.004
 
+Nielsen, S. V. (2021). [A Late Mesolithic Forager Dispersal Caused Pre-Agricultural Demographic Transition in Norway](https://doi.org/10.1111/ojoa.12218). Oxford Journal of Archaeology, 40(2), 153–175. 
+
 Palmisano, A., Bevan, A., Shennan, S. 2017. [Comparing archaeological proxies for long-term population patterns: An example from central Italy](https://doi.org/10.1016/j.jas.2017.10.001). Journal of Archaeological Science, 87, 59-72. doi:10.1016/j.jas.2017.10.001
 
 Palmisano, A., Lawrence, D., de Gruchy, M. W., Bevan, A., & Shennan, S. 2021. [Holocene regional population dynamics and climatic trends in the Near East: A first comparison using archaeo-demographic proxies](https://doi.org/10.1016/j.quascirev.2020.106739). Quaternary Science Reviews, 252, 106739. 
