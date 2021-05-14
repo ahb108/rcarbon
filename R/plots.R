@@ -1158,7 +1158,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	      legend("topleft",legend=names(x$spds),fill=col.fill)
 	    } else {
 	      
-	      args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+	      args.legend1 <- list("topleft", legend=rev(names(x$spds)),fill=rev(col.fill))
 	      args.legend1[names(legend.arg)] <- legend.arg
 	      do.call("legend", args=args.legend1)
 	    }
@@ -1206,7 +1206,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 			{
 				legend("topleft",legend=names(x$spds),fill=col.fill)
 			} else {
-				args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+				args.legend1 <- list("topleft", legend=rev(names(x$spds)),fill=rev(col.fill))
 				args.legend1[names(legend.arg)] <- legend.arg
 				do.call("legend", args.legend1)
 			}
@@ -1246,7 +1246,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
       {
         legend("topleft",legend=names(x$spds),fill=col.fill)
       } else {
-        args.legend1 <- list("topleft", legend=names(x$spds),fill=col.fill)
+        args.legend1 <- list("topleft", legend=rev(names(x$spds)),fill=rev(col.fill))
         args.legend1[names(legend.arg)] <- legend.arg
         do.call("legend", args.legend1)
       }
