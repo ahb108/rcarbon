@@ -605,7 +605,7 @@ permTest <- function(x, marks, timeRange, backsight=10,changexpr=expression((t1/
     names(observedROC)[[i]]=names(observedSPD)[[i]]
     simulatedROC[[i]] = apply(simulatedSPD[[i]],2,foo,backsight=backsight,timeSequence=timeSequence,changexpr=changexpr)
   }
-
+names(simulatedROC) <- unique(GroupList)
 
     ## Simulation Envelope
     simulatedCIlist = simulatedCIlist.roc = vector("list",length=length(unique(GroupList)))
