@@ -85,6 +85,8 @@ de Souza, J. G., Robinson, M., Maezumi, S. Y., Capriles, J., Hoggarth, J. A., Lo
 
 de Souza, P., Cartajena, I., Riquelme, R., Maldonado, A., Porras, M. E. de, Santander, B., et al. (2021). [Late Pleistocene–Early Holocene human settlement and environmental dynamics in the southern Atacama Desert highlands (24.0°S–24.5°S, Northern Chile)](https://doi.org/10.1002/gea.21849). Geoarchaeology.
 
+DiNapoli, R. J., Crema, E. R., Lipo, C. P., Rieth, T. M., & Hunt, T. L. (2021). [Approximate Bayesian Computation of radiocarbon and paleoenvironmental record shows population resilience on Rapa Nui (Easter Island)](https://doi.org/10.1038/s41467-021-24252-z). Nature Communications, 12(1), 3939. 
+
 Edinborough, K., Martineau, R., Dufraisse, A., Shennan, S., Imbeaux, M., Dumontet, A., et al. (2021). [A Neolithic population model based on new radiocarbon dates from mining, funerary and population scaled activity in the Saint-Gond Marshes region of North East France](https://doi.org/10.1016/j.quaint.2021.03.001). Quaternary International. 
 
 Ekholm, T. 2021. [Hunter-gatherer adaptions during the Early Holocene in Northern Sweden](https://doi.org/10.1177/0959683620961482). The Holocene, 31(1), 83–94. 
@@ -92,6 +94,8 @@ Ekholm, T. 2021. [Hunter-gatherer adaptions during the Early Holocene in Norther
 Feeser, I., Dörfler, W., Kneisel, J., Hinz, M., & Dreibrodt, S. 2019. [Human impact and population dynamics in the Neolithic and Bronze Age: Multi-proxy evidence from north-western Central Europe](https://doi.org/10.1177/0959683619857223). The Holocene, 0959683619857223. doi:10.1177/0959683619857223
 
 Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Meyer, J.A., Kelly, R.L., Anderies, J.M., 2018. [Synchronization of energy consumption by human societies throughout the Holocene](https://doi.org/10.1073/pnas.1802859115). Proceedings of the National Academy of Sciences of the United States of America, 115 (40) 9962-9967. doi:10.1073/pnas.1802859115
+
+Freeman, J., Hard, R. J., Mauldin, R. P., & Anderies, J. M. (2021). [Radiocarbon data may support a Malthus-Boserup model of hunter-gatherer population expansion](https://doi.org/10.1016/j.jaa.2021.101321). Journal of Anthropological Archaeology, 63, 101321. 
 
 Fritz, C., Tosello, G., Fleury, G., Kasarhérou, E., Walter, P., Duranthon, F., et al. 2021. [First record of the sound produced by the oldest Upper Paleolithic seashell horn](https://doi.org/10.1126/sciadv.abe9510). Science Advances, 7(7), eabe9510. 
 
@@ -165,11 +169,13 @@ Saag, L., Laneman, M., Varul, L., Malve, M., Valk, H., Razzak, M. A., et al. 201
 
 Schauer, P., Shennan, S., Bevan, A., Cook, G., Edinborough, K., Fyfe, R., et al. 2019. [Supply and demand in prehistory? Economics of Neolithic mining in northwest Europe](https://doi.org/10.1016/j.jaa.2019.03.001). Journal of Anthropological Archaeology, 54, 149–160. doi:10.1016/j.jaa.2019.03.001
 
-Schauer, P., Shennan, S., Bevan, A., College, S., Edinborough, K., Kerig, T., & Pearson, M. P. 2020. [Cycles in Stone Mining and Copper Circulation in Europe 5500–2000 bc: A View from Space](https://doi.org/10.1017/eaa.2020.56). European Journal of Archaeology, 1–22. 
+Schauer, P., Shennan, S., Bevan, A., Colledge, S., Edinborough, K., Kerig, T., & Pearson, M. P. (2021). [Cycles in Stone Mining and Copper Circulation in Europe 5500–2000 bc: A View from Space](https://doi.org/10.1017/eaa.2020.56). European Journal of Archaeology, 24(2), 204–225. 
 
 Schauer, P., Bevan, A., Shennan, S., Edinborough, K., Kerig, T., Pearson, M.P., 2019. [British Neolithic Axehead Distributions and Their Implications](https://doi.org/10.1007/s10816-019-09438-6). Journal of Archaeological Method and Theory. doi:/10.1007/s10816-019-09438-6
 
 Schirrmacher, J., Kneisel, J., Knitter, D., Hamer, W., Hinz, M., Schneider, R.R., Weinelt, M., 2020. [Spatial patterns of temperature, precipitation, and settlement dynamics on the Iberian Peninsula during the Chalcolithic and the Bronze Age.](https://doi.org/10.1016/j.quascirev.2020.106220) Quaternary Science Reviews 233, 106220. 
+
+Schroeter, N., Mingram, J., Kalanke, J., Lauterbach, S., Tjallingii, R., Schwab, V. F., & Gleixner, G. (2021). [The Reservoir Age Effect Varies With the Mobilization of Pre-Aged Organic Carbon in a High-Altitude Central Asian Catchment](https://doi.org/10.3389/feart.2021.681931). Frontiers in Earth Science, 0. 
 
 Seidensticker, D., Hubau, W., Verschuren, D., Fortes-Lima, C., Maret, P. de, Schlebusch, C. M., & Bostoen, K. 2021. [Population collapse in Congo rainforest from 400 CE urges reassessment of the Bantu Expansion](https://doi.org/10.1126/sciadv.abd8352). Science Advances, 7(7), eabd8352. 
 
