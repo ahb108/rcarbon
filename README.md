@@ -87,6 +87,8 @@ de Souza, P., Cartajena, I., Riquelme, R., Maldonado, A., Porras, M. E. de, Sant
 
 DiNapoli, R. J., Crema, E. R., Lipo, C. P., Rieth, T. M., & Hunt, T. L. (2021). [Approximate Bayesian Computation of radiocarbon and paleoenvironmental record shows population resilience on Rapa Nui (Easter Island)](https://doi.org/10.1038/s41467-021-24252-z). Nature Communications, 12(1), 3939. 
 
+Doering, B. N. 2021. [Subarctic landscape adaptations and paleodemography: A 14,000-year history of climate change and human settlement in central Alaska and Yukon](https://doi.org/10.1016/j.quascirev.2021.107139). Quaternary Science Reviews, 268, 107139. 
+
 Edinborough, K., Martineau, R., Dufraisse, A., Shennan, S., Imbeaux, M., Dumontet, A., et al. (2021). [A Neolithic population model based on new radiocarbon dates from mining, funerary and population scaled activity in the Saint-Gond Marshes region of North East France](https://doi.org/10.1016/j.quaint.2021.03.001). Quaternary International. 
 
 Ekholm, T. 2021. [Hunter-gatherer adaptions during the Early Holocene in Northern Sweden](https://doi.org/10.1177/0959683620961482). The Holocene, 31(1), 83–94. 
@@ -188,6 +190,8 @@ Szpak, P., Savelle, J. M., Conolly, J., & Richards, M. P. 2019. [Variation in la
 Tallavara, M., Personen, P. 2018. [Human ecodynamics in the north-west coast of Finland 10,000–2000 years ago](https://doi.org/10.1016/j.quaint.2018.06.032).Quaternary International,doi:/10.1016/j.quaint.2018.06.032
 
 Tallavaara, M., & Jørgensen, E. K. 2021. [Why are population growth rate estimates of past and present hunter–gatherers so different?](https://doi.org/10.1098/rstb.2019.0708) Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190708. 
+
+Thompson, A. E., Feinman, G. M., Lemly, M., & Prufer, K. M. 2021. [Inequality, networks, and the financing of Classic Maya political power](https://doi.org/10.1016/j.jas.2021.105441). Journal of Archaeological Science, 133, 105441. 
 
 Thomson, M.J., MacDonald, G.M., 2020. [Climate and growing season variability impacted the intensity and distribution of Fremont maize farmers during and after the Medieval Climate Anomaly based on a statistically downscaled climate model](https://doi.org/10.1088/1748-9326/aba57e). Environ. Res. Lett.
 
