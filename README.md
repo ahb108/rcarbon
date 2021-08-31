@@ -197,6 +197,8 @@ Thomson, M.J., MacDonald, G.M., 2020. [Climate and growing season variability im
 
 Van der Bilt, W. G. M., Born, A., & Haaga, K. A. 2019. [Was Common Era glacier expansion in the Arctic Atlantic region triggered by unforced atmospheric cooling?](https://doi.org/10.1016/j.quascirev.2019.07.042) Quaternary Science Reviews, 105860. doi:10.1016/j.quascirev.2019.07.042
 
+Van Maldegem, E., Vandendriessche, H., Verhegge, J., Sergant, J., Meylemans, E., Perdaen, Y., et al. 2021. [Population collapse or human resilience in response to the 9.3 and 8.2 ka cooling events: A multi-proxy analysis of Mesolithic occupation in the Scheldt basin (Belgium)](https://doi.org/10.1016/j.jaa.2021.101348). Journal of Anthropological Archaeology, 64, 101348. 
+
 Vander Linden, M., & Silva, F. 2021. [Dispersals as demographic processes: testing and describing the spread of the Neolithic in the Balkans](https://doi.org/10.1098/rstb.2020.0231). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20200231. 
 
 Vogels, O., Fäder, E., Lenssen-Erz, T., 2020. [A matter of diversity? Identifying past hunter-gatherer aggregation camps through data driven analyses of rock art sites.](https://doi.org/10.1016/j.quaint.2020.05.057) Quaternary International. 
