@@ -26,7 +26,6 @@ Crema, E.R., Bevan, A. 2021 [Inference from Large Sets of Radiocarbon Dates: Sof
 
 ### References
 Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holocene fluctuations in human population demonstrate repeated links to food production and climate](https://doi.org/10.1073/pnas.1709190114). Proceedings of the National Academy of Sciences of the United States of America. doi:10.1073/pnas.1709190114  
-
 Crema, E.R., Bevan, A. 2021 [Inference from Large Sets of Radiocarbon Dates: Software and Methods](https://doi.org/10.1017/RDC.2020.95) Radiocarbon 63(1),23-39. doi:10.1017/RDC.2020.95
 
 Crema, E.R., Bevan, A., Shennan, S., 2017. [Spatio-temporal approaches to archaeological radiocarbon dates](https://doi.org/10.1016/j.jas.2017.09.007). Journal of Archaeological Science 87, 1–9. doi:10.1016/j.jas.2017.09.007
@@ -94,6 +93,8 @@ Edinborough, K., Martineau, R., Dufraisse, A., Shennan, S., Imbeaux, M., Dumonte
 Ekholm, T. 2021. [Hunter-gatherer adaptions during the Early Holocene in Northern Sweden](https://doi.org/10.1177/0959683620961482). The Holocene, 31(1), 83–94. 
 
 Feeser, I., Dörfler, W., Kneisel, J., Hinz, M., & Dreibrodt, S. 2019. [Human impact and population dynamics in the Neolithic and Bronze Age: Multi-proxy evidence from north-western Central Europe](https://doi.org/10.1177/0959683619857223). The Holocene, 0959683619857223. doi:10.1177/0959683619857223
+
+Freeman, J., Anderies, J. M., Beckman, N. G., Robinson, E., Baggio, J. A., Bird, D., et al. (2021). [Landscape Engineering Impacts the Long-Term Stability of Agricultural Populations](https://doi.org/10.1007/s10745-021-00242-z). Human Ecology. 
 
 Freeman, J., Baggio, J.A., Robinson, E., Byers, D.A., Gayo, E., Finley, J.B., Meyer, J.A., Kelly, R.L., Anderies, J.M., 2018. [Synchronization of energy consumption by human societies throughout the Holocene](https://doi.org/10.1073/pnas.1802859115). Proceedings of the National Academy of Sciences of the United States of America, 115 (40) 9962-9967. doi:10.1073/pnas.1802859115
 
