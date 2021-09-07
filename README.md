@@ -192,6 +192,8 @@ Tallavara, M., Personen, P. 2018. [Human ecodynamics in the north-west coast of 
 
 Tallavaara, M., & Jørgensen, E. K. 2021. [Why are population growth rate estimates of past and present hunter–gatherers so different?](https://doi.org/10.1098/rstb.2019.0708) Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190708. 
 
+ter Schure, A. T. M. ter, M. Bajard, K. Loftsgarden, H. I. Høeg, E. Ballo, J. Bakke, E. W. N. Støren, et al. 2021 [Anthropogenic and Environmental Drivers of Vegetation Change in Southeastern Norway during the Holocene](https://doi.org/10.1016/j.quascirev.2021.107175). Quaternary Science Reviews 270, 107175.
+
 Thompson, A. E., Feinman, G. M., Lemly, M., & Prufer, K. M. 2021. [Inequality, networks, and the financing of Classic Maya political power](https://doi.org/10.1016/j.jas.2021.105441). Journal of Archaeological Science, 133, 105441. 
 
 Thomson, M.J., MacDonald, G.M., 2020. [Climate and growing season variability impacted the intensity and distribution of Fremont maize farmers during and after the Medieval Climate Anomaly based on a statistically downscaled climate model](https://doi.org/10.1088/1748-9326/aba57e). Environ. Res. Lett.
