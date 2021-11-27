@@ -140,6 +140,8 @@ Nielsen, S. V. (2021). [A Late Mesolithic Forager Dispersal Caused Pre-Agricultu
 
 Palmisano, A., Bevan, A., Shennan, S. 2017. [Comparing archaeological proxies for long-term population patterns: An example from central Italy](https://doi.org/10.1016/j.jas.2017.10.001). Journal of Archaeological Science, 87, 59-72. doi:10.1016/j.jas.2017.10.001
 
+Palmisano, A., Bevan, A., Kabelindde, A., Roberts, N., & Shennan, S. (2021). [Long-Term Demographic Trends in Prehistoric Italy: Climate Impacts and Regionalised Socio-Ecological Trajectories](https://doi.org/10.1007/s10963-021-09159-3). Journal of World Prehistory. 
+
 Palmisano, A., Lawrence, D., de Gruchy, M. W., Bevan, A., & Shennan, S. 2021. [Holocene regional population dynamics and climatic trends in the Near East: A first comparison using archaeo-demographic proxies](https://doi.org/10.1016/j.quascirev.2020.106739). Quaternary Science Reviews, 252, 106739. 
 
 Palmisano, A., Woodbridge, J., Roberts, N., Bevan, A., Fyfe, R., Shennan, S., et al. 2019. [Holocene landscape dynamics and long-term population trends in the Levant.](https://doi.org/10.1177/0959683619826642) The Holocene, 0959683619826642. doi:10.1177/0959683619826642
@@ -168,7 +170,9 @@ Robinson, E., Bocinsky, R. K., Bird, D., Freeman, J., & Kelly, R. L. (2021). [De
 
 Roscoe, P., Sandweiss, D. H., & Robinson, E. 2021. [Population density and size facilitate interactive capacity and the rise of the state](https://doi.org/10.1098/rstb.2019.0725). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190725. 
 
-Saag, L., Laneman, M., Varul, L., Malve, M., Valk, H., Razzak, M. A., et al. 2019. [The Arrival of Siberian Ancestry Connecting the Eastern Baltic to Uralic Speakers further East](https://doi.org/10.1016/j.cub.2019.04.026). Current Biology,
+Saag, L., Laneman, M., Varul, L., Malve, M., Valk, H., Razzak, M. A., et al. 2019. [The Arrival of Siberian Ancestry Connecting the Eastern Baltic to Uralic Speakers further East](https://doi.org/10.1016/j.cub.2019.04.026). Current Biology
+
+Sánchez, R. M. M., Rodríguez, J. C. V., Caro, J. G., Pardo-Gordó, S., Pérez-Jordà, G., & Peña-Chocarro, L. (2021). [Reflections on the Other Side. A Southern Iberia Origin for the First Pottery Production of Northern Morocco?](https://doi.org/10.1515/opar-2020-0174) Open Archaeology, 7(1), 1054–1065. 
 
 Schauer, P., Shennan, S., Bevan, A., Cook, G., Edinborough, K., Fyfe, R., et al. 2019. [Supply and demand in prehistory? Economics of Neolithic mining in northwest Europe](https://doi.org/10.1016/j.jaa.2019.03.001). Journal of Anthropological Archaeology, 54, 149–160. doi:10.1016/j.jaa.2019.03.001
 
@@ -183,6 +187,8 @@ Schroeter, N., Mingram, J., Kalanke, J., Lauterbach, S., Tjallingii, R., Schwab,
 Seidensticker, D., Hubau, W., Verschuren, D., Fortes-Lima, C., Maret, P. de, Schlebusch, C. M., & Bostoen, K. 2021. [Population collapse in Congo rainforest from 400 CE urges reassessment of the Bantu Expansion](https://doi.org/10.1126/sciadv.abd8352). Science Advances, 7(7), eabd8352. 
 
 Solheim, S., 2020. [Mesolithic coastal landscapes : Demography, settlement patterns and subsistence economy in southeastern Norway](https://doi.org/10.4324/9780203730942-4). In Schülke. A (Eds.) ,Coastal Landscapes of the Mesolithic, Taylor and Francis.
+
+Solheim, S. (2021). [TIMING THE EMERGENCE AND DEVELOPMENT OF ARABLE FARMING IN SOUTHEASTERN NORWAY BY USING SUMMED PROBABILITY DISTRIBUTION OF RADIOCARBON DATES AND A BAYESIAN AGE MODEL](https://doi.org/10.1017/RDC.2021.80). Radiocarbon, 63(5), 1503–1524. 
 
 Stoddart, S., Woodbridge, J., Palmisano, A., Mercuri, A. M., Mensing, S. A., Colombaroli, D., et al. 2019. [Tyrrhenian central Italy: Holocene population and landscape ecology.](https://doi.org/10.1177/0959683619826696) The Holocene, 0959683619826696. doi:10.1177/0959683619826696
 
