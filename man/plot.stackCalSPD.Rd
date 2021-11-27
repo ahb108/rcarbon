@@ -66,7 +66,7 @@
 
 \item{legend}{Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.}
 
-\item{legend.arg}{list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.}
+\item{legend.arg}{list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE. If supplied legend position must be given (e.g. \code{legend.arg=list(x='bottomright')}.}
 
 \item{ylab}{a title for the y axis}
 

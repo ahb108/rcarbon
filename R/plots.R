@@ -992,7 +992,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param cex.lab The magnification to be used for x and y  labels relative to the current setting of cex. Default is adjusted to 1.
 #' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.
 #' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.
-#' @param legend.arg list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE.
+#' @param legend.arg list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE. If supplied legend position must be given (e.g. \code{legend.arg=list(x='bottomright')}.
 #' @param ylab a title for the y axis
 #' @param ymargin multiplier for the maximum value on ylim range. Default is 1.1.
 #' @param ... Additional arguments affecting the plot. 
@@ -1126,7 +1126,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	    {
 	      legend("topleft",legend=names(x$spds),col=col.line,lty=lty.obs,lwd=lwd.obs)
 	    } else {
-	      args.legend1 <- list("topleft", legend = names(x$spds),col=col.line,lty=lty.obs,lwd=lwd.obs)
+	      args.legend1 <- list(legend = names(x$spds),col=col.line,lty=lty.obs,lwd=lwd.obs)
 	      args.legend1[names(legend.arg)] <- legend.arg
 	      do.call("legend", args=args.legend1)
 	    }
@@ -1155,10 +1155,10 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	  {
 	    if (is.null(legend.arg))
 	    {
-	      legend("topleft",legend=names(x$spds),fill=col.fill)
+	      legend("topleft",legend=rev(names(x$spds)),fill=rev(col.fill))
 	    } else {
 	      
-	      args.legend1 <- list("topleft", legend=rev(names(x$spds)),fill=rev(col.fill))
+	      args.legend1 <- list(legend=rev(names(x$spds)),fill=rev(col.fill))
 	      args.legend1[names(legend.arg)] <- legend.arg
 	      do.call("legend", args=args.legend1)
 	    }
@@ -1204,9 +1204,9 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 		{
 			if (is.null(legend.arg))
 			{
-				legend("topleft",legend=names(x$spds),fill=col.fill)
+				legend("topleft",legend=rev(names(x$spds)),fill=rev(col.fill))
 			} else {
-				args.legend1 <- list("topleft", legend=rev(names(x$spds)),fill=rev(col.fill))
+				args.legend1 <- list(legend=rev(names(x$spds)),fill=rev(col.fill))
 				args.legend1[names(legend.arg)] <- legend.arg
 				do.call("legend", args.legend1)
 			}
@@ -1244,9 +1244,9 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
     {
       if (is.null(legend.arg))
       {
-        legend("topleft",legend=names(x$spds),fill=col.fill)
+        legend("topleft",legend=rev(names(x$spds)),fill=rev(col.fill))
       } else {
-        args.legend1 <- list("topleft", legend=rev(names(x$spds)),fill=rev(col.fill))
+        args.legend1 <- list(legend=rev(names(x$spds)),fill=rev(col.fill))
         args.legend1[names(legend.arg)] <- legend.arg
         do.call("legend", args.legend1)
       }
