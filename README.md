@@ -46,6 +46,8 @@ Barnett, R. L., Charman, D. J., Johns, C., Ward, S. L., Bevan, A., Bradley, S. L
 
 Becker, F., Knitter, D., Nykamp, M., Schütt, B., 2020. [Meta-Analysis of Geomorphodynamics in the Western Lower Bakırçay Plain (Aegean Region, Turkey)](https://doi.org/10.3390/land9090338). Land 9, 338. 
 
+Benito, X., Luethje, M., Schneider, T., Fritz, S.C., Baker, P.A., Pedersen, E.J., Gaüzère, P., de Novaes Nascimento, M., Bush, M., Ruhi, A., 2021. [Ecological resilience in tropical Andean lakes: A paleolimnological perspective](https://doi.org/10.1002/lno.11747). Limnology and Oceanography n/a. 
+
 Bergsvik, K. A., Darmark, K., Hjelle, K. L., Aksdal, J., & Åstveit, L. I. (2021). [Demographic developments in Stone Age coastal western Norway by proxy of radiocarbon dates, stray finds and palynological data](https://doi.org/10.1016/j.quascirev.2021.106898). Quaternary Science Reviews, 259, 106898. 
 
 Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holocene fluctuations in human population demonstrate repeated links to food production and climate](https://doi.org/10.1073/pnas.1709190114). Proceedings of the National Academy of Sciences of the United States of America, 114 (49) E10524-E10531. doi:10.1073/pnas.1709190114  
@@ -59,6 +61,8 @@ Broodbank, C., Lucarini, G. 2019. [The Dynamics of Mediterranean Africa, ca. 960
 Broughton,J.M., Weitzel,E.M. 2018. [Population reconstructions for humans and megafauna suggest mixed causes for North American Pleistocene extinctions](https://doi.org/10.1038/s41467-018-07897-1).Nature Communications, 9, 5441. doi:10.1038/s41467-018-07897-1
 
 Brown, A. A., Crema, E. R. 2019. [Māori Population Growth in Pre-contact New Zealand: Regional Population Dynamics Inferred From Summed Probability Distributions of Radiocarbon Dates](https://doi.org/10.1080/15564894.2019.1605429). The Journal of Island and Coastal Archaeology, 1–19. 
+
+Cahiza, P., Garate, E., Sabatini, G., Gheggi, S., Iniesta, M.L., Carosio, S., García, G., 2021. [Temporal dynamics of La Rioja village landscapes, Argentina](https://doi.org/10.1016/j.jasrep.2021.103123). Journal of Archaeological Science: Reports 39, 103123. 
 
 Carter, V. A., Brunelle, A., Power, M. J., DeRose, R. J., Bekker, M. F., Hart, I., et al. (2021). [Legacies of Indigenous land use shaped past wildfire regimes in the Basin-Plateau Region, USA](https://doi.org/10.1038/s43247-021-00137-3). Communications Earth & Environment, 2(1), 1–9. 
 
@@ -114,11 +118,17 @@ Gretzinger, J., Molak, M., Reiter, E., Pfrengle, S., Urban, C., Neukamm, J., et 
 
 Harrison, S.P., Gaillard, M.-J., Stocker, B.D., Vander Linden, M., Klein Goldewijk, K., Boles, O., Braconnot, P., Dawson, A., Fluet-Chouinard, E., Kaplan, J.O., Kastner, T., Pausata, F.S.R., Robinson, E., Whitehouse, N.J., Madella, M., Morrison, K.D., 2020. [Development and testing scenarios for implementing land use and land cover changes during the Holocene in Earth system model experiments](https://doi.org/10.5194/gmd-13-805-2020). Geoscientific Model Development 13, 805–824. 
 
+Hixon, S.W., Douglass, K.G., Godfrey, L.R., Eccles, L., Crowley, B.E., Rakotozafy, L.M.A., Clark, G., Haberle, S., Anderson, A., Wright, H.T., Kennett, D.J., 2021. [Ecological Consequences of a Millennium of Introduced Dogs on Madagascar](https://doi.org/10.3389/fevo.2021.689559). Frontiers in Ecology and Evolution 9, 428. 
+
 Jones, T. L., Coltrain, J. B., Jacobs, D. K., Porcasi, J., Brewer, S. C., Buckner, J. C., et al. (2021). [Causes and consequences of the late Holocene extinction of the marine flightless duck (Chendytes lawi) in the northeastern Pacific](https://doi.org/10.1016/j.quascirev.2021.106914). Quaternary Science Reviews, 260, 106914. 
 
 Jørgensen, E. K., & Riede, F. 2019. [Convergent catastrophes and the termination of the Arctic Norwegian Stone Age: A multi-proxy assessment of the demographic and adaptive responses of mid-Holocene collectors to biophysical forcing.](https://doi.org/10.1177/0959683619862036) The Holocene, 0959683619862036. 
 
 Jorgeson, I.A., Breslawski, R.P., Fisher, A.E., 2020. [Radiocarbon simulation fails to support the temporal synchroneity requirement of the Younger Dryas impact hypothesis](https://doi.org/10.1017/qua.2019.83). Quaternary Research 1–17. 
+
+Kitchel, N.R., Mackie, M.E., 2021. [Plants and Subsistence during the Fluted-Point Period of the Northeast](https://doi.org/10.1017/aaq.2021.125). American Antiquity 1–9. 
+
+Kim, H., Lee, G.-A., Crema, E.R., 2021. [Bayesian analyses question the role of climate in Chulmun demography](https://doi.org/10.1038/s41598-021-03180-4). Scientific Reports 11, 23797. 
 
 Kwak, S., Obata, H., Lee, G.-A., 2020. [Broad-spectrum foodways in southern coastal Korea in the Holocene: Isotopic and archaeobotanical signatures in Neolithic shell middens.](https://doi.org/10.1080/15564894.2020.1776427) The Journal of Island and Coastal Archaeology 0, 1–29. 
 
@@ -134,9 +144,15 @@ Lucarini, G., Wilkinson, T., Crema, E.R., Palombini, A., Bevan, A., Broodbank, C
 
 MacInnes, D. 2019. [The impact of population dynamics on social complexity in Neolithic Orkney.](https://doi.org/10.1016/j.jasrep.2019.02.036) Journal of Archaeological Science: Reports, 24, 721–728. doi:10.1016/j.jasrep.2019.02.036
 
+McCool, W.C., Tung, T.A., Coltrain, J.B., Accinelli Obando, A.J., Kennett, D.J., 2021. [The character of conflict: A bioarchaeological study of violence in the Nasca highlands of Peru during the Late Intermediate Period (950–1450 C.E.)](https://doi.org/10.1002/ajpa.24205). American Journal of Physical Anthropology 174, 614–630. 
+
+McCool, W.C., Anderson, A.S., Kennett, D.J., 2021. [Using a multimethod life history approach to navigate the osteological paradox: A case study from Prehispanic Nasca, Peru](https://doi.org/10.1002/ajpa.24279). American Journal of Physical Anthropology 175, 816–833. 
+
 Nielsen, S.V., Persson, P., Solheim, S., 2019. [De-Neolithisation in southern Norway inferred from statistical modelling of radiocarbon dates](https://doi.org/10.1016/j.jaa.2018.11.004). Journal of Anthropological Archaeology 53, 82–91. doi:10.1016/j.jaa.2018.11.004
 
 Nielsen, S. V. (2021). [A Late Mesolithic Forager Dispersal Caused Pre-Agricultural Demographic Transition in Norway](https://doi.org/10.1111/ojoa.12218). Oxford Journal of Archaeology, 40(2), 153–175. 
+
+Nykamp, M., Becker, F., Braun, R., Pöllath, N., Knitter, D., Peters, J., Schütt, B., 2021. [Sediment cascades and the entangled relationship between human impact and natural dynamics at the pre-pottery Neolithic site of Göbekli Tepe, Anatolia](https://doi.org/10.1002/esp.5035). Earth Surface Processes and Landforms 46, 430–442. 
 
 Palmisano, A., Bevan, A., Shennan, S. 2017. [Comparing archaeological proxies for long-term population patterns: An example from central Italy](https://doi.org/10.1016/j.jas.2017.10.001). Journal of Archaeological Science, 87, 59-72. doi:10.1016/j.jas.2017.10.001
 
@@ -159,6 +175,8 @@ Ren, X., Xu, J., Wang, H., Storozum, M., Lu, P., Mo, D., et al. 2021. [Holocene 
 Riris, P. 2018 [Dates as data revisited: A statistical examination of the Peruvian preceramic radiocarbon record](https://doi.org/10.1016/j.jas.2018.06.008). Journal of Archaeological Science, 97, 67-76. doi:10.1016/j.jas.2018.06.008
 
 Riris, P., Arroyo-Kalin, M. 2018. [Widespread Population Decline in South America Correlates with Mid-holocene Climate Change](https://doi.org/10.1038/s41598-019-43086-w) Scientific Reports, 9, Article number: 6850 (2019). doi:10.1038/s41598-019-43086-w.
+
+Riris, P., de Souza, J.G., 2021. [Formal Tests for Resistance-Resilience in Archaeological Time Series.](https://doi.org/10.3389/fevo.2021.740629) Frontiers in Ecology and Evolution 9, 906. 
 
 Riris, P., & Silva, F. 2021. [Resolution and the detection of cultural dispersals: development and application of spatiotemporal methods in Lowland South America.](https://doi.org/10.1057/s41599-021-00717-w) Humanities and Social Sciences Communications, 8(1), 1–13. 
 
