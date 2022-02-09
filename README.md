@@ -84,6 +84,8 @@ Deforce K., Groenewoudt B., Haneca K. 2020. [2500 years of charcoal production i
 
 de Groot, B., 2020. [The impact of population fluctuations on the spatial spread of Neolithic ceramic traditions in West Anatolia and South-East Europe.](https://doi.org/10.1016/j.jaa.2019.101121) Journal of Anthropological Archaeology 57, 101121. doi:10.1016/j.jaa.2019.101121
 
+de Groot, B., Bloxam, A., 2022. [Radiocarbon approaches for mapping technological change: The spread of the potter’s wheel in the Iberian Peninsula, 1000–0 BCE](https://doi.org/10.1016/j.jasrep.2021.103288). Journal of Archaeological Science: Reports 41, 103288. 
+
 de Souza, J. G., Robinson, M., Maezumi, S. Y., Capriles, J., Hoggarth, J. A., Lombardo, U., et al. 2019. [Climate change and cultural resilience in late pre-Columbian Amazonia](https://doi.org/10.1038/s41559-019-0924-0). Nature Ecology & Evolution, 1. doi:10.1038/s41559-019-0924-0
 
 de Souza, P., Cartajena, I., Riquelme, R., Maldonado, A., Porras, M. E. de, Santander, B., et al. (2021). [Late Pleistocene–Early Holocene human settlement and environmental dynamics in the southern Atacama Desert highlands (24.0°S–24.5°S, Northern Chile)](https://doi.org/10.1002/gea.21849). Geoarchaeology.
@@ -162,6 +164,8 @@ Palmisano, A., Lawrence, D., de Gruchy, M. W., Bevan, A., & Shennan, S. 2021. [H
 
 Palmisano, A., Woodbridge, J., Roberts, N., Bevan, A., Fyfe, R., Shennan, S., et al. 2019. [Holocene landscape dynamics and long-term population trends in the Levant.](https://doi.org/10.1177/0959683619826642) The Holocene, 0959683619826642. doi:10.1177/0959683619826642
 
+Park, G., Marwick, B., 2022. [How did the introduction of stemmed points affect mobility and site occupation during the late Pleistocene in Korea?](https://doi.org/10.1016/j.quascirev.2021.107312) Quaternary Science Reviews 277, 107312. 
+
 Porčić, M., 2020. [Observations on the origin and demography of the Vinča culture](https://doi.org/10.1016/j.quaint.2020.04.012). Quaternary International. 
 
 Porčić, M., Blagojević, T., Pendić, J., & Stefanović, S. 2021. [The Neolithic Demographic Transition in the Central Balkans: population dynamics reconstruction based on new radiocarbon evidence](https://doi.org/10.1098/rstb.2019.0712). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190712. 
@@ -187,6 +191,8 @@ Robinson, E., Nicholson, C., & Kelly, R. L. 2019. [The Importance of Spatial Dat
 Robinson, E., Bocinsky, R. K., Bird, D., Freeman, J., & Kelly, R. L. (2021). [Dendrochronological dates confirm a Late Prehistoric population decline in the American Southwest derived from radiocarbon dates](https://doi.org/10.1098/rstb.2019.0718). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190718. 
 
 Roscoe, P., Sandweiss, D. H., & Robinson, E. 2021. [Population density and size facilitate interactive capacity and the rise of the state](https://doi.org/10.1098/rstb.2019.0725). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190725. 
+
+Ruiz-Redondo, A., Vukosavljević, N., Tomasso, A., Peresani, M., Davies, W., Vander Linden, M., 2022. [Mid and Late Upper Palaeolithic in the Adriatic Basin: Chronology, transitions and human adaptations to a changing landscape](https://doi.org/10.1016/j.quascirev.2021.107319). Quaternary Science Reviews 276, 107319. 
 
 Saag, L., Laneman, M., Varul, L., Malve, M., Valk, H., Razzak, M. A., et al. 2019. [The Arrival of Siberian Ancestry Connecting the Eastern Baltic to Uralic Speakers further East](https://doi.org/10.1016/j.cub.2019.04.026). Current Biology
 
