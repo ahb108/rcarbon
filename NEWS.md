@@ -1,6 +1,6 @@
 # Version 1.4.3 (ongoing development)
 * UPDATE: Reversed legend item order in `plot.stackCalSPD()` to match display
-
+* UPDATE: `hpdi()` now has the option to return a character vector with HPDI ranges in either BP or BCAD.
 
 # Version 1.4.2 (15 March 2021)
 * Bug fix: Fixed a number of minor bugs and errors caused when the summed probability vector contains zero. Functions affected by this bugs were:
