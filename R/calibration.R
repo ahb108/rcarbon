@@ -590,16 +590,21 @@ length.CalDates <- function(x,...)
 #' 
 #' @param x A \code{CalDates} class object.
 #' @param credMass Interval probability mass
+#' @param asList Logical variable determining whether the output should be a list (TRUE)  or a character vector (FALSE). Default is TRUE
+#' @param calendar Whether daes should be reported in cal BP (\code{"BP"}) or in BCAD (\code{"BCAD"}). Default is 'BP'. Ignored when \code{"asList=TRUE"}.
+#' @param sep character string to separate date ranges. Default is '|'. Ignored when \code{"asList==TRUE"}.
+#' @param pdigits indicate the number of decimal places for reporting probabilities. Default is 3. Ignored when \code{"asList==TRUE"}.
 #' 
 #' @return A list of matrices with HPDI ranges and associated probabilities in cal BP. Note that the sum of the probability mass will be only approximately equal to the argument \code{credMass}.
 #' @examples
-#' x <- calibrate(c(3050,2950),c(20,20))
+#' x <- calibrate(c(2000,3050,2950),c(35,20,20))
 #' hpdi(x)
+#' hpdi(x,asList=FALSE,calendar='BCAD')
 #' @seealso \code{\link{calibrate}}
 #' @export
 
 
-hpdi <- function(x, credMass=0.95){
+hpdi <- function(x, credMass=0.95,asList=TRUE,calendar='BP',sep='|',pdigits=3){
   
   cl <- class(x)
   if (!"CalDates"%in%cl){
@@ -623,11 +628,30 @@ hpdi <- function(x, credMass=0.95){
     ends <- indices[c(gaps, length(indices))]
     p_interval <- as.integer(length(starts))
     for (j in 1:length(starts))
-      {
-        p_interval[j] <- sum(grd$PrDens[starts[j]:ends[j]])
-      }
+    {
+      p_interval[j] <- sum(grd$PrDens[starts[j]:ends[j]])
+    }
     result[[i]] <- cbind(startCalBP = grd$calBP[starts], endCalBP = grd$calBP[ends],prob = p_interval) 
   }  
+  
+  if (asList==FALSE)
+  {
+    result.tmp = character(length(result))
+    
+    for (i in 1:length(result))
+    {
+      if (calendar=='BP')
+      {
+        result.tmp[i]=paste0(apply(result[[i]],1,function(x){paste0(x[1],'BP-',x[2],'BP (',round(x[3],pdigits),')')}),collapse=sep)
+      }
+      
+      if (calendar=='BCAD')
+      {
+        result.tmp[i]=paste0(apply(result[[i]],1,function(x){x[1:2]=BPtoBCAD(x[1:2]);paste0(abs(x[1]),ifelse(x[1]<0,'BC','AD'),'-',abs(x[2]),ifelse(x[2]<0,'BC','AD'),' (', round(x[3],pdigits),')')}),collapse=sep)
+      }
+    }
+    result = result.tmp
+  }
   return(result)
 }
 

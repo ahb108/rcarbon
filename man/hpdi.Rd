@@ -4,12 +4,27 @@
 \alias{hpdi}
 \title{Computes the highest posterior density interval (HPDI) for calibrated dates}
 \usage{
-hpdi(x, credMass = 0.95)
+hpdi(
+  x,
+  credMass = 0.95,
+  asList = TRUE,
+  calendar = "BP",
+  sep = "|",
+  pdigits = 3
+)
 }
 \arguments{
 \item{x}{A \code{CalDates} class object.}
 
 \item{credMass}{Interval probability mass}
+
+\item{asList}{Logical variable determining whether the output should be a list (TRUE)  or a character vector (FALSE). Default is TRUE}
+
+\item{calendar}{Whether daes should be reported in cal BP (\code{"BP"}) or in BCAD (\code{"BCAD"}). Default is 'BP'. Ignored when \code{"asList=TRUE"}.}
+
+\item{sep}{character string to separate date ranges. Default is '|'. Ignored when \code{"asList==TRUE"}.}
+
+\item{pdigits}{indicate the number of decimal places for reporting probabilities. Default is 3. Ignored when \code{"asList==TRUE"}.}
 }
 \value{
 A list of matrices with HPDI ranges and associated probabilities in cal BP. Note that the sum of the probability mass will be only approximately equal to the argument \code{credMass}.
@@ -18,8 +33,9 @@ A list of matrices with HPDI ranges and associated probabilities in cal BP. Note
 Computes the highest posterior density interval (HPDI) for calibrated dates
 }
 \examples{
-x <- calibrate(c(3050,2950),c(20,20))
+x <- calibrate(c(2000,3050,2950),c(35,20,20))
 hpdi(x)
+hpdi(x,asList=FALSE,calendar='BCAD')
 }
 \seealso{
 \code{\link{calibrate}}
