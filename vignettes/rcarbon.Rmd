@@ -309,7 +309,7 @@ plot(perm.emedyd,focalm = 3,main="South-Central Anatolia", type='roc')
 It is also possible to visually compare SPDs by creating `stackCalSPD` class objects using the `stackspd()` function. These can be plotted in a vatiety of ways to the ease the visual comparison of SPDs across different groups:
 
 ```{r,fig.width=7,fig.height=7}
-emedyd.spd=stackspd(x=cal.emedyd,group=emedyd$Region,timeRange=c(16000,9000),bins=bins.emedyd,runm=50)
+emedyd.spd=stackspd(x=cal.emedyd,group=emedyd$Region,timeRange=c(16000,9000),bins=bins.emedyd,runm=50,verbos=FALSE)
 par(mfrow=c(2,2))
 plot(emedyd.spd,type='stacked')
 plot(emedyd.spd,type='lines')
