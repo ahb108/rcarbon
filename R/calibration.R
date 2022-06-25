@@ -87,7 +87,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
         warning(paste0("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(",timeRange[1],",",timeRange[1],")"))
       }
     }
-
+    out.prob.cnt = 0 #Counter for dates with calbrated probabilities outside timeRange
     if (F14C==TRUE&normalised==FALSE)
     {
       normalised=TRUE
@@ -204,6 +204,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
     calBP = calBPrange[cclist2[[calCurves[b]]]$calBPindex]
     PrDens = dens[cclist2[[calCurves[b]]]$calBPindex]
     if (anyNA(PrDens)){stop("One or more dates are outside the calibration range")}
+    if (sum(dens)>sum(PrDens,na.rm=TRUE)){out.prob.cnt = out.prob.cnt + 1}
     res = list(calBP = calBP[PrDens > 0],PrDens = PrDens[PrDens > 0])
     return(res)
   }
@@ -229,6 +230,7 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
   }
   class(reslist) <- c("CalDates",class(reslist))
   if (verbose){ print("Done.") }
+  if (out.prob.cnt > 0) {warning(paste0(out.prob.cnt, ' dates have calibrated probabilities outside the user-defined timeRange interval. Consider changing the timeRange parameter to a wider interval.'))}
   return(reslist)
 }
 
