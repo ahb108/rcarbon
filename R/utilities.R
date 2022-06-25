@@ -325,11 +325,11 @@ binMed <- function(x,bins,verbose=TRUE){
 #'
 #' @description Function for computing a matrix of gaussian or fixed weights from distance matrix
 #'
-#' @param distmat a symmetric matrix of inter-site distances (in km). 
+#' @param distmat a symmetric matrix containing inter-site distances (in km) or the output of \code{`sf::st_distance()`}. In the latter case distances are automatically converted in km. 
 #' @param h parameter of the Gaussian distance decay function.
 #' @param kernel indicates the type of weighting function, either 'fixed' or 'gaussian'. Default is 'gaussian'. 
 #'
-#' @details This function generates a weight matrix (required for the \code{\link{SPpermTest}}) function. When \code{kernel=="fixed"}, the weight \eqn{w_{ij}} between site \eqn{i} and \eqn{j} is equal to 1 when their interdistance \eqn{d_{ij}} is below \code{h}, and equal to 0 when  \eqn{d_{ij}>h}.When \code{kernel=="gaussian"}, the weight is calculated with formula exp(-d_{ij}^2/h^2).
+#' @details This function generates a weight matrix (required for the \code{\link{sptest}}) function. When \code{kernel=="fixed"}, the weight \eqn{w_{ij}} between site \eqn{i} and \eqn{j} is equal to 1 when their interdistance \eqn{d_{ij}} is below \code{h}, and equal to 0 when  \eqn{d_{ij}>h}.When \code{kernel=="gaussian"}, the weight is calculated with formula exp(-d_{ij}^2/h^2).
 #'
 #' @return An object of class spatialweights
 #'
@@ -346,6 +346,17 @@ binMed <- function(x,bins,verbose=TRUE){
 
 spweights<-function(distmat,h=NULL,kernel="gaussian")
 {
+    if(class(distmat)=='units')
+    {
+	    if(units(distmat)$numerator=='m')
+	    {
+		    distmat = distmat/1000
+	    }
+	    distmat = as.matrix(distmat)
+	    class(distmat) = 'matrix'
+    }
+
+
     w=matrix(NA,nrow=nrow(distmat),ncol=ncol(distmat))
     kernels <- c("gaussian","fixed")
     if (!kernel %in% kernels){
