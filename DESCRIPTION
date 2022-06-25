@@ -1,6 +1,6 @@
 Package: rcarbon
 Title: Calibration and Analysis of Radiocarbon Dates
-Version: 1.4.3
+Version: 1.4.4
 Authors@R: c(person("Andrew","Bevan", role=c("aut"),email=c("andrew.bevan@gmail.com"),comment=c(ORCID="0000-0001-7967-3117")),
 	     person("Enrico","Crema", role=c("aut","cre"),email=c("enrico.crema@gmail.com"),comment=c(ORCID="0000-0001-6727-5138")),
 	     person("R. Kyle","Bocinsky",role=c("ctb"),email="bocinsky@gmail.com"),
@@ -13,7 +13,6 @@ Description: Enables the calibration and analysis of radiocarbon dates, often bu
 Depends: R (>= 3.3.0)
 Imports: sp,stats,spatstat.geom, spatstat.core, spatstat.linnet, spatstat (>= 2.0-0),graphics,grDevices,utils,snow,doSNOW,foreach,iterators,knitr
 Suggests:
-    spelling,
     rmarkdown,
     testthat (>= 2.1.0)
 License: GPL (>= 2)
