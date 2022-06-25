@@ -144,7 +144,7 @@ thinDates <- function(ages, errors, bins, size, thresh=0.5, method="random", see
 #' @export
 
 spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE, runm=NA, verbose=TRUE, edgeSize=500){
-    
+    display.timeRange = timeRange
     defcall <- as.list(args(spd))
     defcall <- defcall[-length(defcall)]
     speccall <- as.list(match.call())
@@ -191,8 +191,8 @@ spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE,
 	    {
 		stop(paste0("timeRange beyond calibration curve. Ensure that timeRange[1]+edgeSize is smaller than ", caltimeRange[1]," and timeRange[2]-edgeSize is larger than 0"))
 	    }
-	    timeRange[1]=ccrange[2]
-	    timeRange[2]=ccrange[1]
+	    timeRange[1]=max(ccrange[2],true.timeRange[1])
+	    timeRange[2]=min(ccrange[1],true.timeRange[2])
     }	
     calyears <- data.frame(calBP=seq(timeRange[1], timeRange[2],-1))
     binnedMatrix <- matrix(NA, nrow=nrow(calyears), ncol=length(binNames))
@@ -252,17 +252,11 @@ spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE,
 
     finalSPD <- apply(binnedMatrix,1,sum)
 
-    if (datenormalised)
-    {
-	    timeRange=true.timeRange
-    }	    
-
-    
     if (!is.na(runm)){
         finalSPD <- runMean(finalSPD, runm, edge="fill")
     }
     res <- data.frame(calBP=calyears$calBP, PrDens=finalSPD)
-    res <- res[res$calBP <= timeRange[1] & res$calBP >= timeRange[2],]
+    res <- res[res$calBP <= display.timeRange[1] & res$calBP >= display.timeRange[2],]
     if (spdnormalised){
         res$PrDens <- res$PrDens/sum(res$PrDens, na.rm=TRUE)
     }
