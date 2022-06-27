@@ -38,6 +38,8 @@ Timpson, A., Colledge, S., Crema, E., Edinborough, K., Kerig, T., Manning, K., T
 
 ### Case Studies Using _rcarbon_
 
+Antolín, F., Martínez-Grau, H., Steiner, B. L., Follmann, F., Soteras, R., Häberle, S., et al. 2022. [Neolithic occupations (c. 5200-3400 cal BC) at Isolino Virginia (Lake Varese, Italy) and the onset of the pile-dwelling phenomenon around the Alps](https://doi.org/10.1016/j.jasrep.2022.103375). Journal of Archaeological Science: Reports, 42, 103375. 
+
 Arroyo-Kalin, M., & Riris, P. (2021). [Did pre-Columbian populations of the Amazonian biome reach carrying capacity during the Late Holocene?](https://doi.org/10.1098/rstb.2019.0715) Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190715. 
 
 Aubán, J.B., Jiménez-Puerto, J., Ruiz, P.E., Gordo, S.P., 2018. [C14 y poblamiento en las comarcas centro-meridionales del País Valenciano (c. 7000-1500 cal BC)](https://www.raco.cat/index.php/RecerquesMuseuAlcoi/article/view/348376). Recerques del Museu d’Alcoi 0, 35-48–48.
@@ -80,7 +82,11 @@ Crema, E.R. 2020 [Non-Stationarity and Local Spatial Analysis](https://doi.org/1
 
 Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
 
+Crema, E. R. 2022. [Statistical Inference of Prehistoric Demography from Frequency Distributions of Radiocarbon Dates: A Review and a Guide for the Perplexed](https://doi.org/10.1007/s10816-022-09559-5). Journal of Archaeological Method and Theory. 
+
 Deforce K., Groenewoudt B., Haneca K. 2020. [2500 years of charcoal production in the Low Countries: The chronology and typology of charcoal kilns and their relation with early iron production.](https://doi.org/10.1016/j.quaint.2020.10.020). Quaternary International.
+
+Deza-Araujo, M., Morales-Molino, C., Conedera, M., Henne, P. D., Krebs, P., Hinz, M., et al. (2022). [A new indicator approach to reconstruct agricultural land use in Europe from sedimentary pollen assemblages](https://doi.org/10.1016/j.palaeo.2022.111051). Palaeogeography, Palaeoclimatology, Palaeoecology, 599, 111051. 
 
 de Groot, B., 2020. [The impact of population fluctuations on the spatial spread of Neolithic ceramic traditions in West Anatolia and South-East Europe.](https://doi.org/10.1016/j.jaa.2019.101121) Journal of Anthropological Archaeology 57, 101121. doi:10.1016/j.jaa.2019.101121
 
@@ -150,6 +156,8 @@ McCool, W.C., Tung, T.A., Coltrain, J.B., Accinelli Obando, A.J., Kennett, D.J.,
 
 McCool, W.C., Anderson, A.S., Kennett, D.J., 2021. [Using a multimethod life history approach to navigate the osteological paradox: A case study from Prehispanic Nasca, Peru](https://doi.org/10.1002/ajpa.24279). American Journal of Physical Anthropology 175, 816–833. 
 
+Mjærum, A., Loftsgarden, K., & Solheim, S. 2022. [Human-vegetation dynamics in Holocene south-eastern Norway based on radiocarbon dated charcoal from archaeological excavations](https://doi.org/10.1177/09596836221088242). The Holocene, 32(7), 690–702. 
+
 Nielsen, S.V., Persson, P., Solheim, S., 2019. [De-Neolithisation in southern Norway inferred from statistical modelling of radiocarbon dates](https://doi.org/10.1016/j.jaa.2018.11.004). Journal of Anthropological Archaeology 53, 82–91. doi:10.1016/j.jaa.2018.11.004
 
 Nielsen, S. V. (2021). [A Late Mesolithic Forager Dispersal Caused Pre-Agricultural Demographic Transition in Norway](https://doi.org/10.1111/ojoa.12218). Oxford Journal of Archaeology, 40(2), 153–175. 
@@ -173,6 +181,8 @@ Porčić, M., Blagojević, T., Pendić, J., & Stefanović, S. 2021. [The Neolith
 Prates, L., & Perez, S. I. (2021). [Late Pleistocene South American megafaunal extinctions associated with rise of Fishtail points and human population](https://doi.org/10.1038/s41467-021-22506-4). Nature Communications, 12(1), 2175. 
 
 Prates, L., Politis, G.G., Perez, S.I., 2020. [Rapid radiation of humans in South America after the last glacial maximum: A radiocarbon-based study.](https://doi.org/10.1371/journal.pone.0236023) PLOS ONE 15, e0236023. 
+
+Marie Prentiss, A., Edinborough, K., Crema, E. R., Kuijt, I., Goodale, N., Ryan, E., et al. 2022. [Divergent population dynamics in the middle to late Holocene lower Fraser valley and mid-Fraser canyon, British Columbia](https://doi.org/10.1016/j.jasrep.2022.103512). Journal of Archaeological Science: Reports, 44, 103512. 
 
 Ren, X., Xu, J., Wang, H., Storozum, M., Lu, P., Mo, D., et al. 2021. [Holocene fluctuations in vegetation and human population demonstrate social resilience in the prehistory of the Central Plains of China](https://doi.org/10.1088/1748-9326/abdf0a). Environmental Research Letters. 
 
@@ -216,6 +226,8 @@ Solheim, S. (2021). [TIMING THE EMERGENCE AND DEVELOPMENT OF ARABLE FARMING IN S
 
 Stoddart, S., Woodbridge, J., Palmisano, A., Mercuri, A. M., Mensing, S. A., Colombaroli, D., et al. 2019. [Tyrrhenian central Italy: Holocene population and landscape ecology.](https://doi.org/10.1177/0959683619826696) The Holocene, 0959683619826696. doi:10.1177/0959683619826696
 
+Sweeney, L., Harrison, S. P., & Linden, M. V. 2022. [Assessing anthropogenic influence on fire history during the Holocene in the Iberian Peninsula](https://doi.org/10.1016/j.quascirev.2022.107562). Quaternary Science Reviews, 287, 107562. 
+
 Szpak, P., Savelle, J. M., Conolly, J., & Richards, M. P. 2019. [Variation in late holocene marine environments in the Canadian Arctic Archipelago: Evidence from ringed seal bone collagen stable isotope compositions](https://doi.org/10.1016/j.quascirev.2019.03.016). Quaternary Science Reviews, 211, 136–155. doi:10.1016/j.quascirev.2019.03.016
 
 Tallavara, M., Personen, P. 2018. [Human ecodynamics in the north-west coast of Finland 10,000–2000 years ago](https://doi.org/10.1016/j.quaint.2018.06.032).Quaternary International,doi:/10.1016/j.quaint.2018.06.032
@@ -238,9 +250,14 @@ Vogels, O., Fäder, E., Lenssen-Erz, T., 2020. [A matter of diversity? Identifyi
 
 Weiberg, E., Bevan, A., Kouli, K., Katsianis, M., Woodbridge, J., Bonnier, A., et al. 2019. [Long-term trends of land use and demography in Greece: A comparative study](https://doi.org/10.1177/0959683619826641) The Holocene, 0959683619826641. doi:10.1177/0959683619826641
 
+Zhang, F., Li, S., Sun, C., Li, W., Zhao, X., Chen, Z., et al. 2022. [Human Impacts Overwhelmed Hydroclimate Control of Soil Erosion in China 5,000 Years Ago](https://doi.org/10.1029/2021GL096983). Geophysical Research Letters, 49(5), e2021GL096983. 
+
+
 Weitzel, E.M., Codding, B.F., Carmody, S.B., Zeanah, D.W., 2020. [Food Production and Domestication Produced Both Cooperative and Competitive Social Dynamics in Eastern North America.](https://doi.org/10.1080/14614103.2020.1737394) Environmental Archaeology 0, 1–14. 
 
 Wilson, K. M., & Hill, M. G. (2020). [Synthesis and assessment of the flat-headed peccary record in North America](https://doi.org/10.1016/j.quascirev.2020.106601). Quaternary Science Reviews, 248, 106601. 
+
+Wilson, K. M., McCool, W. C., Brewer, S. C., Zamora-Wilson, N., Schryver, P. J., Lamson, R. L. F., et al. 2022. [Climate and demography drive 7000 years of dietary change in the Central Andes](https://doi.org/10.1038/s41598-022-05774-y). Scientific Reports, 12(1), 2026. 
 
 Woodbridge, J., Roberts, C. N., Palmisano, A., Bevan, A., Shennan, S., Fyfe, R., et al. 2019. [Pollen-inferred regional vegetation patterns and demographic change in Southern Anatolia through the Holocene.](https://doi.org/10.1177/0959683619826635) The Holocene, 0959683619826635. doi:10.1177/0959683619826635
 
