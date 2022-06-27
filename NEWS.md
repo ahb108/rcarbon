@@ -1,4 +1,8 @@
-# Version 1.4.3 (ongoing development)
+# Version 1.4.4 (In Development)
+* Bug Fix: Fixed a bug in `spd()` reducing the `timeRange` when `datenormalised` was set to TRUE.
+* UPDATE: `calibrate()` now issues a warning in case dates have calibrated probabilities outside the user defined `timeRange` value.
+
+# Version 1.4.3 (17 February 2022)
 * UPDATE: Reversed legend item order in `plot.stackCalSPD()` to match display
 * UPDATE: `hpdi()` now has the option to return a character vector with HPDI ranges in either BP or BCAD.
 
