@@ -22,7 +22,7 @@ stackspd(
 
 \item{bins}{A vector containing the bin names associated with each radiocarbon date. If set to NA, binning is not carried out.}
 
-\item{group}{A vector containing the grouping variable.}
+\item{group}{A character or factor vector containing the grouping variable.}
 
 \item{datenormalised}{Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE.}
 

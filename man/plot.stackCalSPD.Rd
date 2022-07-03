@@ -26,6 +26,7 @@
   legend.arg = NULL,
   ylab = NA,
   ymargin = 1.1,
+  rnd = 2,
   ...
 )
 }
@@ -38,7 +39,7 @@
 
 \item{spdnormalised}{A logical variable indicating whether the total probability mass of the SPDs are normalised to sum to unity. Default is FALSE.}
 
-\item{rescale}{A logical variable indicating whether the SPDs should be rescaled to range 0 to 1. Default is FALSE.}
+\item{rescale}{A logical variable indicating whether the summed probabilities values should be rescaled to range 0 to 1. Default is FALSE.Notice that this is different from setting \code{spdnormalised} to TRUE.}
 
 \item{runm}{A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA}
 
@@ -72,17 +73,21 @@
 
 \item{ymargin}{multiplier for the maximum value on ylim range. Default is 1.1.}
 
+\item{rnd}{integer indicating the number of decimal places to be displayed in the y-axis for when \code{type} is set "multitype".}
+
 \item{...}{Additional arguments affecting the plot.}
 }
 \description{
 Visualises multiple SPDs grouped as a \code{stackCalSPD} object.
 }
+\details{
+The display order of the SPDs is given by the factor levels of the user-supplied \code{group} argument in the \code{stackspd()} function.
+}
 \examples{
 \dontrun{
 data(emedyd)
-emedyd = subset(emedyd,Region==1)
 x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
-bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
+bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=100)
 res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
 plot(res,type='stacked')
 plot(res,type='lines')

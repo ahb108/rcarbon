@@ -978,7 +978,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param type How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}. 
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPDs are normalised to sum to unity. Default is FALSE. 
-#' @param rescale  A logical variable indicating whether the SPDs should be rescaled to range 0 to 1. Default is FALSE.
+#' @param rescale  A logical variable indicating whether the summed probabilities values should be rescaled to range 0 to 1. Default is FALSE.Notice that this is different from setting \code{spdnormalised} to TRUE.
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param ylim the y limits of the plot.
@@ -995,16 +995,18 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param legend.arg list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE. If supplied legend position must be given (e.g. \code{legend.arg=list(x='bottomright')}.
 #' @param ylab a title for the y axis
 #' @param ymargin multiplier for the maximum value on ylim range. Default is 1.1.
+#' @param rnd integer indicating the number of decimal places to be displayed in the y-axis for when \code{type} is set "multitype".
 #' @param ... Additional arguments affecting the plot. 
+
+#' @details The display order of the SPDs is given by the factor levels of the user-supplied \code{group} argument in the \code{stackspd()} function.
 
 #' @references 
 #' Erich Neuwirth (2014). RColorBrewer: ColorBrewer Palettes. R package version 1.1-2. \url{https://CRAN.R-project.org/package=RColorBrewer}.
 #' @examples
 #' \dontrun{
 #'data(emedyd)
-#'emedyd = subset(emedyd,Region==1)
 #'x = calibrate(x=emedyd$CRA, errors=emedyd$Error,normalised=FALSE)
-#'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=50)
+#'bins = binPrep(sites=emedyd$SiteName, ages=emedyd$CRA,h=100)
 #'res = stackspd(x=x,timeRange=c(16000,8000),bins=bins,group=emedyd$Region)
 #'plot(res,type='stacked')
 #'plot(res,type='lines')
@@ -1014,7 +1016,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @method plot stackCalSPD
 #' @export
 
-plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.line=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA, ymargin=1.1, ...)
+plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FALSE,rescale=FALSE, runm=NA, xlim=NA, ylim=NA, xaxt='s', yaxt='s',gapFactor = 0.2, col.fill=NA, col.line=NA, lwd.obs=1, lty.obs=1, cex.lab=1, cex.axis=cex.lab,legend=TRUE,legend.arg=NULL, ylab=NA, ymargin=1.1, rnd=2,...)
 {
   # Based on Dark2 of RcolorBrewer
   colpal=c("#1B9E77","#D95F02","#7570B3","#E7298A","#66A61E","#E6AB02","#A6761D","#666666")
@@ -1062,8 +1064,9 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	  PrDens[,i]=x$spds[[i]][[2]][[2]]
 	  if (!is.na(runm)){ PrDens[,i] <- runMean(PrDens[,i], runm, edge="fill") }
 	}
-	
 	if (spdnormalised) {PrDens=apply(PrDens,2,function(x){x/sum(x)})}
+	PrDensMinMax = apply(PrDens,2,function(x){c(min(x),max(x))})
+
 	if (rescale){PrDens = apply(PrDens,2,reScale)}
 	
 	#Assign Colours and Line Types
@@ -1113,6 +1116,7 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 	{
 	  if (any(is.na(ylim))){ ylim <- c(0,max(PrDens)*ymargin) }
 	  if (is.na(ylab)){ylab='Summed Probability'}
+	  if (rescale==TRUE){ylab='Summed Probability (rescale)'}
 	  plot(0, 0, xlim=xlim, ylim=ylim, type="l", ylab=ylab, xlab=xlabel, xaxt="n", yaxt=yaxt,cex.axis=cex.axis,cex.lab=cex.lab)
 	  
 	  for (i in 1:nsets)
@@ -1235,7 +1239,9 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
     for (i in 1:nsets)
     {
       tmpYlim= YLIMs[[i]]
-      axis(2,at=c(tmpYlim[1],median(tmpYlim),max(tmpYlim)),labels=round(c(min(ylim),median(ylim),max(ylim)),2),las=2,cex.axis=cex.axis)
+      if (rescale==FALSE) {labs=round(c(min(ylim),median(ylim),max(ylim)),rnd)}
+      if (rescale==TRUE) {labs=round(c(min(PrDensMinMax[,i]),median(PrDensMinMax[,i]),max(PrDensMinMax[,i])),rnd)}
+      axis(2,at=c(tmpYlim[1],median(tmpYlim),max(tmpYlim)),labels=labs,las=2,cex.axis=cex.axis)
       
       polygon(c(plotyears,rev(plotyears)),c(PrDens[,i]+tmpYlim[1],rep(0,length(plotyears))+tmpYlim[1]),col=col.fill[i],lwd=lwd.obs[i],border=col.line[i],lty=lty.obs[i])
     }
