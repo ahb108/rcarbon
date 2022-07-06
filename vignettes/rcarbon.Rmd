@@ -351,7 +351,7 @@ plot(stkde1, 5900, type="all")
 
 When geographic study areas are very large, it becomes inappropriate to assume that there is complete spatial homogeneity in the demographic trajectories of different sub-regions in the study area. At the same time, evaluating such regional divergences is difficult because any increase in spatial scale of a study usually entails also an increase in the heterogeneity of research design and in the overall sampling intensity. _rcarbon_ enables an exploration of spatial heterogeneity in the SPDs that is robust to differences in sampling intensity and provides a permutation-based statistical significance framework (for details of the method see Crema et al. 2017).
 
-In order to carry out a spatial analysis of aggregate radiocarbon dates, we need calibrated dates, bins, and a `SpatialPoints` class object containing the site locations:
+In order to carry out a spatial analysis of aggregate radiocarbon dates, we need calibrated dates, bins, and a `sf` class object containing the site locations:
 
 ```{r,results='hide'}
 euroevol=subset(euroevol,C14Age<=7200&C14Age>=4200)
@@ -360,22 +360,13 @@ eurobins <- binPrep(sites=euroevol$SiteID,ages=euroevol$C14Age,h=200)
 
 # Create a data.frame of site locations extracting spatial coordinates
 sites <- unique(data.frame(id=euroevol$SiteID,lat=euroevol$Latitude,lon=euroevol$Longitude))
-rownames(sites) <- sites$id
-sites <- sites[,-1]
 
-# Convert to a SpatialPoints class object:
-sp::coordinates(sites) <- c("lon","lat")
-sp::proj4string(sites) <- sp::CRS("+proj=longlat +datum=WGS84")
+# Convert to a sf class object:
+library(sf)
+sites  <- st_as_sf(sites,coords=c('lon','lat'),crs=4326)
 ```
+Notice that the field "id" in `sites` contains site names ("S2220","S3350", etc..) that are matched to bin names ("S2220_1","S2220_2,"S3350_1", etc.) in the object `eurobins`. This format is required for the correct execution of the spatial permutation test.
 
-We then need to generate a distance matrix which we will use to define a spatial weighting scheme using the `spweights()` function. The example below uses a Gaussian decay function (the default) with a bandwidth size of 100 km:
-
-```{r,results='hide'}
-#Compute distance matrix
-d <- sp::spDists(sites,sites,longlat=TRUE)
-#Compute spatial weights
-w <- spweights(d,h=100)
-```
 
 The core function `sptest()` compares the observed and the expected geometric growth rates rather than the raw SPD. Thus we need to define the breakpoints of our chronological blocks and the overall time range of our analysis. In this case, we examine a sequence of blocks, each 500 years long.
 
@@ -396,17 +387,18 @@ In this case, the pan-regional trend shows a positive but declining growth rate 
 In order examine whether these dynamics is observed consistently across the study region we conduct a permutation test with the `sptest()` function:
 
 ```{r,results='hide'}
-eurospatial <- sptest(calDates=eurodates, bins=eurobins,timeRange=timeRange, locations=sites,permute="locations",nsim=1000, breaks=breaks, spatialweights=w,ncores=3) 
+eurospatial <- sptest(calDates=eurodates, bins=eurobins,timeRange=timeRange, locations=sites,locations.id.col='id',h=100,kernel='gaussian',permute="locations",nsim=100,breaks=breaks,ncores=1,verbose=FALSE) 
 ```
+Notice that the argument `locations.id.col` is the column name in the `sf` class object containing the site names linked to the `bins`. The arguments `h` and `kernel` defines how the spatial weighting are applied, with the former defining the spatial scale of the analyses. Finally the `permute` argument determines whether the permutations are applied by shuffling all bins in the same location together (`permute="locations"`) or separately (`permute="bins"`).
 
-The output of the function has its own `plot()` method which provides various ways to display the outcome. The function plots only the point locations, so it is often convenient to load a separate base map. The example below uses the *rworldmap* package:
+The output of the function has its own `plot()` method which provides various ways to display the outcome. The function plots only the point locations, so it is often convenient to load a separate base map. The example below uses the *rnaturalearth* package. We start by retrieving a base map for the European continent:
 
 ```{r,results='hide',message=FALSE}
-library(rworldmap)
-base <- getMap(resolution="low") #extract basemap
+library(rnaturalearth)
+win  <- st_geometry(ne_countries(continent = 'europe',scale=10,returnclass='sf'))
 #extract bounding coordinates of the site distribution
-xrange <- bbox(sites)[1,]
-yrange <- bbox(sites)[2,]
+xrange <- st_bbox(sites)[c(1,3)]
+yrange <- st_bbox(sites)[c(2,4)]
 ```
 
 The plot function requires the definition of an `index` value (a numerical integer representing the $i$-th transition (thus `index=1` means first transition, in this case the transition from the time block 8000-7500 to the time block 7500-7000 cal BP), and an `option` argument, which indicates what needs to be plotted (either the results of the statistical tests or the local estimates of geometric growth rates). The script below examines the transition when the declining growth rate exhibits a short reversion (i.e. 6500-6000 to 6000-5500 cal BP).
@@ -414,12 +406,13 @@ The plot function requires the definition of an `index` value (a numerical integ
 ```{r, fig.height=5,fig.width=10}
 ## Spatial Permutation Test for Transition 4
 par(mar=c(1,1,4,1),mfrow=c(1,2))
-plot(base,col="antiquewhite3", border="antiquewhite3",xlim=xrange, ylim=yrange,main="6.5-6 to 6-5.5 kBP \n (Test Results)")
+# Plot function should have the option to either use default or return an sf object
+plot(win,col="antiquewhite3", border="antiquewhite3",xlim=xrange, ylim=yrange,main="6.5-6 to 6-5.5 kBP \n (Test Results)")
 plot(eurospatial,index=4, option="test", add=TRUE, legend=TRUE, legSize=0.7, location="topleft")
 
 ## Geometric Growth Rate for Transition 4
-plot(base,col="antiquewhite3", border="antiquewhite3", xlim=xrange, ylim=yrange, main="6.5-6 to 6-5.5 kBP \n (Growth Rate)")
-plot(eurospatial,index=4, option="raw", add=TRUE, breakRange=c(-0.005,0.005), legend=TRUE,legSize=0.7, location="topleft")
+plot(win,col="antiquewhite3", border="antiquewhite3", xlim=xrange, ylim=yrange, main="6.5-6 to 6-5.5 kBP \n (Growth Rate)")
+plot(eurospatial,index=4, option="raw", add=TRUE,breakRange =c(-0.005,0.005),breakLength=7,rd=5, legend=TRUE,legSize=0.7, location="topleft")
 ```
 
 The two figures show significant spatial heterogeneity in growth rates. Southern Ireland, Britain, and the Baltic area all exhibit positive growth, while most of France is associated with negative deviations from the pan-regional model. Given the large number of site locations and consequent inflation of type I error, `sptest()` also calculates a false discovery rate (q-values) using the `p.adjust()` function with `method="fdr"`. A q-value of 0.05 implies that 5% of the results that have a q-value below 0.05 are false positives.

@@ -694,28 +694,6 @@ names(simulatedROC) <- unique(GroupList)
     return(res)
 }
 
-
-#' @title Spatial Permutation Test of summed probability distributions.
-#' @description This function is deprecated. Please use \code{\link{sptest}} instead.
-#' @return A \code{spatialTest} class object
-#' @name SPpermTest-deprecated
-#' @usage SPpermTest(calDates, timeRange, bins, locations, breaks, 
-#' spatialweights,rate=expression((t2/t1)^(1/d)-1), nsim=1000, runm=NA,permute="locations",
-#' ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
-#' @seealso \code{\link{rcarbon-deprecated}}
-#' @keywords internal
-NULL
-#' @rdname rcarbon-deprecated
-#' @section \code{SPpermTest}:
-#' For \code{SPpermTest}, use \code{\link{sptest}}.
-#' @export
-SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
-{
-.Deprecated("sptest")
- sptest(calDates=calDates, timeRange=timeRange, bins=bins, locations=locations, breaks=breaks, spatialweights=spatialweights,rate=rate, nsim=nsim, runm=runm,permute=permute,ncores=ncores,datenormalised=datenormalised,verbose=verbose,raw=raw)
-}
-
-
 #' @title Spatial Permutation Test of summed probability distributions.
 #'
 #' @description This function carries out local spatial permutation tests of summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al 2017).
@@ -723,9 +701,11 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @param calDates  A \code{CalDates} class object.
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP
 #' @param bins A vector indicating which bin each radiocarbon date is assigned to. Must have the same length as the number of radiocarbon dates. Can be created using the  \code{\link{binPrep}}) function. Bin names should follow the format "x_y", where x refers to a unique location (e.g. a site) and y is a integer value (e.g. "S023_1", "S023_2","S034_1", etc.).  
-#' @param locations A \code{SpatialPoints} or a \code{SpatialPointsDataFrame} class object. Rownames of each point should much the first part of the bin names supplied (e.g. "S023","S034") 
+#' @param locations A \code{sf} class object of the site locations.
+#' @param locations.id.col Column name containing the first part of the supplied bin names. If missing rownames are used. 
 #' @param breaks A vector of break points for defining the temporal slices.
-#' @param spatialweights A \code{spatialweights} class object defining the spatial weights between the locations (cf. \code{\link{spweights}})
+#' @param h distance parameter for calculating spatial weights.
+#' @param kernel indicates the type of weighting function, either 'fixed' or 'gaussian'. When set to "fixed" weight is equal to 1 within a radius of \code{h} km from each focal sie, and 0 outside this range. When set "gaussian" the weight declines with an exponential rate equal to exp(-d^2/h^2), where the d is the distance to the focal site. Default is "gaussian".
 #' @param rate An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block, \code{t2} is the summed probability for next block, and \code{d} is the duration of the blocks. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).
 #' @param nsim The total number of simulations. Default is 1000.
 #' @param runm The window size of the moving window average. Must be set to \code{NA} if the rates of change are calculated from the raw SPDs. 
@@ -735,7 +715,7 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param raw A logical variable indicating whether permuted sets of geometric growth rates for each location should be returned. Default is FALSE. 
 #'
-#' @details The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates, weighting the contribution of dates from neighbouring sites using a weight scheme provided by the \code{spatialweights} class object; 2) define temporal slices (using \code{breaks} as break values), then compute the total probability mass within each slice; 3) compute the rate of change between abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of individual bins or the entire sequence of bins associated with a given location and carry out steps 1 to 3; 5) repeat step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate with the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.    
+#' @details The function consists of the following seven steps: 1) generate a weight matrix based on inter-site distance; 2) for each location (e.g. a site) generate a local SPD of radiocarbon dates, weighting the contribution of dates from neighbouring sites using a weight scheme computed in step 1; 3) define temporal slices (using \code{breaks} as break values), then compute the total probability mass within each slice; 4) compute the rate of change between abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 5) randomise the location of individual bins or the entire sequence of bins associated with a given location and carry out steps 2 to 4; 6) repeat step 5 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 7) compare, for each location, the observed growth rate with the distribution under the null hypothesis and compute the p-values; and 8) compute the false-discovery rate for each location.    
 #'
 #' @return A \code{spatialTest} class object
 #'
@@ -749,52 +729,41 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #'\dontrun{
 #' data(euroevol) #load data
 #'
-#' ## Subset only for 8000 to 5000 Cal BP (c7200-4200 C14BP)
-#' edge=800
-#' timeRange=c(8000,5000)
-#' euroevol2=subset(euroevol,C14Age<=c(timeRange[1]-edge)&C14Age>=c(timeRange[2]-edge))
+#' ## Subset only for ca 8000 to 5000 Cal BP (7500-4000 14C Age)
+#' euroevol2=subset(euroevol,C14Age<=7500&C14Age>=4000)
 #'
 #' ## define chronological breaks
 #' breaks=seq(8000,5000,-500)
 #'
-#' ## Create a SpatialPoints class object 
-#' library(sp)
-#' sites = unique(data.frame(SiteID=euroevol2$SiteID,
+#' ## Create a sf class object 
+#' library(sf)
+#' sites.df = unique(data.frame(SiteID=euroevol2$SiteID,
 #' Longitude=euroevol2$Longitude,Latitude=euroevol2$Latitude))
-#' locations=data.frame(Longitude=sites$Longitude,Latitude=sites$Latitude)
-#' rownames(locations)=sites$SiteID
-#' coordinates(locations)<-c("Longitude","Latitude")
-#' proj4string(locations)<- CRS("+proj=longlat +datum=WGS84")
-#'
-#' ## Compute Distance and Spatial Weights 
-#' distSamples=spDists(locations,locations,longlat = TRUE)
-#' spatialweights=spweights(distSamples,h=100) #using a kernal bandwidth of 100km
+#' sites.sf = st_as_sf(sites.df,coords=c('Longitude','Latitude'),crs=4326) 
 #'
 #' ## Calibration and binning
 #' bins=binPrep(sites=euroevol2$SiteID,ages=euroevol2$C14Age,h=200)  
-#' calDates=calibrate(x=euroevol2$C14Age,errors=euroevol2$C14SD,
-#' timeRange=timeRange,normalised=FALSE)
+#' calDates=calibrate(x=euroevol2$C14Age,errors=euroevol2$C14SD,normalised=FALSE)
 #'
 #' ## Main Analysis (over 2 cores; requires doSnow package) 
 #' ## NOTE: the number of simulations should be ideally larger 
-#' ## to ensure a better resolution of the p/q-values.
-#' res.locations=sptest(calDates,timeRange=timeRange,bins=bins,locations=locations,
-#' spatialweights=spatialweights,breaks=breaks,ncores=2,nsim=100,
+#' ## to ensure more accurate and precise estimates of the p/q-values.
+#' res.locations=sptest(calDates,timeRange=c(8000,5000),bins=bins,
+#' locations=sites.sf,locations.id.col="SiteID",h=100,breaks=breaks,ncores=2,nsim=100,
 #' permute="locations",datenormalised=FALSE)
 #' 
 #' ## Plot results
-#' library(rworldmap)
-#' base=getMap(resolution="low") #optionally add base map
-#' #retrieve coordinate limits#
-#' xrange=bbox(res.locations$locations)[1,] 
-#' yrange=bbox(res.locations$locations)[2,]
+#' library(rnaturalearth)
+#' win  <- ne_countries(continent = 'europe',scale=10,returnclass='sf')
+#' #retrieve coordinate limits
+#' xrange <- st_bbox(sites.sf)[c(1,3)]
+#' yrange <- st_bbox(sites.sf)[c(2,4)]
 #'
-#' par(mfrow=c(2,2))  
+#' par(mfrow=c(1,2))  
 #' par(mar=c(0.1,0.1,0,0.5))
-#' plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
+#' plot(sf::st_geometry(win),col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
 #' plot(res.locations,index=4,add=TRUE,legend=TRUE,option="raw",breakRange=c(-0.005,0.005)) 
-#' par(mar=c(0.1,0.1,0,0.5))
-#' plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange) 
+#' plot(sf::st_geometry(win),col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange) 
 #' plot(res.locations,index=4,add=TRUE,legend=TRUE,option="test")  
 #' }
 #' @import utils
@@ -803,11 +772,11 @@ SPpermTest<-function(calDates, timeRange, bins, locations, breaks, spatialweight
 #' @import snow
 #' @import foreach 
 #' @import iterators 
-#' @import sp
+#' @import sf
 #' @export
  
 
-sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
+sptest<-function(calDates, timeRange, bins, locations, locations.id.col=NULL,breaks, h, kernel='gaussian', rate=expression((t2/t1)^(1/d)-1),nsim=1000, runm=NA,permute="locations",ncores=1,datenormalised=FALSE,verbose=TRUE,raw=FALSE)
 {
 
   #######################
@@ -836,16 +805,23 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 	} else {
 		bins <- rep("0_0",length(calDates$grid))
 	}
-
-	if (!("SpatialPoints" %in% class(locations)[1]|"SpatialPointsDataFrame" %in% class(locations)[1])){
-		stop("locations must be an object of class 'SpatialPoints' or 'SpatialPointsDataFrame'.")
-	}
-
-	locations.id=row.names(locations@coords)
-	if (is.null(locations.id))
+	if (!any(class(locations)%in%c('sf')))
 	{
-		stop("locations must have rownames")
+		stop("locations must be sf class object")
 	}
+	if (is.null(locations.id.col))
+	{
+		locations.id=row.names(locations)
+	} else {
+		locations.id=locations[[which(colnames(locations)==locations.id.col)]]
+	}
+
+	tmpbintosite = unlist(lapply(strsplit(bins,"_"),function(x){x[1]}))
+	if (!all(tmpbintosite%in%locations.id))
+	{
+		stop("Mismatch between bin names and location IDs")
+	}
+	
 	if (!all(range(timeRange)==range(breaks)))
 	{
 		stop("Range of breaks values must much match the temporal range defined by timeRange")
@@ -862,6 +838,31 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 		warning("raw==TRUE available only for ncores=1")
 		raw=FALSE
 	}
+
+
+	#################################
+	#### Compute Spatial Weights ####
+	#################################
+	distmat = sf::st_distance(locations,locations) |> as.dist() |> as.matrix()
+	distmat = distmat / 1000 #Convert to km
+	w = matrix(NA,nrow=nrow(distmat),ncol=ncol(distmat))
+	kernels <- c("gaussian","fixed")
+	if (!kernel %in% kernels){
+		stop("The kernel you have chosen is not currently an option.")
+	}
+	if (is.null(h))
+	{
+		stop("Distance parameter h undefined")  
+	}
+	for (i in 1:nrow(distmat))
+	{
+		if (kernel=="gaussian")
+			{w[i,]=exp(-distmat[i,]^2/h^2)}
+		if (kernel=="fixed")
+			{w[i,]=as.numeric(distmat[i,]<=h)}
+	}
+
+
 	#############################
 	#### Create binnedMatrix ####
 	#############################
@@ -935,7 +936,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 	## Apply SpatialWeights ##
 
-	obsGridVal=t(spatialweights$w)%*%obsMatrix
+	obsGridVal=t(w)%*%obsMatrix
 
 	## Compute Rate of Change #3
 
@@ -981,7 +982,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 		}
 		resultHiLoEq<-foreach (x=1:nsim,.combine= sumcombine,.options.snow = opts) %dopar% {
 
-			simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
+			simGridVal<-matrix(NA,nrow=nrow(w),ncol=nBreaks)
 
 			## Aggregate by Site ## 
 
@@ -1015,12 +1016,12 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 				## Apply Weights ##
 
-				simGridVal=t(spatialweights$w)%*%aggMatrix
+				simGridVal=t(w)%*%aggMatrix
 			}
 			if (permute=="locations")
 			{
 				simMatrix=obsMatrix[sample(nrow(obsMatrix)),]	
-				simGridVal=t(spatialweights$w)%*%simMatrix
+				simGridVal=t(w)%*%simMatrix
 
 			}
 
@@ -1059,9 +1060,9 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 	} else {
 
-		hi=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
-		lo=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
-		eq=matrix(0,nrow=nrow(spatialweights$w),ncol=nBreaks-1)
+		hi=matrix(0,nrow=nrow(w),ncol=nBreaks-1)
+		lo=matrix(0,nrow=nrow(w),ncol=nBreaks-1)
+		eq=matrix(0,nrow=nrow(w),ncol=nBreaks-1)
 
 
 		if(verbose){
@@ -1071,7 +1072,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 		if(raw)
 		{
-			rocaSimAll = array(NA,dim=c(nsim,nrow(spatialweights$w),nBreaks-1))
+			rocaSimAll = array(NA,dim=c(nsim,nrow(w),nBreaks-1))
 		}
 		
 		if(verbose){pb <- txtProgressBar(min = 1, max = nsim, style=3)}
@@ -1079,7 +1080,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 		for (s in 1:nsim)
 		{
 			if(verbose){setTxtProgressBar(pb, s)}
-			simGridVal<-matrix(NA,nrow=nrow(spatialweights$w),ncol=nBreaks)
+			simGridVal<-matrix(NA,nrow=nrow(w),ncol=nBreaks)
 			## Aggregate by Site ## 
 			simResMatrix=matrix(0,nrow=length(unique(locations.id)),ncol=nrow(binnedMatrix))
 
@@ -1112,12 +1113,12 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 
 				##Apply Weights 
-				simGridVal=t(spatialweights$w)%*%aggMatrix
+				simGridVal=t(w)%*%aggMatrix
 			}
 			if (permute=="locations")
 			{
 				simMatrix=obsMatrix[sample(nrow(obsMatrix)),]	
-				simGridVal=t(spatialweights$w)%*%simMatrix
+				simGridVal=t(w)%*%simMatrix
 			}
 
 
@@ -1178,7 +1179,7 @@ sptest<-function(calDates, timeRange, bins, locations, breaks, spatialweights, r
 
 
 
-	metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""),weights.h=spatialweights$h,weights.kernel=spatialweights$kernel)
+	metadata=data.frame(npoints=length(unique(locations.id)),ndates=nrow(calDates$metadata),nbins=length(binNames),nsim=nsim,permutationType=permute,datenormalised=datenormalised,breaks=nBreaks,timeRange=paste(timeRange[1],"-",timeRange[2],sep=""),weights.h=h,weights.kernel=kernel)
 
 	if(raw==FALSE){rocaSimAll=NA} 
 	reslist=list(metadata=metadata,rocaSim=rocaSimAll,rocaObs=rocaObs,pval=pval,pvalHi=pvalHi,pvalLo=pvalLo,qval=qval,qvalLo=qvalLo,qvalHi=qvalHi,locations=locations)

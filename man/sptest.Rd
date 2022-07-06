@@ -9,8 +9,10 @@ sptest(
   timeRange,
   bins,
   locations,
+  locations.id.col = NULL,
   breaks,
-  spatialweights,
+  h,
+  kernel = "gaussian",
   rate = expression((t2/t1)^(1/d) - 1),
   nsim = 1000,
   runm = NA,
@@ -28,11 +30,15 @@ sptest(
 
 \item{bins}{A vector indicating which bin each radiocarbon date is assigned to. Must have the same length as the number of radiocarbon dates. Can be created using the  \code{\link{binPrep}}) function. Bin names should follow the format "x_y", where x refers to a unique location (e.g. a site) and y is a integer value (e.g. "S023_1", "S023_2","S034_1", etc.).}
 
-\item{locations}{A \code{SpatialPoints} or a \code{SpatialPointsDataFrame} class object. Rownames of each point should much the first part of the bin names supplied (e.g. "S023","S034")}
+\item{locations}{A \code{sf} class object of the site locations.}
+
+\item{locations.id.col}{Column name containing the first part of the supplied bin names. If missing rownames are used.}
 
 \item{breaks}{A vector of break points for defining the temporal slices.}
 
-\item{spatialweights}{A \code{spatialweights} class object defining the spatial weights between the locations (cf. \code{\link{spweights}})}
+\item{h}{distance parameter for calculating spatial weights.}
+
+\item{kernel}{indicates the type of weighting function, either 'fixed' or 'gaussian'. When set to "fixed" weight is equal to 1 within a radius of \code{h} km from each focal sie, and 0 outside this range. When set "gaussian" the weight declines with an exponential rate equal to exp(-d^2/h^2), where the d is the distance to the focal site. Default is "gaussian".}
 
 \item{rate}{An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block, \code{t2} is the summed probability for next block, and \code{d} is the duration of the blocks. Default is a geometric growth rate (i.e \code{expression((t2/t1)^(1/d)-1)}).}
 
@@ -57,59 +63,48 @@ A \code{spatialTest} class object
 This function carries out local spatial permutation tests of summed radiocarbon probability distributions in order to detect local deviations in growth rates (Crema et al 2017).
 }
 \details{
-The function consists of the following seven steps: 1) for each location (e.g. a site) generate a local SPD of radiocarbon dates, weighting the contribution of dates from neighbouring sites using a weight scheme provided by the \code{spatialweights} class object; 2) define temporal slices (using \code{breaks} as break values), then compute the total probability mass within each slice; 3) compute the rate of change between abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 4) randomise the location of individual bins or the entire sequence of bins associated with a given location and carry out steps 1 to 3; 5) repeat step 4 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 6) compare, for each location, the observed growth rate with the distribution under the null hypothesis and compute the p-values; and 7) compute the false-discovery rate for each location.
+The function consists of the following seven steps: 1) generate a weight matrix based on inter-site distance; 2) for each location (e.g. a site) generate a local SPD of radiocarbon dates, weighting the contribution of dates from neighbouring sites using a weight scheme computed in step 1; 3) define temporal slices (using \code{breaks} as break values), then compute the total probability mass within each slice; 4) compute the rate of change between abutting temporal slices by using the formula: \eqn{(SPD_{t}/SPD_{t+1}^{1/\Delta t}-1)}; 5) randomise the location of individual bins or the entire sequence of bins associated with a given location and carry out steps 2 to 4; 6) repeat step 5 \code{nsim} times and generate, for each location, a distribution of growth rates under the null hypothesis (i.e. spatial independence); 7) compare, for each location, the observed growth rate with the distribution under the null hypothesis and compute the p-values; and 8) compute the false-discovery rate for each location.
 }
 \examples{
 ## Reproduce Crema et al 2017 ##
 \dontrun{
 data(euroevol) #load data
 
-## Subset only for 8000 to 5000 Cal BP (c7200-4200 C14BP)
-edge=800
-timeRange=c(8000,5000)
-euroevol2=subset(euroevol,C14Age<=c(timeRange[1]-edge)&C14Age>=c(timeRange[2]-edge))
+## Subset only for ca 8000 to 5000 Cal BP (7500-4000 14C Age)
+euroevol2=subset(euroevol,C14Age<=7500&C14Age>=4000)
 
 ## define chronological breaks
 breaks=seq(8000,5000,-500)
 
-## Create a SpatialPoints class object 
-library(sp)
-sites = unique(data.frame(SiteID=euroevol2$SiteID,
+## Create a sf class object 
+library(sf)
+sites.df = unique(data.frame(SiteID=euroevol2$SiteID,
 Longitude=euroevol2$Longitude,Latitude=euroevol2$Latitude))
-locations=data.frame(Longitude=sites$Longitude,Latitude=sites$Latitude)
-rownames(locations)=sites$SiteID
-coordinates(locations)<-c("Longitude","Latitude")
-proj4string(locations)<- CRS("+proj=longlat +datum=WGS84")
-
-## Compute Distance and Spatial Weights 
-distSamples=spDists(locations,locations,longlat = TRUE)
-spatialweights=spweights(distSamples,h=100) #using a kernal bandwidth of 100km
+sites.sf = st_as_sf(sites.df,coords=c('Longitude','Latitude'),crs=4326) 
 
 ## Calibration and binning
 bins=binPrep(sites=euroevol2$SiteID,ages=euroevol2$C14Age,h=200)  
-calDates=calibrate(x=euroevol2$C14Age,errors=euroevol2$C14SD,
-timeRange=timeRange,normalised=FALSE)
+calDates=calibrate(x=euroevol2$C14Age,errors=euroevol2$C14SD,normalised=FALSE)
 
 ## Main Analysis (over 2 cores; requires doSnow package) 
 ## NOTE: the number of simulations should be ideally larger 
-## to ensure a better resolution of the p/q-values.
-res.locations=sptest(calDates,timeRange=timeRange,bins=bins,locations=locations,
-spatialweights=spatialweights,breaks=breaks,ncores=2,nsim=100,
+## to ensure more accurate and precise estimates of the p/q-values.
+res.locations=sptest(calDates,timeRange=c(8000,5000),bins=bins,
+locations=sites.sf,locations.id.col="SiteID",h=100,breaks=breaks,ncores=2,nsim=100,
 permute="locations",datenormalised=FALSE)
 
 ## Plot results
-library(rworldmap)
-base=getMap(resolution="low") #optionally add base map
-#retrieve coordinate limits#
-xrange=bbox(res.locations$locations)[1,] 
-yrange=bbox(res.locations$locations)[2,]
+library(rnaturalearth)
+win  <- ne_countries(continent = 'europe',scale=10,returnclass='sf')
+#retrieve coordinate limits
+xrange <- st_bbox(sites.sf)[c(1,3)]
+yrange <- st_bbox(sites.sf)[c(2,4)]
 
-par(mfrow=c(2,2))  
+par(mfrow=c(1,2))  
 par(mar=c(0.1,0.1,0,0.5))
-plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
+plot(sf::st_geometry(win),col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange)
 plot(res.locations,index=4,add=TRUE,legend=TRUE,option="raw",breakRange=c(-0.005,0.005)) 
-par(mar=c(0.1,0.1,0,0.5))
-plot(base,col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange) 
+plot(sf::st_geometry(win),col="antiquewhite3",border="antiquewhite3",xlim=xrange,ylim=yrange) 
 plot(res.locations,index=4,add=TRUE,legend=TRUE,option="test")  
 }
 }
