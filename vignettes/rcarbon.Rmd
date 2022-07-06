@@ -230,7 +230,7 @@ Please note also that _rcarbon_ employs two different methods for generating 14C
 
 ### Testing against custom growth models
 
-The `modelTest()` function can also be used to test user-defined growth models. The example below compares the observed SPD against a fitted logistic growth model (using the `nls()` function). Other applications may include theoretical models that are independent to the observed data (i.e. not fitted to the observed SPD) or based on alternative proxy time-series (see for example Crema and Kobayashi 2020 for a comparison between SPDs and residential count data). 
+The `modelTest()` function can also be used to test user-defined growth models. The example below compares the observed SPD against a fitted logistic growth model (using the `nls()` function, but see below regarding problems related to obtaining model parameters via direct regression analyses on SPDs). Other applications may include theoretical models that are independent to the observed data (i.e. not fitted to the observed SPD) or based on alternative proxy time-series (see for example Crema and Kobayashi 2020 for a comparison between SPDs and residential count data). 
 
 ```{r,results='hide'}
 # Generate a smoothed SPD
@@ -277,6 +277,12 @@ results
 ```
 
 Note that when the arguments `p1` and `p2` are not supplied `p2pTest()` displays the SPD and enable users to select the two points on the plotted SPD interactively.
+
+### A Note on Model Fitting
+
+It is worth noting here that the core premise of `modelTest()` is testing whether the observed SPD deviates from _a particular_ parameter setting of a growth model (e.g. an exponential growth with a specific rate). Parameter values estimated via regression analyses of SPDs are however biased, as they do not account for calibration effect nor sampling error (see Carleton and Gourcutt 2021). As a result, the null hypothesis tested in `modelTest()` (and conversely in `p2pTest()`) might not represent the best-fit parameter combination when the `model` parameter is set to `exponential` or `linear`. 
+
+More robust solutions for fitting growth models whilst accounting for calibration effects are discussed in Timpson et al (2022) and Crema and Shoda (2022), and implemented in the [ADMUR](https://CRAN.R-project.org/package=ADMUR) and [nimbleCarbon](https://CRAN.R-project.org/package=nimbleCarbon) packages. For further details concerning this issue see also the review article by Crema (2022).
 
 
 ## Comparing empirical SPDs against each other
@@ -428,9 +434,13 @@ Bronk Ramsey C. 2008. [Radiocarbon dating: revolutions in understanding.](https:
 
 Brown, W. A. 2017. [The past and future of growth rate estimation in demographic temporal frequency analysis: Biodemographic interpretability and the ascendance of dynamic growth models.](https://doi.org/10.1016/j.jas.2017.02.003) Journal of Archaeological Science, 80, 96–108.
 
+Carleton, W. C., Groucutt, H. S. 2021. [Sum things are not what they seem: Problems with point-wise interpretations and quantitative analyses of proxies based on aggregated radiocarbon dates](https://doi.org/10.1177/0959683620981700). The Holocene, 31, 630–643
+
 Chaput, M. A., Kriesche, B., Betts, M., Martindale, A., Kulik, R., Schmidt, V., & Gajewski, K. 2015. [Spatiotemporal distribution of Holocene populations in North America.](https://doi.org/10.1073/pnas.1505657112) Proceedings of the National Academy of Sciences, 112(39), 12127–12132. 
 
 Collard, M., K. Edinborough, S. Shennan & M.G. Thomas 2010. [Radiocarbon evidence indicates that migrants introduced farming to Britain.](https://doi.org/10.1016/j.jas.2009.11.016) Journal of Archaeological Science 37: 866–70.
+
+Crema, E.R. 2022. [Statistical Inference of Prehistoric Demography from Frequency Distributions of Radiocarbon Dates: A Review and a Guide for the Perplexed](https://doi.org/10.1007/s10816-022-09559-5). Journal of Archaeological Method and Theory.
 
 Crema, E.R., J. Habu, K. Kobayashi & M. Madella 2016. [Summed Probability Distribution of 14 C Dates Suggests Regional Divergences in the Population Dynamics of the Jomon Period in Eastern Japan.](https://doi.org/10.1371/journal.pone.0154809) PLOS ONE 11: e0154809.
 
@@ -439,6 +449,8 @@ Crema, E.R., A. Bevan. & S. Shennan. 2017. [Spatio-temporal approaches to archae
 Crema, E.R., Bevan, A. 2020 [Inference from Large Sets of Radiocarbon Dates: Software and Methods](https://doi.org/10.1017/RDC.2020.95) Radiocarbon.
 
 Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
+
+Crema, E. R., & Shoda, S. 2021. [A Bayesian approach for fitting and comparing demographic growth models of radiocarbon dates: A case study on the Jomon-Yayoi transition in Kyushu (Japan)](https://doi.org/10.1371/journal.pone.0251695). PLOS ONE, 16(5), e0251695. 
 
 Edinborough, K., M. Porčić, A. Martindale, T.J. Brown, K. Supernant & K.M. Ames 2017. [Radiocarbon test for demographic events in written and oral history.](https://doi.org/10.1073/pnas.1713012114) Proceedings of the National Academy of Sciences 114: 12436–41.
 
@@ -457,6 +469,8 @@ Shennan, S., S.S. Downey., A. Timpson., K. Edinborough., S. Colledge., T. Kerig.
 Stevens, C.J. & D.Q. Fuller 2012. [Did Neolithic farming fail? The case for a Bronze Age agricultural revolution in the British Isles](https://doi.org/10.1017/S0003598X00047864). Antiquity 86: 707–22.
 
 Timpson, A., S. Colledge, E. Crema, K. Edinborough, T. Kerig, K. Manning, M.G. Thomas & S. Shennan. 2014. [Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method.](https://doi.org/10.1016/j.jas.2014.08.011) Journal of Archaeological Science 52: 549–57
+
+Timpson, A., Barberena, R., Thomas, M. G., Méndez, C., & Manning, K. 2021. [Directly modelling population dynamics in the South American Arid Diagonal using 14C dates](https://doi.org/10.1098/rstb.2019.0723). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190723. 
 
 Weninger, B., L. Clare, O. Jöris, R. Jung & K. Edinborough 2015. [Quantum theory of radiocarbon calibration.](https://doi.org/10.1080/00438243.2015.1064022) World Archaeology 47: 543–66.
 
