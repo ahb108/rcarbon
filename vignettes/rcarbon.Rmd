@@ -267,7 +267,7 @@ plot(expnull,type='roc')
 The `modelTest()` function does not itself indicate whether the observed difference between two particular points in time is significant, as both local and global tests are based on the overall shape of the observed and expected SPDs (or their corresponding rates of change). The `p2pTest()` follows a procedure introduced by Edinborough et al (2017) which compares the expected and the observed difference in radiocarbon density between just two user-defined points in time. The example below is based on the Danish subset using a uniform theoretical model.
 
 ```{r,results='hide'}
-#Fit a Uniform model (the argumet raw should be set to TRUE for p2pTest())
+#Fit a Uniform model (the argument raw should be set to TRUE for p2pTest())
 uninull <- modelTest(DK.caldates, errors=DK$C14SD, bins=DK.bins, nsim=nsim, timeRange=c(8000,4000), model="uniform",runm=100, raw=TRUE)
 ```
 ```{r,fig.height=5,fig.width=5}
@@ -325,7 +325,7 @@ The core principles of the "dates as data" approach can be extended over space b
 
 The `stkde()` function enables the computation of spatio-temporal kernel density estimates (KDE) of radiocarbon dates for a particular `focal` year based on user-defined spatial (`sbw`) and temporal (`tbw`) bandwidths. In practice, this is achieved by placing a Gaussian kernel around a chosen year and then the degree of overlap between this kernel and the probability distribution of each date is evaluated.  The weights are then used to compute weighted spatial kernel density estimates using the `density()` function of the _spatstat_ package (Baddeley et al 2015). The function returns the KDE for each focal year, the rate of change (based on the user-defined expression provided in the argument `changepr`) between focal years and some earlier `backsight` year, as well as relative risk surfaces (Kelsall and Diggle 1995). The latter consist of dividing the KDE of a particular year with the KDE of all periods to take into account overall differences in sampling intensity (see Chaput et al 2015 and Bevan et 2017 for examples).
 
-The example below examines a subset of the EUROEVOL radiocarbon dates from England and Wales between 6500 to 5000 BP, using a temporal bandwidth of 50 years, a spatial bandwidth of 40km, and `backsight` of 200 years (i.e. change is computed between focal year and focal year minus 200 years):
+The example below examines a subset of the EUROEVOL radiocarbon dates from England and Wales between 6500 and 5000 BP, using a temporal bandwidth of 50 years, a spatial bandwidth of 40km, and `backsight` of 200 years (i.e. change is computed between focal year and focal year minus 200 years):
 
 ```{r}
 ## Load Data
@@ -349,7 +349,7 @@ plot(stkde1, 5900, type="all")
 
 ### Spatial Permutation Test 
 
-When geographic study areas are very large, it becomes inappropriate to assume that there is complete spatial homogeneity in the demographic trajectories of different sub-regions in the study area. At the same time, evaluating such regional divergences is difficult because any increase in spatial scale of a study usually entails also an increase in the heterogeneity of research design and in the overall sampling intensity. _rcarbon_ enables an exploration of spatial heterogeneity in the SPDs that is robust to differences in sampling intensity and provides a permutation-based statistical significance framework (for details of the method see Crema et al. 2017).
+When geographic study areas are very large, it becomes inappropriate to assume that there is complete spatial homogeneity in the demographic trajectories of different subregions in the study area. At the same time, evaluating such regional divergences is difficult because any increase in spatial scale of a study usually entails also an increase in the heterogeneity of research design and in the overall sampling intensity. _rcarbon_ enables an exploration of spatial heterogeneity in the SPDs that is robust to differences in sampling intensity and provides a permutation-based statistical significance framework (for details of the method see Crema et al. 2017).
 
 In order to carry out a spatial analysis of aggregate radiocarbon dates, we need calibrated dates, bins, and a `SpatialPoints` class object containing the site locations:
 
@@ -466,14 +466,3 @@ Stevens, C.J. & D.Q. Fuller 2012. [Did Neolithic farming fail? The case for a Br
 Timpson, A., S. Colledge, E. Crema, K. Edinborough, T. Kerig, K. Manning, M.G. Thomas & S. Shennan. 2014. [Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method.](https://doi.org/10.1016/j.jas.2014.08.011) Journal of Archaeological Science 52: 549–57
 
 Weninger, B., L. Clare, O. Jöris, R. Jung & K. Edinborough 2015. [Quantum theory of radiocarbon calibration.](https://doi.org/10.1080/00438243.2015.1064022) World Archaeology 47: 543–66.
-
-
-
-
-
-
-
-
-
-
-
