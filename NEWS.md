@@ -1,4 +1,4 @@
-# Version 1.4.4 (In Development)
+# Version 1.4.4 (21 July 2022)
 * Bug Fix: Fixed a bug in `spd()` reducing the `timeRange` when `datenormalised` was set to TRUE.
 * UPDATE: `calibrate()` now issues a warning in case dates have calibrated probabilities outside the user defined `timeRange` value.
 * UPDATE: `stackspd()` now requires the `group` argument to be factors. Factor levels will be condition the plot order in `plot.stackCalSPD()`.
