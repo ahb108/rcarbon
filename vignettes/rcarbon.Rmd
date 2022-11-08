@@ -280,7 +280,7 @@ Note that when the arguments `p1` and `p2` are not supplied `p2pTest()` displays
 
 ### A Note on Model Fitting
 
-It is worth noting here that the core premise of `modelTest()` is testing whether the observed SPD deviates from _a particular_ parameter setting of a growth model (e.g. an exponential growth with a specific rate). Parameter values estimated via regression analyses of SPDs are however biased, as they do not account for calibration effect nor sampling error (see Carleton and Gourcutt 2021). As a result, the null hypothesis tested in `modelTest()` (and conversely in `p2pTest()`) might not represent the best-fit parameter combination when the `model` parameter is set to `exponential` or `linear`. 
+It is worth noting here that the core premise of `modelTest()` is testing whether the observed SPD deviates from _a particular_ parameter setting of a growth model (e.g. an exponential growth with a specific rate). Parameter values estimated via regression analyses of SPDs are however biased, as they do not account for calibration effect nor sampling error (see Carleton and Gourcutt 2021). As a result, the null hypothesis tested in `modelTest()` (and conversely in `p2pTest()`) might not represent the best-fit parameter combination when the `model` parameter is set to `exponential` or `linear` (see Crema 2022).
 
 More robust solutions for fitting growth models whilst accounting for calibration effects are discussed in Timpson et al (2022) and Crema and Shoda (2022), and implemented in the [ADMUR](https://CRAN.R-project.org/package=ADMUR) and [nimbleCarbon](https://CRAN.R-project.org/package=nimbleCarbon) packages. For further details concerning this issue see also the review article by Crema (2022).
 
@@ -451,6 +451,8 @@ Crema, E.R., Bevan, A. 2020 [Inference from Large Sets of Radiocarbon Dates: Sof
 Crema, E.R., Kobayashi, K., 2020. [A multi-proxy inference of Jōmon population dynamics using bayesian phase models, residential data, and summed probability distribution of 14C dates](https://doi.org/10.1016/j.jas.2020.105136). Journal of Archaeological Science 117, 105136. 
 
 Crema, E. R., & Shoda, S. 2021. [A Bayesian approach for fitting and comparing demographic growth models of radiocarbon dates: A case study on the Jomon-Yayoi transition in Kyushu (Japan)](https://doi.org/10.1371/journal.pone.0251695). PLOS ONE, 16(5), e0251695. 
+
+Crema, E. R. 2022. [Statistical Inference of Prehistoric Demography from Frequency Distributions of Radiocarbon Dates: A Review and a Guide for the Perplexed](https://doi.org/10.1007/s10816-022-09559-5). Journal of Archaeological Method and Theory. https://doi.org/10.1007/s10816-022-09559-5
 
 Edinborough, K., M. Porčić, A. Martindale, T.J. Brown, K. Supernant & K.M. Ames 2017. [Radiocarbon test for demographic events in written and oral history.](https://doi.org/10.1073/pnas.1713012114) Proceedings of the National Academy of Sciences 114: 12436–41.
 
