@@ -159,7 +159,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 
 
 
-    if (model %in% c("exponential","linear")
+    if (model %in% c("exponential","linear"))
     {
 	    warning("Direct model fitting on SPDs can lead to biased estimates and Null Hypothesis")
     }
