@@ -1,3 +1,9 @@
+# Version 1.5.0 (in development)
+* UPDATE: Functions related to spatial permutation test (`spweights()`,`sptest()`, and `plot.spatialTest()`) now depend on `sf` instead of `sp` package.
+* UPDATE: `modelTest()` now issues a warning message when `model` is set to `"exponential"` or `"uniform"` (i.e. when the SPD is tested against exponential and uniform curves fitted on observed SPD values.) 
+* UPDATE: Updated vignette with minor changes reflecting the workflow for `sptest()` and the warning in `modelTest()`.
+* Updated spatstat dependencies.
+
 # Version 1.4.4 (21 July 2022)
 * Bug Fix: Fixed a bug in `spd()` reducing the `timeRange` when `datenormalised` was set to TRUE.
 * UPDATE: `calibrate()` now issues a warning in case dates have calibrated probabilities outside the user defined `timeRange` value.
