@@ -8,7 +8,7 @@
   x,
   index = 1,
   option,
-  breakRange = NA,
+  breakRange,
   breakLength = 7,
   rd = 5,
   baseSize = 0.5,
@@ -25,7 +25,7 @@
 
 \item{index}{A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}. Default is 1.}
 
-\item{option}{Indicates what to display. Either "\code{raw}" (the local growth rate) or "\code{test}" (the test results, i.e. q and p values).}
+\item{option}{Either "\code{raw}" to display local growth rates, "\code{test}" to display the test results (i.e. q and p values), or "\code{return}" to return a \code{sf} class object containing all relevant information for the given \code{index} value.}
 
 \item{breakRange}{A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend. If set to NA its computed from data range (default).}
 

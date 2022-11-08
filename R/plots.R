@@ -1640,7 +1640,7 @@ res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 #'
 #' @param x A \code{spatialTest} class object
 #' @param index A numerical value indicating which transition to display. Ignored when \code{option="rawlegend"} or  \code{option="testlegend"}. Default is 1.
-#' @param option Indicates what to display. Either "\code{raw}" (the local growth rate) or "\code{test}" (the test results, i.e. q and p values). 
+#' @param option Either "\code{raw}" to display local growth rates, "\code{test}" to display the test results (i.e. q and p values), or "\code{return}" to return a \code{sf} class object containing all relevant information for the given \code{index} value.
 #' @param breakRange A vector of length 2 defining the minimum and maximum values of growth rate to be displayed in the legend. If set to NA its computed from data range (default).
 #' @param breakLength A numerical vector defining the number of breaks for growth rates to be displayed in the legend.
 #' @param rd Number of decimal places of the growth rate to be displayed in the Legend
@@ -1660,11 +1660,11 @@ res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 #' @import grDevices
 #' @import graphics
 #' @import utils
+#' @import sf
 #' @method plot spatialTest
 #' @export 
 
-
-plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,baseSize=0.5,plim=0.05,qlim=0.05,legend=FALSE,legSize=1,location="bottomright",...)
+plot.spatialTest<-function(x,index=1,option,breakRange,breakLength=7,rd=5,baseSize=0.5,plim=0.05,qlim=0.05,legend=FALSE,legSize=1,location="bottomright",...)
 {
 	if (!any(class(x)%in%c("spatialTest")))
 	{
@@ -1676,86 +1676,75 @@ plot.spatialTest<-function(x,index=1,option,breakRange=NA,breakLength=7,rd=5,bas
         stop("index value missing")
 	}
 
-	if (!option%in%c("raw","test"))
+	if (!option%in%c("raw","test","return"))
 	{
         stop(paste("The option ",option," is not available",sep=""))
 	}
 
+
         locations=x$locations
 
-	if(all(is.na(breakRange))){breakRange=range((x$rocaObs[,index]))} 
+	if (option=='return')
+	{
+		locations$roc = x$rocaObs[,index]
+		locations$pval = x$pval[,index]
+		locations$qval = x$qval[,index]
+		locations$pvalHi = x$pvalHi[,index]
+		locations$pvalLo = x$pvalLo[,index]
+		locations$qvalHi = x$qvalHi[,index]
+		locations$qvalHi = x$qvalHi[,index]
+		return(locations)
+	}
 
 	if (option=="raw")
 	{
-	breaks=seq(breakRange[1],breakRange[2],length.out=breakLength)
-	outbreak=c(-Inf,breaks,Inf)
-	classes=cut(x$rocaObs[,index], outbreak,labels=F)
-	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
-	classes=cols[classes]
-	plot(locations,col=classes,pch=20,cex=baseSize,...)
-	if (legend)
-	{
-	breaks=round(seq(breakRange[1],breakRange[2],length.out=breakLength),rd)
-	cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
-	breaksLab=numeric(breakLength+1)
-	breaksLab[1]= paste("<",breaks[1])
-	for (j in 2:c(breakLength+1))
-	{
-	 breaksLab[j] = paste(breaks[j-1],"to", breaks[j])
-	 if (j==c(breakLength+1)) {breaksLab[j] = paste(">",breaks[length(breaks)])}
-	}
-	legend(location,legend=breaksLab,col=cols,pch=20,bg="white",cex=legSize)
-	}
-	}
+		
+		locations$roc = x$rocaObs[,index]
+		breaks=seq(breakRange[1],breakRange[2],length.out=breakLength)
+		outbreak=c(-Inf,breaks,Inf)
+		classes=cut(x$rocaObs[,index], outbreak,labels=F)
+		cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
+		classes=cols[classes]
+		plot(st_geometry(locations),col=classes,pch=20,cex=baseSize,key.pos=0,...)
 
+		if (legend)
+		{
+			breaks=round(seq(breakRange[1],breakRange[2],length.out=breakLength),rd)
+			cols=colorRampPalette(c("blue","white","red"))(breakLength+1)
+			breaksLab=numeric(breakLength+1)
+			breaksLab[1]= paste("<",breaks[1])
+			for (j in 2:c(breakLength+1))
+			{
+				breaksLab[j] = paste(breaks[j-1],"to", breaks[j])
+				if (j==c(breakLength+1)) {breaksLab[j] = paste(">",breaks[length(breaks)])}
+			}
+			legend(location,legend=breaksLab,col=cols,pch=20,bg="white",cex=legSize)
+		}
+	}
 
 	if (option=="test")
 	{
-	nBreaks=ncol(x$rocaObs)
-	plusPoints=locations[which(x$pvalHi[,index]>=0.5),]
-	minusPoints=locations[which(x$pvalHi[,index]<0.5),]
-
-	# Set Base
-	plot(locations,col=NA,xlab="",ylab="",axes=FALSE,...)
-	points(plusPoints,col="darkgrey",pch=20,cex=baseSize)
-	points(minusPoints,col="darkgrey",pch=20,cex=baseSize)
 
 
-	# Set Positive
-	positive.index=which(x$pvalHi[,index]<=plim)
-
-	if (length(positive.index)>0)
-		{
-		positive=locations[positive.index,]
-		points(positive,pch=20,col="orange",cex=baseSize)
+		nBreaks=ncol(x$rocaObs)
+		locations$plotcol = "darkgrey"
+		# Identify cases below theshold
+		positive.index=which(x$pvalHi[,index]<=plim)
 		qpositive.index=which(x$qvalHi[,index]<=qlim&x$pvalHi[,index]<=plim) #Originally based on qvalHi
-		if (length(qpositive.index)>0)
-			{
-				qpositive=locations[qpositive.index,]
-				points(qpositive,pch=20,col="red",cex=baseSize)
-
-			}
-		}
-	negative.index=which(x$pvalLo[,index]<=plim)
-
-	if (length(negative.index)>0)
-		{
-		negative=locations[negative.index,]
-		points(negative,pch=20,col="cornflowerblue",cex=baseSize)
+		locations$plotcol[positive.index]="orange"
+		locations$plotcol[qpositive.index]="red"
+		negative.index=which(x$pvalLo[,index]<=plim)
 		qnegative.index=which(x$qvalLo[,index]<=qlim&x$pvalLo[,index]<=plim) #Originally based on qvalLo
-		if (length(qnegative.index)>0)
-			{
-				qnegative=locations[qnegative.index,]
-				points(qnegative,pch=20,col="darkblue",cex=baseSize)
+		locations$plotcol[negative.index]="cornflowerblue"
+		locations$plotcol[qnegative.index]="darkblue"
 
-			}
+		# plot
+		plot(st_geometry(locations),col=locations$plotcol,pch=20,axes=FALSE,main="",cex=baseSize,...)
 
+		if (legend)
+		{
+			legend(location,legend=c(paste("positive deviation (p<",plim,")",sep=""),paste("positive deviation (q<",qlim,")",sep=""),paste("negative deviation (p<",plim,")",sep=""),paste("negative deviation (q<",qlim,")",sep="")),pch=20, col=c("orange","red","cornflowerblue","darkblue"),bg="white",cex=legSize)
 		}
-
-	if (legend)
-	{
-	legend(location,legend=c(paste("positive deviation (p<",plim,")",sep=""),paste("positive deviation (q<",qlim,")",sep=""),paste("negative deviation (p<",plim,")",sep=""),paste("negative deviation (q<",qlim,")",sep="")),pch=20, col=c("orange","red","cornflowerblue","darkblue"),bg="white",cex=legSize)
-	}
 
 	}
 
