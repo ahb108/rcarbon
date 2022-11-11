@@ -2,6 +2,7 @@
 * UPDATE: Functions related to spatial permutation test (`spweights()`,`sptest()`, and `plot.spatialTest()`) now depend on `sf` instead of `sp` package.
 * UPDATE: `modelTest()` now issues a warning message when `model` is set to `"exponential"` or `"uniform"` (i.e. when the SPD is tested against exponential and uniform curves fitted on observed SPD values.) 
 * UPDATE: Updated vignette with minor changes reflecting the workflow for `sptest()` and the warning in `modelTest()`.
+* Bug Fix: Fixed a problem with `plot.stackCalSPD()` function when attempting to display proportion SPD plots including intervals with no dates.
 * Updated spatstat dependencies.
 
 # Version 1.4.4 (21 July 2022)
