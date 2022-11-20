@@ -5,7 +5,7 @@
 [![R-CMD-check](https://github.com/ahb108/rcarbon/workflows/R-CMD-check/badge.svg)](https://github.com/ahb108/rcarbon/actions)
 # rcarbon <img src="/logo/rcarbon_logo.png" align="right" />
 
-This package enables the calibration and analysis of radiocarbon dates, often but not exclusively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration, and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists, including: Monte-Carlo simulation test (Timpson et al 2014), random mark permutation test (Crema et al 2016, Bevan et al 2017) point-to-point test (Edinborough et al 2017), and spatial permutation test (Crema, Bevan, and Shennan 2017). For more details see the associated paper (Crema and Bevan 2021).
+This package enables the calibration and analysis of radiocarbon dates, often but not exclusively for the purposes of archaeological research. It includes functions not only for basic calibration, uncalibration, and plotting of one or more dates, but also a statistical framework for building demographic and related longitudinal inferences from aggregate radiocarbon date lists, including: Monte-Carlo simulation tests (Timpson et al 2014), random mark permutation tests (Crema et al 2016, Bevan et al 2017), a point-to-point test (Edinborough et al 2017), and spatial permutation tests (Crema, Bevan, and Shennan 2017). For more details see the associated paper (Crema and Bevan 2021).
 
 To install the stable version from CRAN:
 
@@ -20,7 +20,7 @@ To install the latest development version:
 devtools::install_github('ahb108/rcarbon')
 ```
 ### Citation
-To cite _rcarbon_ in pubblications use:
+To cite _rcarbon_ in publications use:
 
 Crema, E.R., Bevan, A. 2021 [Inference from Large Sets of Radiocarbon Dates: Software and Methods](https://doi.org/10.1017/RDC.2020.95) Radiocarbon 63(1),23-39  doi:10.1017/RDC.2020.95
 
@@ -56,19 +56,19 @@ Bevan, A. Colledge,S., Fuller, D., Fyfe, R., Shennan, S., Stevens, C. 2017.[Holo
 
 Bevan, A., & Crema, E. R. 2021. [Modifiable reporting unit problems and time series of long-term human activity](https://doi.org/10.1098/rstb.2019.0726). Philosophical Transactions of the Royal Society B: Biological Sciences, 376(1816), 20190726. 
 
-Bird, D., Freeman, J., Robinson, E., Maughan, G., Finley, J.B., Lambert, P.M., Kelly, R.L., 2020. [A first empirical analysis of population stability in North America using radiocarbon records](https://doi.org/10.1177/0959683620919975). The Holocene. 
+Bird, D., Freeman, J., Robinson, E., Maughan, G., Finley, J.B., Lambert, P.M., Kelly, R.L., 2020. [A first empirical analysis of population stability in North America using radiocarbon records](https://doi.org/10.1177/0959683620919975). The Holocene, 30(9), 1345–1359.
 
 Broodbank, C., Lucarini, G. 2019. [The Dynamics of Mediterranean Africa, ca. 9600–1000 bc: An Interpretative Synthesis of Knowns and Unknowns](https://doi.org/10.1558/jma.40581), Journal of Mediterranean Archaeology, 32(2), 195-267.
 
 Broughton,J.M., Weitzel,E.M. 2018. [Population reconstructions for humans and megafauna suggest mixed causes for North American Pleistocene extinctions](https://doi.org/10.1038/s41467-018-07897-1).Nature Communications, 9, 5441. doi:10.1038/s41467-018-07897-1
 
-Brown, A. A., Crema, E. R. 2019. [Māori Population Growth in Pre-contact New Zealand: Regional Population Dynamics Inferred From Summed Probability Distributions of Radiocarbon Dates](https://doi.org/10.1080/15564894.2019.1605429). The Journal of Island and Coastal Archaeology, 1–19. 
+Brown, A., A., Crema, E. R. 2019. [Māori Population Growth in Pre-contact New Zealand: Regional Population Dynamics Inferred From Summed Probability Distributions of Radiocarbon Dates](https://doi.org/10.1080/15564894.2019.1605429). The Journal of Island and Coastal Archaeology, 1–19. 
 
 Cahiza, P., Garate, E., Sabatini, G., Gheggi, S., Iniesta, M.L., Carosio, S., García, G., 2021. [Temporal dynamics of La Rioja village landscapes, Argentina](https://doi.org/10.1016/j.jasrep.2021.103123). Journal of Archaeological Science: Reports 39, 103123. 
 
 Carter, V. A., Brunelle, A., Power, M. J., DeRose, R. J., Bekker, M. F., Hart, I., et al. (2021). [Legacies of Indigenous land use shaped past wildfire regimes in the Basin-Plateau Region, USA](https://doi.org/10.1038/s43247-021-00137-3). Communications Earth & Environment, 2(1), 1–9. 
 
-Cascalheira, J., Alcaraz-Castaño, M., Alcolea-González, J., de Andrés-Herrero, M., Arrizabalaga, A., Aura Tortosa, J.E., Garcia-Ibaibarriaga, N., Iriarte-Chiapusso, M.-J., 2020. [Paleoenvironments and human adaptations during the Last Glacial Maximum in the Iberian Peninsula: A review.](https://doi.org/10.1016/j.quaint.2020.08.005) Quaternary International. 
+Cascalheira, J., Alcaraz-Castaño, M., Alcolea-González, J., de Andrés-Herrero, M., Arrizabalaga, A., Aura Tortosa, J.E., Garcia-Ibaibarriaga, N., Iriarte-Chiapusso, M.-J., 2020. [Paleoenvironments and human adaptations during the Last Glacial Maximum in the Iberian Peninsula: A review.](https://doi.org/10.1016/j.quaint.2020.08.005) Quaternary International 581–582, 28-51.
 
 Cheddadi, R., Palmisano, A., López-Sáez, J. A., Nourelbait, M., Zielhofer, C., Tabel, J., et al. 2019. [Human demography changes in Morocco and environmental imprint during the Holocene](https://doi.org/10.1177/0959683619826657) The Holocene, 0959683619826657. doi:10.1177/0959683619826657
 
