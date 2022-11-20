@@ -10,7 +10,7 @@ output:
 fontsize: 11pt
 documentclass: article
 vignette: >
-  %\VignetteIndexEntry{Analysing radiocarbon dates with the rcarbon package}
+  %\VignetteIndexEntry{Analysing radiocarbon dates using the rcarbon package}
   %\VignetteEngine{knitr::rmarkdown_notangle}
 ---
 
