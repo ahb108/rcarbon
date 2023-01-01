@@ -304,7 +304,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
     }
 
 
-        tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=normalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+        suppressWarnings(tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=normalised, ncores=1, verbose=FALSE, calMatrix=TRUE))
 
         simDateMatrix <- tmp$calmatrix 
 	sim[,s] <- apply(simDateMatrix,1,sum) 
@@ -343,7 +343,7 @@ modelTest <- function(x, errors, nsim, bins=NA, runm=NA, timeRange=NA,backsight=
 		    randomSDs <- sample(size=length(unlist(randomDates)), errors, replace=TRUE) 
 
 
-		    tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=normalised, ncores=1, verbose=FALSE, calMatrix=TRUE) 
+		    suppressWarnings(tmp <- calibrate(x=unlist(randomDates),errors=randomSDs, timeRange=timeRange, calCurves=ccurve.tmp, normalised=normalised, ncores=1, verbose=FALSE, calMatrix=TRUE))
 
 		    simDateMatrix <- tmp$calmatrix
 		    aux <- apply(simDateMatrix,1,sum)
