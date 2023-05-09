@@ -1,5 +1,7 @@
 # Version 1.5.1 (in development)
 * Bug Fix: Removed non-relevant warning messages from `calibrate()` within `modelTest()`.
+* NEW: `qCal()` function computes quantiles of calibrated dates.
+* UPDATE: `multiplot()` now enables relative positioning of labels based on quantiles of calibrated dates. 
 
 # Version 1.5.0 (21 November 2022)
 * UPDATE: Functions related to spatial permutation test (`spweights()`,`sptest()`, and `plot.spatialTest()`) now depend on `sf` instead of `sp` package.

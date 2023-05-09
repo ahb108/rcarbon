@@ -187,6 +187,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param credMass A numerical value indicating the size of the higher posterior density interval. Default is 0.95.
 #' @param decreasing Whether dates should be plotted with decreasing order of median calibrated date (i.e. old to new; TRUE) or increasing order (i.e. new to old; FALSE). If set to NULL the dates plotted in the supplied order. Default is NULL 
 #' @param label Whether the ID of each date should be displayed. Default is TRUE.
+#' @param label.pos Relative position of the label in relation to the calibrated distribution expressed in quantiles. Default is 0.5 (median).
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").
 #' @param ylab (optional) Label for the y axis.
@@ -215,7 +216,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @export  
 
 
-multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,xlim=NULL,xlab=NA,ylab=NA,col.fill='grey50',col.fill2='grey82',col.line='black',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2,rescale=FALSE)
+multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,label.pos=0.5,xlim=NULL,xlab=NA,ylab=NA,col.fill='grey50',col.fill2='grey82',col.line='black',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2,rescale=FALSE)
 {
 
 	if(length(lwd)==1){lwd=rep(lwd,length(x))}
@@ -233,7 +234,7 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 		col.fill2 = col.fill2[ord]
 	}
 
-	medDates = medCal(x)
+	date.pos = qCal(x,p=label.pos)
 
 
 	calendars <- c("BP","BCAD")
@@ -292,12 +293,12 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 			if (calendar=='BP')
 			{
 				apply(tmp,1,function(x,y,lwd,col){lines(c(x),c(y,y),lwd=lwd,col=col)},y=i,lwd=lwd[i],col=col.line[i])
-				if(label){text(x=medDates[i],y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
+				if(label){text(x=date.pos[i],y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
 			}
 			if (calendar=='BCAD')
 			{
 				apply(tmp,1,function(x,y,lwd,col){lines(BPtoBCAD(c(x)),c(y,y),lwd=lwd,col=col)},y=i,lwd=lwd[i],col=col.line[i])
-				if(label){text(x=BPtoBCAD(medDates[i]),y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
+				if(label){text(x=BPtoBCAD(date.pos[i]),y=i+gapFactor,label=x$metadata$DateID[i],cex=cex.id)}
 			}
 		}
 	}
@@ -384,7 +385,7 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 
 			if (label)
 			{
-				xx = medDates[i]
+				xx = date.pos[i]
 				if (calendar=='BCAD'){xx = BPtoBCAD(xx)}
 				ylabel=ifelse(rescale,max(yvals)-0.5,max(yvals)+gap/2) 
 				text(x=xx,y=ylabel,labels=x$metadata$DateID[i],cex=cex.id)

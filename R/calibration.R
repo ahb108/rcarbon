@@ -751,6 +751,55 @@ medCal <- function(x)
   return(meddates)
 }
 
+#' @title Computes the quantile date of calibrated dates 
+#'
+#' @description Function for generating a vector quantile calibrated dates from a \code{CalDates} class object.
+#' 
+#' @param x A \code{CalDates} class object.
+#' @param p A numeric value of probability. Default is 0.5 (median).
+#'
+#' @return A vector of quantile dates in cal BP
+#' @examples
+#' x <- calibrate(c(3050,2950),c(20,20))
+#' qCal(x,p=0.2)
+#' @seealso \code{\link{calibrate}}, \code{\link{barCodes}}
+#' @export
+
+
+qCal <- function(x,p=0.5)
+{
+  ndates=nrow(x$metadata)
+  qdates=numeric()
+  if (p >= 1 | p <= 0)
+  {stop ("p must be between 0 an 1")}
+  if (is.na(x$calmatrix[1]))
+  {
+    for (i in 1:ndates)
+    {
+      tmp=x$grids[[i]]
+      tmp$PrDens = tmp$PrDens/sum(tmp$PrDens)
+      tmp$Cumul = cumsum(tmp$PrDens)
+      qdates[i]=tmp[which.min(abs(tmp$Cumul-p)),1]
+    }		
+  } else
+    
+  {
+    calmat  <- apply(x$calmatrix,2,function(x){x/sum(x)})
+    cumcal=apply(calmat,2,cumsum)
+    for (i in 1:ndates)
+    {
+      index = which.min(abs(cumcal[,i]-p))
+      qdates[i]=as.numeric(rownames(cumcal)[index])
+    }
+  }
+  return(qdates)
+}
+
+
+
+
+
+
 #' @title Creates mixed calibration curves.
 #'
 #' @description Function for generating mixed calibration curves (e.g. intcal20/marine20, intcal20/shcal20)  with user-defined proportions.
