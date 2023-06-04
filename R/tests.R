@@ -823,6 +823,11 @@ sptest<-function(calDates, timeRange, bins, locations, locations.id.col=NULL,bre
 		locations.id=locations[[which(colnames(locations)==locations.id.col)]]
 	}
 
+	if (any(duplicated(locations.id)))
+	{
+		stop('"locations" contains duplicate ids')
+	}
+
 	tmpbintosite = unlist(lapply(strsplit(bins,"_"),function(x){x[1]}))
 	if (!all(tmpbintosite%in%locations.id))
 	{
