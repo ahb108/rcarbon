@@ -13,6 +13,7 @@ multiplot(
   decreasing = NULL,
   label = TRUE,
   label.pos = 0.5,
+  label.offset = 0,
   xlim = NULL,
   xlab = NA,
   ylab = NA,
@@ -44,6 +45,8 @@ multiplot(
 \item{label}{Whether the ID of each date should be displayed. Default is TRUE.}
 
 \item{label.pos}{Relative position of the label in relation to the calibrated distribution expressed in quantiles. Default is 0.5 (median).}
+
+\item{label.offset}{Horrizontal offset of label position in number of years. Default is 0.}
 
 \item{xlim}{the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).}
 

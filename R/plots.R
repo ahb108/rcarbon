@@ -188,6 +188,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param decreasing Whether dates should be plotted with decreasing order of median calibrated date (i.e. old to new; TRUE) or increasing order (i.e. new to old; FALSE). If set to NULL the dates plotted in the supplied order. Default is NULL 
 #' @param label Whether the ID of each date should be displayed. Default is TRUE.
 #' @param label.pos Relative position of the label in relation to the calibrated distribution expressed in quantiles. Default is 0.5 (median).
+#' @param label.offset Horrizontal offset of label position in number of years. Default is 0.
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param xlab (optional) Label for the x axis. If unspecified the default setting will be applied ("Year BP" or "Year BC/AD").
 #' @param ylab (optional) Label for the y axis.
@@ -216,7 +217,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @export  
 
 
-multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,label.pos=0.5,xlim=NULL,xlab=NA,ylab=NA,col.fill='grey50',col.fill2='grey82',col.line='black',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2,rescale=FALSE)
+multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing=NULL,label=TRUE,label.pos=0.5,label.offset=0,xlim=NULL,xlab=NA,ylab=NA,col.fill='grey50',col.fill2='grey82',col.line='black',lwd=1,cex.id=1,cex.lab=1,cex.axis=1,ydisp=FALSE,gapFactor=0.2,rescale=FALSE)
 {
 
 	if(length(lwd)==1){lwd=rep(lwd,length(x))}
@@ -234,7 +235,7 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 		col.fill2 = col.fill2[ord]
 	}
 
-	date.pos = qCal(x,p=label.pos)
+	date.pos = qCal(x,p=label.pos) + label.offset
 
 
 	calendars <- c("BP","BCAD")
