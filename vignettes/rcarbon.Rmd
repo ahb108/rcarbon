@@ -42,8 +42,12 @@ Note that the development version can be unstable, so for general use we recomme
 
 Once the installation is completed the package can be loaded using the `library()` command:
 
-```{r}
+```{r,eval=F}
 library(rcarbon)
+```
+
+```{r,echo=F}
+suppressMessages(library(rcarbon))
 ```
 
 # Calibrating $^{14}$C Dates
@@ -73,9 +77,9 @@ summary(xx)
 
 `CalDates` comprising multiple radiocarbon dates can be plotted using the `plot()` function specifying the index number, or more conveniently using the `multiplot()` function:
 
-```{r}
+```{r,fig.height=5,fig.width=5}
 plot(xx,2) #plot the second date
-multiplot(xx,decreasing=TRUE,rescale=TRUE,HPD=TRUE) #see help documentation for alternative options
+multiplot(xx,decreasing=TRUE,rescale=TRUE,HPD=TRUE,label.pos=0.9,label.offset=-200) #see help documentation for alternative options
 ```
 
 With most common machines, the `calibrate()` function is capable of calibrating 10,000 dates in less than a minute; the function can also be executed in parallel for improved performance by specifying the number of cores using the argument `ncores`. 
