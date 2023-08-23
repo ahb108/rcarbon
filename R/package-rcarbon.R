@@ -19,4 +19,5 @@
 #' @author The \pkg{rcarbon} is developed and maintained by Andrew Bevan and Enrico Crema
 #' @docType package
 #' @name rcarbon
+#' @aliases rcarbon-package
 NULL
