@@ -1,17 +1,20 @@
-citHeader("To cite rcarbon in publications use:")
-citEntry(entry = "Article",
-    title = "Inference from large sets of radiocarbon dates: software and methods",
-    author = personList(as.person("Enrico R. Crema"),
-			as.person("Andrew Bevan")),
-    year = "2021",
-    journal = "Radiocarbon",
-    volume = "63",
-    issue = "1",
-    pages = "23-39",
-    url = "https://dx.doi.org/10.1017/RDC.2020.95",
-    textVersion =
-    paste("Crema, E.R. and Bevan, A. (2021)",
-    "Inference from large sets of radiocarbon dates: software and methods",
-    "Radiocarbon, 63(1), 23-39",
-    "URL https://dx.doi.org/10.1017/RDC.2020.95") 		
-  )
+bibentry(
+		bibtype = "Article",
+		title = "Inference from large sets of radiocarbon dates: software and methods",
+		author = c(person(given="Enrico R.", family= "Crema"),
+			person(given="Andrew",family="Bevan")),
+		journal = "Radiocarbon",
+		year = "2021",
+		volume = "63",
+		issue = "1",
+		pages = "23-39",
+		doi = "10.1017/RDC.2020.95",
+		url = "https://dx.doi.org/10.1017/RDC.2020.95",
+		textVersion =
+		paste("Crema, E.R. and Bevan, A. (2021)",
+			"Inference from large sets of radiocarbon dates: software and methods",
+			"Radiocarbon, 63(1), 23-39",
+			"URL https://dx.doi.org/10.1017/RDC.2020.95") 		
+		encoding = "UTF-8",
+		header("To cite rcarbon in publications use:")
+	)
