@@ -1,7 +1,8 @@
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/rcarbon)](http://CRAN.R-project.org/package=rcarbon)
 [![development version](https://img.shields.io/badge/devel%20version-1.5.1-blue.svg)](https://github.com/ahb108/rcarbon)
-[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/rcarbon?)](https://github.com/metacran/cranlogs.app)
-[![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/rcarbon?color=82b4e8)](https://github.com/metacran/cranlogs.app)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/rcarbon)](https://cran.r-project.org/package=rcarbon)
+[![](https://cranlogs.r-pkg.org/badges/rcarbon)](https://cran.rstudio.com/web/packages/rcarbon/index.html)
+
 [![R-CMD-check](https://github.com/ahb108/rcarbon/workflows/R-CMD-check/badge.svg)](https://github.com/ahb108/rcarbon/actions)
 # rcarbon <img src="/logo/rcarbon_logo.png" align="right" />
 
