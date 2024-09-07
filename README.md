@@ -1,4 +1,4 @@
-[![cran version](http://www.r-pkg.org/badges/version/rcarbon)](https://CRAN.R-project.org/package=rcarbon) 
+[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/rcarbon)](http://CRAN.R-project.org/package=rcarbon)
 [![development version](https://img.shields.io/badge/devel%20version-1.5.1-blue.svg)](https://github.com/ahb108/rcarbon)
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/rcarbon?)](https://github.com/metacran/cranlogs.app)
 [![rstudio mirror downloads](http://cranlogs.r-pkg.org/badges/grand-total/rcarbon?color=82b4e8)](https://github.com/metacran/cranlogs.app)
