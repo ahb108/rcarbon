@@ -14,6 +14,7 @@ Depends: R (>= 4.1.0)
 Imports: sf,stats,spatstat.geom, spatstat.model,spatstat.explore, spatstat.linnet, spatstat (>= 2.0-0),graphics,grDevices,utils,snow,doSNOW,foreach,iterators,knitr
 Suggests:
     rmarkdown,
+    rnaturalearth,
     testthat (>= 2.1.0)
 License: GPL (>= 2)
 Encoding: UTF-8
