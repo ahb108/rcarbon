@@ -77,5 +77,5 @@ plot(spd.northernlevant, runm=50, col="red", type="simple", add=TRUE)
 }
 }
 \seealso{
-\code{\link{spd}}; \code{\link{plot.CalGrid}}
+\code{\link[rcarbon]{spd}}; \code{\link[rcarbon]{plot.CalGrid}}
 }

@@ -21,7 +21,7 @@
 )
 }
 \arguments{
-\item{x}{A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.}
+\item{x}{A \code{SpdModelTest} class object generated using the \code{\link[rcarbon]{modelTest}} function.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
@@ -35,9 +35,9 @@
 
 \item{lwd.obs}{Line width for the observed SPD.}
 
-\item{xaxs}{The style of x-axis interval calculation (see \code{\link{par}})}
+\item{xaxs}{The style of x-axis interval calculation (see \code{\link[graphics]{par}})}
 
-\item{yaxs}{The style of y-axis interval calculation (see \code{\link{par}})}
+\item{yaxs}{The style of y-axis interval calculation (see \code{\link[graphics]{par}})}
 
 \item{bbty}{Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details below.}
 
@@ -54,5 +54,5 @@ The function visualises the observed summed probability distribution of radiocar
 The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of significance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot.
 }
 \seealso{
-\code{\link{modelTest}}
+\code{\link[rcarbon]{modelTest}}
 }

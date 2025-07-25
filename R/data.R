@@ -63,7 +63,7 @@
 
 
 #' @title Subset of EUROEVOL radiocarbon dates from Great Britain
-#' @description Radiocarbon dates (n=2,324) and site coordinates (n=652) from England and Wales collected from the EUROEVOL project database. See \cite{\link{euroevol}} for more details regarding the source data.
+#' @description Radiocarbon dates (n=2,324) and site coordinates (n=652) from England and Wales collected from the EUROEVOL project database. See \cite{\link[rcarbon]{euroevol}} for more details regarding the source data.
 #'
 #' @format A data.frame with the following variables:
 #' \describe{
@@ -82,7 +82,7 @@
 
 
 #' @title Polygonal window of England and Wales 
-#' @description An \code{\link{owin}} class polygonal window of England and Wales.
+#' @description An \code{\link[spatstat.geom]{owin}} class polygonal window of England and Wales.
 #' @format An \code{owin} class object. 
 #' @examples
 #' \dontrun{

@@ -24,9 +24,9 @@
 
 \item{lwd.obs}{Line width for the observed SPD}
 
-\item{xaxs}{The style of x-axis interval calculation (see \code{\link{par}})}
+\item{xaxs}{The style of x-axis interval calculation (see \code{\link[graphics]{par}})}
 
-\item{yaxs}{The style of y-axis interval calculation (see \code{\link{par}})}
+\item{yaxs}{The style of y-axis interval calculation (see \code{\link[graphics]{par}})}
 
 \item{xlim}{Limits for the x axis.}
 
@@ -36,5 +36,5 @@
 Plot rates of change between time-blocks
 }
 \seealso{
-\code{\link{spd2rc}}
+\code{\link[rcarbon]{spd2rc}}
 }

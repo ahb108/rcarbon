@@ -24,6 +24,6 @@ Manning, K., Colledge, S., Crema, E., Shennan, S., Timpson, A., 2016. The Cultur
 ewdates
 }
 \description{
-Radiocarbon dates (n=2,324) and site coordinates (n=652) from England and Wales collected from the EUROEVOL project database. See \cite{\link{euroevol}} for more details regarding the source data.
+Radiocarbon dates (n=2,324) and site coordinates (n=652) from England and Wales collected from the EUROEVOL project database. See \cite{\link[rcarbon]{euroevol}} for more details regarding the source data.
 }
 \keyword{datasets}

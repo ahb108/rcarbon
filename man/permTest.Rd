@@ -36,7 +36,7 @@ permTest(
 
 \item{runm}{A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied.Default is NA.}
 
-\item{datenormalised}{If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.}
+\item{datenormalised}{If set to TRUE the total probability mass of each calibrated date will be made to sum to unity (the default in most radiocarbon calibration software). This argument will only have an effect if the dates in \code{x} were calibrated without normalisation (via normalised=FALSE in the \code{\link[rcarbon]{calibrate}} function), in which case setting \code{datenormalised=TRUE} here will rescale each dates probability mass to sum to unity before aggregating the dates, while setting \code{datenormalised=FALSE} will ensure unnormalised dates are used for both observed and simulated SPDs. Default is FALSE.}
 
 \item{spdnormalised}{A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity.}
 
@@ -47,16 +47,16 @@ permTest(
 \value{
 An object of class \code{SpdPermTest} with the following elements
 \itemize{
-\item{\code{observed}} {A list containing data.frames with the summed probability (column \emph{PrDens} for each calendar year (column \emph{calBP} for each mark/group}
-\item{\code{envelope}} {A list containing matrices with the lower and upper bound values of the simulation envelope for each mark/group} 
-\item{\code{pValueList}} {A list of p-value associated with each mark/group}  
+\item \code{observed} A list containing data.frames with the summed probability (column \emph{PrDens} for each calendar year (column \emph{calBP} for each mark/group
+\item \code{envelope} A list containing matrices with the lower and upper bound values of the simulation envelope for each mark/group
+\item \code{pValueList} A list of p-value associated with each mark/group  
 }
 }
 \description{
 Global and local significance test for comparing shapes of multiple SPDs using random permutations.
 }
 \details{
-The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation envelope is computed. Local significant departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global significance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data.
+The function generates a distribution of expected SPDs by randomly shuffling the marks assigned to each \emph{bin} (see \code{\link[rcarbon]{spd}} for details on binning). The resulting distribution of probabilities for each \emph{mark} (i.e. group of dates) for each calendar year is z-transformed, and a 95\% simulation envelope is computed. Local significant departures are defined as instances where the observed SPD (which is also z-transformed) is outside such envelope. A global significance is also computed by comparing the total "area" outside the simulation envelope in the observed and simulated data.
 }
 \examples{
 ## compare demographic trajectories in Netherlands and Denmark  

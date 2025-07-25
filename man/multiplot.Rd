@@ -85,5 +85,5 @@ multiplot(x,HPD=TRUE,decreasing=TRUE,label=FALSE,gapFactor = 0.1)
 multiplot(x,type='b',calendar='BCAD',cex.id = 0.5,lwd=2,gapFactor = 0.5)
 }
 \seealso{
-\code{\link{calibrate}}
+\code{\link[rcarbon]{calibrate}}
 }

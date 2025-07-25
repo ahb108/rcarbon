@@ -20,7 +20,7 @@
 #' @param add if set to \code{TRUE} the calibrated date is displayed over the existing plot. Default is \code{FALSE}. 
 #' @param ... Additional arguments affecting the plot. 
 #'
-#' @seealso \code{\link{calibrate}}
+#' @seealso \code{\link[rcarbon]{calibrate}}
 #'
 #' @examples
 #' x <- calibrate(x=c(3402,3490,4042),errors=c(20,20,30))
@@ -202,7 +202,7 @@ plot.CalDates <- function(x, ind=1, label=NA, calendar="BP", type="standard", xl
 #' @param ydisp Whether the y axis should be displayed. Ignored when \code{type} is set to \code{'b'}. Default is FALSE
 #' @param gapFactor Defines spacing between calibrated dates (when \code{type} is set to \code{'d'}) or the distance between the lines and the labels (when \code{type} is set to \code{'b'}) as proportion of individual y-axis ranges. Default is 0.2.
 #' @param rescale Whether probability distributions should be rescaled (applicable only when \code{type} is set to \code{'d'}, default is FALSE).
-#' @seealso \code{\link{calibrate}}
+#' @seealso \code{\link[rcarbon]{calibrate}}
 #'
 #' @examples
 #' data("emedyd")
@@ -441,15 +441,15 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 #'
 #' @description The function visualises the observed summed probability distribution of radiocarbon dates along with a simulation envelope for the null model and regions of positive and negative deviation.
 #'
-#' @param x A \code{SpdModelTest} class object generated using the \code{\link{modelTest}} function.
+#' @param x A \code{SpdModelTest} class object generated using the \code{\link[rcarbon]{modelTest}} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param type Whether to display SPDs ('spd') or rates of change ('roc'). Default is 'spd'.
 #' @param xlim the x limits of the plot. In BP or in BC/AD depending on the choice of the parameter \code{calender}. Notice that if BC/AD is selected BC ages should have a minus sign (e.g. \code{c(-5000,200)} for 5000 BC to 200 AD).
 #' @param ylim the y limits of the plot.
 #' @param col.obs Line colour for the observed SPD.
 #' @param lwd.obs Line width for the observed SPD.
-#' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
-#' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
+#' @param xaxs The style of x-axis interval calculation (see \code{\link[graphics]{par}})
+#' @param yaxs The style of y-axis interval calculation (see \code{\link[graphics]{par}})
 #' @param bbty Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details below.
 #' @param bbtyRet Whether details on the intervals of positive and negative deviations are returned. Default is TRUE.
 #' @param drawaxes A logical value determining whether the axes should be displayed or not. Default is TRUE.
@@ -457,7 +457,7 @@ multiplot<- function(x,type='d',calendar='BP',HPD=FALSE,credMass=0.95,decreasing
 
 #' @details The argument \code{bbty} controls the display options of the Monte-Carlo Test. Default settings (\code{bbty='f'}) displays the observed SPD (solid black line), the simulation envelope of the fitted model (shaded grey polygon) and regions of significance positive (red semi-transparent rectangle) and negative (blue semi-transparent rectangle) deviation. The option \code{bbty='b'} removes the regions of positive/negative deviations, whilst the option \code{bbty='n'} displays the simulation envelope on existing plot. 
 
-#' @seealso \code{\link{modelTest}}
+#' @seealso \code{\link[rcarbon]{modelTest}}
 #' @import stats
 #' @import grDevices
 #' @import graphics
@@ -648,7 +648,7 @@ plot.SpdModelTest <- function(x, calendar="BP", type='spd', ylim=NA, xlim=NA, co
 #' @title Plot the median values of calibrated radiocarbon dates or bins 
 #'
 #' @description Plot the median values of multiple calibrated radiocarbon dates or bins in a barcode-like strip.
-#' @param x A vector containing median values obtained from \code{\link{medCal}} or \code{\link{binMed}}  
+#' @param x A vector containing median values obtained from \code{\link[rcarbon]{medCal}} or \code{\link[rcarbon]{binMed}}  
 #' @param yrng y-axis range of the bars.
 #' @param width width of the bars (optional) 
 #' @param col color of the bars
@@ -656,7 +656,7 @@ plot.SpdModelTest <- function(x, calendar="BP", type='spd', ylim=NA, xlim=NA, co
 #' @param ... Additional arguments affecting the plot
 #'
 #' 
-#' @seealso \code{\link{medCal}}; \code{\link{binMed}}
+#' @seealso \code{\link[rcarbon]{medCal}}; \code{\link[rcarbon]{binMed}}
 #' @import stats
 #' @import grDevices
 #' @import graphics
@@ -757,7 +757,7 @@ barCodes <- function(x, yrng=c(0,0.03), width=20, col=rgb(0,0,0,25,maxColorValue
 #'
 #'
 #'
-#' @seealso \code{\link{spd}}; \code{\link{plot.CalGrid}}
+#' @seealso \code{\link[rcarbon]{spd}}; \code{\link[rcarbon]{plot.CalGrid}}
 #' @examples
 #' \dontrun{
 #' data(emedyd)
@@ -858,7 +858,7 @@ plot.CalSPD <- function(x, runm=NA, calendar="BP", type="standard", xlim=NA, yli
 #' @param add Whether or not the new graphic should be added to an existing plot.
 #' @param ... Additional arguments affecting the plot
 #'
-#' @seealso \code{\link{spd}}; \code{\link{plot.CalSPD}}
+#' @seealso \code{\link[rcarbon]{spd}}; \code{\link[rcarbon]{plot.CalSPD}}
 #' @examples
 #' data(euroevol)
 #' mycaldates <- calibrate(euroevol[1:10,"C14Age"], euroevol[1:10,"C14SD"], normalised=FALSE)
@@ -976,7 +976,7 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #'
 #' @description Visualises multiple SPDs grouped as a \code{stackCalSPD} object.
 #' 
-#' @param x A \code{stackCalSPD} class object. Result of \code{\link{stackspd}} function.
+#' @param x A \code{stackCalSPD} class object. Result of \code{\link[rcarbon]{stackspd}} function.
 #' @param type How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}. 
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPDs are normalised to sum to unity. Default is FALSE. 
@@ -993,8 +993,8 @@ plot.UncalGrid <- function(x, type="adjusted", fill.p="grey50", border.p=NA, xli
 #' @param lty.obs Line type for the observed SPDs. Default is 1.
 #' @param cex.lab The magnification to be used for x and y  labels relative to the current setting of cex. Default is adjusted to 1.
 #' @param cex.axis The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.
-#' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.
-#' @param legend.arg list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE. If supplied legend position must be given (e.g. \code{legend.arg=list(x='bottomright')}.
+#' @param legend Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link[rcarbon]{stackspd}}. Default is TRUE.
+#' @param legend.arg list of additional arguments to pass to \code{\link[graphics]{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE. If supplied legend position must be given (e.g. \code{legend.arg=list(x='bottomright')}.
 #' @param ylab a title for the y axis
 #' @param ymargin multiplier for the maximum value on ylim range. Default is 1.1.
 #' @param rnd integer indicating the number of decimal places to be displayed in the y-axis for when \code{type} is set "multitype".
@@ -1291,9 +1291,9 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 
 #' @title Plot result of mark permutation test of SPDs
 #'
-#' @description Visualises the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
+#' @description Visualises the observed SPD along with the simulation envelope generated from \code{\link[rcarbon]{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
 #'
-#' @param x A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})
+#' @param x A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link[rcarbon]{permTest}})
 #' @param focalm Value specifying the name of the focal mark (group) to be plotted. 
 #' @param type Whether to display SPDs ('spd') or rates of change ('roc'). Default is 'spd'.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
@@ -1302,14 +1302,14 @@ plot.stackCalSPD <- function(x, type='stacked', calendar='BP', spdnormalised=FAL
 #' @param col.obs Line colour for the observed SPD
 #' @param col.env Colour for the simulation envelope
 #' @param lwd.obs Line width for the observed SPD
-#' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
-#' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
-#' @param bbty Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details in \code{\link{plot.SpdModelTest}}.
+#' @param xaxs The style of x-axis interval calculation (see \code{\link[graphics]{par}})
+#' @param yaxs The style of y-axis interval calculation (see \code{\link[graphics]{par}})
+#' @param bbty Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details in \code{\link[rcarbon]{plot.SpdModelTest}}.
 #' @param drawaxes A logical value determining whether the axes should be displayed or not. Default is TRUE.
 
 #' @param ... Additional arguments affecting the plot
 #'
-#' @seealso \code{\link{permTest}}; \code{\link{plot.SpdModelTest}};
+#' @seealso \code{\link[rcarbon]{permTest}}; \code{\link[rcarbon]{plot.SpdModelTest}};
 #' @import stats
 #' @import grDevices
 #' @import graphics
@@ -1521,20 +1521,20 @@ bbpolygons <- function(x, baseline=1, height=1, calendar="BP", border=NA, bg=NA,
 
 #' @title Bin sensitivity Plot
 #' 
-#' @description Visually explores how choosing different values for \code{h} in the \code{\link{binPrep}} function affects the shape of the SPD.
+#' @description Visually explores how choosing different values for \code{h} in the \code{\link[rcarbon]{binPrep}} function affects the shape of the SPD.
 #' 
 #' @param x A \code{CalDates} class object containing calibrated radiocarbon dates.
 #' @param y A vector containing the locations ID (e.g. site ID) of each calibrated date to be used for the binning process. 
-#' @param h A vector of numbers containing values for the \code{h} parameter to be used in the \code{\link{binPrep}} function. 
+#' @param h A vector of numbers containing values for the \code{h} parameter to be used in the \code{\link[rcarbon]{binPrep}} function. 
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param binning  Either \code{'CRA'} or \code{'calibrated'}. Indicate whether the binning should be carried using the 14C age or using the median calibrated date. Default is \code{'CRA'}.
 #' @param raw A logical variable indicating whether all  SPDs should be returned or not. Default is FALSE.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param legend A logical variable indicating whether the legend should be displayed. Default is TRUE
-#' @param ... Additional arguments to be passed to the \code{\link{spd}} function. 
+#' @param ... Additional arguments to be passed to the \code{\link[rcarbon]{spd}} function. 
 #' 
-#' @seealso \code{\link{binPrep}}; \code{\link{spd}}
+#' @seealso \code{\link[rcarbon]{binPrep}}; \code{\link[rcarbon]{spd}}
 #' @examples
 #' \dontrun{
 #' data(euroevol)
@@ -1664,7 +1664,7 @@ res=cbind.data.frame(calBP=timeRange[1]:timeRange[2],res)
 #' @details
 #' The function displays a distribution map of local growth rates (when \code{option="raw"}), q- and p-values (when \code{option="test"}), and the associated legends (when \code{option="rawlegend"} or  \code{option="testlegend"}).
 #'
-#' @seealso \code{\link{sptest}}
+#' @seealso \code{\link[rcarbon]{sptest}}
 #' @import stats
 #' @import grDevices
 #' @import graphics
@@ -1769,11 +1769,11 @@ plot.spatialTest<-function(x,index=1,option,breakRange,breakLength=7,rd=5,baseSi
 #' @param col.obs Line colour for the observed SPD
 #' @param lwd.obs Line width for the observed SPD
 #' @param xlim Limits for the x axis.
-#' @param xaxs The style of x-axis interval calculation (see \code{\link{par}})
-#' @param yaxs The style of y-axis interval calculation (see \code{\link{par}})
+#' @param xaxs The style of x-axis interval calculation (see \code{\link[graphics]{par}})
+#' @param yaxs The style of y-axis interval calculation (see \code{\link[graphics]{par}})
 #' @param ... Additional arguments affecting the plot. 
 #'
-#' @seealso \code{\link{spd2rc}}
+#' @seealso \code{\link[rcarbon]{spd2rc}}
 #'
 #' @import stats
 #' @import grDevices
@@ -1861,7 +1861,7 @@ plot.spdRC<- function(x,calendar="BP",col.obs="black", lwd.obs=0.5, xaxs="i", ya
 
 
 #' @title Plots a Composite Kernel Density Estimate of sampled radiocarbon dates.  
-#' @param x A \code{compositeKDE} class object generated using the \code{\link{ckde}} function.
+#' @param x A \code{compositeKDE} class object generated using the \code{\link[rcarbon]{ckde}} function.
 #' @param calendar Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.
 #' @param type Either \code{envelope} or \code{multiline}. Default is \code{envelope}.
 #' @param ylim the y limits of the plot.
@@ -1874,7 +1874,7 @@ plot.spdRC<- function(x,calendar="BP",col.obs="black", lwd.obs=0.5, xaxs="i", ya
 #' @param multiline.col Line color when \code{type='multiline'}. Default is 'black'.
 #' @param ... Additional arguments affecting the plot
 #' @details Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile interval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown. 
-#' @seealso \code{\link{ckde}}; 
+#' @seealso \code{\link[rcarbon]{ckde}}; 
 #' @import stats
 #' @import grDevices
 #' @import graphics

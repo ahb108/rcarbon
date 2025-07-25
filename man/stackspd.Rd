@@ -24,7 +24,7 @@ stackspd(
 
 \item{group}{A character or factor vector containing the grouping variable.}
 
-\item{datenormalised}{Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE.}
+\item{datenormalised}{Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link[rcarbon]{calibrate}} is set to FALSE. Default is FALSE.}
 
 \item{runm}{A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA}
 

@@ -9,7 +9,7 @@ binMed(x, bins, verbose = TRUE)
 \arguments{
 \item{x}{A \code{CalDates} class object.}
 
-\item{bins}{vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}.}
+\item{bins}{vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link[rcarbon]{binPrep}}.}
 
 \item{verbose}{A logical variable indicating whether extra information on progress should be reported. Default is TRUE.}
 }
@@ -33,5 +33,5 @@ binMed(x=denmarkDates,bins=denmarkBins)
 }
 }
 \seealso{
-\code{\link{binPrep}},\code{\link{barCodes}}
+\code{\link[rcarbon]{binPrep}},\code{\link[rcarbon]{barCodes}}
 }

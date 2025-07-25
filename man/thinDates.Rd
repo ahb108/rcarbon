@@ -44,5 +44,5 @@ tdates1 <- foursites[thinInds,]
 tdates1
 }
 \seealso{
-\code{\link{binPrep}}
+\code{\link[rcarbon]{binPrep}}
 }

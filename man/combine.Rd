@@ -28,5 +28,5 @@ x = combine(x1,x2,x3)
 ## x$metadata
 }
 \seealso{
-\code{\link{calibrate}}
+\code{\link[rcarbon]{calibrate}}
 }

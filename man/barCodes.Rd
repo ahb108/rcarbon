@@ -14,7 +14,7 @@ barCodes(
 )
 }
 \arguments{
-\item{x}{A vector containing median values obtained from \code{\link{medCal}} or \code{\link{binMed}}}
+\item{x}{A vector containing median values obtained from \code{\link[rcarbon]{medCal}} or \code{\link[rcarbon]{binMed}}}
 
 \item{yrng}{y-axis range of the bars.}
 
@@ -60,5 +60,5 @@ barCodes(BPtoBCAD(bm),yrng=c(0,0.01))
 }
 }
 \seealso{
-\code{\link{medCal}}; \code{\link{binMed}}
+\code{\link[rcarbon]{medCal}}; \code{\link[rcarbon]{binMed}}
 }

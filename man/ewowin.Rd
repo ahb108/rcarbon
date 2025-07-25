@@ -14,7 +14,7 @@ South,A.2011.rworldmap: A New R package for Mapping Global Data. The R Journal V
 ewowin
 }
 \description{
-An \code{\link{owin}} class polygonal window of England and Wales.
+An \code{\link[spatstat.geom]{owin}} class polygonal window of England and Wales.
 }
 \examples{
 \dontrun{

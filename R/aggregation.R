@@ -4,18 +4,18 @@
 #' @title Binning function of radiocarbon dates.  
 #'
 #' @description Prepare a set of bins for controlling the aggregation of radiocarbon dates
-#' known to be from the same phase of same archaeological site (for use with \code{\link{spd}}). Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in a given site phase will impede comparison between sites or phases. 
+#' known to be from the same phase of same archaeological site (for use with \code{\link[rcarbon]{spd}}). Used in cases where there is a concern that unusually high levels of sampling for radiocarbon at a given site or in a given site phase will impede comparison between sites or phases. 
 #' 
 #' @param sites a vector of character strings (or number to coerce to character) of all sites or site phases. If character strings are used these should not contain underscores (see also below)
-#' @param ages a vector of uncalibrated conventional radiocarbon ages or a \code{CalDates} class object obtained using the \code{\link{calibrate}} function.
-#' @param h a single numeric value passed to \code{\link{cutree}} control degree of grouping of similar ages in a phase site.
-#' @param method the agglomeration method to be used, passed on to \code{\link{hclust}}. Defaults to "complete" as in \code{\link{hclust}}.
+#' @param ages a vector of uncalibrated conventional radiocarbon ages or a \code{CalDates} class object obtained using the \code{\link[rcarbon]{calibrate}} function.
+#' @param h a single numeric value passed to \code{\link[stats]{cutree}} control degree of grouping of similar ages in a phase site.
+#' @param method the agglomeration method to be used, passed on to \code{\link[stats]{hclust}}. Defaults to "complete" as in \code{\link[stats]{hclust}}.
 #'
 #' @details If \code{ages} is a \code{CalDates} class object, median dates are used for the clustering.
 #'
-#' @return A vector of character strings with the same length of the object supplied for the argument \code{ages} identifying intra-site or intra-phase grouping, for use with \code{\link{spd}}.The character strings effectively provide a "name" for each "phase" within a "site", using sequential integers after an underscore. For example if a site named "S001" had four dates grouped into two bins with two dates each, the resulting vector would be "S001_1", "S001_1", "S001_2", and "S001_2".  
+#' @return A vector of character strings with the same length of the object supplied for the argument \code{ages} identifying intra-site or intra-phase grouping, for use with \code{\link[rcarbon]{spd}}.The character strings effectively provide a "name" for each "phase" within a "site", using sequential integers after an underscore. For example if a site named "S001" had four dates grouped into two bins with two dates each, the resulting vector would be "S001_1", "S001_1", "S001_2", and "S001_2".  
 
-#' @seealso \code{\link{spd}} for generating SPD; \code{\link{binsense}} for sensitivity analysis pertaining the choice of the parameter \code{h}.
+#' @seealso \code{\link[rcarbon]{spd}} for generating SPD; \code{\link[rcarbon]{binsense}} for sensitivity analysis pertaining the choice of the parameter \code{h}.
 #' @import stats
 #' @import utils
 #' @export
@@ -74,7 +74,7 @@ binPrep <- function(sites, ages, h, method = "complete"){
 #'bins=foursites$SiteID, size=10, method="splitsample", thresh=0.6, seed=123)
 #'tdates1 <- foursites[thinInds,]
 #'tdates1
-#' @seealso \code{\link{binPrep}}
+#' @seealso \code{\link[rcarbon]{binPrep}}
 #' @export
 #'
 thinDates <- function(ages, errors, bins, size, thresh=0.5, method="random", seed=NA){
@@ -122,24 +122,24 @@ thinDates <- function(ages, errors, bins, size, thresh=0.5, method="random", see
 #' @param x A \code{CalDates} class object containing the calibrated radiocarbon dates.
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param bins A vector containing the bin names associated with each radiocarbon date. If set to NA, binning is not carried out. 
-#' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE. 
+#' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link[rcarbon]{calibrate}} is set to FALSE. Default is FALSE. 
 #' @param spdnormalised A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity. 
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param edgeSize Extra margin in C14 Age time to handle edge effect when \code{datenormalise} is set to TRUE. Default is 500.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
-#' @details The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link{binPrep}}, whilst the sensitivity to parameter choice can be explored with the \code{\link{binsense}} function.
+#' @details The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link[rcarbon]{binPrep}}, whilst the sensitivity to parameter choice can be explored with the \code{\link[rcarbon]{binsense}} function.
 #'
 #' @return An object of class \code{CalSPD} with the following elements
 #' \itemize{
-#' \item{\code{metadata}} {A data.frame containing relevant information regarding the parameters used to create the SPD as well as sample size and number of bins}
-#' \item{\code{grid}} {A \code{CalGrid} class object containing the summed probability associated to each calendar year between \code{timeRange[1]} and \code{timeRange[2]}}
+#' \item \code{metadata} A data.frame containing relevant information regarding the parameters used to create the SPD as well as sample size and number of bins
+#' \item \code{grid} A \code{CalGrid} class object containing the summed probability associated to each calendar year between \code{timeRange[1]} and \code{timeRange[2]}
 #'}
 #'
 #' @references 
 #' Timpson, A., et al, (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52: 549-557. DOI:10.1016/j.jas.2014.08.011
 #'
-#' @seealso \code{\link{calibrate}} for calibrating radiocarbon dates; \code{\link{binPrep}} for preparing bins.
+#' @seealso \code{\link[rcarbon]{calibrate}} for calibrating radiocarbon dates; \code{\link[rcarbon]{binPrep}} for preparing bins.
 #' @import utils
 #' @export
 
@@ -276,7 +276,7 @@ spd <- function(x,timeRange, bins=NA, datenormalised=FALSE, spdnormalised=FALSE,
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param bins A vector containing the bin names associated with each radiocarbon date. If set to NA, binning is not carried out. 
 #' @param group A character or factor vector containing the grouping variable. 
-#' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE. 
+#' @param datenormalised Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link[rcarbon]{calibrate}} is set to FALSE. Default is FALSE. 
 #' @param runm A number indicating the window size of the moving average to smooth the SPD. If set to \code{NA} no moving average is applied. Default is NA  
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #' @param edgeSize Controls edge effect by expanding the fitted model beyond the range defined by \code{timeRange}.
@@ -339,15 +339,15 @@ stackspd <- function(x, timeRange, bins=NA, group=NULL, datenormalised=FALSE, ru
 #' @title Composite Kernel Density Estimates of Radiocarbon Dates
 #'
 #' @description Computes a Composite Kernel Density Estimate (CKDE) from multiple sets of randomly sampled calendar dates.
-#' @param x A \code{simdates} class object, generated using \code{\link{sampleDates}}.
+#' @param x A \code{simdates} class object, generated using \code{\link[rcarbon]{sampleDates}}.
 #' @param timeRange A vector of length 2 indicating the start and end date of the analysis in cal BP.
 #' @param bw Kernel bandwidth to be used.
 #' @param normalised A logical variable indicating whether the contribution of individual dates should be equal (TRUE), or weighted based on the area under the curve of non-normalised calibration (FALSE). Default is TRUE.
 #' @details The function computes Kernel Density Estimates using randomly sampled calendar dates contained in a \code{simdates} class object (generated using the \code{sampledates()} function). The output contains \code{nsim} KDEs, where \code{nsim} is the argument used in \code{simulate.dates()}. The resulting object can be plotted to visualise a CKDE (cf Brown 2017), and if \code{boot} was set to \code{TRUE} in \code{sampleDates} its bootstrapped variant (cf McLaughlin 2018 for a similar analysis). The shape of the CKDE is comparable to an SPD generated from non-normalised dates when the argument \code{normalised} is set to FALSE.
 #' @return An object of class \code{ckdeSPD} with the following elements
 #' \itemize{
-#' \item{\code{timeRange}} {The \code{timeRange} setting used.}
-#' \item{\code{res.matrix}} {A matrix containing the KDE values with rows representing calendar dates.}
+#' \item \code{timeRange} The \code{timeRange} setting used.
+#' \item \code{res.matrix} A matrix containing the KDE values with rows representing calendar dates.
 #'}
 #'
 #' @references 
@@ -364,7 +364,7 @@ stackspd <- function(x, timeRange, bins=NA, group=NULL, datenormalised=FALSE, ru
 #'plot(ckdeNorm,type='multiline',calendar='BCAD')
 #' }
 #'
-#' @seealso \code{\link{sampleDates}}
+#' @seealso \code{\link[rcarbon]{sampleDates}}
 #'
 #' @import stats
 #' @import utils
@@ -436,11 +436,11 @@ ckde<- function(x,timeRange,bw,normalised=FALSE)
 #'
 #' @return A list object of class stKde with the following elements:
 #' \itemize{
-#' \item {A series of list items storing some of the input parameters such as the focalyears, sbw, tbw, backsight, maskthresh} 
-#' \item{\code{nonfocal}} {An im object mapping the basic spatial intensity of all dates, without reference to a focal year.} 
-#' \item{\code{impaths}} {A character vector of the paths to the individual timeslices stored on file. Maps are not stored in memory (see spkde() for further details of what is stored).}
-#' \item{\code{stats}} {A list of data.frames offering summary statistics on each of the different types of output surface across all timeslices. Used primarily to allow consistent colour ramps across time-slices.}
-#' \item{\code{ppp}} {The ppp object for all dates and the observation window.}
+#' \item A series of list items storing some of the input parameters such as the focalyears, sbw, tbw, backsight, maskthresh
+#' \item \code{nonfocal} An im object mapping the basic spatial intensity of all dates, without reference to a focal year. 
+#' \item \code{impaths} A character vector of the paths to the individual timeslices stored on file. Maps are not stored in memory (see spkde() for further details of what is stored).
+#' \item \code{stats} A list of data.frames offering summary statistics on each of the different types of output surface across all timeslices. Used primarily to allow consistent colour ramps across time-slices.
+#' \item \code{ppp} The ppp object for all dates and the observation window.
 #' }
 #'
 #' @examples
@@ -488,9 +488,9 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 	if(dpoints){warning("Duplicated coordinates: spkde() has been executed with spjitter set to TRUE")}
     }	    
 
-    if (any(inside.owin(coords[,1],coords[,2],win)==FALSE))
+    if (any(spatstat.geom::inside.owin(coords[,1],coords[,2],win)==FALSE))
     {
-	in.pts=inside.owin(coords[,1],coords[,2],win)    
+	in.pts=spatstat.geom::inside.owin(coords[,1],coords[,2],win)    
         x=x[which(in.pts)]
 	coords=coords[which(in.pts),]
 	bins=bins[which(in.pts)]
@@ -559,11 +559,11 @@ stkde <- function(x, coords, sbw, focalyears, tbw, win, cellres, outdir=".", bin
 #'
 #' @return A list object of class spKde with the following elements:
 #' \itemize{
-#' \item {A series of list items storing some of the input parameters such as the focal year, sbw, tbw, backsight, maskthresh.} 
-#' \item{\code{nonfocal}} {An im object mapping the basic spatial intensity of all dates, without reference to a focal year.} 
-#' \item{\code{focal}} {An im object mapping the spatial intensity of dates for the focal year (i.e. weighted by how much each dates probability distribution overlaps with a Gaussian kernel centred on the focal year with a standard deviation of tbw).}
-#' \item{\code{proportion}} {An im object mapping the proportional intensity of dates for the focal year (i.e. the focal surface divided by the nonfocal surface).}
-#' \item{\code{change}} {An im object mapping the amount of change between the intensity of dates for the focal year and a chosen backsight year (i.e. as defined by changexpr).}
+#' \item A series of list items storing some of the input parameters such as the focal year, sbw, tbw, backsight, maskthresh.
+#' \item \code{nonfocal} An im object mapping the basic spatial intensity of all dates, without reference to a focal year. 
+#' \item \code{focal} An im object mapping the spatial intensity of dates for the focal year (i.e. weighted by how much each dates probability distribution overlaps with a Gaussian kernel centred on the focal year with a standard deviation of tbw).
+#' \item \code{proportion} An im object mapping the proportional intensity of dates for the focal year (i.e. the focal surface divided by the nonfocal surface).
+#' \item \code{change} An im object mapping the amount of change between the intensity of dates for the focal year and a chosen backsight year (i.e. as defined by changexpr).
 #' }
 #'
 #' @examples
@@ -604,9 +604,9 @@ spkde <- function(x, coords, sbw, focalyear, tbw, win, cellres, bins=NA, backsig
 	if(dpoints){warning("Duplicated coordinates: spkde() has been executed with spjitter set to TRUE")}
     }	    
     
-    if (any(inside.owin(coords[,1],coords[,2],win)==FALSE))
+    if (any(spatstat.geom::inside.owin(coords[,1],coords[,2],win)==FALSE))
     {
-	in.pts=inside.owin(coords[,1],coords[,2],win)    
+	in.pts=spatstat.geom::inside.owin(coords[,1],coords[,2],win)    
         x=x[which(in.pts)]
 	coords=coords[which(in.pts),]
 	bins=bins[which(in.pts)]

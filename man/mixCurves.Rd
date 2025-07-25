@@ -24,7 +24,7 @@ mixCurves(
 \item{resErrors}{Error of the marine reservoir effect offset to be applied to calCurve2. Default is 0.}
 }
 \value{
-A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link{calibrate}} function.
+A three-column matrix containing calibrated year BP, uncalibrated age bp, and standard deviation. To be used as custom calibration curve for the \code{\link[rcarbon]{calibrate}} function.
 }
 \description{
 Function for generating mixed calibration curves (e.g. intcal20/marine20, intcal20/shcal20)  with user-defined proportions.
@@ -42,5 +42,5 @@ Blaauw, M. 2018. clam: Classical Age-Depth Modelling of Cores from Deposits. R p
 Marsh, E.J., Bruno, M.C., Fritz, S.C., Baker, P., Capriles, J.M. and Hastorf, C.A., 2018. IntCal, SHCal, or a Mixed Curve? Choosing a 14 C Calibration Curve for Archaeological and Paleoenvironmental Records from Tropical South America. Radiocarbon, 60(3), pp.925-940.
 }
 \seealso{
-\code{\link{calibrate}}
+\code{\link[rcarbon]{calibrate}}
 }

@@ -38,5 +38,5 @@ hpdi(x)
 hpdi(x,asList=FALSE,calendar='BCAD')
 }
 \seealso{
-\code{\link{calibrate}}
+\code{\link[rcarbon]{calibrate}}
 }

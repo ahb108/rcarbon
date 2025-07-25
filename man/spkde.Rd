@@ -62,11 +62,11 @@ spkde(
 \value{
 A list object of class spKde with the following elements:
 \itemize{
-\item {A series of list items storing some of the input parameters such as the focal year, sbw, tbw, backsight, maskthresh.} 
-\item{\code{nonfocal}} {An im object mapping the basic spatial intensity of all dates, without reference to a focal year.} 
-\item{\code{focal}} {An im object mapping the spatial intensity of dates for the focal year (i.e. weighted by how much each dates probability distribution overlaps with a Gaussian kernel centred on the focal year with a standard deviation of tbw).}
-\item{\code{proportion}} {An im object mapping the proportional intensity of dates for the focal year (i.e. the focal surface divided by the nonfocal surface).}
-\item{\code{change}} {An im object mapping the amount of change between the intensity of dates for the focal year and a chosen backsight year (i.e. as defined by changexpr).}
+\item A series of list items storing some of the input parameters such as the focal year, sbw, tbw, backsight, maskthresh.
+\item \code{nonfocal} An im object mapping the basic spatial intensity of all dates, without reference to a focal year. 
+\item \code{focal} An im object mapping the spatial intensity of dates for the focal year (i.e. weighted by how much each dates probability distribution overlaps with a Gaussian kernel centred on the focal year with a standard deviation of tbw).
+\item \code{proportion} An im object mapping the proportional intensity of dates for the focal year (i.e. the focal surface divided by the nonfocal surface).
+\item \code{change} An im object mapping the amount of change between the intensity of dates for the focal year and a chosen backsight year (i.e. as defined by changexpr).
 }
 }
 \description{

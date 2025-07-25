@@ -22,7 +22,7 @@
 )
 }
 \arguments{
-\item{x}{A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link{permTest}})}
+\item{x}{A \code{SpdPermTest} class object. Result of random mark permutation test (see \code{\link[rcarbon]{permTest}})}
 
 \item{focalm}{Value specifying the name of the focal mark (group) to be plotted.}
 
@@ -40,19 +40,19 @@
 
 \item{lwd.obs}{Line width for the observed SPD}
 
-\item{xaxs}{The style of x-axis interval calculation (see \code{\link{par}})}
+\item{xaxs}{The style of x-axis interval calculation (see \code{\link[graphics]{par}})}
 
-\item{yaxs}{The style of y-axis interval calculation (see \code{\link{par}})}
+\item{yaxs}{The style of y-axis interval calculation (see \code{\link[graphics]{par}})}
 
-\item{bbty}{Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details in \code{\link{plot.SpdModelTest}}.}
+\item{bbty}{Display options; one between \code{'b'},\code{'n'},and \code{'f'}. See details in \code{\link[rcarbon]{plot.SpdModelTest}}.}
 
 \item{drawaxes}{A logical value determining whether the axes should be displayed or not. Default is TRUE.}
 
 \item{...}{Additional arguments affecting the plot}
 }
 \description{
-Visualises the observed SPD along with the simulation envelope generated from \code{\link{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
+Visualises the observed SPD along with the simulation envelope generated from \code{\link[rcarbon]{permTest}}, with regions of positive and negative deviations highlighted in red and blue.
 }
 \seealso{
-\code{\link{permTest}}; \code{\link{plot.SpdModelTest}};
+\code{\link[rcarbon]{permTest}}; \code{\link[rcarbon]{plot.SpdModelTest}};
 }

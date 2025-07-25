@@ -7,7 +7,7 @@
 \method{summary}{SpdPermTest}(object, type = "spd", ...)
 }
 \arguments{
-\item{object}{A \code{SpdPermTest} class object produced using the \code{link{permTest}} function.}
+\item{object}{A \code{SpdPermTest} class object produced using the \code{link[rcarbon]{permTest}} function.}
 
 \item{type}{Specifies whether the summary should be based on SPD ('spd') or associated rates of change ('roc'). Default is 'spd'.}
 
@@ -20,5 +20,5 @@
 The summary function returns metadata (number of radiocarbon dates, bins, and simulations), the p-value of the global significance test, and the chronological interval of local positive and negative deviations from the simulation envelope for each set.
 }
 \seealso{
-\code{\link{permTest}}.
+\code{\link[rcarbon]{permTest}}.
 }

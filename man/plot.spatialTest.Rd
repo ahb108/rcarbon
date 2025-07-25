@@ -54,5 +54,5 @@ Displays local growth rates, p-values, and q-values retrieved from a \code{spati
 The function displays a distribution map of local growth rates (when \code{option="raw"}), q- and p-values (when \code{option="test"}), and the associated legends (when \code{option="rawlegend"} or  \code{option="testlegend"}).
 }
 \seealso{
-\code{\link{sptest}}
+\code{\link[rcarbon]{sptest}}
 }

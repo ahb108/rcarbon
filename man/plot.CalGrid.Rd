@@ -55,5 +55,5 @@ plot(myspd) #ordinary plot using \code{plot.CalSPD}
 plot(myspd$grid) #working plot using the internal CalGrid object
 }
 \seealso{
-\code{\link{spd}}; \code{\link{plot.CalSPD}}
+\code{\link[rcarbon]{spd}}; \code{\link[rcarbon]{plot.CalSPD}}
 }

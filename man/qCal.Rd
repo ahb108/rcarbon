@@ -22,5 +22,5 @@ x <- calibrate(c(3050,2950),c(20,20))
 qCal(x,p=0.2)
 }
 \seealso{
-\code{\link{calibrate}}, \code{\link{barCodes}}
+\code{\link[rcarbon]{calibrate}}, \code{\link[rcarbon]{barCodes}}
 }

@@ -22,7 +22,7 @@ binsense(
 
 \item{y}{A vector containing the locations ID (e.g. site ID) of each calibrated date to be used for the binning process.}
 
-\item{h}{A vector of numbers containing values for the \code{h} parameter to be used in the \code{\link{binPrep}} function.}
+\item{h}{A vector of numbers containing values for the \code{h} parameter to be used in the \code{\link[rcarbon]{binPrep}} function.}
 
 \item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP.}
 
@@ -36,10 +36,10 @@ binsense(
 
 \item{legend}{A logical variable indicating whether the legend should be displayed. Default is TRUE}
 
-\item{...}{Additional arguments to be passed to the \code{\link{spd}} function.}
+\item{...}{Additional arguments to be passed to the \code{\link[rcarbon]{spd}} function.}
 }
 \description{
-Visually explores how choosing different values for \code{h} in the \code{\link{binPrep}} function affects the shape of the SPD.
+Visually explores how choosing different values for \code{h} in the \code{\link[rcarbon]{binPrep}} function affects the shape of the SPD.
 }
 \examples{
 \dontrun{
@@ -51,5 +51,5 @@ binsense(x=denmarkDates,y=denmark$SiteID,h=seq(0,200,20),timeRange=c(10000,4000)
 }
 }
 \seealso{
-\code{\link{binPrep}}; \code{\link{spd}}
+\code{\link[rcarbon]{binPrep}}; \code{\link[rcarbon]{spd}}
 }

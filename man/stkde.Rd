@@ -59,11 +59,11 @@ stkde(
 \value{
 A list object of class stKde with the following elements:
 \itemize{
-\item {A series of list items storing some of the input parameters such as the focalyears, sbw, tbw, backsight, maskthresh} 
-\item{\code{nonfocal}} {An im object mapping the basic spatial intensity of all dates, without reference to a focal year.} 
-\item{\code{impaths}} {A character vector of the paths to the individual timeslices stored on file. Maps are not stored in memory (see spkde() for further details of what is stored).}
-\item{\code{stats}} {A list of data.frames offering summary statistics on each of the different types of output surface across all timeslices. Used primarily to allow consistent colour ramps across time-slices.}
-\item{\code{ppp}} {The ppp object for all dates and the observation window.}
+\item A series of list items storing some of the input parameters such as the focalyears, sbw, tbw, backsight, maskthresh
+\item \code{nonfocal} An im object mapping the basic spatial intensity of all dates, without reference to a focal year. 
+\item \code{impaths} A character vector of the paths to the individual timeslices stored on file. Maps are not stored in memory (see spkde() for further details of what is stored).
+\item \code{stats} A list of data.frames offering summary statistics on each of the different types of output surface across all timeslices. Used primarily to allow consistent colour ramps across time-slices.
+\item \code{ppp} The ppp object for all dates and the observation window.
 }
 }
 \description{

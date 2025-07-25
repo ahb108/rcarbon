@@ -7,7 +7,7 @@
 ckde(x, timeRange, bw, normalised = FALSE)
 }
 \arguments{
-\item{x}{A \code{simdates} class object, generated using \code{\link{sampleDates}}.}
+\item{x}{A \code{simdates} class object, generated using \code{\link[rcarbon]{sampleDates}}.}
 
 \item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP.}
 
@@ -18,8 +18,8 @@ ckde(x, timeRange, bw, normalised = FALSE)
 \value{
 An object of class \code{ckdeSPD} with the following elements
 \itemize{
-\item{\code{timeRange}} {The \code{timeRange} setting used.}
-\item{\code{res.matrix}} {A matrix containing the KDE values with rows representing calendar dates.}
+\item \code{timeRange} The \code{timeRange} setting used.
+\item \code{res.matrix} A matrix containing the KDE values with rows representing calendar dates.
 }
 }
 \description{
@@ -44,5 +44,5 @@ Brown, W. A. 2017. The past and future of growth rate estimation in demographic 
 McLaughlin, T. R. 2018. On Applications of Space–Time Modelling with Open-Source 14C Age Calibration. \emph{Journal of Archaeological Method and Theory}. DOI https://doi.org/10.1007/s10816-018-9381-3
 }
 \seealso{
-\code{\link{sampleDates}}
+\code{\link[rcarbon]{sampleDates}}
 }

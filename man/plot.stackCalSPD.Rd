@@ -31,7 +31,7 @@
 )
 }
 \arguments{
-\item{x}{A \code{stackCalSPD} class object. Result of \code{\link{stackspd}} function.}
+\item{x}{A \code{stackCalSPD} class object. Result of \code{\link[rcarbon]{stackspd}} function.}
 
 \item{type}{How to display the SPDs.Current options are \code{'stacked'},\code{'lines'}, '\code{'proportion'}. and \code{'multipanel'}. Default is \code{'stacked'}.}
 
@@ -65,9 +65,9 @@
 
 \item{cex.axis}{The magnification to be used for axis annotation relative to the current setting of cex. Default is adjusted to 1.}
 
-\item{legend}{Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link{stackspd}}. Default is TRUE.}
+\item{legend}{Whether legend needs to be displayed. Item names will be retrieved from the values supplied in the argument \code{group} in \code{\link[rcarbon]{stackspd}}. Default is TRUE.}
 
-\item{legend.arg}{list of additional arguments to pass to \code{\link{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE. If supplied legend position must be given (e.g. \code{legend.arg=list(x='bottomright')}.}
+\item{legend.arg}{list of additional arguments to pass to \code{\link[graphics]{legend}}; names of the list are used as argument names. Only used if \code{legend} is set to TRUE. If supplied legend position must be given (e.g. \code{legend.arg=list(x='bottomright')}.}
 
 \item{ylab}{a title for the y axis}
 

@@ -72,16 +72,16 @@ calibrate(x, ...)
 
 \item{type}{Currently, two options are available. With "fast", a look-up is conducted for each calendar year that picks up the amplitude of the nearest CRA age. With "full", each CRA is calibrated individually and then summed (much slower).}
 
-\item{datenormalised}{Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE.}
+\item{datenormalised}{Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link[rcarbon]{calibrate}} is set to FALSE. Default is FALSE.}
 
 \item{spdnormalised}{A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity.}
 }
 \value{
 An object of class CalDates with the following elements:
 \itemize{
-\item{\code{metadata}} {A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.}
-\item{\code{grids}} {A list of calGrid class objects, containing the posterior probabilities for each calendar year. The most memory-efficient way to store calibrated dates, as only years with non-zero probability are stored, but aggregation methods such as \code{spd()} may then take longer to extract and combine multiple dates. NA when the parameter calMatrix is set to TRUE.} 
-\item{\code{calMatrix}} {A matrix of probability values, one row per calendar year in timeRange and one column per date. By storing all possible years, not just those with non-zero probability, this approach takes more memory, but speeds up spd() and is suggested whenever the latter is to be used. NA when the parameter calMatrix is set to FALSE.}  
+\item \code{metadata} A data.frame containing relevant information regarding each radiocarbon date and the parameter used in the calibration process.
+\item \code{grids} A list of calGrid class objects, containing the posterior probabilities for each calendar year. The most memory-efficient way to store calibrated dates, as only years with non-zero probability are stored, but aggregation methods such as \code{spd()} may then take longer to extract and combine multiple dates. NA when the parameter calMatrix is set to TRUE. 
+\item \code{calMatrix} A matrix of probability values, one row per calendar year in timeRange and one column per date. By storing all possible years, not just those with non-zero probability, this approach takes more memory, but speeds up spd() and is suggested whenever the latter is to be used. NA when the parameter calMatrix is set to FALSE.  
 }
 }
 \description{

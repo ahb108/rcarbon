@@ -12,7 +12,7 @@ spd2rc(
 )
 }
 \arguments{
-\item{spd}{Summed Probability Distribution obtained using the \code{\link{spd}} function.}
+\item{spd}{Summed Probability Distribution obtained using the \code{\link[rcarbon]{spd}} function.}
 
 \item{breaks}{A vector giving the breakpoints between the time-blocks.}
 

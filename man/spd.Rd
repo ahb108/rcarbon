@@ -22,7 +22,7 @@ spd(
 
 \item{bins}{A vector containing the bin names associated with each radiocarbon date. If set to NA, binning is not carried out.}
 
-\item{datenormalised}{Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link{calibrate}} is set to FALSE. Default is FALSE.}
+\item{datenormalised}{Controls for calibrated dates with probability mass outside the timerange of analysis. If set to TRUE the total probability mass within the time-span of analysis is normalised to sum to unity. Should be set to FALSE when the parameter \code{normalised} in \code{\link[rcarbon]{calibrate}} is set to FALSE. Default is FALSE.}
 
 \item{spdnormalised}{A logical variable indicating whether the total probability mass of the SPD is normalised to sum to unity.}
 
@@ -35,19 +35,19 @@ spd(
 \value{
 An object of class \code{CalSPD} with the following elements
 \itemize{
-\item{\code{metadata}} {A data.frame containing relevant information regarding the parameters used to create the SPD as well as sample size and number of bins}
-\item{\code{grid}} {A \code{CalGrid} class object containing the summed probability associated to each calendar year between \code{timeRange[1]} and \code{timeRange[2]}}
+\item \code{metadata} A data.frame containing relevant information regarding the parameters used to create the SPD as well as sample size and number of bins
+\item \code{grid} A \code{CalGrid} class object containing the summed probability associated to each calendar year between \code{timeRange[1]} and \code{timeRange[2]}
 }
 }
 \description{
 The function generates Summed probability distributions (SPD) of radiocarbon dates, with optional binning routine for controlling inter-site or inter-phase variation in sampling intensity.
 }
 \details{
-The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link{binPrep}}, whilst the sensitivity to parameter choice can be explored with the \code{\link{binsense}} function.
+The binning routine consists of computing summed probability distribution of all dates associated to a given bin, divided by the number of contributing dates. This controls for any striking differences in sampling intensity, and ensures that each site phase is equally contributing to the final SPD (see Timpson et al 2014 for details). Bins can be generated using the \code{\link[rcarbon]{binPrep}}, whilst the sensitivity to parameter choice can be explored with the \code{\link[rcarbon]{binsense}} function.
 }
 \references{
 Timpson, A., et al, (2014). Reconstructing regional population fluctuations in the European Neolithic using radiocarbon dates: a new case-study using an improved method. Journal of Archaeological Science 52: 549-557. DOI:10.1016/j.jas.2014.08.011
 }
 \seealso{
-\code{\link{calibrate}} for calibrating radiocarbon dates; \code{\link{binPrep}} for preparing bins.
+\code{\link[rcarbon]{calibrate}} for calibrating radiocarbon dates; \code{\link[rcarbon]{binPrep}} for preparing bins.
 }

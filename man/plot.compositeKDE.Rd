@@ -20,7 +20,7 @@
 )
 }
 \arguments{
-\item{x}{A \code{compositeKDE} class object generated using the \code{\link{ckde}} function.}
+\item{x}{A \code{compositeKDE} class object generated using the \code{\link[rcarbon]{ckde}} function.}
 
 \item{calendar}{Either \code{'BP'} or \code{'BCAD'}. Indicate whether the calibrated date should be displayed in BP or BC/AD. Default is  \code{'BP'}.}
 
@@ -51,5 +51,5 @@ Plots a Composite Kernel Density Estimate of sampled radiocarbon dates.
 Visualise a \code{compositeKDE} class object. If \code{type} is set \code{'envelope'} an envelope of the percentile interval defined by the parameter \code{interval} is shown along with the mean KDE. If \code{type} is set \code{'multiline'} all KDEs are shown.
 }
 \seealso{
-\code{\link{ckde}};
+\code{\link[rcarbon]{ckde}};
 }

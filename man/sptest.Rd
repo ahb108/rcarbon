@@ -28,7 +28,7 @@ sptest(
 
 \item{timeRange}{A vector of length 2 indicating the start and end date of the analysis in cal BP}
 
-\item{bins}{A vector indicating which bin each radiocarbon date is assigned to. Must have the same length as the number of radiocarbon dates. Can be created using the  \code{\link{binPrep}}) function. Bin names should follow the format "x_y", where x refers to a unique location (e.g. a site) and y is a integer value (e.g. "S023_1", "S023_2","S034_1", etc.).}
+\item{bins}{A vector indicating which bin each radiocarbon date is assigned to. Must have the same length as the number of radiocarbon dates. Can be created using the  \code{\link[rcarbon]{binPrep}}) function. Bin names should follow the format "x_y", where x refers to a unique location (e.g. a site) and y is a integer value (e.g. "S023_1", "S023_2","S034_1", etc.).}
 
 \item{locations}{A \code{sf} class object of the site locations.}
 
@@ -112,5 +112,5 @@ plot(res.locations,index=4,add=TRUE,legend=TRUE,option="test")
 Crema, E.R., Bevan, A., Shennan, S. (2017). Spatio-temporal approaches to archaeological radiocarbon dates. Journal of Archaeological Science, 87, 1-9.
 }
 \seealso{
-\code{\link{permTest}} for a non-spatial permutation test; \code{\link{plot.spatialTest}} for plotting; \code{\link{spd2rc}} for computing geometric growth rates.
+\code{\link[rcarbon]{permTest}} for a non-spatial permutation test; \code{\link[rcarbon]{plot.spatialTest}} for plotting; \code{\link[rcarbon]{spd2rc}} for computing geometric growth rates.
 }

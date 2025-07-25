@@ -189,7 +189,7 @@ BCADtoBP <- function(x){
 #' @description Function for generating a vector of median calibrated dates for each each bin.
 #' 
 #' @param x A \code{CalDates} class object.
-#' @param bins vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link{binPrep}}.
+#' @param bins vector containing the bin names associated with each radiocarbon date. Can be generated using \code{\link[rcarbon]{binPrep}}.
 #' @param verbose A logical variable indicating whether extra information on progress should be reported. Default is TRUE.
 #'
 #' @return A vector of median dates in cal BP
@@ -205,7 +205,7 @@ BCADtoBP <- function(x){
 #' #Compute median date for each bin
 #' binMed(x=denmarkDates,bins=denmarkBins)
 #' }
-#' @seealso \code{\link{binPrep}},\code{\link{barCodes}}
+#' @seealso \code{\link[rcarbon]{binPrep}},\code{\link[rcarbon]{barCodes}}
 #' @import utils
 #' @import stats
 #' @export
@@ -288,7 +288,7 @@ binMed <- function(x,bins,verbose=TRUE){
 #'
 #' @description Function for computing rates of change between abutting user-defined time-blocks.
 #'
-#' @param spd Summed Probability Distribution obtained using the \code{\link{spd}} function. 
+#' @param spd Summed Probability Distribution obtained using the \code{\link[rcarbon]{spd}} function. 
 #' @param breaks A vector giving the breakpoints between the time-blocks.
 #' @param backsight A single numeric value defining the distance in time between the focal year and the backsight year for computing the rate of change.
 #' @param changexpr An expression defining how the rate of change is calculated, where \code{t1} is the summed probability for a focal block or year, \code{t0} is the summed probability for previous block or backsight year, and \code{d} is the duration of the block or the length of the backsight. Default is a geometric growth rate (i.e \code{expression((t1/t0)^(1/d)-1)}).
@@ -408,8 +408,8 @@ curveSamples <- function(bins,calCurves,nsim)
 #' 
 #' @return An object of class \code{simdates} with the following elements
 #' \itemize{
-#' \item{\code{sdates}} {A matrix containing the randomly sampled calendar dates, with rows containing each of the \code{nsim} repetitions.}
-#' \item{\code{weight}} {A vector (or matrix in when \code{boot=TRUE}) containing the total area under the curve of each date, normalised to sum to unity. Notice this will be identical for all dates if the calibration is carried out with the argument \code{normalised} set to TRUE.}
+#' \item \code{sdates} A matrix containing the randomly sampled calendar dates, with rows containing each of the \code{nsim} repetitions.
+#' \item \code{weight} A vector (or matrix in when \code{boot=TRUE}) containing the total area under the curve of each date, normalised to sum to unity. Notice this will be identical for all dates if the calibration is carried out with the argument \code{normalised} set to TRUE.
 #'}
 #'
 #' @import stats 
@@ -687,7 +687,7 @@ which.CalDates=function(x,s,p)
 #' x3 = calibrate(5300,20,calCurves=mcurve,ids=5)
 #' x = combine(x1,x2,x3)
 #' ## x$metadata
-#' @seealso \code{\link{calibrate}}
+#' @seealso \code{\link[rcarbon]{calibrate}}
 #' @export
 combine = function(...,fixIDs=FALSE)
 {

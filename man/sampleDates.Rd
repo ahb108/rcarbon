@@ -20,8 +20,8 @@ sampleDates(x, bins = NA, nsim, boot = FALSE, verbose = TRUE)
 \value{
 An object of class \code{simdates} with the following elements
 \itemize{
-\item{\code{sdates}} {A matrix containing the randomly sampled calendar dates, with rows containing each of the \code{nsim} repetitions.}
-\item{\code{weight}} {A vector (or matrix in when \code{boot=TRUE}) containing the total area under the curve of each date, normalised to sum to unity. Notice this will be identical for all dates if the calibration is carried out with the argument \code{normalised} set to TRUE.}
+\item \code{sdates} A matrix containing the randomly sampled calendar dates, with rows containing each of the \code{nsim} repetitions.
+\item \code{weight} A vector (or matrix in when \code{boot=TRUE}) containing the total area under the curve of each date, normalised to sum to unity. Notice this will be identical for all dates if the calibration is carried out with the argument \code{normalised} set to TRUE.
 }
 }
 \description{
