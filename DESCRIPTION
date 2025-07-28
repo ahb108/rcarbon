@@ -15,6 +15,7 @@ Imports: sf,stats,spatstat.geom, spatstat.model,spatstat.explore, spatstat.linne
 Suggests:
     rmarkdown,
     rnaturalearth,
+    rnaturalearthdata,
     testthat (>= 2.1.0)
 License: GPL (>= 2)
 Encoding: UTF-8

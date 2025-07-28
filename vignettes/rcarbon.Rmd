@@ -405,7 +405,8 @@ The output of the function has its own `plot()` method which provides various wa
 
 ```{r,results='hide',message=FALSE}
 library(rnaturalearth)
-win  <- st_geometry(ne_countries(continent = 'europe',scale=10,returnclass='sf'))
+library(rnaturalearthdata)
+win  <- st_geometry(ne_countries(continent = 'europe',scale=50,returnclass='sf'))
 #extract bounding coordinates of the site distribution
 xrange <- st_bbox(sites)[c(1,3)]
 yrange <- st_bbox(sites)[c(2,4)]
