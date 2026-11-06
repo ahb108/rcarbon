@@ -81,10 +81,10 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
   
     if (any(class(calCurves) %in% c("matrix","data.frame")))
     {
-      if (max(calCurves[,1])<timeRange[1] | min(calCurves[,1]) < timeRange[2] )
+      if (max(calCurves[,1])<timeRange[1] | min(calCurves[,1]) > timeRange[2] )
       {
-        timeRange=c(max(calCurves[,1]),min(calCurves[,1]))
-        warning(paste0("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(",timeRange[1],",",timeRange[1],")"))
+        timeRange=c(min(timeRange[1],max(calCurves[,1])),max(timeRange[2],min(calCurves[,1])))
+        warning(paste0("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(",timeRange[1],",",timeRange[2],")"))
       }
     }
     out.prob.cnt = 0 #Counter for dates with calbrated probabilities outside timeRange
