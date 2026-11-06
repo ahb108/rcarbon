@@ -268,7 +268,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal20', timeRange=c(5
     stop("calCurves must be a character vector specifying a known curve or a custom three-column matrix/data.frame (see ?calibrate.default).")
   }
   if (type=="full"){
-    caleach <- calibrate(x=x$CRA, errors=errors, normalised=datenormalised, calMatrix=TRUE, ...)
+    caleach <- calibrate(x=x$CRA, errors=errors, calCurves=calCurves, timeRange=timeRange, normalised=datenormalised, calMatrix=TRUE, eps=eps, verbose=verbose, ...)
     for (d in 1:ncol(caleach$calmatrix)){
       caleach$calmatrix[,d] <- caleach$calmatrix[,d] *  x$PrDens[d]
     }
