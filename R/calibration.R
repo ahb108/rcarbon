@@ -81,10 +81,10 @@ calibrate.default <- function(x, errors, ids=NA, dateDetails=NA, calCurves='intc
   
     if (any(class(calCurves) %in% c("matrix","data.frame")))
     {
-      if (max(calCurves[,1])<timeRange[1] | min(calCurves[,1]) < timeRange[2] )
+      if (max(calCurves[,1])<timeRange[1] | min(calCurves[,1]) > timeRange[2] )
       {
-        timeRange=c(max(calCurves[,1]),min(calCurves[,1]))
-        warning(paste0("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(",timeRange[1],",",timeRange[1],")"))
+        timeRange=c(min(timeRange[1],max(calCurves[,1])),max(timeRange[2],min(calCurves[,1])))
+        warning(paste0("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(",timeRange[1],",",timeRange[2],")"))
       }
     }
     out.prob.cnt = 0 #Counter for dates with calbrated probabilities outside timeRange
@@ -255,7 +255,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal20', timeRange=c(5
     timeRange=c(50000,0)
     warning("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(50000,0)")
   }
-    if (class(calCurves) %in% c("matrix","data.frame")){
+    if (inherits(calCurves, c("matrix","data.frame"))){
         calcurve <- as.matrix(calCurves)
         if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
             stop("The custom calibration curve must have just three numeric columns.")
@@ -268,7 +268,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal20', timeRange=c(5
     stop("calCurves must be a character vector specifying a known curve or a custom three-column matrix/data.frame (see ?calibrate.default).")
   }
   if (type=="full"){
-    caleach <- calibrate(x=x$CRA, errors=errors, normalised=datenormalised, calMatrix=TRUE, ...)
+    caleach <- calibrate(x=x$CRA, errors=errors, calCurves=calCurves, timeRange=timeRange, normalised=datenormalised, calMatrix=TRUE, eps=eps, verbose=verbose, ...)
     for (d in 1:ncol(caleach$calmatrix)){
       caleach$calmatrix[,d] <- caleach$calmatrix[,d] *  x$PrDens[d]
     }
