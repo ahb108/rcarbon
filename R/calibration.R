@@ -255,7 +255,7 @@ calibrate.UncalGrid <- function(x, errors=0, calCurves='intcal20', timeRange=c(5
     timeRange=c(50000,0)
     warning("timeRange value not supported with the selected curve(s); calibrating using timeRange=c(50000,0)")
   }
-    if (class(calCurves) %in% c("matrix","data.frame")){
+    if (inherits(calCurves, c("matrix","data.frame"))){
         calcurve <- as.matrix(calCurves)
         if (ncol(calcurve)!=3 | !all(sapply(calcurve,is.numeric))){
             stop("The custom calibration curve must have just three numeric columns.")
