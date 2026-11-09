@@ -1,4 +1,6 @@
-# Version 1.5.1 (in development)
+# Version 1.5.3 (In development)
+
+# Version 1.5.2 (28 July 2025)
 * Bug Fix: Removed non-relevant warning messages from `calibrate()` within `modelTest()`.
 * NEW: `qCal()` function computes quantiles of calibrated dates.
 * UPDATE: `multiplot()` now enables relative positioning of labels based on quantiles of calibrated dates and/or a user-defined offset. 
