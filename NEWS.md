@@ -1,5 +1,6 @@
 # Version 1.5.3 (In development)
-
+* Bug Fix: Fixes various bugs associated with custom calibration curve
+* 
 # Version 1.5.2 (28 July 2025)
 * Bug Fix: Removed non-relevant warning messages from `calibrate()` within `modelTest()`.
 * NEW: `qCal()` function computes quantiles of calibrated dates.
